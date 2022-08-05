@@ -1,12 +1,6 @@
 from datasets import load_dataset
 from parso import parse
 
-ds = load_dataset("codeparrot/github-code", streaming=True,
-                  split="train", languages=["Python"])
-
-iterator = iter(ds)
-count = 0
-
 
 def all_imports(node):
     for subscope in node.iter_funcdefs():
@@ -27,8 +21,13 @@ def contains_framework(ast):
 
 
 def main():
+    ds = load_dataset("codeparrot/github-code", streaming=True,
+                      split="train", languages=["Python"])
+
+    iterator = iter(ds)
+
     files = []
-    for i in range(100000):
+    for i in range(10000):
         code_data = next(iterator)
         if "torch" in code_data['code'] or "tensorflow" in code_data['code'] or "jax" in code_data['code']:
             files.append(code_data['code'])
