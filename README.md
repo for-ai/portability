@@ -1,5 +1,5 @@
 # portability
 
-poetry install
+`poetry install`
 
-poetry run python main.py
+`poetry run python main.py`
