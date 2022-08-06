@@ -16,9 +16,13 @@ def contains_framework(item):
     generator = all_imports(ast)
     for im in generator:
         # gets the first path from all imports
-        name = im.get_paths()[0][0]
-        if "torch" in name.__repr__() or "tensorflow" in name.__repr__() or "jax" in name.__repr__():
-            return True
+        paths = im.get_paths()
+        if len(paths[0]) > 0:
+            name = im.get_paths()[0][0]
+            if "Name: torch" in name.__repr__() or "Name: tensorflow" in name.__repr__() or "Name: jax" in name.__repr__():
+                return True
+            elif "torch" in name.__repr__() or "tensorflow" in name.__repr__() or "jax" in name.__repr__():
+                print(name)
     return False
 
 
@@ -33,12 +37,15 @@ def main():
 
     ds = ds.filter(contains_framework)
 
+    count = 0
     f = open("files.txt", "a")
-    for i in ds.take(10):
+    for i in ds.take(100):
         f.write(i['code'])
         f.write("\n")
+        count += 1
 
     f.close()
+    print("FILE COUNT", count)
 
 
 main()
