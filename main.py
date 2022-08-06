@@ -30,20 +30,9 @@ def text_match(item):
 def main():
     ds = load_dataset("codeparrot/github-code", streaming=True,
                       split="train", languages=["Python"])
-    # ds = ds.filter(text_match)
-
-    # iterator = iter(ds)
-
-    # files = []
-    # for i in range(100000):
-    #     code_data = next(iterator)
-    #     if "torch" in code_data['code'] or "tensorflow" in code_data['code'] or "jax" in code_data['code']:
-    #         files.append(code_data['code'])
 
     ds = ds.filter(contains_framework)
-    # filtered_files = [
-    #     file for file in files if contains_framework(parse(file))
-    # ]
+
     f = open("files.txt", "a")
     for i in ds.take(10):
         f.write(i['code'])
