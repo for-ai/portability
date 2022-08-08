@@ -92,13 +92,12 @@ def main():
 
     # filters for files only containing framework imports
     ds = ds.filter(partial(contains_framework, "torch"))
+    # recurses ast to get name frequencies
+    ds = ds.map(lambda i: get_name_frequencies(parse(i['code'])))
     counts = build_dictionary("torch")
 
     files = 100000
-    for i in tqdm(ds.take(files)):
-        ast = parse(i['code'])
-        # recurses ast to get name frequencies
-        frequencies = get_name_frequencies(ast)
+    for frequencies in tqdm(ds.take(files)):
         for fn in function_lists.pytorch_functions:
             counts[fn] += frequencies.get(fn, 0)
 
