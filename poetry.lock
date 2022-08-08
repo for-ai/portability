@@ -215,6 +215,21 @@ optional = false
 python-versions = ">=3.5"
 
 [[package]]
+name = "jedi"
+version = "0.18.1"
+description = "An autocompletion tool for Python that can be used for text editors."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+parso = ">=0.8.0,<0.9.0"
+
+[package.extras]
+qa = ["flake8 (==3.8.3)", "mypy (==0.782)"]
+testing = ["Django (<3.1)", "colorama", "docopt", "pytest (<7.0.0)"]
+
+[[package]]
 name = "lark"
 version = "1.1.2"
 description = "a modern parsing library"
@@ -449,7 +464,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "4401df1c2d5716211dc3919c28851296273e551e80c6e5ae7b981f370c64fdfa"
+content-hash = "8bec07164c8ebb2b55d469efbaa8509f0024edf0d46517250fa03a8b3f3e2602"
 
 [metadata.files]
 aiohttp = []
@@ -466,6 +481,7 @@ frozenlist = []
 fsspec = []
 huggingface-hub = []
 idna = []
+jedi = []
 lark = []
 multidict = []
 multiprocess = []
