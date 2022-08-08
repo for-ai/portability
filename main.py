@@ -62,30 +62,45 @@ def build_dictionary(framework):
     return dictionary
 
 
-def _get_code_for_children(self, children, include_prefix):
-    if include_prefix:
-        return "".join(c.get_code() for c in children)
-    else:
-        first = children[0].get_code(include_prefix=False)
-        return first + "".join(c.get_code(include_prefix=False) for c in children[1:])
+def get_name_frequencies(ast):
+    """
+    Returns all the :class:`Name` leafs that exist in this module. This
+    includes both definitions and references of names.
+    """
+    # Don't directly use self._used_names to eliminate a lookup.
+    dct = {}
 
+    def recurse(node):
+        try:
+            children = node.children
+        except AttributeError:
+            if node.type == 'name':
+                dct[node.value] = dct.get(node.value, 0) + 1
+                # arr = dct.setdefault(node.value, [])
+                # arr.append(node)
+        else:
+            for child in children:
+                recurse(child)
 
-BaseNode._get_code_for_children = _get_code_for_children
+    recurse(ast)
+    return dct
 
 
 def main():
     ds = load_dataset("codeparrot/github-code", streaming=True,
                       split="train", languages=["Python"])
 
+    # filters for files only containing framework imports
     ds = ds.filter(partial(contains_framework, "torch"))
     counts = build_dictionary("torch")
 
-    files = 100
+    files = 100000
     for i in tqdm(ds.take(files)):
-        # Removes comments and whitespace from the file
-        code_file = parse(i['code']).get_code(include_prefix=False)
+        ast = parse(i['code'])
+        # recurses ast to get name frequencies
+        frequencies = get_name_frequencies(ast)
         for fn in function_lists.pytorch_functions:
-            counts[fn] += len(re.findall(fn, code_file))
+            counts[fn] += frequencies.get(fn, 0)
 
     print(counts)
     f = open("frequencies.json", "a")
