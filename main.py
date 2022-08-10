@@ -1,12 +1,10 @@
 from datasets import load_dataset
-from parso import parse
-from parso.tree import BaseNode
 from functools import partial
 import json
-from jedi import Script
 import function_lists
 import re
 from tqdm import tqdm
+import code_tokenize as ctok
 
 import_keyword = {
     "torch": "Name: torch",
@@ -24,18 +22,11 @@ def all_imports(node):
 
 
 def contains_framework(framework, item):
-    code = item['code']
-    ast = parse(code)
-    generator = all_imports(ast)
-    import_match = import_keyword[framework]
-    for im in generator:
-        # gets the first path from all imports
-        paths = im.get_paths()
-        if len(paths[0]) > 0:
-            name = im.get_paths()[0][0]
-            if import_match in name.__repr__():
-                return True
-    return False
+    code_content = item['content']
+    import_regex = r"(from " + re.escape(framework) + \
+        r"|import " + re.escape(framework) + r")"
+    matches = re.findall(import_regex, code_content)
+    return len(matches) > 0
 
 
 def match_with_line_num(code_string):
@@ -62,42 +53,54 @@ def build_dictionary(framework):
     return dictionary
 
 
-def get_name_frequencies(ast):
-    """
-    Returns all the :class:`Name` leafs that exist in this module. This
-    includes both definitions and references of names.
-    """
-    # Don't directly use self._used_names to eliminate a lookup.
-    dct = {}
+# def get_name_frequencies(ast):
+#     """
+#     Returns all the :class:`Name` leafs that exist in this module. This
+#     includes both definitions and references of names.
+#     """
+#     # Don't directly use self._used_names to eliminate a lookup.
+#     dct = {}
 
-    def recurse(node):
-        try:
-            children = node.children
-        except AttributeError:
-            if node.type == 'name':
-                dct[node.value] = dct.get(node.value, 0) + 1
-                # arr = dct.setdefault(node.value, [])
-                # arr.append(node)
-        else:
-            for child in children:
-                recurse(child)
+#     def recurse(node):
+#         try:
+#             children = node.children
+#         except AttributeError:
+#             if node.type == 'name':
+#                 dct[node.value] = dct.get(node.value, 0) + 1
+#                 # arr = dct.setdefault(node.value, [])
+#                 # arr.append(node)
+#         else:
+#             for child in children:
+#                 recurse(child)
 
-    recurse(ast)
-    return dct
+#     recurse(ast)
+#     return dct
+
+def get_name_frequencies(string):
+    dict = {}
+    for word in ctok.tokenize(string, lang="python"):
+        if word.type == "identifier":
+            word = word.text
+            if word not in dict:
+                dict[word] = 0
+            dict[word] += 1
+    return dict
 
 
 def main():
-    ds = load_dataset("codeparrot/github-code", streaming=True,
-                      split="train", languages=["Python"])
+    ds = load_dataset("codeparrot/codeparrot-clean",
+                      streaming=True, split="train")
 
     # filters for files only containing framework imports
     ds = ds.filter(partial(contains_framework, "torch"))
     # recurses ast to get name frequencies
-    ds = ds.map(lambda i: get_name_frequencies(parse(i['code'])))
+    ds = ds.map(lambda i: get_name_frequencies(
+        i['content']))
     counts = build_dictionary("torch")
 
     files = 100000
     for frequencies in tqdm(ds.take(files)):
+        # print("hi")
         for fn in function_lists.pytorch_functions:
             counts[fn] += frequencies.get(fn, 0)
 

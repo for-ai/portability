@@ -7,10 +7,8 @@ authors = ["frasermince"]
 [tool.poetry.dependencies]
 python = "^3.9"
 datasets = "^2.4.0"
-lark = "^1.1.2"
-parso = "^0.8.3"
-jedi = "^0.18.1"
 tqdm = "^4.64.0"
+code-tokenize = "^0.2.0"
 
 [tool.poetry.dev-dependencies]
 
