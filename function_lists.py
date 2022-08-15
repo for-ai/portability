@@ -292,7 +292,6 @@ pytorch_functions = [
     "msort",
     "diag_embed",
     "diagflat",
-    "If input is a vector (1-D tensor), then returns a 2-D square tensor",
     "diagonal",
     "diff",
     "einsum",
