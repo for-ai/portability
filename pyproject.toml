@@ -9,6 +9,7 @@ python = "^3.9"
 datasets = "^2.4.0"
 tqdm = "^4.64.0"
 code-tokenize = "^0.2.0"
+beautifulsoup4 = "^4.11.1"
 
 [tool.poetry.dev-dependencies]
 
