@@ -5,11 +5,12 @@ description = ""
 authors = ["frasermince"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.9,<3.11"
 datasets = "^2.4.0"
 tqdm = "^4.64.0"
 code-tokenize = "^0.2.0"
 beautifulsoup4 = "^4.11.1"
+tensorflow = "^2.9.2"
 
 [tool.poetry.dev-dependencies]
 
