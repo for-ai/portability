@@ -1,5 +1,5 @@
 import json
-from inspect import getmembers, isclass, isfunction, ismodule, ismethod
+from inspect import getmembers, isclass, isfunction, ismodule, ismethod, isbuiltin
 import tensorflow as tf
 import torch
 import functools
@@ -38,6 +38,9 @@ def iterate_module(framework, module=None, is_top_level=True, namespace_dict={},
     #     import code; code.interact(local=dict(globals(), **locals()))
     if is_top_level:
         module = choose_module(framework)
+    # else:
+    #     if module.__name__ == "torch":
+    #         import code; code.interact(local=dict(globals(), **locals()))
     for child in getmembers(module, isclass if isClass else ismodule):
         name = child[0]
         child = child[1]
@@ -60,7 +63,7 @@ def iterate_module(framework, module=None, is_top_level=True, namespace_dict={},
                     # print("fn", key, ".", member[0])
                     namespace_dict[key]["methods"].append(member[0])
 
-                for member in getmembers(child, isfunction):
+                for member in getmembers(child, lambda x: isfunction(x) or isbuiltin(x)):
                     # print("fn", key, ".", member[0])
                     namespace_dict[key]["functions"].append(member[0])
                 for member in getmembers(child, isclass):
