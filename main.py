@@ -12,9 +12,6 @@ import_keyword = {
     "jax": "Name: jax"
 }
 
-pytorch_set = set(function_lists.pytorch_functions)
-tensorflow_set = set(function_lists.tensorflow_functions)
-
 error_files = []
 false_negatives = []
 
@@ -34,7 +31,8 @@ def contains_framework(framework, item):
     matches = re.findall(import_regex, code_content)
     tensorflow_authors = r".*Copyright 20.. The TensorFlow Authors"
     if len(matches) > 0:
-        tensorflow_authors_matches = re.findall(tensorflow_authors, code_content)
+        tensorflow_authors_matches = re.findall(
+            tensorflow_authors, code_content)
         if framework == "tensorflow" and len(tensorflow_authors_matches) > 0:
             return False
         else:
@@ -93,20 +91,19 @@ def get_name_frequencies(freq_dict, set, framework, file_data, debug=False):
             #             module_list.append(ast[i + 1].text)
             #             print("UNQUALIFIED")
             #             # import code; code.interact(local=dict(globals(), **locals()))
-                    
 
             if word.type == "identifier" and word.text in set:
                 if i != len(ast) - 1 and ast[i + 1].text == "(" and ((i != 0 and ast[i - 1].text != "def") or i == 0):
                     # if (word in module_list or (i >= 2 and (ast[i - 2].text in module_list or (ast[i - 2] == ")" and i - 4 in valid_index_list)))):
-                        # print(word)
+                    # print(word)
 
-                        # print("VALID", word, ast[i - 2])
-                        word = word.text
-                        # if word not in dict:
-                        #     dict[word] = 0
+                    # print("VALID", word, ast[i - 2])
+                    word = word.text
+                    # if word not in dict:
+                    #     dict[word] = 0
 
-                        freq_dict[word] += 1
-                        valid_index_list.append(i)
+                    freq_dict[word] += 1
+                    valid_index_list.append(i)
                     #     if i >= 4 and ast[i - 3].type == "=":
                     #         print("ASSIGNMENT")
                     #         import code; code.interact(local=dict(globals(), **locals()))
@@ -134,14 +131,30 @@ def get_name_frequencies(freq_dict, set, framework, file_data, debug=False):
 def main():
     ds = load_dataset("codeparrot/codeparrot-clean",
                       streaming=False, split="train")
+    test_negatives = True
     framework = "tensorflow"
-    f = open(framework + '_flat_functions.json')
-    
-    function_list = json.load(f)
-    f.close()
+    if test_negatives:
+        f = open('tensorflow_flat_functions.json')
+        tensorflow_function_list = json.load(f)
+        f.close()
+        f = open('torch_flat_functions.json')
+        torch_function_list = json.load(f)
+        f.close()
+        function_list = tensorflow_function_list + torch_function_list
+
+    else:
+        f = open(framework + '_flat_functions.json')
+        function_list = json.load(f)
+        f.close()
 
     # filters for files only containing framework imports
-    ds = ds.filter(partial(contains_framework, framework))
+    if test_negatives:
+        ds = ds.filter(
+            partial(lambda framework, x: not contains_framework(framework, x), "tensorflow"))
+        ds = ds.filter(
+            partial(lambda framework, x: not contains_framework(framework, x), "torch"))
+    else:
+        ds = ds.filter(partial(contains_framework, framework))
     ds = ds.shuffle(seed=42)
     ds = ds.select(range(3001))
     # tokenizes and gets frequencies of tokens
@@ -174,8 +187,10 @@ def main():
             if key not in result:
                 result[key] = 0
             result[key] += value
-
-    f = open(framework + "_frequencies.json", "w")
+    if test_negatives:
+        f = open("negative_frequencies.json", "w")
+    else:
+        f = open(framework + "_frequencies.json", "w")
     f.write(json.dumps(result, indent=4, sort_keys=True))
     f.close()
 
