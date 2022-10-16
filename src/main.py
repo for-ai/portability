@@ -134,10 +134,10 @@ def main():
     test_negatives = True
     framework = "tensorflow"
     if test_negatives:
-        f = open('tensorflow_flat_functions.json')
+        f = open('../tensorflow_flat_functions.json')
         tensorflow_function_list = json.load(f)
         f.close()
-        f = open('torch_flat_functions.json')
+        f = open('../torch_flat_functions.json')
         torch_function_list = json.load(f)
         f.close()
         function_list = tensorflow_function_list + torch_function_list
