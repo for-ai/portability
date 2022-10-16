@@ -177,7 +177,7 @@ def main():
         item["frequencies"] = new_item
 
     print(error_files)
-    f = open("individual" + framework + "_frequencies.json", "w")
+    f = open("individual_" + framework + "_frequencies.json", "w")
     f.write(json.dumps(counts, indent=4, sort_keys=True))
     f.close()
 
