@@ -1,27 +1,14 @@
 """Tests for tensorflow.python.training.saver.py."""
 
-import contextlib
 import os
-import pathlib
-import shutil
-import tempfile
-
-from google.protobuf import text_format
 
 from tensorflow.core.protobuf import saver_pb2
-from tensorflow.python.checkpoint import checkpoint as util
 from tensorflow.python.checkpoint import checkpoint_management
-from tensorflow.python.eager import context
-from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops as ops_lib
-from tensorflow.python.framework import test_util
-from tensorflow.python.lib.io import file_io
 from tensorflow.python.ops import variables
 from tensorflow.python.platform import gfile
 from tensorflow.python.platform import test
-from tensorflow.python.platform import tf_logging as logging
 from tensorflow.python.training import saver as saver_module
-from tensorflow.python.training.checkpoint_state_pb2 import CheckpointState
 
 
 class SaverUtilsTest(test.TestCase):
