@@ -28,15 +28,8 @@ change. This file contains two types of randomized tests:
    across different versions of scipy (namely, they yield invalid results in 1.7+)
 """
 
-from torch.nn.functional import softmax
-from torch.distributions.utils import (probs_to_logits, lazy_property, tril_matrix_to_vec,
-                                       vec_to_tril_matrix)
-from torch.distributions.transforms import (AffineTransform, CatTransform, ExpTransform,
-                                            StackTransform, identity_transform)
-from torch.distributions.kl import _kl_expfamily_expfamily
-from torch.distributions.dirichlet import _Dirichlet_backward
+from torch.distributions.transforms import (AffineTransform, ExpTransform)
 from torch.distributions.constraints import Constraint, is_dependent
-from torch.distributions.constraint_registry import transform_to
 from torch.distributions import (Bernoulli, Beta, Binomial, Categorical,
                                  Cauchy, Chi2, ContinuousBernoulli, Dirichlet,
                                  Distribution, Exponential, ExponentialFamily,
@@ -50,21 +43,12 @@ from torch.distributions import (Bernoulli, Beta, Binomial, Categorical,
                                  Pareto, Poisson, RelaxedBernoulli, RelaxedOneHotCategorical,
                                  StudentT, TransformedDistribution, Uniform,
                                  VonMises, Weibull, Wishart, constraints, kl_divergence)
-from torch.autograd.functional import jacobian
-import torch.autograd.forward_ad as fwAD
-from torch.autograd import grad
 from torch.testing._internal.common_cuda import TEST_CUDA
 from torch.testing._internal.common_utils import \
-    (TestCase, run_tests, set_rng_seed, TEST_WITH_UBSAN, load_tests,
-     gradcheck)
-from torch._six import inf, nan
+    (TestCase, run_tests)
 import math
 import numbers
-import unittest
 from collections import namedtuple
-from itertools import product
-from random import shuffle
-from packaging import version
 
 import torch
 
