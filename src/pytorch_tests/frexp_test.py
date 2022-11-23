@@ -55,26 +55,6 @@ from torch.testing._internal.common_dtype import (
 if TEST_SCIPY:
     import scipy
 
-# Refer [scipy reference filter]
-# Filter operators for which the reference function
-# is available in the current environment (for reference_numerics tests).
-reference_filtered_ops = list(filter(lambda op: op.ref is not None, unary_ufuncs))
-
-# Tests for unary "universal functions (ufuncs)" that accept a single
-# tensor and have common properties like:
-#   - they are elementwise functions
-#   - the input shape is the output shape
-#   - they typically have method and inplace variants
-#   - they typically support the out kwarg
-#   - they typically have NumPy or SciPy references
-
-# See NumPy's universal function documentation
-# (https://numpy.org/doc/1.18/reference/ufuncs.html) for more details
-# about the concept of ufuncs.
-
-
-# TODO: port test_unary_out_op_mem_overlap
-# TODO: add test for inplace variants erroring on broadcasted inputs
 class TestUnaryUfuncs(TestCase):
     exact_dtype = True
 
