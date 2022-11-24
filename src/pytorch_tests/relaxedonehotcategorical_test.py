@@ -37,6 +37,8 @@ from random import shuffle
 from packaging import version
 
 import torch
+from hypothesis import given
+import torch.testing._internal.hypothesis_utils as hu
 
 # TODO: remove this global setting
 # Distributions tests use double as the default dtype
@@ -161,7 +163,6 @@ class TestDistributions(DistributionsTestCase):
             return dist_ctor(*params).log_prob(s)
 
         gradcheck(apply_fn, (s,) + tuple(ctor_params), raise_exception=True)
-
 
 
     def test_relaxed_one_hot_categorical_1d(self):

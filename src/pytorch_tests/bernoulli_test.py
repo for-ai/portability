@@ -7,6 +7,8 @@ from random import shuffle
 from packaging import version
 
 import torch
+from hypothesis import given
+import torch.testing._internal.hypothesis_utils as hu
 
 # TODO: remove this global setting
 # Distributions tests use double as the default dtype

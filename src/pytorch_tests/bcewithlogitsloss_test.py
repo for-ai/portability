@@ -28,6 +28,8 @@ from torch.testing._internal.common_dtype import get_all_dtypes, integral_types
 import torch.backends.mps
 from torch.distributions import Uniform, Exponential
 from functools import partial
+from hypothesis import given
+import torch.testing._internal.hypothesis_utils as hu
 
 from torch.testing._internal.common_methods_invocations import (
     op_db,

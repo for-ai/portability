@@ -19,6 +19,9 @@ from tempfile import NamedTemporaryFile
 import weakref
 import gc
 
+from hypothesis import given
+import torch.testing._internal.hypothesis_utils as hu
+
 import torch
 
 # TODO: remove this global setting
