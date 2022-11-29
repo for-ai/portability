@@ -10,6 +10,8 @@ from torch.testing._internal.common_device_type import (
 from torch.testing._internal.common_dtype import all_types_and_complex_and
 from torch.utils.dlpack import from_dlpack, to_dlpack
 
+from hypothesis import given
+import torch.testing._internal.hypothesis_utils as hu
 
 class TestTorchDlPack(TestCase):
     exact_dtype = True

@@ -7,6 +7,8 @@ import math
 from numbers import Number
 import random
 import unittest
+from hypothesis import given
+import torch.testing._internal.hypothesis_utils as hu
 
 from torch._six import inf, nan
 from torch.testing._internal.common_utils import (

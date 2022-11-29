@@ -12,6 +12,10 @@ from torch.testing._internal.common_utils import (
     TestCase, run_tests, subtest, gradcheck, gradgradcheck, parametrize, instantiate_parametrized_tests)
 from torch.testing._internal.logging_tensor import LoggingTensor
 
+from hypothesis import given
+import torch.testing._internal.hypothesis_utils as hu
+
+
 # Utilities for parametrizing the tensor constructors used in autograd tests
 #
 # TODO: maybe move somewhere so other tests can also use
