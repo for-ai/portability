@@ -61,13 +61,14 @@ from torch.testing._internal.common_dtype import (
 )
 
 # Protects against includes accidentally setting the default dtype
-assert torch.get_default_dtype() is torch.float32
+# assert torch.get_default_dtype() is torch.float32
 
 # load_tests from torch.testing._internal.common_utils is used to automatically filter tests for
 # sharding on sandcastle. This line silences flake warnings
 load_tests = load_tests
 
 AMPERE_OR_ROCM = TEST_WITH_ROCM or tf32_is_not_fp32()
+
 
 @contextlib.contextmanager
 def torch_vital_set(value):
@@ -131,7 +132,8 @@ class TestTorch(TestCase):
 
         doubleStorage = storage.double()
         self.assertEqual(doubleStorage.size(), 6)
-        self.assertEqual(doubleStorage.tolist(), [-1.0, 0.0, 1.0, 2.0, 3.0, 4.0])
+        self.assertEqual(doubleStorage.tolist(),
+                         [-1.0, 0.0, 1.0, 2.0, 3.0, 4.0])
         self.assertEqual(doubleStorage.type(), 'torch.DoubleStorage')
         self.assertEqual(doubleStorage.int().tolist(), [-1, 0, 1, 2, 3, 4])
         self.assertIs(doubleStorage.dtype, torch.float64)
@@ -152,21 +154,27 @@ class TestTorch(TestCase):
 
         boolStorage = storage.bool()
         self.assertEqual(boolStorage.size(), 6)
-        self.assertEqual(boolStorage.tolist(), [True, False, True, True, True, True])
+        self.assertEqual(boolStorage.tolist(), [
+                         True, False, True, True, True, True])
         self.assertEqual(boolStorage.type(), 'torch.BoolStorage')
         self.assertEqual(boolStorage.int().tolist(), [1, 0, 1, 1, 1, 1])
         self.assertIs(boolStorage.dtype, torch.bool)
 
-        complexfloat_storage = torch.ComplexFloatStorage([-1, 0, 1 + 2j, 2.5j, 3.5, 4 - 2j])
+        complexfloat_storage = torch.ComplexFloatStorage(
+            [-1, 0, 1 + 2j, 2.5j, 3.5, 4 - 2j])
         self.assertEqual(complexfloat_storage.size(), 6)
-        self.assertEqual(complexfloat_storage.tolist(), [-1, 0, 1 + 2j, 2.5j, 3.5, 4 - 2j])
-        self.assertEqual(complexfloat_storage.type(), 'torch.ComplexFloatStorage')
+        self.assertEqual(complexfloat_storage.tolist(),
+                         [-1, 0, 1 + 2j, 2.5j, 3.5, 4 - 2j])
+        self.assertEqual(complexfloat_storage.type(),
+                         'torch.ComplexFloatStorage')
         self.assertIs(complexfloat_storage.dtype, torch.complex64)
 
         complexdouble_storage = complexfloat_storage.complex_double()
         self.assertEqual(complexdouble_storage.size(), 6)
-        self.assertEqual(complexdouble_storage.tolist(), [-1, 0, 1 + 2j, 2.5j, 3.5, 4 - 2j])
-        self.assertEqual(complexdouble_storage.type(), 'torch.ComplexDoubleStorage')
+        self.assertEqual(complexdouble_storage.tolist(),
+                         [-1, 0, 1 + 2j, 2.5j, 3.5, 4 - 2j])
+        self.assertEqual(complexdouble_storage.type(),
+                         'torch.ComplexDoubleStorage')
         self.assertIs(complexdouble_storage.dtype, torch.complex128)
 
 
