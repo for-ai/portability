@@ -17,8 +17,12 @@ sns.set_theme(style="whitegrid")
 #     return ((previous + (0.5 * current)) / length) * 100
 
 
-framework = "tensorflow"
+# CHANGE THESE BEFORE YOU RUN
+framework = "torch"
+# framework = "tensorflow"
 decile_to_choose = 100
+
+
 f = open(framework + '_frequencies.json')
 function_list = json.load(f)
 function_list = function_list.items()
