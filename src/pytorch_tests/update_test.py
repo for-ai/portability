@@ -1,5 +1,39 @@
 # Owner(s): ["module: nn"]
 
+from torch.types import _TensorOrTensors
+from torch.testing._internal.common_cuda import tf32_on_and_off, tf32_is_not_fp32, tf32_off, tf32_on
+from torch.testing._internal.common_utils import dtype2prec_DONTUSE
+from torch.testing._internal.common_utils import _assertGradAndGradgradChecks, gradcheck, gradgradcheck, \
+    GRADCHECK_NONDET_TOL
+import torch.testing._internal.hypothesis_utils as hu
+from hypothesis import given
+from torch.nn import MultiheadAttention
+from torch.testing._internal.common_device_type import instantiate_device_type_tests, dtypes, \
+    dtypesIfCUDA, precisionOverride, skipCUDAIfCudnnVersionLessThan, onlyCUDA, onlyCPU, \
+    skipCUDAIfRocm, skipCUDAIf, skipCUDAIfNotRocm, \
+    onlyNativeDeviceTypes, deviceCountAtLeast, largeTensorTest, expectedFailureMeta, skipMeta, get_all_device_types
+from torch.testing._internal.common_cuda import TEST_CUDA, TEST_MULTIGPU, TEST_CUDNN, TEST_CUDNN_VERSION
+from torch.testing._internal.common_utils import freeze_rng_state, run_tests, TestCase, skipIfNoLapack, skipIfRocm, \
+    TEST_NUMPY, TEST_SCIPY, TEST_WITH_CROSSREF, TEST_WITH_ROCM, \
+    download_file, get_function_arglist, load_tests, skipIfMps,\
+    TemporaryFileName, TEST_WITH_UBSAN, IS_PPC, \
+    parametrize as parametrize_test, subtest, instantiate_parametrized_tests, IS_WINDOWS
+from torch.testing._internal.common_dtype import integral_types, get_all_math_dtypes
+from torch.nn.parallel._functions import Broadcast
+from torch.nn import Parameter
+from torch.nn.utils.fusion import fuse_linear_bn_weights
+from torch.nn.utils.fusion import fuse_conv_bn_weights
+from torch.nn.utils import parameters_to_vector, vector_to_parameters
+import torch.nn.utils.prune as prune
+import torch.nn.utils.parametrize as parametrize
+from torch.nn.utils import clip_grad_norm_, clip_grad_value_
+import torch.nn.utils.rnn as rnn_utils
+import torch.nn.init as init
+import torch.nn.functional as F
+import torch.nn as nn
+import torch.backends.cudnn as cudnn
+import torch.autograd.forward_ad as fwAD
+from torch._six import inf, nan
 import contextlib
 import math
 import random
@@ -25,44 +59,19 @@ import torch
 # NN tests use double as the default dtype
 torch.set_default_dtype(torch.double)
 
-from torch._six import inf, nan
-import torch.autograd.forward_ad as fwAD
-import torch.backends.cudnn as cudnn
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.nn.init as init
-import torch.nn.utils.rnn as rnn_utils
-from torch.nn.utils import clip_grad_norm_, clip_grad_value_
-import torch.nn.utils.parametrize as parametrize
-import torch.nn.utils.prune as prune
-from torch.nn.utils import parameters_to_vector, vector_to_parameters
-from torch.nn.utils.fusion import fuse_conv_bn_weights
-from torch.nn.utils.fusion import fuse_linear_bn_weights
-from torch.nn import Parameter
-from torch.nn.parallel._functions import Broadcast
-from torch.testing._internal.common_dtype import integral_types, get_all_math_dtypes
-from torch.testing._internal.common_utils import freeze_rng_state, run_tests, TestCase, skipIfNoLapack, skipIfRocm, \
-    TEST_NUMPY, TEST_SCIPY, TEST_WITH_CROSSREF, TEST_WITH_ROCM, \
-    download_file, get_function_arglist, load_tests, skipIfMps,\
-    TemporaryFileName, TEST_WITH_UBSAN, IS_PPC, \
-    parametrize as parametrize_test, subtest, instantiate_parametrized_tests, IS_WINDOWS
-from torch.testing._internal.common_cuda import TEST_CUDA, TEST_MULTIGPU, TEST_CUDNN, TEST_CUDNN_VERSION
-from common_nn import NNTestCase, NewModuleTest, CriterionTest, \
-    module_tests, criterion_tests, loss_reference_fns, \
-    ctcloss_reference, new_module_tests, single_batch_reference_fn, _test_bfloat16_ops, _test_module_empty_input
-from torch.testing._internal.common_device_type import instantiate_device_type_tests, dtypes, \
-    dtypesIfCUDA, precisionOverride, skipCUDAIfCudnnVersionLessThan, onlyCUDA, onlyCPU, \
-    skipCUDAIfRocm, skipCUDAIf, skipCUDAIfNotRocm, \
-    onlyNativeDeviceTypes, deviceCountAtLeast, largeTensorTest, expectedFailureMeta, skipMeta, get_all_device_types
-from torch.nn import MultiheadAttention
+if __package__ is None or __package__ == '':
+    # uses current directory visibility
+    import common_nn
+    from common_nn import NNTestCase, NewModuleTest, CriterionTest, \
+        module_tests, criterion_tests, loss_reference_fns, \
+        ctcloss_reference, new_module_tests, single_batch_reference_fn, _test_bfloat16_ops, _test_module_empty_input
 
-from hypothesis import given
-import torch.testing._internal.hypothesis_utils as hu
-from torch.testing._internal.common_utils import _assertGradAndGradgradChecks, gradcheck, gradgradcheck, \
-    GRADCHECK_NONDET_TOL
-from torch.testing._internal.common_utils import dtype2prec_DONTUSE
-from torch.testing._internal.common_cuda import tf32_on_and_off, tf32_is_not_fp32, tf32_off, tf32_on
-from torch.types import _TensorOrTensors
+else:
+    # uses current package visibility
+    from . import common_nn
+    from .common_nn import NNTestCase, NewModuleTest, CriterionTest, \
+        module_tests, criterion_tests, loss_reference_fns, \
+        ctcloss_reference, new_module_tests, single_batch_reference_fn, _test_bfloat16_ops, _test_module_empty_input
 
 
 AMPERE_OR_ROCM = TEST_WITH_ROCM or tf32_is_not_fp32()
@@ -85,7 +94,6 @@ if TEST_NUMPY:
 # CI.
 
 class TestNN(NNTestCase):
-
 
     def test_ModuleDict(self):
         modules = OrderedDict([
@@ -391,7 +399,8 @@ class TestNN(NNTestCase):
         check()
 
         parameter_dict2 = parameter_dict.fromkeys(['p19', 'p20'], temp_param)
-        self.assertEqual({'p19': temp_param, 'p20': temp_param}, parameter_dict2)
+        self.assertEqual(
+            {'p19': temp_param, 'p20': temp_param}, parameter_dict2)
         check()
 
         parameter_dict['p21'] = torch.rand(2, 2)
@@ -404,7 +413,6 @@ class TestNN(NNTestCase):
         parameters['p22'] = parameter_dict['p22']
         parameters['foo'] = parameter_dict['foo']
 
-    
     def test_load_state_dict(self):
         l = nn.Linear(5, 5)
         block = nn.Module()
@@ -431,7 +439,8 @@ class TestNN(NNTestCase):
             'module.block.conv1.bias': torch.arange(1, 4, dtype=conv1_bias_dtype),
             'module.bn.running_mean': torch.randn(2),
         })
-        torch.nn.modules.utils.consume_prefix_in_state_dict_if_present(ddp_state_dict, 'module.')
+        torch.nn.modules.utils.consume_prefix_in_state_dict_if_present(
+            ddp_state_dict, 'module.')
         for sd in [state_dict, ddp_state_dict]:
             incompatible_keys = net.load_state_dict(sd)
             self.assertEqual(len(incompatible_keys.missing_keys), 0)
@@ -443,7 +452,8 @@ class TestNN(NNTestCase):
 
         state_dict = net.state_dict()
         state_dict.update({'extra': torch.ones(5)})
-        self.assertRaises(RuntimeError, lambda: net.load_state_dict(state_dict))
+        self.assertRaises(
+            RuntimeError, lambda: net.load_state_dict(state_dict))
         incompatible_keys = net.load_state_dict(state_dict, strict=False)
         self.assertEqual(len(incompatible_keys.missing_keys), 0)
         self.assertEqual(len(incompatible_keys.unexpected_keys), 1)
@@ -452,7 +462,8 @@ class TestNN(NNTestCase):
 
         state_dict = net.state_dict()
         state_dict.update({'extra.param': torch.ones(5)})
-        self.assertRaises(RuntimeError, lambda: net.load_state_dict(state_dict))
+        self.assertRaises(
+            RuntimeError, lambda: net.load_state_dict(state_dict))
         incompatible_keys = net.load_state_dict(state_dict, strict=False)
         self.assertEqual(len(incompatible_keys.missing_keys), 0)
         self.assertEqual(len(incompatible_keys.unexpected_keys), 1)
@@ -460,13 +471,15 @@ class TestNN(NNTestCase):
 
         state_dict = net.state_dict()
         del state_dict['linear1.weight']
-        self.assertRaises(RuntimeError, lambda: net.load_state_dict(state_dict))
+        self.assertRaises(
+            RuntimeError, lambda: net.load_state_dict(state_dict))
         incompatible_keys = net.load_state_dict(state_dict, strict=False)
         self.assertEqual(len(incompatible_keys.missing_keys), 1)
         self.assertEqual(len(incompatible_keys.unexpected_keys), 0)
         self.assertIn('linear1.weight', incompatible_keys.missing_keys)
         state_dict.update({'extra.param': torch.ones(5)})
-        self.assertRaises(RuntimeError, lambda: net.load_state_dict(state_dict))
+        self.assertRaises(
+            RuntimeError, lambda: net.load_state_dict(state_dict))
         incompatible_keys = net.load_state_dict(state_dict, strict=False)
         self.assertEqual(len(incompatible_keys.missing_keys), 1)
         self.assertEqual(len(incompatible_keys.unexpected_keys), 1)
@@ -475,8 +488,10 @@ class TestNN(NNTestCase):
 
         state_dict = net.state_dict()
         state_dict.update({'bn.running_mean': torch.rand(14, 4)})  # wrong size
-        self.assertRaises(RuntimeError, lambda: net.load_state_dict(state_dict))
-        self.assertRaises(RuntimeError, lambda: net.load_state_dict(state_dict, strict=False))
+        self.assertRaises(
+            RuntimeError, lambda: net.load_state_dict(state_dict))
+        self.assertRaises(RuntimeError, lambda: net.load_state_dict(
+            state_dict, strict=False))
 
         state_dict = net.state_dict()
         old_state_dict = deepcopy(state_dict)
@@ -496,6 +511,7 @@ class TestNN(NNTestCase):
         del old_state_dict['bn.running_mean']
         for k, v, in old_state_dict.items():
             self.assertTrue(v.equal(new_state_dict[k]))
+
 
 instantiate_parametrized_tests(TestNN)
 

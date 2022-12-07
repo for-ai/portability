@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import random
 import csv
-import numpy as np
 import math
 sns.set_theme(style="whitegrid")
 
@@ -20,7 +19,7 @@ sns.set_theme(style="whitegrid")
 # CHANGE THESE BEFORE YOU RUN
 framework = "torch"
 # framework = "tensorflow"
-decile_to_choose = 100
+decile_to_choose = 10
 
 
 f = open(framework + '_frequencies.json')
