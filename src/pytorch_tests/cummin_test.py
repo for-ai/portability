@@ -59,10 +59,15 @@ from torch.testing._internal.common_dtype import (
     all_types_and, floating_types, floating_and_complex_types, integral_types,
 )
 
+# assert torch.get_default_dtype() is torch.float32
+
 
 class TestTorchDeviceType(TestCase):
     def test_cummax_cummin(self, device):
+        torch.set_default_dtype(torch.float32)
+
         def test_ops(op, string_of_function_name, expected_output1, expected_output2):
+            print("**TYPE", torch.get_default_dtype())
             x = torch.rand(100, 100, device=device)
             out1 = op(x, 1)
             res2 = torch.empty(0, device=device)
@@ -127,6 +132,8 @@ class TestTorchDeviceType(TestCase):
         test_ops(torch.cummin, "cummin", torch.tensor([[1, 0, 1],
                                                        [0, 0, 0],
                                                        [0, 0, 0]]), expected_out)
+
+        torch.set_default_dtype(torch.float64)
 
 
 instantiate_device_type_tests(TestTorchDeviceType, globals())

@@ -28,6 +28,36 @@ change. This file contains two types of randomized tests:
    across different versions of scipy (namely, they yield invalid results in 1.7+)
 """
 
+from torch.nn.functional import softmax
+from torch.distributions.utils import (probs_to_logits, lazy_property, tril_matrix_to_vec,
+                                       vec_to_tril_matrix)
+from torch.distributions.transforms import (AffineTransform, CatTransform, ExpTransform,
+                                            StackTransform, identity_transform)
+from torch.distributions.kl import _kl_expfamily_expfamily
+from torch.distributions.dirichlet import _Dirichlet_backward
+from torch.distributions.constraints import Constraint, is_dependent
+from torch.distributions.constraint_registry import transform_to
+from torch.distributions import (Bernoulli, Beta, Binomial, Categorical,
+                                 Cauchy, Chi2, ContinuousBernoulli, Dirichlet,
+                                 Distribution, Exponential, ExponentialFamily,
+                                 FisherSnedecor, Gamma, Geometric, Gumbel,
+                                 HalfCauchy, HalfNormal, Independent, Kumaraswamy,
+                                 LKJCholesky, Laplace, LogisticNormal,
+                                 LogNormal, LowRankMultivariateNormal,
+                                 MixtureSameFamily, Multinomial, MultivariateNormal,
+                                 NegativeBinomial, Normal,
+                                 OneHotCategorical, OneHotCategoricalStraightThrough,
+                                 Pareto, Poisson, RelaxedBernoulli, RelaxedOneHotCategorical,
+                                 StudentT, TransformedDistribution, Uniform,
+                                 VonMises, Weibull, Wishart, constraints, kl_divergence)
+from torch.autograd.functional import jacobian
+import torch.autograd.forward_ad as fwAD
+from torch.autograd import grad
+from torch.testing._internal.common_cuda import TEST_CUDA
+from torch.testing._internal.common_utils import \
+    (TestCase, run_tests, set_rng_seed, TEST_WITH_UBSAN, load_tests,
+     gradcheck)
+from torch._six import inf, nan
 import math
 import numbers
 import unittest
@@ -44,36 +74,6 @@ import torch.testing._internal.hypothesis_utils as hu
 # Distributions tests use double as the default dtype
 torch.set_default_dtype(torch.double)
 
-from torch._six import inf, nan
-from torch.testing._internal.common_utils import \
-    (TestCase, run_tests, set_rng_seed, TEST_WITH_UBSAN, load_tests,
-     gradcheck)
-from torch.testing._internal.common_cuda import TEST_CUDA
-from torch.autograd import grad
-import torch.autograd.forward_ad as fwAD
-from torch.autograd.functional import jacobian
-from torch.distributions import (Bernoulli, Beta, Binomial, Categorical,
-                                 Cauchy, Chi2, ContinuousBernoulli, Dirichlet,
-                                 Distribution, Exponential, ExponentialFamily,
-                                 FisherSnedecor, Gamma, Geometric, Gumbel,
-                                 HalfCauchy, HalfNormal, Independent, Kumaraswamy,
-                                 LKJCholesky, Laplace, LogisticNormal,
-                                 LogNormal, LowRankMultivariateNormal,
-                                 MixtureSameFamily, Multinomial, MultivariateNormal,
-                                 NegativeBinomial, Normal,
-                                 OneHotCategorical, OneHotCategoricalStraightThrough,
-                                 Pareto, Poisson, RelaxedBernoulli, RelaxedOneHotCategorical,
-                                 StudentT, TransformedDistribution, Uniform,
-                                 VonMises, Weibull, Wishart, constraints, kl_divergence)
-from torch.distributions.constraint_registry import transform_to
-from torch.distributions.constraints import Constraint, is_dependent
-from torch.distributions.dirichlet import _Dirichlet_backward
-from torch.distributions.kl import _kl_expfamily_expfamily
-from torch.distributions.transforms import (AffineTransform, CatTransform, ExpTransform,
-                                            StackTransform, identity_transform)
-from torch.distributions.utils import (probs_to_logits, lazy_property, tril_matrix_to_vec,
-                                       vec_to_tril_matrix)
-from torch.nn.functional import softmax
 
 # load_tests from torch.testing._internal.common_utils is used to automatically filter tests for
 # sharding on sandcastle. This line silences flake warnings
@@ -164,17 +164,24 @@ class TestDistributions(DistributionsTestCase):
 
         gradcheck(apply_fn, (s,) + tuple(ctor_params), raise_exception=True)
 
-
     def test_relaxed_one_hot_categorical_1d(self):
+
+        torch.set_default_dtype(torch.float64)
         p = torch.tensor([0.1, 0.2, 0.3], requires_grad=True)
         temp = torch.tensor(0.67, requires_grad=True)
-        self.assertEqual(RelaxedOneHotCategorical(probs=p, temperature=temp).sample().size(), (3,))
-        self.assertFalse(RelaxedOneHotCategorical(probs=p, temperature=temp).sample().requires_grad)
-        self.assertEqual(RelaxedOneHotCategorical(probs=p, temperature=temp).sample((2, 2)).size(), (2, 2, 3))
-        self.assertEqual(RelaxedOneHotCategorical(probs=p, temperature=temp).sample((1,)).size(), (1, 3))
-        self._gradcheck_log_prob(lambda t, p: RelaxedOneHotCategorical(t, p, validate_args=False), (temp, p))
+        self.assertEqual(RelaxedOneHotCategorical(
+            probs=p, temperature=temp).sample().size(), (3,))
+        self.assertFalse(RelaxedOneHotCategorical(
+            probs=p, temperature=temp).sample().requires_grad)
+        self.assertEqual(RelaxedOneHotCategorical(
+            probs=p, temperature=temp).sample((2, 2)).size(), (2, 2, 3))
+        self.assertEqual(RelaxedOneHotCategorical(
+            probs=p, temperature=temp).sample((1,)).size(), (1, 3))
+        self._gradcheck_log_prob(lambda t, p: RelaxedOneHotCategorical(
+            t, p, validate_args=False), (temp, p))
 
     def test_relaxed_one_hot_categorical_2d(self):
+        torch.set_default_dtype(torch.float64)
         probabilities = [[0.1, 0.2, 0.3], [0.5, 0.3, 0.2]]
         probabilities_1 = [[1.0, 0.0], [0.0, 1.0]]
         temp = torch.tensor([3.0], requires_grad=True)
@@ -183,11 +190,16 @@ class TestDistributions(DistributionsTestCase):
         temp_2 = torch.tensor([0.25], requires_grad=True)
         p = torch.tensor(probabilities, requires_grad=True)
         s = torch.tensor(probabilities_1, requires_grad=True)
-        self.assertEqual(RelaxedOneHotCategorical(temp, p).sample().size(), (2, 3))
-        self.assertEqual(RelaxedOneHotCategorical(temp, p).sample(sample_shape=(3, 4)).size(), (3, 4, 2, 3))
-        self.assertEqual(RelaxedOneHotCategorical(temp, p).sample((6,)).size(), (6, 2, 3))
-        self._gradcheck_log_prob(lambda t, p: RelaxedOneHotCategorical(t, p, validate_args=False), (temp, p))
-        self._gradcheck_log_prob(lambda t, p: RelaxedOneHotCategorical(t, p, validate_args=False), (temp_2, p))
+        self.assertEqual(RelaxedOneHotCategorical(
+            temp, p).sample().size(), (2, 3))
+        self.assertEqual(RelaxedOneHotCategorical(temp, p).sample(
+            sample_shape=(3, 4)).size(), (3, 4, 2, 3))
+        self.assertEqual(RelaxedOneHotCategorical(
+            temp, p).sample((6,)).size(), (6, 2, 3))
+        self._gradcheck_log_prob(lambda t, p: RelaxedOneHotCategorical(
+            t, p, validate_args=False), (temp, p))
+        self._gradcheck_log_prob(lambda t, p: RelaxedOneHotCategorical(
+            t, p, validate_args=False), (temp_2, p))
 
     @unittest.skipIf(not TEST_NUMPY, "Numpy not found")
     def test_argmax_relaxed_categorical(self):
@@ -213,8 +225,10 @@ class TestDistributions(DistributionsTestCase):
 
         for probs, temp in product([torch.tensor([0.1, 0.9]), torch.tensor([0.2, 0.2, 0.6])], [0.1, 1.0, 10.0]):
             self._check_sampler_discrete(ArgMax(RelaxedOneHotCategorical(temp, probs)),
-                                         ScipyCategorical(scipy.stats.multinomial(1, probs)),
-                                         'Rounded(RelaxedOneHotCategorical(temp={}, probs={}))'.format(temp, probs),
+                                         ScipyCategorical(
+                                             scipy.stats.multinomial(1, probs)),
+                                         'Rounded(RelaxedOneHotCategorical(temp={}, probs={}))'.format(
+                                             temp, probs),
                                          failure_rate=1e-3)
 
         for probs in [torch.tensor([0.1, 0.9]), torch.tensor([0.2, 0.2, 0.6])]:
@@ -230,16 +244,19 @@ class TestDistributions(DistributionsTestCase):
             log_prob_mode = dist.log_prob(sanitized_mode)
             if isinstance(dist, OneHotCategorical):
                 idx = (dist._categorical.mode + 1) % dist.probs.shape[-1]
-                other = torch.nn.functional.one_hot(idx, num_classes=dist.probs.shape[-1]).to(dist.mode)
+                other = torch.nn.functional.one_hot(
+                    idx, num_classes=dist.probs.shape[-1]).to(dist.mode)
             else:
                 other = dist.mode + step
             mask = batch_isfinite & dist.support.check(other)
             self.assertTrue(mask.any() or dist.mode.unique().numel() == 1)
             # Add a dimension to the right if the event shape is not a scalar, e.g. OneHotCategorical.
-            other = torch.where(mask[..., None] if mask.ndim < other.ndim else mask, other, dist.sample())
+            other = torch.where(
+                mask[..., None] if mask.ndim < other.ndim else mask, other, dist.sample())
             log_prob_other = dist.log_prob(other)
             delta = log_prob_mode - log_prob_other
-            self.assertTrue((-1e-12 < delta[mask].detach()).all())  # Allow up to 1e-12 rounding error.
+            # Allow up to 1e-12 rounding error.
+            self.assertTrue((-1e-12 < delta[mask].detach()).all())
 
     def _test_continuous_distribution_mode(self, dist, sanitized_mode, batch_isfinite):
         if isinstance(dist, Wishart):
@@ -248,7 +265,8 @@ class TestDistributions(DistributionsTestCase):
         num_points = 10
         transform = transform_to(dist.support)
         unconstrained_mode = transform.inv(sanitized_mode)
-        perturbation = 1e-5 * (torch.rand((num_points,) + unconstrained_mode.shape) - 0.5)
+        perturbation = 1e-5 * \
+            (torch.rand((num_points,) + unconstrained_mode.shape) - 0.5)
         perturbed_mode = transform(perturbation + unconstrained_mode)
         log_prob_mode = dist.log_prob(sanitized_mode)
         log_prob_other = dist.log_prob(perturbed_mode)
@@ -256,7 +274,8 @@ class TestDistributions(DistributionsTestCase):
 
         # We pass the test with a small tolerance to allow for rounding and manually set the
         # difference to zero if both log probs are infinite with the same sign.
-        both_infinite_with_same_sign = (log_prob_mode == log_prob_other) & (log_prob_mode.abs() == inf)
+        both_infinite_with_same_sign = (
+            log_prob_mode == log_prob_other) & (log_prob_mode.abs() == inf)
         delta[both_infinite_with_same_sign] = 0.
         ordering = (delta > -1e-12).all(axis=0)
         self.assertTrue(ordering[batch_isfinite].all())
@@ -280,19 +299,23 @@ class TestDistributions(DistributionsTestCase):
 
                 # Check that either all or no elements in the event shape are nan: the mode cannot be
                 # defined for part of an event.
-                isfinite = dist.mode.isfinite().reshape(dist.batch_shape + (dist.event_shape.numel(),))
+                isfinite = dist.mode.isfinite().reshape(
+                    dist.batch_shape + (dist.event_shape.numel(),))
                 batch_isfinite = isfinite.all(axis=-1)
-                self.assertTrue((batch_isfinite | ~isfinite.any(axis=-1)).all())
+                self.assertTrue(
+                    (batch_isfinite | ~isfinite.any(axis=-1)).all())
 
                 # We sanitize undefined modes by sampling from the distribution.
-                sanitized_mode = torch.where(~dist.mode.isnan(), dist.mode, dist.sample())
+                sanitized_mode = torch.where(
+                    ~dist.mode.isnan(), dist.mode, dist.sample())
                 if isinstance(dist, discrete_distributions):
-                    self._test_discrete_distribution_mode(dist, sanitized_mode, batch_isfinite)
+                    self._test_discrete_distribution_mode(
+                        dist, sanitized_mode, batch_isfinite)
                 else:
-                    self._test_continuous_distribution_mode(dist, sanitized_mode, batch_isfinite)
+                    self._test_continuous_distribution_mode(
+                        dist, sanitized_mode, batch_isfinite)
 
                 self.assertFalse(dist.log_prob(sanitized_mode).isnan().any())
-
 
 
 class TestConstraints(DistributionsTestCase):
@@ -322,7 +345,8 @@ class TestConstraints(DistributionsTestCase):
 
                     # Check param shape is compatible with distribution shape.
                     self.assertGreaterEqual(value.dim(), constraint.event_dim)
-                    value_batch_shape = value.shape[:value.dim() - constraint.event_dim]
+                    value_batch_shape = value.shape[:value.dim(
+                    ) - constraint.event_dim]
                     torch.broadcast_shapes(dist.batch_shape, value_batch_shape)
 
                     if is_dependent(constraint):
@@ -331,6 +355,7 @@ class TestConstraints(DistributionsTestCase):
                     message = '{} example {}/{} parameter {} = {}'.format(
                         Dist.__name__, i + 1, len(params), name, value)
                     self.assertTrue(constraint.check(value).all(), msg=message)
+
 
 if __name__ == '__main__' and torch._C.has_lapack:
     run_tests()

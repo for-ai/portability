@@ -34,6 +34,7 @@ class TestTensorCreation(TestCase):
     # TODO: this test should be updated
     @suppress_warnings
     def test_range(self, device):
+        torch.set_default_dtype(torch.float32)
         res1 = torch.range(0, 1, device=device)
         res2 = torch.tensor((), device=device)
         torch.range(0, 1, device=device, out=res2)
@@ -42,7 +43,8 @@ class TestTensorCreation(TestCase):
         # Check range for non-contiguous tensors.
         x = torch.zeros(2, 3, device=device)
         torch.range(0, 3, device=device, out=x.narrow(1, 1, 2))
-        res2 = torch.tensor(((0, 0, 1), (0, 2, 3)), device=device, dtype=torch.float32)
+        res2 = torch.tensor(((0, 0, 1), (0, 2, 3)),
+                            device=device, dtype=torch.float32)
         self.assertEqual(x, res2, atol=1e-16, rtol=0)
 
         # Check negative
@@ -65,7 +67,7 @@ class TestTensorCreation(TestCase):
             torch.range(0, 10, device=device)
             self.assertEqual(len(w), 1)
 
-    
+
 instantiate_device_type_tests(TestTensorCreation, globals())
 
 if __name__ == '__main__':

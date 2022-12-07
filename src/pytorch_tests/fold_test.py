@@ -1,5 +1,42 @@
 # Owner(s): ["module: nn"]
 
+import torch.testing._internal.hypothesis_utils as hu
+from hypothesis import given
+from torch.types import _TensorOrTensors
+from torch.testing._internal.common_cuda import tf32_on_and_off, tf32_is_not_fp32, tf32_off, tf32_on
+from torch.testing._internal.common_utils import dtype2prec_DONTUSE
+from torch.testing._internal.common_utils import _assertGradAndGradgradChecks, gradcheck, gradgradcheck, \
+    GRADCHECK_NONDET_TOL
+from torch.nn import MultiheadAttention
+from torch.testing._internal.common_device_type import instantiate_device_type_tests, dtypes, \
+    dtypesIfCUDA, precisionOverride, skipCUDAIfCudnnVersionLessThan, onlyCUDA, onlyCPU, \
+    skipCUDAIfRocm, skipCUDAIf, skipCUDAIfNotRocm, \
+    onlyNativeDeviceTypes, deviceCountAtLeast, largeTensorTest, expectedFailureMeta, skipMeta, get_all_device_types
+from torch.testing._internal.common_nn import NNTestCase, NewModuleTest, CriterionTest, \
+    module_tests, criterion_tests, loss_reference_fns, \
+    ctcloss_reference, new_module_tests, single_batch_reference_fn
+from torch.testing._internal.common_cuda import TEST_CUDA, TEST_MULTIGPU, TEST_CUDNN, TEST_CUDNN_VERSION
+from torch.testing._internal.common_utils import freeze_rng_state, run_tests, TestCase, skipIfNoLapack, skipIfRocm, \
+    TEST_NUMPY, TEST_SCIPY, TEST_WITH_CROSSREF, TEST_WITH_ROCM, \
+    download_file, get_function_arglist, load_tests, skipIfMps,\
+    TemporaryFileName, TEST_WITH_UBSAN, IS_PPC, \
+    parametrize as parametrize_test, subtest, instantiate_parametrized_tests, IS_WINDOWS
+from torch.testing._internal.common_dtype import integral_types, get_all_math_dtypes
+from torch.nn.parallel._functions import Broadcast
+from torch.nn import Parameter
+from torch.nn.utils.fusion import fuse_linear_bn_weights
+from torch.nn.utils.fusion import fuse_conv_bn_weights
+from torch.nn.utils import parameters_to_vector, vector_to_parameters
+import torch.nn.utils.prune as prune
+import torch.nn.utils.parametrize as parametrize
+from torch.nn.utils import clip_grad_norm_, clip_grad_value_
+import torch.nn.utils.rnn as rnn_utils
+import torch.nn.init as init
+import torch.nn.functional as F
+import torch.nn as nn
+import torch.backends.cudnn as cudnn
+import torch.autograd.forward_ad as fwAD
+from torch._six import inf, nan
 import contextlib
 import math
 import random
@@ -25,53 +62,17 @@ import torch
 # NN tests use double as the default dtype
 torch.set_default_dtype(torch.double)
 
-from torch._six import inf, nan
-import torch.autograd.forward_ad as fwAD
-import torch.backends.cudnn as cudnn
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.nn.init as init
-import torch.nn.utils.rnn as rnn_utils
-from torch.nn.utils import clip_grad_norm_, clip_grad_value_
-import torch.nn.utils.parametrize as parametrize
-import torch.nn.utils.prune as prune
-from torch.nn.utils import parameters_to_vector, vector_to_parameters
-from torch.nn.utils.fusion import fuse_conv_bn_weights
-from torch.nn.utils.fusion import fuse_linear_bn_weights
-from torch.nn import Parameter
-from torch.nn.parallel._functions import Broadcast
-from torch.testing._internal.common_dtype import integral_types, get_all_math_dtypes
-from torch.testing._internal.common_utils import freeze_rng_state, run_tests, TestCase, skipIfNoLapack, skipIfRocm, \
-    TEST_NUMPY, TEST_SCIPY, TEST_WITH_CROSSREF, TEST_WITH_ROCM, \
-    download_file, get_function_arglist, load_tests, skipIfMps,\
-    TemporaryFileName, TEST_WITH_UBSAN, IS_PPC, \
-    parametrize as parametrize_test, subtest, instantiate_parametrized_tests, IS_WINDOWS
-from torch.testing._internal.common_cuda import TEST_CUDA, TEST_MULTIGPU, TEST_CUDNN, TEST_CUDNN_VERSION
-from torch.testing._internal.common_nn import NNTestCase, NewModuleTest, CriterionTest, \
-    module_tests, criterion_tests, loss_reference_fns, \
-    ctcloss_reference, new_module_tests, single_batch_reference_fn
-from torch.testing._internal.common_device_type import instantiate_device_type_tests, dtypes, \
-    dtypesIfCUDA, precisionOverride, skipCUDAIfCudnnVersionLessThan, onlyCUDA, onlyCPU, \
-    skipCUDAIfRocm, skipCUDAIf, skipCUDAIfNotRocm, \
-    onlyNativeDeviceTypes, deviceCountAtLeast, largeTensorTest, expectedFailureMeta, skipMeta, get_all_device_types
-from torch.nn import MultiheadAttention
 
 # from hypothesis import given
 # import torch.testing._internal.hypothesis_utils as hu
-from torch.testing._internal.common_utils import _assertGradAndGradgradChecks, gradcheck, gradgradcheck, \
-    GRADCHECK_NONDET_TOL
-from torch.testing._internal.common_utils import dtype2prec_DONTUSE
-from torch.testing._internal.common_cuda import tf32_on_and_off, tf32_is_not_fp32, tf32_off, tf32_on
-from torch.types import _TensorOrTensors
 
-from hypothesis import given
-import torch.testing._internal.hypothesis_utils as hu
 
 AMPERE_OR_ROCM = TEST_WITH_ROCM or tf32_is_not_fp32()
 
 # load_tests from common_utils is used to automatically filter tests for
 # sharding on sandcastle. This line silences flake warnings
 load_tests = load_tests
+
 
 if TEST_SCIPY:
     from scipy import stats
@@ -80,10 +81,13 @@ if TEST_SCIPY:
 
 if TEST_NUMPY:
     import numpy as np
+
+
 def add_test(test, decorator=None):
     def add(test_name, fn):
         if hasattr(TestNN, test_name):
-            raise RuntimeError('Found two tests with the same name: ' + test_name)
+            raise RuntimeError(
+                'Found two tests with the same name: ' + test_name)
         if decorator is not None:
             fn = decorator(fn)
         setattr(TestNN, test_name, fn)
@@ -169,7 +173,8 @@ class TestNN(NNTestCase):
                 return module(input)
 
     def _backward(self, module, input: _TensorOrTensors, output, grad_output, create_graph=False):
-        output.backward(grad_output, retain_graph=True, create_graph=create_graph)
+        output.backward(grad_output, retain_graph=True,
+                        create_graph=create_graph)
         if isinstance(input, tuple):
             return tuple(i.grad.data if i.grad is not None else None for i in input)
         else:
@@ -222,7 +227,8 @@ class TestNN(NNTestCase):
             def __init__(self):
                 super(Layer, self).__init__()
                 self.layer_dummy_param = Parameter(torch.empty(3, 5))
-                self.register_buffer('layer_dummy_buf', torch.zeros(1, 3, 3, 7))
+                self.register_buffer(
+                    'layer_dummy_buf', torch.zeros(1, 3, 3, 7))
 
         class Net(nn.Module):
             def __init__(self):
@@ -238,8 +244,6 @@ class TestNN(NNTestCase):
         return l, n, s
 
 
-    
-    
 for test_params in criterion_tests:
     if 'constructor' not in test_params:
         name = test_params.pop('module_name')
@@ -249,7 +253,8 @@ for test_params in criterion_tests:
     add_test(test, decorator)
     if 'check_sum_reduction' in test_params:
         desc = test_params.get('desc', None)
-        test_params['desc'] = 'sum_reduction' if desc is None else desc + '_sum_reduction'
+        test_params['desc'] = 'sum_reduction' if desc is None else desc + \
+            '_sum_reduction'
 
         def gen_sum_reduction_constructor(constructor):
             def sum_reduction_constructor(*args, **kwargs):
@@ -258,7 +263,8 @@ for test_params in criterion_tests:
             sum_reduction_constructor.__name__ = constructor.__name__
             return sum_reduction_constructor
 
-        test_params['constructor'] = gen_sum_reduction_constructor(test_params['constructor'])
+        test_params['constructor'] = gen_sum_reduction_constructor(
+            test_params['constructor'])
         test = CriterionTest(**test_params)
         add_test(test, decorator)
 
@@ -317,10 +323,12 @@ add_test(NewModuleTest(
     fullname='MaxUnpool3d_net_no_batch_dim',
     check_gradgrad=False))
 
+
 class _AdaptiveLogSoftmaxWithLoss(nn.AdaptiveLogSoftmaxWithLoss):
     def __call__(self, input):
         t = torch.tensor([0, 1, 4, 8]).to(input.device)
         return nn.AdaptiveLogSoftmaxWithLoss.__call__(self, input, t).output
+
 
 add_test(NewModuleTest(
     constructor=lambda: _AdaptiveLogSoftmaxWithLoss(16, 10, [2, 6]),
@@ -431,9 +439,11 @@ def _buildEquivalentAffineTransforms2d(device, input_size, output_size, angle_ra
         rotation_ary.T),
         outscale_ary),
         outtrans_ary)
-    grid_ary = np.dot(np.dot(np.dot(reorder_ary, rotation_ary.T), outscale_ary), outtrans_ary)
+    grid_ary = np.dot(
+        np.dot(np.dot(reorder_ary, rotation_ary.T), outscale_ary), outtrans_ary)
 
-    transform_tensor = torch.from_numpy((rotation_ary)).to(device, torch.float32)
+    transform_tensor = torch.from_numpy(
+        (rotation_ary)).to(device, torch.float32)
     transform_tensor = transform_tensor[:2].unsqueeze(0)
 
     return transform_tensor, transform_ary, grid_ary
@@ -504,9 +514,11 @@ def _buildEquivalentAffineTransforms3d(device, input_size, output_size, angle_ra
         np.linalg.inv(scipyRotation_ary)),
         outscale_ary),
         outtrans_ary)
-    grid_ary = np.dot(np.dot(np.dot(reorder_ary, np.linalg.inv(scipyRotation_ary)), outscale_ary), outtrans_ary)
+    grid_ary = np.dot(np.dot(np.dot(reorder_ary, np.linalg.inv(
+        scipyRotation_ary)), outscale_ary), outtrans_ary)
 
-    transform_tensor = torch.from_numpy((torchRotation_ary)).to(device, torch.float32)
+    transform_tensor = torch.from_numpy(
+        (torchRotation_ary)).to(device, torch.float32)
     transform_tensor = transform_tensor[:3].unsqueeze(0)
 
     return transform_tensor, transform_ary, grid_ary
@@ -514,7 +526,7 @@ def _buildEquivalentAffineTransforms3d(device, input_size, output_size, angle_ra
 
 
 class TestNNDeviceType(NNTestCase):
-    
+
     def test_fold(self, device):
         def test_dtype(fn, input, dtype):
             input = input.detach().clone().to(dtype=dtype).requires_grad_(True)
