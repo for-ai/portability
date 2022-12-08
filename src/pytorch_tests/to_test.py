@@ -9,20 +9,15 @@ import torch.testing._internal.hypothesis_utils as hu
 from torch.testing import make_tensor
 from hypothesis import given
 from torch.nn import MultiheadAttention
-from torch.testing._internal.common_device_type import expectedFailureXLA, instantiate_device_type_tests, dtypes, \
-    dtypesIfCUDA, precisionOverride, skipCUDAIfNoCudnn, skipCUDAIfCudnnVersionLessThan, onlyCUDA, onlyCPU, \
-    skipCUDAIfRocm, skipCUDAIf, skipCUDAIfNotRocm, skipCUDAIfRocmVersionLessThan, skipCUDAIfNotMiopenSuggestNHWC, \
-    onlyNativeDeviceTypes, deviceCountAtLeast, largeTensorTest, expectedFailureMeta, skipMeta, get_all_device_types, \
-    disableMkldnn, skipCPUIfNoMkldnn, disablecuDNN, skipCUDAIfMiopen, skipCUDAIfNoMiopen
-from torch.testing._internal.common_nn import NNTestCase, NewModuleTest, CriterionTest, \
-    module_tests, criterion_tests, loss_reference_fns, \
-    ctcloss_reference, new_module_tests, single_batch_reference_fn
+from torch.testing._internal.common_device_type import expectedFailureXLA, instantiate_device_type_tests, dtypes
+from torch.testing._internal.common_nn import NNTestCase
 from torch.testing._internal.common_cuda import TEST_CUDA, TEST_MULTIGPU, TEST_CUDNN, TEST_CUDNN_VERSION
 from torch.testing._internal.common_utils import freeze_rng_state, run_tests, TestCase, skipIfNoLapack, skipIfRocm, \
     skipIfRocmVersionLessThan, skipIfNotMiopenSuggestNHWC, TEST_NUMPY, TEST_SCIPY, TEST_WITH_CROSSREF, TEST_WITH_ROCM, \
     download_file, get_function_arglist, load_tests, skipIfMps,\
     suppress_warnings, TemporaryFileName, TEST_WITH_UBSAN, IS_PPC, \
     parametrize as parametrize_test, subtest, instantiate_parametrized_tests, set_default_dtype, IS_WINDOWS
+
 from torch.testing._internal.common_dtype import integral_types, floating_types_and, get_all_math_dtypes, \
     floating_and_complex_types_and
 from torch.nn.parallel._functions import Broadcast
@@ -39,25 +34,12 @@ import torch.nn as nn
 import torch.backends.cudnn as cudnn
 import torch.autograd.forward_ad as fwAD
 from torch._six import inf, nan
-import contextlib
-import math
-import random
-import string
-import unittest
-import io
-import unittest.mock as mock
-import itertools
-import warnings
-import pickle
-from copy import deepcopy
-from itertools import repeat, product
-from functools import reduce, partial
-from operator import mul
-from collections import OrderedDict
-from tempfile import NamedTemporaryFile
-
 import torch
 
+if __package__ is None or __package__ == '':
+    from utils.timer_wrapper import pytorch_timer
+else:
+    from .utils.timer_wrapper import pytorch_timer
 # TODO: remove this global setting
 # NN tests use double as the default dtype
 torch.set_default_dtype(torch.double)
@@ -95,7 +77,9 @@ class TestNN(NNTestCase):
 
     def test_to(self):
         m = nn.Linear(3, 5)
-        self.assertIs(m, m.to('cpu'))
+        with pytorch_timer():
+            m_cpu = m.to('cpu')
+        self.assertIs(m, m_cpu)
         self.assertIs(m, m.to('cpu', dtype=torch.float32))
         self.assertEqual(m.double(), m.to(torch.float64))
         self.assertRaises(RuntimeError, lambda: m.to('cpu', copy=True))
