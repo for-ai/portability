@@ -1,10 +1,12 @@
 import contextlib
 import torch
 import time
+import numpy as np
 
 try:
     # Import the TPUProfiler class from the torch_xla package
     from torch_xla import TPUProfiler
+    import torch_xla.core.xla_model as xm
 except ImportError:
     # torch_xla is not installed, so TPUProfiler is not available
     TPUProfiler = None
@@ -23,7 +25,7 @@ def pytorch_timer():
         # Waits for all CUDA operations to finish running
         torch.cuda.synchronize()
         print(start.elapsed_time(end))  # milliseconds
-    elif device.type == 'xla':
+    elif TPUProfiler != None and xm.xla_device():
         # Use TPUProfiler to measure time on a TPU
         with TPUProfiler('pytorch_timer') as prof:
             yield
@@ -35,3 +37,17 @@ def pytorch_timer():
         yield
         end = time.perf_counter()
         print(end - start)  # seconds
+
+"""
+- not sure if this is the best way, but it is a place to start
+- for example, if we want to measure the running time for np.sum, below is a way to do it. 
+Then, in every place we use np.sum, we have to replace it with mysum.
+- this will require a lot of work, so it would be great if we could find a better way to do it. 
+"""
+def mysum(*args, **kwargs):
+    with pytorch_timer() as timer:
+        return np.array(*args, **kwargs)
+
+    return timer.elapsed_time
+
+mysum([1,2,3])
