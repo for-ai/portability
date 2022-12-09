@@ -1,7 +1,7 @@
 import contextlib
 import torch
 import time
-import numpy as np
+import functools
 
 try:
     # Import the TPUProfiler class from the torch_xla package
@@ -32,22 +32,27 @@ def pytorch_timer():
         # Print the time elapsed for TPU operations
         print(prof.total_time_ms())
     else:
-        # Use Python's time module to measure time on a CPU
+        #Use Python's time module to measure time on a CPU
         start = time.perf_counter()
         yield
         end = time.perf_counter()
         print(end - start)  # seconds
 
+
 """
 - not sure if this is the best way, but it is a place to start
-- for example, if we want to measure the running time for np.sum, below is a way to do it. 
-Then, in every place we use np.sum, we have to replace it with mysum.
-- this will require a lot of work, so it would be great if we could find a better way to do it. 
+- for example, if we want to measure the running time for torch.sum, below is a way to do it. 
 """
+# def cal_running_time(fn): 
 def mysum(*args, **kwargs):
     with pytorch_timer() as timer:
-        return np.array(*args, **kwargs)
+        return temp(*args, **kwargs)
 
     return timer.elapsed_time
+    # return mysum
 
-mysum([1,2,3])
+temp = torch.sum
+torch.sum = mysum
+
+# then every time we call torch.sum, it measures the time elapsed. 
+print(torch.sum(torch.Tensor([1,2,3])))
