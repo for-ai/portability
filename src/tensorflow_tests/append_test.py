@@ -20,12 +20,16 @@ from tensorflow.python.framework import dtypes
 from tensorflow.python.ops import list_ops
 from tensorflow.python.autograph.core import converter_testing
 
+from ..utils.timer_wrapper import tensorflow_timer
+
 
 class ListTest(converter_testing.TestCase):
     def test_list_append(self):
+
         def f():
             l = special_functions.tensor_list([1])
-            l.append(2)
+            with tensorflow_timer():
+                l.append(2)
             l.append(3)
             return l
 

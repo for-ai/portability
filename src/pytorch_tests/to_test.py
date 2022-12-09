@@ -36,10 +36,7 @@ import torch.autograd.forward_ad as fwAD
 from torch._six import inf, nan
 import torch
 
-if __package__ is None or __package__ == '':
-    from utils.timer_wrapper import pytorch_timer
-else:
-    from .utils.timer_wrapper import pytorch_timer
+from ..utils.timer_wrapper import pytorch_timer
 # TODO: remove this global setting
 # NN tests use double as the default dtype
 torch.set_default_dtype(torch.double)

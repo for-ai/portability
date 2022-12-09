@@ -13,6 +13,19 @@ except ImportError:
 
 
 @contextlib.contextmanager
+def tensorflow_timer():
+    start = time.perf_counter()
+
+    yield
+
+    # Stop the timer
+    end = time.perf_counter()
+
+    # Print the elapsed time
+    print("***TIME", end - start)  # seconds
+
+
+@contextlib.contextmanager
 def pytorch_timer():
     if torch.cuda.is_available():
         # Use CUDA events to measure time on a GPU
@@ -32,7 +45,7 @@ def pytorch_timer():
         # Print the time elapsed for TPU operations
         print(prof.total_time_ms())
     else:
-        #Use Python's time module to measure time on a CPU
+        # Use Python's time module to measure time on a CPU
         start = time.perf_counter()
         yield
         end = time.perf_counter()
@@ -43,7 +56,9 @@ def pytorch_timer():
 - not sure if this is the best way, but it is a place to start
 - for example, if we want to measure the running time for torch.sum, below is a way to do it. 
 """
-# def cal_running_time(fn): 
+# def cal_running_time(fn):
+
+
 def mysum(*args, **kwargs):
     with pytorch_timer() as timer:
         return temp(*args, **kwargs)
@@ -51,9 +66,9 @@ def mysum(*args, **kwargs):
     return timer.elapsed_time
     # return mysum
 
-    
+
 temp = torch.sum
 torch.sum = mysum
 
-# then every time we call torch.sum, it measures the time elapsed. 
-print(torch.sum(torch.Tensor([1,2,3])))
+# then every time we call torch.sum, it measures the time elapsed.
+print(torch.sum(torch.Tensor([1, 2, 3])))
