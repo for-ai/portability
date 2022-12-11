@@ -59,9 +59,6 @@ from torch.testing._internal.common_dtype import (
     all_types_and, floating_types, floating_and_complex_types, integral_types,
 )
 
-# Protects against includes accidentally setting the default dtype
-assert torch.get_default_dtype() is torch.float32
-
 
 class TestTorch(TestCase):
     def test_tensor_set(self):
