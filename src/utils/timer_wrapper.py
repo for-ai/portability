@@ -2,6 +2,8 @@ import contextlib
 import torch
 import time
 import functools
+import pytest
+import os
 
 try:
     # Import the TPUProfiler class from the torch_xla package
@@ -27,6 +29,7 @@ def tensorflow_timer():
 
 @contextlib.contextmanager
 def pytorch_timer():
+    print("***TEST NAME?", pytest.test_name)
     if torch.cuda.is_available():
         # Use CUDA events to measure time on a GPU
         start = torch.cuda.Event(enable_timing=True)
@@ -37,19 +40,27 @@ def pytorch_timer():
 
         # Waits for all CUDA operations to finish running
         torch.cuda.synchronize()
+
+        pytest.test_times[pytest.test_name + "_" +
+                          str(pytest.test_i)] = start.elapsed_time(end)
         print(start.elapsed_time(end))  # milliseconds
     elif TPUProfiler != None and xm.xla_device():
         # Use TPUProfiler to measure time on a TPU
         with TPUProfiler('pytorch_timer') as prof:
             yield
         # Print the time elapsed for TPU operations
+        pytest.test_times[pytest.test_name + "_" +
+                          str(pytest.test_i)] = prof.total_time_ms()
         print(prof.total_time_ms())
     else:
         # Use Python's time module to measure time on a CPU
         start = time.perf_counter()
         yield
         end = time.perf_counter()
+        pytest.test_times[pytest.test_name +
+                          "_" + str(pytest.test_i)] = end - start
         print(end - start)  # seconds
+    pytest.test_i += 1
 
 
 """
@@ -59,16 +70,16 @@ def pytorch_timer():
 # def cal_running_time(fn):
 
 
-def mysum(*args, **kwargs):
-    with pytorch_timer() as timer:
-        return temp(*args, **kwargs)
+# def mysum(*args, **kwargs):
+#     with pytorch_timer() as timer:
+#         return temp(*args, **kwargs)
 
-    return timer.elapsed_time
-    # return mysum
+#     return timer.elapsed_time
+#     # return mysum
 
 
-temp = torch.sum
-torch.sum = mysum
+# temp = torch.sum
+# torch.sum = mysum
 
-# then every time we call torch.sum, it measures the time elapsed.
-print(torch.sum(torch.Tensor([1, 2, 3])))
+# # then every time we call torch.sum, it measures the time elapsed.
+# print(torch.sum(torch.Tensor([1, 2, 3])))
