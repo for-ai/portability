@@ -20,7 +20,7 @@ from tensorflow.python.framework import dtypes
 from tensorflow.python.ops import list_ops
 from tensorflow.python.autograph.core import converter_testing
 
-from ..utils.timer_wrapper import tensorflow_timer
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 class ListTest(converter_testing.TestCase):
@@ -28,7 +28,7 @@ class ListTest(converter_testing.TestCase):
 
         def f():
             l = special_functions.tensor_list([1])
-            with tensorflow_timer():
+            with tensorflow_op_timer():
                 l.append(2)
             l.append(3)
             return l

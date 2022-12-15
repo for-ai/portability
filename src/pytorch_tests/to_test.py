@@ -36,7 +36,7 @@ import torch.autograd.forward_ad as fwAD
 from torch._six import inf, nan
 import torch
 
-from ..utils.timer_wrapper import pytorch_timer
+from ..utils.timer_wrapper import pytorch_op_timer
 # TODO: remove this global setting
 # NN tests use double as the default dtype
 torch.set_default_dtype(torch.double)
@@ -74,7 +74,7 @@ class TestNN(NNTestCase):
 
     def test_to(self):
         m = nn.Linear(3, 5)
-        with pytorch_timer():
+        with pytorch_op_timer():
             m_cpu = m.to('cpu')
         self.assertIs(m, m_cpu)
         self.assertIs(m, m.to('cpu', dtype=torch.float32))
