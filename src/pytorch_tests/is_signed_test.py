@@ -30,7 +30,7 @@ from functools import partial
 from torch import multiprocessing as mp
 from torch.testing import make_tensor
 from torch.testing._internal.common_utils import (
-     TestCase, TEST_WITH_ROCM, run_tests,
+    TestCase, TEST_WITH_ROCM, run_tests,
     IS_WINDOWS, IS_FILESYSTEM_UTF8_ENCODING, NO_MULTIPROCESSING_SPAWN,
     IS_SANDCASTLE, IS_FBCODE, IS_REMOTE_GPU, load_tests, slowTest,
     TEST_WITH_CROSSREF,
@@ -58,14 +58,13 @@ from torch.testing._internal.common_dtype import (
     all_types_and, floating_types, floating_and_complex_types,
 )
 
-# Protects against includes accidentally setting the default dtype
-assert torch.get_default_dtype() is torch.float32
 
 # load_tests from torch.testing._internal.common_utils is used to automatically filter tests for
 # sharding on sandcastle. This line silences flake warnings
 load_tests = load_tests
 
 AMPERE_OR_ROCM = TEST_WITH_ROCM or tf32_is_not_fp32()
+
 
 @contextlib.contextmanager
 def torch_vital_set(value):
@@ -83,6 +82,8 @@ def torch_vital_set(value):
 
 # Tests Vital Signs for Torch
 # FIXME: document or deprecate whatever this is
+
+
 class TestBasicVitalSigns(TestCase):
     def test_basic_vitals(self):
         with torch_vital_set(''):
@@ -94,7 +95,8 @@ class TestBasicVitalSigns(TestCase):
         with torch_vital_set('ON'):
             self.assertTrue(torch.vitals_enabled())
             # This tests the code path of setting a vital
-            self.assertTrue(torch.set_vital('Dataloader', 'basic_unit_test', 'TEST_VALUE_STRING'))
+            self.assertTrue(torch.set_vital(
+                'Dataloader', 'basic_unit_test', 'TEST_VALUE_STRING'))
             self.assertIn('TEST_VALUE_STRING', torch.read_vitals())
             self.assertIn('CUDA.used', torch.read_vitals())
 
@@ -105,10 +107,14 @@ class TestBasicVitalSigns(TestCase):
             dataset = torch.utils.data.TensorDataset(inps, tgts)
             loader = torch.utils.data.DataLoader(dataset, batch_size=2)
             self.assertIn('Dataloader.enabled\t\t True', torch.read_vitals())
+
+
 METHOD = 1
 INPLACE_METHOD = 2
 FUNCTIONAL = 4
 DIM_ARG = None
+
+
 def make_neg_dim_test(name, tensor_arg, arg_constr, types, extra_dim=0):
     def neg_dim_test(self):
         if isinstance(tensor_arg, list):
@@ -151,19 +157,25 @@ def make_neg_dim_test(name, tensor_arg, arg_constr, types, extra_dim=0):
 
     return neg_dim_test
 
+
 def add_neg_dim_tests():
     neg_dim_tests = [
         ('narrow', (10, 20, 30), lambda: [DIM_ARG, 0, 5], [METHOD]),
-        ('transpose', (10, 20, 30), lambda: [DIM_ARG, DIM_ARG], [METHOD, INPLACE_METHOD, FUNCTIONAL]),
+        ('transpose', (10, 20, 30), lambda: [DIM_ARG, DIM_ARG], [
+         METHOD, INPLACE_METHOD, FUNCTIONAL]),
         ('size', (10, 20, 30), lambda: [DIM_ARG], [METHOD]),
         ('cat', [(2, 3, 4), (2, 3, 4)], lambda: [DIM_ARG], [FUNCTIONAL]),
         ('chunk', (10, 20, 30), lambda: [5, DIM_ARG], [METHOD, FUNCTIONAL]),
-        ('gather', (10, 20), lambda: [DIM_ARG, idx_tensor((10, 20), 10)], [METHOD, FUNCTIONAL]),
-        ('index_select', (10, 10), lambda: [DIM_ARG, idx_tensor((10,), 10)], [METHOD, FUNCTIONAL]),
+        ('gather', (10, 20), lambda: [DIM_ARG, idx_tensor(
+            (10, 20), 10)], [METHOD, FUNCTIONAL]),
+        ('index_select', (10, 10), lambda: [
+         DIM_ARG, idx_tensor((10,), 10)], [METHOD, FUNCTIONAL]),
         ('split', (10, 20), lambda: [5, DIM_ARG], [METHOD, FUNCTIONAL]),
-        ('squeeze', (10, 1, 20, 1), lambda: [DIM_ARG], [METHOD, INPLACE_METHOD, FUNCTIONAL]),
+        ('squeeze', (10, 1, 20, 1), lambda: [DIM_ARG], [
+         METHOD, INPLACE_METHOD, FUNCTIONAL]),
         ('unbind', (2, 3, 4), lambda: [DIM_ARG], [FUNCTIONAL]),
-        ('unsqueeze', (10, 20), lambda: [DIM_ARG], [METHOD, INPLACE_METHOD, FUNCTIONAL], 1),
+        ('unsqueeze', (10, 20), lambda: [DIM_ARG], [
+         METHOD, INPLACE_METHOD, FUNCTIONAL], 1),
         ('logcumsumexp', (10, 20), lambda: [DIM_ARG], [METHOD, FUNCTIONAL]),
         ('cumprod', (10, 20), lambda: [DIM_ARG], [METHOD, FUNCTIONAL]),
         ('cumsum', (10, 20), lambda: [DIM_ARG], [METHOD, FUNCTIONAL]),
@@ -183,11 +195,16 @@ def add_neg_dim_tests():
         ('min', (10, 20), lambda: [DIM_ARG], [METHOD, FUNCTIONAL]),
         ('sort', (10, 20), lambda: [DIM_ARG], [METHOD, FUNCTIONAL]),
         ('topk', (10, 20), lambda: [5, DIM_ARG], [METHOD, FUNCTIONAL]),
-        ('renorm', (10, 20), lambda: [2, DIM_ARG, 1], [METHOD, INPLACE_METHOD, FUNCTIONAL]),
-        ('index_add', (10, 10), lambda: [DIM_ARG, idx_tensor((10,), 10), torch.randn(10, 10)], [INPLACE_METHOD]),
-        ('index_copy', (10, 10), lambda: [DIM_ARG, idx_tensor((10,), 10), torch.randn(10, 10)], [INPLACE_METHOD]),
-        ('index_fill', (10, 10), lambda: [DIM_ARG, idx_tensor((10,), 10), 12], [INPLACE_METHOD]),
-        ('scatter', (10, 10), lambda: [DIM_ARG, idx_tensor((10, 10), 10), torch.randn(10, 10)], [INPLACE_METHOD]),
+        ('renorm', (10, 20), lambda: [2, DIM_ARG, 1], [
+         METHOD, INPLACE_METHOD, FUNCTIONAL]),
+        ('index_add', (10, 10), lambda: [DIM_ARG, idx_tensor(
+            (10,), 10), torch.randn(10, 10)], [INPLACE_METHOD]),
+        ('index_copy', (10, 10), lambda: [DIM_ARG, idx_tensor(
+            (10,), 10), torch.randn(10, 10)], [INPLACE_METHOD]),
+        ('index_fill', (10, 10), lambda: [
+         DIM_ARG, idx_tensor((10,), 10), 12], [INPLACE_METHOD]),
+        ('scatter', (10, 10), lambda: [DIM_ARG, idx_tensor(
+            (10, 10), 10), torch.randn(10, 10)], [INPLACE_METHOD]),
         ('select', (10, 20), lambda: [DIM_ARG, 3], [METHOD]),
         ('unfold', (10, 20), lambda: [DIM_ARG, 5, 2], [METHOD]),
     ]
@@ -201,10 +218,14 @@ def add_neg_dim_tests():
 
         test_name = 'test_' + name + '_neg_dim'
 
-        assert not hasattr(TestTorch, test_name), "Duplicated test name: " + test_name
-        setattr(TestTorch, test_name, make_neg_dim_test(name, tensor_arg, arg_constr, types, extra_dim))
+        assert not hasattr(
+            TestTorch, test_name), "Duplicated test name: " + test_name
+        setattr(TestTorch, test_name, make_neg_dim_test(
+            name, tensor_arg, arg_constr, types, extra_dim))
 
 # FIXME: document or deprecate whatever this is
+
+
 class TestVitalSignsCuda(TestCase):
     @onlyCUDA
     def test_cuda_vitals_gpu_only(self, device):
@@ -281,7 +302,7 @@ class TestTorchDeviceType(TestCase):
         x.expand((5, 2, 3))
         x.expand_as(x)
         x.sum_to_size((1,))
-        torch.broadcast_tensors(x , x)
+        torch.broadcast_tensors(x, x)
         x.reshape((1, 3, 2))
         x.reshape_as(y)
         x.squeeze()
@@ -318,7 +339,7 @@ class TestTorchDeviceType(TestCase):
         self.assertEqual(torch.FloatTensor(5).to(device).is_signed(), True)
         self.assertEqual(torch.HalfTensor(10).to(device).is_signed(), True)
 
-    
+
 class TestTorch(TestCase):
     # FIXME: resolve comment below and move this to indexing test suite
     # add coverage for issue with atomic add that appeared only for
@@ -332,38 +353,49 @@ class TestTorch(TestCase):
                     if dtype.is_floating_point or dtype.is_complex:
                         tensor = torch.rand(size, dtype=dtype, device=device)
                     elif dtype.is_signed:
-                        tensor = torch.randint(-5, 15, size, dtype=dtype, device=device)
+                        tensor = torch.randint(-5, 15,
+                                               size, dtype=dtype, device=device)
                     else:
-                        tensor = torch.randint(0, 10, size, dtype=dtype, device=device)
+                        tensor = torch.randint(
+                            0, 10, size, dtype=dtype, device=device)
 
                     # index_add calls atomicAdd on cuda.
                     zeros = torch.zeros(size, dtype=dtype, device=device)
 
-                    added = zeros.index_add(0, torch.arange(0, size[0], dtype=idx_dtype, device=device), tensor)
+                    added = zeros.index_add(0, torch.arange(
+                        0, size[0], dtype=idx_dtype, device=device), tensor)
                     self.assertEqual(added, tensor)
 
-                    added = zeros.index_add(0, torch.arange(0, size[0], dtype=idx_dtype, device=device), tensor, alpha=-1)
+                    added = zeros.index_add(0, torch.arange(
+                        0, size[0], dtype=idx_dtype, device=device), tensor, alpha=-1)
                     self.assertEqual(added, -tensor)
 
-    
     def test_dtype_is_signed(self):
         for dtype in all_types_and_complex_and(torch.half, torch.bfloat16, torch.half):
-            self.assertEqual(dtype.is_signed, torch.is_signed(torch.tensor(0, dtype=dtype)))
+            self.assertEqual(dtype.is_signed, torch.is_signed(
+                torch.tensor(0, dtype=dtype)))
 
-        self.assertRaisesRegex(RuntimeError, 'not supported for quantized', lambda: torch.quint8.is_signed)
-        self.assertRaisesRegex(RuntimeError, 'not supported for quantized', lambda: torch.qint8.is_signed)
-        self.assertRaisesRegex(RuntimeError, 'not supported for quantized', lambda: torch.qint32.is_signed)
+        self.assertRaisesRegex(
+            RuntimeError, 'not supported for quantized', lambda: torch.quint8.is_signed)
+        self.assertRaisesRegex(
+            RuntimeError, 'not supported for quantized', lambda: torch.qint8.is_signed)
+        self.assertRaisesRegex(
+            RuntimeError, 'not supported for quantized', lambda: torch.qint32.is_signed)
 
-    
+
 # TODO: these empy classes are temporarily instantiated for XLA compatibility
 #   once XLA updates their test suite it should be removed
 class TestViewOps(TestCase):
     pass
 
+
 class TestTensorDeviceOps(TestCase):
     pass
+
+
 def idx_tensor(size, max_val):
     return torch.LongTensor(*size).random_(0, max_val - 1)
+
 
 # Generates tests
 # Note: test generation must be done at file scope, not within main, or
