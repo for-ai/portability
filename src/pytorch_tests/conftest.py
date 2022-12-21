@@ -2,12 +2,20 @@ import pytest
 import os
 import json
 from ..utils.timer_wrapper import pytorch_test_timer
+from torch.testing._internal.common_device_type import onlyCUDA
+import torch
 
 
 def pytest_configure():
     pytest.pytorch_test_times = {}
     pytest.test_name = ""
     pytest.test_i = 0
+
+
+def pytest_runtest_call(item):
+    testfunction = item.obj
+    # print("ITEM", item)
+    # item.obj = onlyCUDA(testfunction)  # Replace the item function with the decorated one
 
 
 @pytest.fixture(autouse=True, scope="session")
@@ -26,3 +34,10 @@ def track_timing(request):
     pytest.pytorch_test_times[pytest.test_name] = {"operations": []}
     with pytorch_test_timer():
         yield
+
+    # t = torch.cuda.get_device_properties(0).total_memory
+    # r = torch.cuda.memory_reserved(0)
+    # a = torch.cuda.memory_allocated(0)
+    # f = r-a  # free inside reserved
+    torch.cuda.empty_cache()
+    print("***MEMORY FREE", torch.cuda.mem_get_info())

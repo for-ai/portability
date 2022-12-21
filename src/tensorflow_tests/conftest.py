@@ -3,6 +3,8 @@ import pytest
 import os
 import json
 from ..utils.timer_wrapper import tensorflow_test_timer
+import gc
+import tensorflow as tf
 
 
 def pytest_configure():
@@ -29,3 +31,6 @@ def track_timing(request):
     pytest.tensorflow_test_times[pytest.test_name] = {"operations": []}
     with tensorflow_test_timer():
         yield
+
+    tf.keras.backend.clear_session()
+    # print("***MEMORY FREE", tf.config.experimental.get_memory_info('GPU:0'))
