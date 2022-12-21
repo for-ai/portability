@@ -13,6 +13,10 @@ optional = true
 [tool.poetry.group.vm]
 optional = true
 
+[tool.poetry.group.tpuvm]
+optional = true
+
+
 
 [tool.poetry.group.m1.dependencies]
 code-tokenize = "^0.2.0"
@@ -24,6 +28,11 @@ tensorflow = "~2.11.0"
 
 [tool.poetry.group.vm.dependencies]
 tensorflow = "~2.11.0"
+
+[tool.poetry.group.tpuvm.dependencies]
+tensorflow = "~2.11.0"
+cloud-tpu-client = "^0.10"
+
 
 [tool.poetry.dependencies]
 python = ">=3.9,<3.11"
