@@ -39,5 +39,6 @@ def track_timing(request):
     # r = torch.cuda.memory_reserved(0)
     # a = torch.cuda.memory_allocated(0)
     # f = r-a  # free inside reserved
-    torch.cuda.empty_cache()
-    print("***MEMORY FREE", torch.cuda.mem_get_info())
+    if os.environ['DEVICE'] == "cuda":
+        torch.cuda.empty_cache()
+        print("***MEMORY FREE", torch.cuda.mem_get_info())
