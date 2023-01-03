@@ -11,8 +11,8 @@ else:
     from .common_nn import NNTestCase, _test_bfloat16_ops, _test_module_empty_input
 
 
-from torch.testing._internal.common_device_type import dtypes, instantiate_device_type_tests
-from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes
+from torch.testing._internal.common_device_type import dtypes
+from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
 
 
 class TestPoolingNNDeviceType(NNTestCase):

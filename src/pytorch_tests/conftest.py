@@ -9,8 +9,9 @@ import torch
 try:
     import torch_xla
     import torch_xla.core.xla_model as xm
+    xla_present = True
 except ImportError:
-    no_xla = True
+    xla_present = False
 
 
 def pytest_configure():
@@ -21,7 +22,7 @@ def pytest_configure():
 
 def pytest_runtest_call(item):
     testfunction = item.obj
-    # print("ITEM", item)
+    print("ITEM", item)
     # item.obj = onlyCUDA(testfunction)  # Replace the item function with the decorated one
 
 
@@ -39,8 +40,8 @@ def track_timing(request):
     test_file = str(request.node.fspath).split("/")[-1]
     pytest.test_name = test_file + ":" + pytest.test_name
     pytest.pytorch_test_times[pytest.test_name] = {"operations": []}
-    if os.environ['DEVICE'] == "tpu":
-        with xm.xla_device():
+    if os.environ['DEVICE'] == "tpu" and xla_present:
+        # with xm.xla_device():
             with pytorch_test_timer():
                 yield
     else:

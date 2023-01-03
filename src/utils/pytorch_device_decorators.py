@@ -3,7 +3,7 @@ import unittest
 import torch
 
 from typing import List, Any, ClassVar
-from torch.testing._internal.common_device_type import CUDATestBase, CPUTestBase, DeviceTypeTestBase, MPSTestBase, LazyTestBase, filter_desired_device_types
+from torch.testing._internal.common_device_type import CUDATestBase, CPUTestBase, DeviceTypeTestBase, MPSTestBase, filter_desired_device_types
 import os
 import copy
 import inspect
@@ -76,15 +76,12 @@ class TPUTestBase(DeviceTypeTestBase):
     @classmethod
     def setUpClass(cls):
         # has_magma shows up after cuda is initialized
-        t = torch.ones(1).cuda()
-        cls.no_magma = not torch.cuda.has_magma
+        device = xm.xla_device()
+        t = torch.ones(1, device=device)
 
         # Determines if cuDNN is available and its version
-        cls.no_cudnn = not torch.backends.cudnn.is_acceptable(t)
-        cls.cudnn_version = None if cls.no_cudnn else torch.backends.cudnn.version()
-
         # Acquires the current device as the primary (test) device
-        cls.primary_device = 'cuda:{0}'.format(torch.cuda.current_device())
+        cls.primary_device = 'xla:1'
 
 # Adds available device-type-specific test base classes
 
@@ -101,7 +98,7 @@ def get_device_type_test_bases():
                 test_bases.append(CUDATestBase)
         else:
             test_bases.append(CPUTestBase)
-    elif ImportTPU and xm.xla_device(devkind='TPU'):
+    elif ImportTPU and xm.xla_device():
         test_bases.append(TPUTestBase)
     else:
         test_bases.append(CPUTestBase)
@@ -148,15 +145,7 @@ def instantiate_device_type_tests(generic_test_class, scope, except_for=None, on
     # Filter out the device types based on user inputs
     desired_device_type_test_bases = filter_desired_device_types(
         test_bases, except_for, only_for)
-    if include_lazy:
-        # Note [Lazy Tensor tests in device agnostic testing]
-        # Right now, test_view_ops.py runs with LazyTensor.
-        # We don't want to opt every device-agnostic test into using the lazy device,
-        # because many of them will fail.
-        # So instead, the only way to opt a specific device-agnostic test file into
-        # lazy tensor testing is with include_lazy=True
-        desired_device_type_test_bases.append(LazyTestBase)
-
+    
     def split_if_not_empty(x: str):
         return x.split(",") if len(x) != 0 else []
 
@@ -184,7 +173,6 @@ def instantiate_device_type_tests(generic_test_class, scope, except_for=None, on
         # type set to Any and suppressed due to unsupport runtime class:
         # https://github.com/python/mypy/wiki/Unsupported-Python-Features
         device_type_test_class: Any = type(class_name, (base, empty_class), {})
-
         for name in generic_members:
             if name in generic_tests:  # Instantiates test member
                 test = getattr(generic_test_class, name)
@@ -203,7 +191,6 @@ def instantiate_device_type_tests(generic_test_class, scope, except_for=None, on
                     name)
                 nontest = getattr(generic_test_class, name)
                 setattr(device_type_test_class, name, nontest)
-
         # Mimics defining the instantiated class in the caller's file
         # by setting its module to the given class's and adding
         # the module to the given scope.
