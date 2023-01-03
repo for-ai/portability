@@ -1,19 +1,7 @@
 # Owner(s): ["module: nn"]
-from functools import reduce
-from itertools import repeat
-import unittest
-import subprocess
-import sys
-import os
-import random
-import itertools
-import math
 
-from torch._six import inf, nan
 import torch
-from torch.testing._internal.common_utils import TestCase, run_tests, TEST_WITH_UBSAN, set_default_dtype, \
-    instantiate_parametrized_tests, slowTest, parametrize as parametrize_test, subtest, skipIfMps
-from torch.testing._internal.common_cuda import TEST_CUDA
+from torch.testing._internal.common_utils import run_tests
 if __package__ is None or __package__ == '':
     # uses current directory visibility
     from common_nn import NNTestCase, _test_bfloat16_ops, _test_module_empty_input
@@ -23,13 +11,8 @@ else:
     from .common_nn import NNTestCase, _test_bfloat16_ops, _test_module_empty_input
 
 
-from torch.testing._internal.common_device_type import largeTensorTest, onlyNativeDeviceTypes, dtypes, \
-    instantiate_device_type_tests, skipCUDAIfRocm, expectedFailureMeta, dtypesIfCUDA, onlyCPU, onlyCUDA, \
-    TEST_WITH_ROCM
-from torch.testing._internal.common_dtype import floating_types_and
-import torch.nn.functional as F
-import torch.nn as nn
-from torch.autograd import gradcheck, gradgradcheck
+from torch.testing._internal.common_device_type import dtypes, instantiate_device_type_tests
+from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes
 
 
 class TestPoolingNNDeviceType(NNTestCase):
@@ -64,7 +47,7 @@ class TestPoolingNNDeviceType(NNTestCase):
         c = out.size(1)
         self.assertEqual(out.stride(), [c, 1, 1, 1, 1])
 
-    @onlyCUDA
+    @onlyAcceleratedDeviceTypes
     def test_pooling_bfloat16(self, device):
         _test_bfloat16_ops(self, torch.nn.AvgPool1d(
             3, stride=2), device, inp_dims=(8, 4, 16), prec=0.05)
