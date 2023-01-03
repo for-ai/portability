@@ -6,6 +6,13 @@ from torch.testing._internal.common_device_type import onlyCUDA
 import torch
 
 
+try:
+    import torch_xla
+    import torch_xla.core.xla_model as xm
+except ImportError:
+    no_xla = True
+
+
 def pytest_configure():
     pytest.pytorch_test_times = {}
     pytest.test_name = ""
@@ -32,8 +39,13 @@ def track_timing(request):
     test_file = str(request.node.fspath).split("/")[-1]
     pytest.test_name = test_file + ":" + pytest.test_name
     pytest.pytorch_test_times[pytest.test_name] = {"operations": []}
-    with pytorch_test_timer():
-        yield
+    if os.environ['DEVICE'] == "tpu":
+        with xm.xla_device():
+            with pytorch_test_timer():
+                yield
+    else:
+        with pytorch_test_timer():
+            yield
 
     # t = torch.cuda.get_device_properties(0).total_memory
     # r = torch.cuda.memory_reserved(0)
