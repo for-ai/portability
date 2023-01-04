@@ -42,8 +42,8 @@ def track_timing(request):
     pytest.pytorch_test_times[pytest.test_name] = {"operations": []}
     if os.environ['DEVICE'] == "tpu" and xla_present:
         # with xm.xla_device():
-            with pytorch_test_timer():
-                yield
+        with pytorch_test_timer():
+            yield
     else:
         with pytorch_test_timer():
             yield
@@ -52,6 +52,6 @@ def track_timing(request):
     # r = torch.cuda.memory_reserved(0)
     # a = torch.cuda.memory_allocated(0)
     # f = r-a  # free inside reserved
-    if os.environ['DEVICE'] == "cuda":
+    if os.environ['DEVICE'] == "gpu":
         torch.cuda.empty_cache()
         print("***MEMORY FREE", torch.cuda.mem_get_info())

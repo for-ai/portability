@@ -20,6 +20,7 @@ PYTORCH_TESTING_DEVICE_ONLY_FOR_KEY = 'PYTORCH_TESTING_DEVICE_ONLY_FOR'
 PYTORCH_TESTING_DEVICE_EXCEPT_FOR_KEY = 'PYTORCH_TESTING_DEVICE_EXCEPT_FOR'
 
 
+# Custom decorator that runs on TPUs and GPUs
 def onlyAcceleratedDeviceTypes(fn):
     @wraps(fn)
     def only_fn(self, *args, **kwargs):
@@ -33,6 +34,7 @@ def onlyAcceleratedDeviceTypes(fn):
     return only_fn
 
 
+# Custom decorator that runs on TPUs, GPUs, CPUs
 def onlyNativeDeviceTypes(fn):
     @wraps(fn)
     def only_fn(self, *args, **kwargs):
@@ -76,8 +78,6 @@ class TPUTestBase(DeviceTypeTestBase):
     @classmethod
     def setUpClass(cls):
         # has_magma shows up after cuda is initialized
-        device = xm.xla_device()
-        t = torch.ones(1, device=device)
 
         # Determines if cuDNN is available and its version
         # Acquires the current device as the primary (test) device
@@ -111,10 +111,7 @@ def get_device_type_test_bases():
 
     return test_bases
 
-# Adds 'instantiated' device-specific test cases to the given scope.
-# The tests in these test cases are derived from the generic tests in
-# generic_test_class.
-# See note "Generic Device Type Testing."
+# Almost the same as the method implemented by pytorch but it uses our custom test bases
 
 
 def instantiate_device_type_tests(generic_test_class, scope, except_for=None, only_for=None, include_lazy=False, allow_mps=False):
@@ -145,7 +142,7 @@ def instantiate_device_type_tests(generic_test_class, scope, except_for=None, on
     # Filter out the device types based on user inputs
     desired_device_type_test_bases = filter_desired_device_types(
         test_bases, except_for, only_for)
-    
+
     def split_if_not_empty(x: str):
         return x.split(",") if len(x) != 0 else []
 
