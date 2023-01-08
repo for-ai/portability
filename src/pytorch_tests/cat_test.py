@@ -9,6 +9,7 @@ import warnings
 import unittest
 from itertools import product, combinations, combinations_with_replacement, permutations
 import random
+from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
 
 from torch.testing import make_tensor
 from torch.testing._internal.common_utils import (
@@ -16,9 +17,9 @@ from torch.testing._internal.common_utils import (
     torch_to_numpy_dtype_dict, numpy_to_torch_dtype_dict, slowTest,
     TEST_SCIPY, IS_MACOS, IS_PPC, IS_WINDOWS, parametrize)
 from torch.testing._internal.common_device_type import (
-    expectedFailureMeta, instantiate_device_type_tests, deviceCountAtLeast, onlyNativeDeviceTypes,
+    expectedFailureMeta, deviceCountAtLeast,
     onlyCPU, largeTensorTest, precisionOverride, dtypes,
-    onlyCUDA, skipCPUIf, dtypesIfCUDA, skipMeta)
+    skipCPUIf, dtypesIfCUDA, skipMeta)
 from torch.testing._internal.common_dtype import (
     all_types_and_complex_and, all_types_and, floating_and_complex_types,
     floating_types, floating_and_complex_types_and, integral_types_and, get_all_dtypes
@@ -77,6 +78,7 @@ class TestTensorCreation(TestCase):
         res1 = torch.cat([empty, empty], dim=1)
         self.assertEqual(res1, empty)
 
+    @onlyNativeDeviceTypes
     def test_cat_out(self, device):
         x = torch.zeros((0), device=device)
         y = torch.randn((4, 6), device=device)
@@ -160,7 +162,7 @@ class TestTensorCreation(TestCase):
         self.assertEqual(res1, res2)
         self.assertTrue(res1.is_contiguous(memory_format=torch.channels_last))
 
-    @onlyCUDA
+    @onlyAcceleratedDeviceTypes
     def test_cat_out_memory_format(self, device):
         inp_size = (4, 4, 4, 4)
         expected_size = (8, 4, 4, 4)
@@ -201,7 +203,7 @@ class TestTensorCreation(TestCase):
 
         self.assertTrue(res3_cuda.is_contiguous(memory_format=torch.channels_last))
 
-    @onlyCUDA
+    @onlyAcceleratedDeviceTypes
     def test_cat_stack_cross_devices(self, device):
         cuda = torch.randn((3, 3), device=device)
         cpu = torch.randn((3, 3), device='cpu')
@@ -216,7 +218,7 @@ class TestTensorCreation(TestCase):
 
     # TODO: reconcile with other cat tests
     # TODO: Compare with a NumPy reference instead of CPU
-    @onlyCUDA
+    @onlyAcceleratedDeviceTypes
     def test_cat(self, device):
         SIZE = 10
         for dim in range(-3, 3):
