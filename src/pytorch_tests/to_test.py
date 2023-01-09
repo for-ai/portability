@@ -9,7 +9,7 @@ import torch.testing._internal.hypothesis_utils as hu
 from torch.testing import make_tensor
 from hypothesis import given
 from torch.nn import MultiheadAttention
-from torch.testing._internal.common_device_type import expectedFailureXLA, instantiate_device_type_tests, dtypes
+from torch.testing._internal.common_device_type import dtypes
 from torch.testing._internal.common_nn import NNTestCase
 from torch.testing._internal.common_cuda import TEST_CUDA, TEST_MULTIGPU, TEST_CUDNN, TEST_CUDNN_VERSION
 from torch.testing._internal.common_utils import freeze_rng_state, run_tests, TestCase, skipIfNoLapack, skipIfRocm, \
@@ -37,6 +37,8 @@ from torch._six import inf, nan
 import torch
 
 from ..utils.timer_wrapper import pytorch_op_timer
+
+from ..utils.pytorch_device_decorators import onlyAcceleratedDeviceTypes, instantiate_device_type_tests
 # TODO: remove this global setting
 # NN tests use double as the default dtype
 torch.set_default_dtype(torch.double)
@@ -72,7 +74,9 @@ class TestNN(NNTestCase):
         padded_tensor = rnn_utils.pad_sequence(ordered)
         return padded_tensor, lengths
 
-    def test_to(self):
+    @dtypes(torch.float32)
+    @onlyAcceleratedDeviceTypes
+    def test_to(self, device, dtype):
         m = nn.Linear(3, 5)
         with pytorch_op_timer():
             m_cpu = m.to('cpu')
@@ -81,17 +85,15 @@ class TestNN(NNTestCase):
         self.assertEqual(m.double(), m.to(torch.float64))
         self.assertRaises(RuntimeError, lambda: m.to('cpu', copy=True))
 
-        if torch.cuda.is_available():
-            for cuda in ['cuda', 'cuda:0' if torch.cuda.device_count() == 1 else 'cuda:1']:
-                m2 = m.cuda(device=cuda)
-                self.assertIs(m2, m2.to(cuda))
-                self.assertEqual(m, m2.to('cpu'))
-                self.assertEqual(m2, m.to(cuda))
-                self.assertIs(m2, m2.to(dtype=torch.float32))
-                self.assertEqual(m2.double(), m2.to(dtype=torch.float64))
+        m2 = m.cuda(device=device)
+        self.assertIs(m2, m2.to(device))
+        self.assertEqual(m, m2.to('cpu'))
+        self.assertEqual(m2, m.to(device))
+        self.assertIs(m2, m2.to(dtype=torch.float32))
+        self.assertEqual(m2.double(), m2.to(dtype=torch.float64))
 
 
-instantiate_parametrized_tests(TestNN)
+instantiate_device_type_tests(TestNN, globals())
 
 if __name__ == '__main__':
     run_tests()
