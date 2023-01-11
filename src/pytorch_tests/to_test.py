@@ -85,7 +85,7 @@ class TestNN(NNTestCase):
         self.assertEqual(m.double(), m.to(torch.float64))
         self.assertRaises(RuntimeError, lambda: m.to('cpu', copy=True))
 
-        m2 = m.cuda(device=device)
+        m2 = m.to(device)
         self.assertIs(m2, m2.to(device))
         self.assertEqual(m, m2.to('cpu'))
         self.assertEqual(m2, m.to(device))
