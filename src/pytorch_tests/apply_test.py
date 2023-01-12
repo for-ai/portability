@@ -58,6 +58,7 @@ from torch.testing._internal.common_dtype import (
     floating_types_and, get_all_math_dtypes, all_types_and_complex_and, complex_types,
     all_types_and, floating_types, floating_and_complex_types, integral_types,
 )
+from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
 
 # Protects against includes accidentally setting the default dtype
 assert torch.get_default_dtype() is torch.float32
@@ -72,12 +73,14 @@ AMPERE_OR_ROCM = TEST_WITH_ROCM or tf32_is_not_fp32()
 class TestTorch(TestCase):
     exact_dtype = True
 
+    @onlyAcceleratedDeviceTypes
     def test_apply(self):
         x = torch.arange(1, 6)
         res = x.clone().apply_(lambda k: k + k)
         self.assertEqual(res, x * 2)
         self.assertRaises(TypeError, lambda: x.apply_(lambda k: "str"))
 
+instantiate_device_type_tests(TestTorch, globals())
 
 if __name__ == '__main__':
     run_tests()
