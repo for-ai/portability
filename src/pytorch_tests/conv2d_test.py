@@ -98,7 +98,6 @@ class TestConvolutionNN(NNTestCase):
             if os.environ['DEVICE'] != "tpu":
                 # inconsistent types should raise an exception
                 result = nn.functional.conv2d(inputs, weights)
-                print("***RESULT", result)
                 self.assertRaises(RuntimeError, lambda: nn.functional.conv2d(inputs, weights))
                 self.assertRaises(RuntimeError, lambda: nn.functional.conv2d(inputs, weights.float(), bias))
 
@@ -347,7 +346,6 @@ class TestConvolutionNNDeviceType(NNTestCase):
             output2 = m2(i2)
             output2.backward(grad_output[:, offset:].contiguous())
 
-            print("***OUTPUTS", dtype2prec_DONTUSE[dtype], output.dtype, output1.dtype, output2.dtype)
             torch.cat([output1, output2], 1)
             self.assertEqual(output, torch.cat([output1, output2], 1),
                              atol=dtype2prec_DONTUSE[dtype], rtol=0)
@@ -394,7 +392,6 @@ class TestConvolutionNNDeviceType(NNTestCase):
             output2 = m2(i2)
             output2.backward(grad_output[:, offset:].contiguous())
 
-            print("***OUTPUTS", dtype2prec_DONTUSE[dtype], output.dtype, output1.dtype, output2.dtype)
             torch.cat([output1, output2], 1)
             self.assertEqual(output, torch.cat([output1, output2], 1),
                              atol=dtype2prec_DONTUSE[dtype], rtol=0)
@@ -477,8 +474,7 @@ class TestConvolutionNNDeviceType(NNTestCase):
 
         for cudnn_enabled in [False, True]:
             with torch.backends.cudnn.flags(enabled=cudnn_enabled):
-                print("***NN", cudnn_enabled)
-                torch.autograd.gradcheck(conv2d_depthwise, (x.double(), weight.double()))
+                torch.autograd.gradcheck(conv2d_depthwise, (x, weight))
 
     
 instantiate_device_type_tests(TestConvolutionNNDeviceType, globals())
