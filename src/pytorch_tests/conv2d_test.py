@@ -465,7 +465,8 @@ class TestConvolutionNNDeviceType(NNTestCase):
                          torch.cat([m1.weight.grad.data, m2.weight.grad.data], 0),
                          atol=dtype2prec_DONTUSE[dtype], rtol=0)
 
-    @dtypes(torch.double)#, torch.cdouble)
+    @onlyGPU
+    @dtypes(torch.double, torch.cdouble)
     def test_Conv2d_backward_depthwise(self, device, dtype):
         x = torch.randn(2, 2, 4, 20, device=device, dtype=dtype, requires_grad=True)
         weight = torch.randn(2, 1, 3, 5, device=device, dtype=dtype, requires_grad=True)
@@ -476,7 +477,8 @@ class TestConvolutionNNDeviceType(NNTestCase):
 
         for cudnn_enabled in [False, True]:
             with torch.backends.cudnn.flags(enabled=cudnn_enabled):
-                torch.autograd.gradcheck(conv2d_depthwise, (x, weight))
+                print("***NN", cudnn_enabled)
+                torch.autograd.gradcheck(conv2d_depthwise, (x.double(), weight.double()))
 
     
 instantiate_device_type_tests(TestConvolutionNNDeviceType, globals())
