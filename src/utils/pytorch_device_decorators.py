@@ -21,6 +21,53 @@ PYTORCH_TESTING_DEVICE_EXCEPT_FOR_KEY = 'PYTORCH_TESTING_DEVICE_EXCEPT_FOR'
 
 
 # Custom decorator that runs on TPUs and GPUs
+def onlyGPU(fn):
+    @wraps(fn)
+    def only_fn(self, *args, **kwargs):
+        if self.device_type not in ['cuda']:
+            reason = "onlyAcceleratedDeviceTypes: doesn't run on {0}".format(
+                self.device_type)
+            raise unittest.SkipTest(reason)
+
+        return fn(self, *args, **kwargs)
+
+    return only_fn
+
+def onlyTPU(fn):
+    @wraps(fn)
+    def only_fn(self, *args, **kwargs):
+        if self.device_type not in ['xla']:
+            reason = "onlyAcceleratedDeviceTypes: doesn't run on {0}".format(
+                self.device_type)
+            raise unittest.SkipTest(reason)
+
+        return fn(self, *args, **kwargs)
+
+    return only_fn
+
+def skipCUDAIfNoCudnn(fn):
+    return skipCUDAIfCudnnVersionLessThan(0)(fn)
+
+# Skips a test on CUDA if cuDNN is unavailable or its version is lower than requested.
+def skipCUDAIfCudnnVersionLessThan(version=0):
+
+    def dec_fn(fn):
+        @wraps(fn)
+        def wrap_fn(self, *args, **kwargs):
+            if self.device_type == 'cuda' or self.device_type == 'xla':
+                if self.no_cudnn:
+                    reason = "cuDNN not available"
+                    raise unittest.SkipTest(reason)
+                if self.cudnn_version is None or self.cudnn_version < version:
+                    reason = "cuDNN version {0} is available but {1} required".format(self.cudnn_version, version)
+                    raise unittest.SkipTest(reason)
+
+            return fn(self, *args, **kwargs)
+
+        return wrap_fn
+    return dec_fn
+
+# Custom decorator that runs on TPUs and GPUs
 def onlyAcceleratedDeviceTypes(fn):
     @wraps(fn)
     def only_fn(self, *args, **kwargs):
@@ -81,6 +128,8 @@ class TPUTestBase(DeviceTypeTestBase):
 
         # Determines if cuDNN is available and its version
         # Acquires the current device as the primary (test) device
+        t = torch.ones(1).to('xla:1')
+        cls.no_cudnn = not torch.backends.cudnn.is_acceptable(t)
         cls.primary_device = 'xla:1'
 
 # Adds available device-type-specific test base classes
@@ -98,12 +147,12 @@ def get_device_type_test_bases():
                 test_bases.append(CUDATestBase)
         else:
             test_bases.append(CPUTestBase)
-    elif ImportTPU and xm.xla_device():
-        test_bases.append(TPUTestBase)
     else:
         test_bases.append(CPUTestBase)
         if torch.cuda.is_available():
             test_bases.append(CUDATestBase)
+        elif ImportTPU and xm.xla_device():
+            test_bases.append(TPUTestBase)
         # Disable MPS testing in generic device testing temporarily while we're
         # ramping up support.
         # elif torch.backends.mps.is_available():

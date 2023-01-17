@@ -50,7 +50,7 @@ from torch.testing._internal.common_cuda import TEST_CUDA, TEST_MULTIGPU, TEST_C
 from torch.testing._internal.common_nn import NNTestCase, NewModuleTest, CriterionTest, \
     module_tests, criterion_tests, loss_reference_fns, \
     ctcloss_reference, new_module_tests, single_batch_reference_fn
-from torch.testing._internal.common_device_type import instantiate_device_type_tests, dtypes, \
+from torch.testing._internal.common_device_type import  dtypes, \
     dtypesIfCUDA, precisionOverride, skipCUDAIfCudnnVersionLessThan, onlyCUDA, onlyCPU, \
     skipCUDAIfRocm, skipCUDAIf, skipCUDAIfNotRocm, \
     onlyNativeDeviceTypes, deviceCountAtLeast, largeTensorTest, expectedFailureMeta, skipMeta, get_all_device_types
@@ -63,6 +63,7 @@ from torch.testing._internal.common_utils import _assertGradAndGradgradChecks, g
 from torch.testing._internal.common_utils import dtype2prec_DONTUSE
 from torch.testing._internal.common_cuda import tf32_on_and_off, tf32_is_not_fp32, tf32_off, tf32_on
 from torch.types import _TensorOrTensors
+from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
 
 
 AMPERE_OR_ROCM = TEST_WITH_ROCM or tf32_is_not_fp32()
@@ -85,6 +86,7 @@ if TEST_NUMPY:
 # CI.
 
 class TestNN(NNTestCase):
+    @onlyAcceleratedDeviceTypes
     def test_named_children(self):
         l1 = nn.Linear(2, 2)
         l2 = nn.Linear(2, 2)
@@ -103,6 +105,7 @@ class TestNN(NNTestCase):
         s.add_module('subnet', subnet)
         self.assertEqual(list(s.named_children()), [('layer1', l1), ('layer2', l2), ('subnet', subnet)])
 
+    @onlyAcceleratedDeviceTypes
     def test_named_modules(self):
         class Net(nn.Module):
             def __init__(self):
@@ -131,7 +134,7 @@ class TestNN(NNTestCase):
             ('1.block', block), ('1.block.linear1', l1),
             ('1.block.linear2', l2)])
 
-    
+    @onlyAcceleratedDeviceTypes
     def test_register_buffer_raises_error_if_attr_exists(self):
         m = nn.Module()
         m.attribute_name = 5
@@ -148,7 +151,7 @@ class TestNN(NNTestCase):
         with self.assertRaises(KeyError):
             m.register_buffer('attribute_name', torch.rand(5))
 
-    
+    @onlyAcceleratedDeviceTypes
     def test_register_parameter_raises_error_if_attr_exists(self):
         m = nn.Module()
         m.attribute_name = 5
@@ -165,6 +168,7 @@ class TestNN(NNTestCase):
         with self.assertRaises(KeyError):
             m.register_parameter('attribute_name', nn.Parameter())
 
+    @onlyAcceleratedDeviceTypes
     def test_add_module_raises_error_if_attr_exists(self):
         methods_to_test = ['add_module', 'register_module']
         for fn in methods_to_test:
@@ -183,6 +187,7 @@ class TestNN(NNTestCase):
             with self.assertRaises(KeyError):
                 getattr(m, fn)('attribute_name', nn.Module())
 
+    @onlyAcceleratedDeviceTypes
     def test_add_module(self):
         methods_to_test = ['add_module', 'register_module']
         for fn in methods_to_test:
@@ -205,7 +210,7 @@ class TestNN(NNTestCase):
             self.assertRaisesRegex(TypeError, 'module name should be a string. Got NoneType',
                                    lambda: getattr(net, fn)(None, l))
 
-instantiate_parametrized_tests(TestNN)
+instantiate_device_type_tests(TestNN, globals())
 
 if __name__ == '__main__':
     run_tests()
