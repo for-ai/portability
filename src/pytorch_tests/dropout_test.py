@@ -31,40 +31,39 @@ class TestDropoutNN(NNTestCase):
             self.assertLess(abs(output.data.std() - std), 0.1)
             output.backward(input)
 
-    def test_AlphaDropout(self):
+    def test_AlphaDropout(self, device):
         # generate random tensor with zero mean and unit std
-        input = torch.randn(5000)
+        input = torch.randn(5000, device=device)
         self._test_alpha_dropout(nn.AlphaDropout, input)
 
-    def test_FeatureAlphaDropout(self):
+    def test_FeatureAlphaDropout(self, device):
         b = random.randint(1, 5)
         w = random.randint(1, 5)
         h = random.randint(1, 5)
         d = random.randint(1, 2)
         num_features = 1000
-        input = torch.randn(num_features, b, d, w, h)
+        input = torch.randn(num_features, b, d, w, h, device=device)
         self._test_alpha_dropout(nn.FeatureAlphaDropout, input)
 
         # no batch dims
-        input = torch.randn(50, 20, 64, 64)
+        input = torch.randn(50, 20, 64, 64, device=device)
         self._test_alpha_dropout(nn.FeatureAlphaDropout, input)
 
-    @unittest.skipIf(not TEST_CUDA, "CUDA unavailable")
-    def test_native_dropout_corner_case(self):
+    @onlyAcceleratedDeviceTypes
+    def test_native_dropout_corner_case(self, device):
         for train in [True, False]:
             for p in [0.0, 1.0]:
-                for device in ["cuda", "cpu"]:
-                    x = torch.randn(5).to(device=device).requires_grad_()
-                    x_ref = x.detach().requires_grad_()
-                    o = torch.native_dropout(x, p, train)[0]
-                    o_ref = torch.dropout(x_ref, p, train)
-                    o.sum().backward()
-                    o_ref.sum().backward()
-                    assert (o.equal(o_ref))
-                    assert (x.grad.equal(x_ref.grad))
+                x = torch.randn(5).to(device=device).requires_grad_()
+                x_ref = x.detach().requires_grad_()
+                o = torch.native_dropout(x, p, train)[0]
+                o_ref = torch.dropout(x_ref, p, train)
+                o.sum().backward()
+                o_ref.sum().backward()
+                assert (o.equal(o_ref))
+                assert (x.grad.equal(x_ref.grad))
 
-    def test_invalid_dropout_p(self):
-        v = torch.ones(1)
+    def test_invalid_dropout_p(self, device):
+        v = torch.ones(1, device=device)
         self.assertRaises(ValueError, lambda: nn.Dropout(-0.1))
         self.assertRaises(ValueError, lambda: nn.Dropout(1.1))
         self.assertRaises(ValueError, lambda: nn.Dropout1d(-0.1))
@@ -141,32 +140,31 @@ class TestDropoutNNDeviceType(NNTestCase):
         for perm in itertools.permutations((0, 1, 2, 3), r=4):
             for shift in shifts:
                 for p in [1e-10, 0.3, 0.5, 0.7]:
-                    # print("variables:", perm, shift, p)
                     mod = cls(p=p)
                     permuted_inp = inp.permute(
                         perm).contiguous().permute(invert_perm(perm))
                     permuted_inp = permuted_inp[shift[0]:, shift[1]:, :, :]
                     out = mod(permuted_inp)
 
-                    # self.assertTrue(out.permute(perm).is_contiguous())
-                    # self.assertEqual(inp.mean(), out.mean(),
-                    #                  rtol=0.5, atol=0.5)
-                    # if p == 1e-10:
-                    #     self.assertEqual(permuted_inp, out)
-                    # else:
-                    #     self.assertNotEqual(permuted_inp, out)
+                    self.assertTrue(out.permute(perm).is_contiguous())
+                    self.assertEqual(inp.mean(), out.mean(),
+                                     rtol=0.5, atol=0.5)
+                    if p == 1e-10:
+                        self.assertEqual(permuted_inp, out)
+                    else:
+                        self.assertNotEqual(permuted_inp, out)
 
-    #bug
+    #slow - run 1.5 hour, pass
     def test_Dropout(self, device):
-        input = torch.empty(1000)
+        input = torch.empty(1000, device=device)
         self._test_dropout(nn.Dropout, device, input)
         self._test_dropout_discontiguous(nn.Dropout, device)
         self._test_dropout_discontiguous(
             nn.Dropout, device, memory_format=torch.channels_last)
         self._test_dropout_stride_mean_preserve(nn.Dropout, device)
-        # if self.device_type == 'cuda' or self.device_type == 'cpu':
-        # input = input.bfloat16()
-        # self._test_dropout(nn.Dropout, device, input)
+        if self.device_type == 'cuda' or self.device_type == 'cpu':
+            input = input.bfloat16()
+            self._test_dropout(nn.Dropout, device, input)
 
     def _test_dropoutNd_no_batch(self, dropout, input):
         input_clone = input.clone()
@@ -195,7 +193,7 @@ class TestDropoutNNDeviceType(NNTestCase):
         with set_default_dtype(torch.double):
             N, C, L = random.randint(10, 15), random.randint(
                 10, 15), random.randint(10, 15)
-            input = torch.empty(N, C, L)
+            input = torch.empty(N, C, L, device=device)
             self._test_dropout(nn.Dropout1d, device, input)
 
             with self.assertRaisesRegex(RuntimeError, "Expected 2D or 3D input, but received a 4D input"):
@@ -222,7 +220,7 @@ class TestDropoutNNDeviceType(NNTestCase):
         w = random.randint(1, 5)
         h = random.randint(1, 5)
         num_features = 1000
-        input = torch.empty(num_features, b, w, h)
+        input = torch.empty(num_features, b, w, h, device=device)
         self._test_dropout(nn.Dropout2d, device, input)
         self._test_dropout(nn.Dropout2d, device, input,
                            memory_format=torch.channels_last)
@@ -290,9 +288,6 @@ class TestDropoutNNDeviceType(NNTestCase):
         out = torch.nn.functional.dropout(x)
         self.assertEqual(out.size(), x.size())
 
-
-# instantiate_device_type_tests(TestDropoutNNDeviceType, globals())
-# instantiate_parametrized_tests(TestDropoutNN)
 
 instantiate_device_type_tests(TestDropoutNNDeviceType, globals())
 instantiate_device_type_tests(TestDropoutNN, globals())
