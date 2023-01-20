@@ -87,11 +87,11 @@ if TEST_NUMPY:
 
 class TestNN(NNTestCase):
     @onlyAcceleratedDeviceTypes
-    def test_named_children(self):
-        l1 = nn.Linear(2, 2)
-        l2 = nn.Linear(2, 2)
-        l3 = nn.Linear(2, 2)
-        l4 = nn.Linear(2, 2)
+    def test_named_children(self, device):
+        l1 = nn.Linear(2, 2,device=device)
+        l2 = nn.Linear(2, 2, device=device)
+        l3 = nn.Linear(2, 2, device=device)
+        l4 = nn.Linear(2, 2, device=device)
         subnet = nn.Sequential(l3, l4)
         s = nn.Sequential()
         with self.assertRaises(KeyError):
@@ -106,17 +106,17 @@ class TestNN(NNTestCase):
         self.assertEqual(list(s.named_children()), [('layer1', l1), ('layer2', l2), ('subnet', subnet)])
 
     @onlyAcceleratedDeviceTypes
-    def test_named_modules(self):
+    def test_named_modules(self, device):
         class Net(nn.Module):
             def __init__(self):
                 super(Net, self).__init__()
                 self.l1 = l
                 self.l2 = l
-                self.param = torch.empty(3, 5)
+                self.param = torch.empty(3, 5, device=device)
                 self.block = block
-        l = nn.Linear(10, 20)
-        l1 = nn.Linear(10, 20)
-        l2 = nn.Linear(10, 20)
+        l = nn.Linear(10, 20, device=device)
+        l1 = nn.Linear(10, 20, device=device)
+        l2 = nn.Linear(10, 20, device=device)
         block = nn.Sequential()
         block.add_module('linear1', l1)
         block.add_module('linear2', l2)
@@ -135,31 +135,31 @@ class TestNN(NNTestCase):
             ('1.block.linear2', l2)])
 
     @onlyAcceleratedDeviceTypes
-    def test_register_buffer_raises_error_if_attr_exists(self):
+    def test_register_buffer_raises_error_if_attr_exists(self, device):
         m = nn.Module()
         m.attribute_name = 5
         with self.assertRaises(KeyError):
-            m.register_buffer('attribute_name', torch.rand(5))
+            m.register_buffer('attribute_name', torch.rand(5, device=device))
 
         del m.attribute_name
         m.register_parameter('attribute_name', nn.Parameter())
         with self.assertRaises(KeyError):
-            m.register_buffer('attribute_name', torch.rand(5))
+            m.register_buffer('attribute_name', torch.rand(5, device=device))
 
         del m.attribute_name
         m.add_module('attribute_name', nn.Module())
         with self.assertRaises(KeyError):
-            m.register_buffer('attribute_name', torch.rand(5))
+            m.register_buffer('attribute_name', torch.rand(5, device=device))
 
     @onlyAcceleratedDeviceTypes
-    def test_register_parameter_raises_error_if_attr_exists(self):
+    def test_register_parameter_raises_error_if_attr_exists(self, device):
         m = nn.Module()
         m.attribute_name = 5
         with self.assertRaises(KeyError):
             m.register_parameter('attribute_name', nn.Parameter())
 
         del m.attribute_name
-        m.register_buffer('attribute_name', torch.rand(5))
+        m.register_buffer('attribute_name', torch.rand(5, device=device))
         with self.assertRaises(KeyError):
             m.register_parameter('attribute_name', nn.Parameter())
 
@@ -169,7 +169,7 @@ class TestNN(NNTestCase):
             m.register_parameter('attribute_name', nn.Parameter())
 
     @onlyAcceleratedDeviceTypes
-    def test_add_module_raises_error_if_attr_exists(self):
+    def test_add_module_raises_error_if_attr_exists(self, device):
         methods_to_test = ['add_module', 'register_module']
         for fn in methods_to_test:
             m = nn.Module()
@@ -178,7 +178,7 @@ class TestNN(NNTestCase):
                 getattr(m, fn)('attribute_name', nn.Module())
 
             del m.attribute_name
-            m.register_buffer('attribute_name', torch.rand(5))
+            m.register_buffer('attribute_name', torch.rand(5, device=device))
             with self.assertRaises(KeyError):
                 getattr(m, fn)('attribute_name', nn.Module())
 
@@ -188,10 +188,10 @@ class TestNN(NNTestCase):
                 getattr(m, fn)('attribute_name', nn.Module())
 
     @onlyAcceleratedDeviceTypes
-    def test_add_module(self):
+    def test_add_module(self, device):
         methods_to_test = ['add_module', 'register_module']
         for fn in methods_to_test:
-            l = nn.Linear(10, 20)
+            l = nn.Linear(10, 20, device=device)
             net = nn.Module()
             net.l = l
             net.l2 = l
@@ -201,7 +201,7 @@ class TestNN(NNTestCase):
             self.assertEqual(net.empty, None)
             getattr(net, fn)('l3', l)
             self.assertEqual(net.l3, l)
-            l3 = nn.Linear(20, 10)
+            l3 = nn.Linear(20, 10, device=device)
             getattr(net, fn)('l', l3)
             self.assertEqual(net.l, l3)
             self.assertRaises(TypeError, lambda: getattr(net, fn)('x', 'non-module'))

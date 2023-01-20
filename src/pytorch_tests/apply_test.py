@@ -73,9 +73,8 @@ AMPERE_OR_ROCM = TEST_WITH_ROCM or tf32_is_not_fp32()
 class TestTorch(TestCase):
     exact_dtype = True
 
-    @onlyAcceleratedDeviceTypes
-    def test_apply(self):
-        x = torch.arange(1, 6)
+    def test_apply(self, device):
+        x = torch.arange(1, 6, device=device)
         res = x.clone().apply_(lambda k: k + k)
         self.assertEqual(res, x * 2)
         self.assertRaises(TypeError, lambda: x.apply_(lambda k: "str"))

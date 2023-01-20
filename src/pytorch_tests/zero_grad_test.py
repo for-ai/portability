@@ -89,9 +89,9 @@ class TestNN(NNTestCase):
     _do_cuda_non_default_stream = True
 
     # @onlyAcceleratedDeviceTypes
-    def test_zero_grad(self):
-        i = torch.randn(2, 5, requires_grad=True)
-        module = nn.Linear(5, 5)
+    def test_zero_grad(self, device):
+        i = torch.randn(2, 5, requires_grad=True, device=device)
+        module = nn.Linear(5, 5, device=device)
         for p in module.parameters():
             p.requires_grad = False
         module.zero_grad()
@@ -121,7 +121,7 @@ class TestNN(NNTestCase):
                          module.weight.data.clone().zero_())
         self.assertEqual(module.bias.grad.data,
                          module.bias.data.clone().zero_())
-
+        print(module.weight.device)
         # Force set to None.
         module.zero_grad(set_to_none=True)
         self.assertIsNone(module.weight.grad)
