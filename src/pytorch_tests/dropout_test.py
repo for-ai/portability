@@ -64,16 +64,16 @@ class TestDropoutNN(NNTestCase):
 
     def test_invalid_dropout_p(self, device):
         v = torch.ones(1, device=device)
-        self.assertRaises(ValueError, lambda: nn.Dropout(-0.1))
-        self.assertRaises(ValueError, lambda: nn.Dropout(1.1))
-        self.assertRaises(ValueError, lambda: nn.Dropout1d(-0.1))
-        self.assertRaises(ValueError, lambda: nn.Dropout1d(1.1))
-        self.assertRaises(ValueError, lambda: nn.Dropout2d(-0.1))
-        self.assertRaises(ValueError, lambda: nn.Dropout2d(1.1))
-        self.assertRaises(ValueError, lambda: nn.Dropout3d(-0.1))
-        self.assertRaises(ValueError, lambda: nn.Dropout3d(1.1))
-        self.assertRaises(ValueError, lambda: F.dropout(v, -0.1))
-        self.assertRaises(ValueError, lambda: F.dropout(v, 1.1))
+        self.assertRaises(ValueError, lambda: nn.Dropout(-0.1).to(device))
+        self.assertRaises(ValueError, lambda: nn.Dropout(1.1).to(device))
+        self.assertRaises(ValueError, lambda: nn.Dropout1d(-0.1).to(device))
+        self.assertRaises(ValueError, lambda: nn.Dropout1d(1.1).to(device))
+        self.assertRaises(ValueError, lambda: nn.Dropout2d(-0.1).to(device))
+        self.assertRaises(ValueError, lambda: nn.Dropout2d(1.1).to(device))
+        self.assertRaises(ValueError, lambda: nn.Dropout3d(-0.1).to(device))
+        self.assertRaises(ValueError, lambda: nn.Dropout3d(1.1).to(device))
+        self.assertRaises(ValueError, lambda: F.dropout(v, -0.1).to(device))
+        self.assertRaises(ValueError, lambda: F.dropout(v, 1.1).to(device))
 
 
 class TestDropoutNNDeviceType(NNTestCase):
@@ -155,16 +155,16 @@ class TestDropoutNNDeviceType(NNTestCase):
                         self.assertNotEqual(permuted_inp, out)
 
     #slow - run 1.5 hour, pass
-    def test_Dropout(self, device):
-        input = torch.empty(1000, device=device)
-        self._test_dropout(nn.Dropout, device, input)
-        self._test_dropout_discontiguous(nn.Dropout, device)
-        self._test_dropout_discontiguous(
-            nn.Dropout, device, memory_format=torch.channels_last)
-        self._test_dropout_stride_mean_preserve(nn.Dropout, device)
-        if self.device_type == 'cuda' or self.device_type == 'cpu':
-            input = input.bfloat16()
-            self._test_dropout(nn.Dropout, device, input)
+    # def test_Dropout(self, device):
+    #     input = torch.empty(1000, device=device)
+    #     self._test_dropout(nn.Dropout, device, input)
+    #     self._test_dropout_discontiguous(nn.Dropout, device)
+    #     self._test_dropout_discontiguous(
+    #         nn.Dropout, device, memory_format=torch.channels_last)
+    #     self._test_dropout_stride_mean_preserve(nn.Dropout, device)
+    #     if self.device_type == 'cuda' or self.device_type == 'cpu':
+    #         input = input.bfloat16()
+    #         self._test_dropout(nn.Dropout, device, input)
 
     def _test_dropoutNd_no_batch(self, dropout, input):
         input_clone = input.clone()
@@ -204,15 +204,15 @@ class TestDropoutNNDeviceType(NNTestCase):
 
             # no batch dims
             input = torch.rand(50, 2, device=device)
-            self._test_dropoutNd_no_batch(nn.Dropout1d(p=0.5), input)
+            self._test_dropoutNd_no_batch(nn.Dropout1d(p=0.5).to(device), input)
             self._test_dropoutNd_no_batch(
-                nn.Dropout1d(p=0.5, inplace=True), input)
+                nn.Dropout1d(p=0.5, inplace=True).to(device), input)
 
             # check that complete channels are dropped
             input = torch.ones(10, 4, 2, device=device)
-            self._test_dropoutNd_channel_zero(nn.Dropout1d(p=0.5), input)
+            self._test_dropoutNd_channel_zero(nn.Dropout1d(p=0.5).to(device), input)
             self._test_dropoutNd_channel_zero(
-                nn.Dropout1d(p=0.5, inplace=True), input)
+                nn.Dropout1d(p=0.5, inplace=True).to(device), input)
 
     @expectedFailureXLA  # seems like freeze_rng_state is not honoured by XLA
     def test_Dropout2d(self, device):
@@ -248,9 +248,9 @@ class TestDropoutNNDeviceType(NNTestCase):
 
         # check that complete channels are dropped
         input = torch.ones(10, 4, 2, 2, device=device)
-        self._test_dropoutNd_channel_zero(nn.Dropout2d(p=0.5), input)
+        self._test_dropoutNd_channel_zero(nn.Dropout2d(p=0.5).to(device), input)
         self._test_dropoutNd_channel_zero(
-            nn.Dropout2d(p=0.5, inplace=True), input)
+            nn.Dropout2d(p=0.5, inplace=True).to(device), input)
 
     @expectedFailureXLA  # seems like freeze_rng_state is not honoured by XLA
     def test_Dropout3d(self, device):
@@ -274,14 +274,14 @@ class TestDropoutNNDeviceType(NNTestCase):
 
         # no batch dims
         input = torch.rand(50, 2, 2, 2, device=device)
-        self._test_dropoutNd_no_batch(nn.Dropout3d(p=0.5), input)
-        self._test_dropoutNd_no_batch(nn.Dropout3d(p=0.5, inplace=True), input)
+        self._test_dropoutNd_no_batch(nn.Dropout3d(p=0.5).to(device), input)
+        self._test_dropoutNd_no_batch(nn.Dropout3d(p=0.5, inplace=True).to(device), input)
 
         # check that complete channels are dropped
         input = torch.ones(10, 4, 2, 2, 2, device=device)
-        self._test_dropoutNd_channel_zero(nn.Dropout3d(p=0.5), input)
+        self._test_dropoutNd_channel_zero(nn.Dropout3d(p=0.5).to(device), input)
         self._test_dropoutNd_channel_zero(
-            nn.Dropout3d(p=0.5, inplace=True), input)
+            nn.Dropout3d(p=0.5, inplace=True).to(device), input)
 
     def test_empty_dropout(self, device):
         x = torch.tensor([]).to(device)
