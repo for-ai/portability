@@ -121,12 +121,18 @@ class TestNN(NNTestCase):
         self.assertIn('bn.num_batches_tracked', state_dict)
         self.assertFalse(any(k.startswith('empty') for k in state_dict.keys()))
         for k, v in state_dict.items():
+
             param = net
             for component in k.split('.'):
                 param = getattr(param, component)
                 if isinstance(param, Parameter):
                     param = param.data
-            self.assertEqual(v.data_ptr(), param.data_ptr())
+            
+            # checking pointer doesn't work on xla, we want to check at least the values
+            if device == "xla:1":
+                self.assertEqual(v, param)
+            else: 
+                self.assertEqual(v.data_ptr(), param.data_ptr())
 
         l = nn.Linear(5, 5, device=device)
         state_dict = l.state_dict()
@@ -134,8 +140,13 @@ class TestNN(NNTestCase):
         self.assertEqual(len(state_dict._metadata), 1)
         self.assertIn('', state_dict._metadata)
         self.assertTrue(state_dict._metadata['']['version'] >= 0)
-        self.assertEqual(state_dict['weight'].data_ptr(), l.weight.data_ptr())
-        self.assertEqual(state_dict['bias'].data_ptr(), l.bias.data_ptr())
+        
+        if device == "xla:1":
+            self.assertEqual(state_dict['weight'], l.weight)
+            self.assertEqual(state_dict['bias'], l.bias)
+        else: 
+            self.assertEqual(state_dict['weight'].data_ptr(), l.weight.data_ptr())
+            self.assertEqual(state_dict['bias'].data_ptr(), l.bias.data_ptr())
 
         # Reference https://github.com/pytorch/pytorch/pull/75507#issuecomment-1110291545
         self.assertNotWarn(lambda: l.state_dict(destination=dict()), "Should not warn kwarg destination w/o _metadata")
