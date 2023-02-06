@@ -30,6 +30,7 @@ from torch.testing._internal.common_cuda import SM53OrLater, tf32_on_and_off, CU
     _get_torch_cuda_version
 from torch.distributions.binomial import Binomial
 from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, instantiate_device_type_tests
+from ..utils.timer_wrapper import pytorch_op_timer
 
 # Protects against includes accidentally setting the default dtype
 # NOTE: jit_metaprogramming_utils sets the default dtype to double!
@@ -49,9 +50,12 @@ class TestLinalg(TestCase):
         def _test_mm(n, m, p, dtype, genf):
             # helper function
             def matrixmultiply(mat1, mat2):
-                n = mat1.size(0)
-                m = mat1.size(1)
-                p = mat2.size(1)
+                with pytorch_op_timer():
+                    n = mat1.size(0)
+                with pytorch_op_timer():
+                    m = mat1.size(1)
+                with pytorch_op_timer():
+                    p = mat2.size(1)
                 res = torch.zeros(n, p, dtype=dtype, device=device)
                 for i, j in iter_indices(res):
                     res[i, j] = sum(mat1[i, k] * mat2[k, j] for k in range(m))

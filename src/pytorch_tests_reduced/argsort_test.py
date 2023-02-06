@@ -12,9 +12,10 @@ from torch.testing._internal.common_dtype import all_types, all_types_and, float
 from torch.testing._internal.common_utils import \
     (TestCase, run_tests, slowTest)
 from torch.testing._internal.common_device_type import \
-    (instantiate_device_type_tests, dtypes, onlyNativeDeviceTypes,
+    (dtypes, onlyNativeDeviceTypes,
      onlyCUDA, dtypesIfCUDA, dtypesIfCPU, onlyCPU, largeTensorTest)
 
+from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
 # TODO: remove this
 SIZE = 100
 

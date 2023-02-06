@@ -13,6 +13,7 @@ else:
 
 from torch.testing._internal.common_device_type import dtypes
 from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+from ..utils.timer_wrapper import pytorch_op_timer
 
 
 class TestPoolingNNDeviceType(NNTestCase):
@@ -28,7 +29,8 @@ class TestPoolingNNDeviceType(NNTestCase):
         _test_module_empty_input(self, mod, inp, check_size=False)
 
         inp = torch.ones(0, 10, 10, 10, dtype=dtype, device=device)
-        mod = torch.nn.AdaptiveAvgPool3d((5, 5, 5)).to(device)
+        with pytorch_op_timer():
+            mod = torch.nn.AdaptiveAvgPool3d((5, 5, 5)).to(device)
         _test_module_empty_input(self, mod, inp, check_size=False)
 
     @onlyNativeDeviceTypes
@@ -36,7 +38,8 @@ class TestPoolingNNDeviceType(NNTestCase):
         x = torch.randn((2, 3, 6, 6, 6), dtype=torch.float,
                         device=device, requires_grad=True)
 
-        net = torch.nn.AdaptiveAvgPool3d(1)
+        with pytorch_op_timer():
+            net = torch.nn.AdaptiveAvgPool3d(1)
         out = net(x)
         ref_out = x.contiguous().mean((-1, -2, -3)).view(out.shape)
 

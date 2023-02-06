@@ -28,6 +28,7 @@ from torch.testing._internal.common_utils import TestCase, freeze_rng_state, run
     slowTest, skipCUDANonDefaultStreamIf, skipCUDAMemoryLeakCheckIf, TEST_WITH_ROCM, TEST_NUMPY, \
     get_cycles_per_ms
 from torch.testing._internal.autocast_test_lists import AutocastTestLists
+from ..utils.timer_wrapper import pytorch_op_timer
 
 # load_tests from common_utils is used to automatically filter tests for
 # sharding on sandcastle. This line silences flake warnings
@@ -87,7 +88,8 @@ class TestCuda(TestCase):
         with torch.cuda.stream(s2), torch.cuda.stream(s1):
             y.copy_(x)
 
-        s1.synchronize()
+        with pytorch_op_timer():
+            s1.synchronize()
         # The copy() is synchronized on the current streams of both src and dst.
         # In the above test, the _sleep() op on s0 will not block the copy() on
         # s2, but both copies are synchronized on s1 in the dst device. Hence,
@@ -104,7 +106,8 @@ class TestCuda(TestCase):
         with torch.cuda.stream(s3), torch.cuda.stream(s0):
             y.copy_(x)
 
-        s0.synchronize()
+        with pytorch_op_timer():
+            s0.synchronize()
         # Similarly, both copy() ops are synchronized on s0.
         self.assertEqual(y, x)
 

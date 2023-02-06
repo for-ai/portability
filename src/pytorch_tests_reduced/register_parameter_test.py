@@ -45,16 +45,19 @@ from torch.testing._internal.common_utils import freeze_rng_state, run_tests, Te
     TEST_NUMPY, TEST_SCIPY, TEST_WITH_CROSSREF, TEST_WITH_ROCM, \
     download_file, get_function_arglist, load_tests, skipIfMps,\
     TemporaryFileName, TEST_WITH_UBSAN, IS_PPC, \
-    parametrize as parametrize_test, subtest, instantiate_parametrized_tests, IS_WINDOWS
+    parametrize as parametrize_test, subtest, IS_WINDOWS
 from torch.testing._internal.common_cuda import TEST_CUDA, TEST_MULTIGPU, TEST_CUDNN, TEST_CUDNN_VERSION
 from torch.testing._internal.common_nn import NNTestCase, NewModuleTest, CriterionTest, \
     module_tests, criterion_tests, loss_reference_fns, \
     ctcloss_reference, new_module_tests, single_batch_reference_fn
-from torch.testing._internal.common_device_type import instantiate_device_type_tests, dtypes, \
+from torch.testing._internal.common_device_type import dtypes, \
     dtypesIfCUDA, precisionOverride, skipCUDAIfCudnnVersionLessThan, onlyCUDA, onlyCPU, \
     skipCUDAIfRocm, skipCUDAIf, skipCUDAIfNotRocm, \
     onlyNativeDeviceTypes, deviceCountAtLeast, largeTensorTest, expectedFailureMeta, skipMeta, get_all_device_types
 from torch.nn import MultiheadAttention
+
+from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+from ..utils.timer_wrapper import pytorch_op_timer
 
 
 from torch.testing._internal.common_utils import _assertGradAndGradgradChecks, gradcheck, gradgradcheck, \
@@ -92,7 +95,8 @@ class TestNN(NNTestCase):
             m.register_buffer('attribute_name', torch.rand(5))
 
         del m.attribute_name
-        m.register_parameter('attribute_name', nn.Parameter())
+        with pytorch_op_timer():
+            m.register_parameter('attribute_name', nn.Parameter())
         with self.assertRaises(KeyError):
             m.register_buffer('attribute_name', torch.rand(5))
 
@@ -125,16 +129,19 @@ class TestNN(NNTestCase):
         with self.assertRaises(KeyError):
             m.register_parameter('attribute_name', nn.Parameter())
 
-    def test_register_parameter_allows_overwriting_with_same_name(self):
+    def test_register_parameter_allows_overwriting_with_same_name(self, device):
         m = nn.Module()
         param1 = nn.Parameter(torch.rand(5))
         param2 = nn.Parameter(param1.data + 5)
         param3 = None
-        m.register_parameter('param_name', param1)
+        with pytorch_op_timer():
+            m.register_parameter('param_name', param1)
         self.assertEqual(m.param_name, param1)
-        m.register_parameter('param_name', param2)
+        with pytorch_op_timer():
+            m.register_parameter('param_name', param2)
         self.assertEqual(m.param_name, param2)
-        m.register_parameter('param_name', param3)
+        with pytorch_op_timer():
+            m.register_parameter('param_name', param3)
         self.assertEqual(m.param_name, param3)
 
     def test_add_module_raises_error_if_attr_exists(self):
@@ -151,11 +158,13 @@ class TestNN(NNTestCase):
                 getattr(m, fn)('attribute_name', nn.Module())
 
             del m.attribute_name
-            m.register_parameter('attribute_name', nn.Parameter())
+
+            with pytorch_op_timer():
+                m.register_parameter('attribute_name', nn.Parameter())
             with self.assertRaises(KeyError):
                 getattr(m, fn)('attribute_name', nn.Module())
 
-instantiate_parametrized_tests(TestNN)
+instantiate_device_type_tests(TestNN, globals())
 
 if __name__ == '__main__':
     run_tests()

@@ -42,6 +42,7 @@ import torch
 import torch.utils._pytree as pytree
 
 from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+from ..utils.timer_wrapper import pytorch_op_timer
 
 
 # Copied from `test_ops.py` for the purposes of duplicating `test_numpy_ref`
@@ -64,9 +65,13 @@ if not torch.backends.mps.is_available():
 class TestRound(TestCase):
     def test_rounding(self, device):
         value = torch.tensor(1.5, device=device)
-        self.assertEqual(value.round(), 2)
+        with pytorch_op_timer():
+            rounded_value = value.round()
+        self.assertEqual(rounded_value, 2)
         value = torch.tensor(1.4, device=device)
-        self.assertEqual(value.round(), 1)
+        with pytorch_op_timer():
+            rounded_value = value.round()
+        self.assertEqual(rounded_value, 1)
 
 
 instantiate_device_type_tests(TestRound, globals())
