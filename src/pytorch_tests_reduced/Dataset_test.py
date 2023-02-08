@@ -7,6 +7,7 @@ from torch.utils.data import (
 from torch.testing._internal.common_utils import (TestCase, run_tests)
 
 
+from torch.testing._internal.common_device_type import onlyCUDA
 from ..utils.pytorch_device_decorators import onlyAcceleratedDeviceTypes, instantiate_device_type_tests
 
 
@@ -53,14 +54,14 @@ class TestDictDataLoader(TestCase):
                 self.assertEqual(n[0], idx)
                 self.assertEqual(n[1], idx + 1)
 
-    @onlyAcceleratedDeviceTypes
+    @onlyCUDA
     def test_pin_memory(self, device):
         loader = DataLoader(self.dataset, batch_size=2, pin_memory=True)
         for sample in loader:
             self.assertTrue(sample['a_tensor'].is_pinned())
             self.assertTrue(sample['another_dict']['a_number'].is_pinned())
 
-    @onlyAcceleratedDeviceTypes
+    @onlyCUDA
     def test_pin_memory_device(self, device):
         loader = DataLoader(self.dataset, batch_size=2,
                             pin_memory=True, pin_memory_device='cuda')
@@ -69,7 +70,7 @@ class TestDictDataLoader(TestCase):
             self.assertTrue(sample['another_dict']
                             ['a_number'].is_pinned(device='cuda'))
 
-    @onlyAcceleratedDeviceTypes
+    @onlyCUDA
     def test_pin_memory_with_only_device(self, device):
         loader = DataLoader(self.dataset, batch_size=2,
                             pin_memory_device=device)
@@ -94,7 +95,7 @@ class TestStringDataLoader(TestCase):
     def setUp(self):
         self.dataset = StringDataset()
 
-    @onlyAcceleratedDeviceTypes
+    @onlyCUDA
     def test_shuffle_pin_memory(self, device):
         loader = DataLoader(self.dataset, batch_size=2,
                             shuffle=True, num_workers=4, pin_memory=True)
