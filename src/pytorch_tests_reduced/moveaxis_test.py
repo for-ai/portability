@@ -16,6 +16,9 @@ from torch.testing._internal.common_device_type import (
     instantiate_device_type_tests, onlyCPU, onlyCUDA, dtypes, onlyNativeDeviceTypes,
     dtypesIfCUDA, largeTensorTest)
 from torch.testing._internal.common_dtype import all_types_and_complex_and, all_types, all_types_and
+from ..utils.pytorch_device_decorators import onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+from ..utils.timer_wrapper import pytorch_op_timer
+
 
 def _generate_input(shape, dtype, device, with_extremal):
     if shape == ():
@@ -45,6 +48,10 @@ def _generate_input(shape, dtype, device, with_extremal):
             x = torch.randint(15, 100, shape, dtype=dtype, device=device)
 
     return x
+
+def _move_axis_timed(*args, **kwargs):
+    with pytorch_op_timer():
+        return torch.moveaxis(*args, **kwargs)
 
 class TestShapeOps(TestCase):
     def _rand_shape(self, dim, min_size, max_size):
@@ -78,10 +85,10 @@ class TestShapeOps(TestCase):
 
             with self.assertRaisesRegex(RuntimeError, "movedim: repeated dim in `destination`"):
                 fn(x, (0, 1, 2), (1, 0, 1))
-
+ 
     @dtypes(torch.int64, torch.float, torch.complex128)
     def test_movedim(self, device, dtype):
-        for fn in [torch.moveaxis, torch.movedim]:
+        for fn in [_move_axis_timed, torch.movedim]:
             for nd in range(5):
                 shape = self._rand_shape(nd, min_size=5, max_size=10)
                 x = _generate_input(shape, dtype, device, with_extremal=False)
