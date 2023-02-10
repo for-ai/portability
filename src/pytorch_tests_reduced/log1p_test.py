@@ -26,6 +26,7 @@ from torch.testing._internal.common_dtype import (
     floating_and_complex_types_and, integral_types, floating_types_and,
 )
 from ..utils.pytorch_device_decorators import onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+from ..utils.timer_wrapper import pytorch_op_timer
 
 if TEST_SCIPY:
     import scipy.sparse
@@ -56,14 +57,21 @@ class TestSparse(TestSparseBase):
             return dtype in integral_types()
 
         dense_tensor = sparse_tensor.to_dense()
-        expected_output = dense_tensor.log1p()
+        with pytorch_op_timer():
+            expected_output = dense_tensor.log1p()
         is_integral_dtype = is_integral(sparse_tensor.dtype)
-        self.assertEqual(expected_output, sparse_tensor.log1p().to_dense())
+
+        with pytorch_op_timer():
+            sparse_to_log1p = sparse_tensor.log1p()
+        self.assertEqual(expected_output, sparse_to_log1p.to_dense())
         if is_integral_dtype:
             with self.assertRaisesRegex(RuntimeError, "result type .* can't be cast to"):
                 sparse_tensor.coalesce().log1p_()
         else:
-            self.assertEqual(expected_output, sparse_tensor.coalesce().log1p_().to_dense())
+            with pytorch_op_timer():
+                sparse_to_log1p = sparse_tensor.log1p()
+
+            self.assertEqual(expected_output, sparse_to_log1p.to_dense())
 
         if not coalesced:
             # test in-place op on uncoalesced input
