@@ -38,6 +38,7 @@ from torch.testing._internal.common_utils import (TestCase, run_tests, TEST_NUMP
 
 from hypothesis import given
 import torch.testing._internal.hypothesis_utils as hu
+from ..utils.pytorch_device_decorators import onlyAcceleratedDeviceTypes, instantiate_device_type_tests
 
 try:
     import dill
@@ -150,18 +151,18 @@ class TestConcatDataset(TestCase):
             # this one goes to 11
             result[11]
 
-    def test_add_dataset(self):
-        d1 = TensorDataset(torch.rand(7, 3, 28, 28), torch.rand(7))
-        d2 = TensorDataset(torch.rand(7, 3, 28, 28), torch.rand(7))
-        d3 = TensorDataset(torch.rand(7, 3, 28, 28), torch.rand(7))
+    def test_add_dataset(self, device):
+        d1 = TensorDataset(torch.rand(7, 3, 28, 28), torch.rand(7, device=device))
+        d2 = TensorDataset(torch.rand(7, 3, 28, 28), torch.rand(7, device=device))
+        d3 = TensorDataset(torch.rand(7, 3, 28, 28), torch.rand(7, device=device))
         result = d1 + d2 + d3
         self.assertEqual(21, len(result))
         self.assertEqual(0, (d1[0][0] - result[0][0]).abs().sum())
         self.assertEqual(0, (d2[0][0] - result[7][0]).abs().sum())
         self.assertEqual(0, (d3[0][0] - result[14][0]).abs().sum())
 
-    def test_iterable_dataset_err(self):
-        d1 = TensorDataset(torch.rand(7, 3, 28, 28), torch.rand(7))
+    def test_iterable_dataset_err(self, device):
+        d1 = TensorDataset(torch.rand(7, 3, 28, 28), torch.rand(7, device=device))
         it1 = CountingIterableDataset(5)
         it2 = CountingIterableDataset(10)
 
@@ -175,6 +176,7 @@ class TestConcatDataset(TestCase):
             ConcatDataset([it1, d1])
 
 
+instantiate_device_type_tests(TestConcatDataset, globals())
 
 if __name__ == '__main__':
     run_tests()
