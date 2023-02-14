@@ -32,6 +32,9 @@ from torch.testing._internal.common_cuda import SM53OrLater, tf32_on_and_off, CU
     _get_torch_cuda_version
 from torch.distributions.binomial import Binomial
 
+from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+from ..utils.timer_wrapper import pytorch_op_timer
+
 # Protects against includes accidentally setting the default dtype
 # NOTE: jit_metaprogramming_utils sets the default dtype to double!
 torch.set_default_dtype(torch.float32)
@@ -88,8 +91,9 @@ class TestLinalg(TestCase):
                                                                          itertools.product([True, False], repeat=3)):
             b, A = self.triangular_solve_test_helper((n, n), (n, k), upper,
                                                      unitriangular, device, dtype)
-            x = torch.triangular_solve(
-                b, A, upper=upper, unitriangular=unitriangular, transpose=transpose)[0]
+            with pytorch_op_timer():
+                x = torch.triangular_solve(
+                    b, A, upper=upper, unitriangular=unitriangular, transpose=transpose)[0]
             if transpose:
                 self.assertEqual(b, np.matmul(A.t().cpu(), x.cpu()))
             else:
