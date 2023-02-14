@@ -39,6 +39,7 @@ from torch.testing._internal.common_utils import (TestCase, run_tests, TEST_NUMP
 from hypothesis import given
 import torch.testing._internal.hypothesis_utils as hu
 from ..utils.pytorch_device_decorators import onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+from ..utils.timer_wrapper import pytorch_op_timer
 
 try:
     import dill
@@ -123,30 +124,34 @@ class CountingIterableDataset(IterableDataset):
 class TestConcatDataset(TestCase):
 
     def test_concat_two_singletons(self):
-        result = ConcatDataset([[0], [1]])
+        with pytorch_op_timer():
+            result = ConcatDataset([[0], [1]])
         self.assertEqual(2, len(result))
         self.assertEqual(0, result[0])
         self.assertEqual(1, result[1])
 
     def test_concat_two_non_singletons(self):
-        result = ConcatDataset([[0, 1, 2, 3, 4],
-                                [5, 6, 7, 8, 9]])
+        with pytorch_op_timer():
+            result = ConcatDataset([[0, 1, 2, 3, 4],
+                                    [5, 6, 7, 8, 9]])
         self.assertEqual(10, len(result))
         self.assertEqual(0, result[0])
         self.assertEqual(5, result[5])
 
     def test_concat_two_non_singletons_with_empty(self):
         # Adding an empty dataset somewhere is correctly handled
-        result = ConcatDataset([[0, 1, 2, 3, 4],
-                                [],
-                                [5, 6, 7, 8, 9]])
+        with pytorch_op_timer():
+            result = ConcatDataset([[0, 1, 2, 3, 4],
+                                    [],
+                                    [5, 6, 7, 8, 9]])
         self.assertEqual(10, len(result))
         self.assertEqual(0, result[0])
         self.assertEqual(5, result[5])
 
     def test_concat_raises_index_error(self):
-        result = ConcatDataset([[0, 1, 2, 3, 4],
-                                [5, 6, 7, 8, 9]])
+        with pytorch_op_timer():
+            result = ConcatDataset([[0, 1, 2, 3, 4],
+                                    [5, 6, 7, 8, 9]])
         with self.assertRaises(IndexError):
             # this one goes to 11
             result[11]

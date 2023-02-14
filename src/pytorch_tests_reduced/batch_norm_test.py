@@ -57,6 +57,7 @@ from collections import OrderedDict
 from tempfile import NamedTemporaryFile
 
 from ..utils.pytorch_device_decorators import onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+from ..utils.timer_wrapper import pytorch_op_timer
 
 import torch
 

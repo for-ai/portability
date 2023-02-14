@@ -57,6 +57,8 @@ from collections import OrderedDict
 from tempfile import NamedTemporaryFile
 
 import torch
+from ..utils.pytorch_device_decorators import onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+from ..utils.timer_wrapper import pytorch_op_timer
 
 # TODO: remove this global setting
 # NN tests use double as the default dtype
@@ -82,7 +84,7 @@ class TestNN(NNTestCase):
     _do_cuda_memory_leak_check = True
     _do_cuda_non_default_stream = True
 
-    def test_Transformer_cell(self):
+    def test_Transformer_cell(self, device):
         # this is just a smoke test; these modules are implemented through
         # autograd so no Jacobian test is needed
         d_model = 512
@@ -99,18 +101,19 @@ class TestNN(NNTestCase):
                                                     (seq_length, bsz, d_model)],
                                                    [(bsz, tgt_length, d_model),
                                                     (tgt_length, bsz, d_model)]):
-            transformer = nn.Transformer(d_model, nhead, num_encoder_layers, num_decoder_layers,
-                                         dim_feedforward, dropout, batch_first=batch_first)
-            src = torch.randn(src_size)
+            with pytorch_op_timer():
+                transformer = nn.Transformer(d_model, nhead, num_encoder_layers, num_decoder_layers,
+                                            dim_feedforward, dropout, batch_first=batch_first).to(device)
+            src = torch.randn(src_size, device=device)
             src_mask = transformer.generate_square_subsequent_mask(
-                seq_length).double()
-            tgt = torch.randn(tgt_size)
+                seq_length).double().to(device)
+            tgt = torch.randn(tgt_size, device=device)
             tgt_mask = transformer.generate_square_subsequent_mask(
-                tgt_length).double()
-            memory_mask = torch.randn(tgt_length, seq_length).double()
-            src_key_padding_mask = torch.rand(bsz, seq_length) >= 0.5
-            tgt_key_padding_mask = torch.rand(bsz, tgt_length) >= 0.5
-            memory_key_padding_mask = torch.rand(bsz, seq_length) >= 0.5
+                tgt_length).double().to(device)
+            memory_mask = torch.randn(tgt_length, seq_length, device=device).double()
+            src_key_padding_mask = torch.rand(bsz, seq_length, device=device) >= 0.5
+            tgt_key_padding_mask = torch.rand(bsz, tgt_length, device=device) >= 0.5
+            memory_key_padding_mask = torch.rand(bsz, seq_length, device=device) >= 0.5
 
             output = transformer(src, tgt,
                                  src_mask=src_mask,
@@ -122,7 +125,7 @@ class TestNN(NNTestCase):
             output.sum().backward()
 
 
-instantiate_parametrized_tests(TestNN)
+instantiate_device_type_tests(TestNN, globals())
 
 if __name__ == '__main__':
     run_tests()
