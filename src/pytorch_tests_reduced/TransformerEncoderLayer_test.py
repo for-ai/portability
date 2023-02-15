@@ -58,6 +58,11 @@ from tempfile import NamedTemporaryFile
 
 import torch
 
+from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+from ..utils.timer_wrapper import pytorch_op_timer
+
+
+
 # TODO: remove this global setting
 # NN tests use double as the default dtype
 torch.set_default_dtype(torch.double)
@@ -66,15 +71,16 @@ torch.set_default_dtype(torch.double)
 class TestNN(NNTestCase):
     _do_cuda_memory_leak_check = True
     _do_cuda_non_default_stream = True
-
-    def test_transformerencoder(self):
-        def get_a_test_layer(use_cuda, activation, batch_first=False):
+   
+    def test_transformerencoder(self, device):
+        def get_a_test_layer( activation, batch_first=False):
             d_model = 4
             nhead = 2
             dim_feedforward = 16
             dropout = 0.0
-            device = torch.device("cuda" if use_cuda else "cpu")
-
+            # device = torch.device("cuda" if use_cuda else "cpu")
+            
+            # with pytorch_op_timer()
             layer = nn.TransformerEncoderLayer(
                 d_model,
                 nhead,
@@ -96,14 +102,14 @@ class TestNN(NNTestCase):
 
         # this is a deterministic test for TransformerEncoder
         activation = F.relu
-        use_cuda = torch.cuda.is_available()
-        device = torch.device("cuda" if use_cuda else "cpu")
+        # use_cuda = torch.cuda.is_available()
+        # device = torch.device("cuda" if use_cuda else "cpu")
 
         def _test(batch_first, training):
             def perm_fn(x):
                 return x.transpose(1, 0) if batch_first else x
 
-            encoder_layer = get_a_test_layer(use_cuda=use_cuda, activation=activation,
+            encoder_layer = get_a_test_layer( activation=activation,
                                              batch_first=batch_first)
 
             model = nn.TransformerEncoder(encoder_layer, 1).to(device)
@@ -260,7 +266,8 @@ class TestNN(NNTestCase):
                     _test(batch_first, training)
 
 
-instantiate_parametrized_tests(TestNN)
+# instantiate_parametrized_tests(TestNN)
+instantiate_device_type_tests(TestNN, globals())
 
 if __name__ == '__main__':
     run_tests()
