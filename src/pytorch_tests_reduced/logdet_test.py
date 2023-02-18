@@ -20,7 +20,7 @@ from torch.testing._internal.common_utils import \
      make_fullrank_matrices_with_distinct_singular_values,
      freeze_rng_state, IS_SANDCASTLE)
 from torch.testing._internal.common_device_type import \
-    (instantiate_device_type_tests, dtypes, has_cusolver,
+    (dtypes, has_cusolver,
      onlyCPU, skipCUDAIf, skipCUDAIfNoMagma, skipCPUIfNoLapack, precisionOverride,
      skipCUDAIfNoMagmaAndNoCusolver, skipCUDAIfRocm, onlyNativeDeviceTypes, dtypesIfCUDA,
      onlyCUDA, skipCUDAVersionIn, skipMeta, skipCUDAIfNoCusolver, dtypesIfMPS)
@@ -32,6 +32,7 @@ from torch.testing._internal.common_dtype import (
 from torch.testing._internal.common_cuda import SM53OrLater, tf32_on_and_off, CUDA11OrLater, CUDA9, _get_magma_version, \
     _get_torch_cuda_version
 from torch.distributions.binomial import Binomial
+from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
 
 # Protects against includes accidentally setting the default dtype
 # NOTE: jit_metaprogramming_utils sets the default dtype to double!
@@ -64,13 +65,13 @@ class TestLinalg(TestCase):
     exact_dtype = True
 
 
-    @skipCUDAIf(torch.version.cuda is not None
-                and torch.version.cuda.split(".") < ["11", "3"], "There's a bug in cuSOLVER < 11.3")
+    # @skipCUDAIf(torch.version.cuda is not None
+    #             and torch.version.cuda.split(".") < ["11", "3"], "There's a bug in cuSOLVER < 11.3")
     # FIXME One of the backends of lu_factor fails in windows. I haven't investigated which or why
     # https://github.com/pytorch/pytorch/issues/75225
+    # @skipCUDAIfNoCusolver
+    # @skipCPUIfNoLapack
     @unittest.skipIf(IS_WINDOWS, "Skipped on Windows!")
-    @skipCUDAIfNoCusolver
-    @skipCPUIfNoLapack
     @dtypes(torch.double)
     def test_det_logdet_slogdet(self, device, dtype):
         def reference_slogdet(M):
@@ -240,8 +241,8 @@ class TestLinalg(TestCase):
         s.fill_(1. / (100 * s.numel()))
         test(u.mm(s.diag()).mm(v))
 
-    @skipCUDAIfNoMagma
-    @skipCPUIfNoLapack
+    # @skipCUDAIfNoMagma
+    # @skipCPUIfNoLapack
     @dtypes(torch.double)
     def test_det_logdet_slogdet_batched(self, device, dtype):
         from torch.testing._internal.common_utils import (random_symmetric_matrix, random_symmetric_psd_matrix,

@@ -19,7 +19,7 @@ from distutils.version import LooseVersion
 from torch.testing._internal.common_cuda import \
     (SM53OrLater, SM80OrLater, CUDA11OrLater)
 from torch.testing._internal.common_device_type import \
-    (instantiate_device_type_tests, ops, dtypes, dtypesIfCUDA, onlyCPU, onlyCUDA, precisionOverride,
+    ( ops, dtypes, dtypesIfCUDA, onlyCPU, onlyCUDA, precisionOverride,
      deviceCountAtLeast, OpDTypes)
 from torch.testing._internal.common_methods_invocations import \
     (sparse_unary_ufuncs, sparse_masked_reduction_ops)
@@ -27,6 +27,8 @@ from torch.testing._internal.common_dtype import (
     all_types, all_types_and_complex, all_types_and_complex_and, floating_and_complex_types,
     floating_and_complex_types_and, integral_types, floating_types_and,
 )
+from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+
 
 if TEST_SCIPY:
     import scipy.sparse
@@ -102,10 +104,11 @@ class TestSparse(TestSparseBase):
             else:
                 existing_indices.add(index)
 
-    @onlyCPU
+    # @onlyCPU
     @coalescedonoff
+    @onlyAcceleratedDeviceTypes
     @dtypes(torch.double, torch.cdouble)
-    def test_saddmm(self, device, dtype, coalesced):
+    def test_saddmm(self, device, dtype):
         def test_shape(di, dj, dk, nnz):
             x = self._gen_sparse(2, nnz, [di, dj], dtype, device, coalesced)[0]
             t = self._gen_sparse(2, nnz, [di, dk], dtype, device, coalesced)[0]
@@ -133,6 +136,6 @@ class TestSparse(TestSparseBase):
         test_shape(1000, 100, 0, 0)
 
 
-instantiate_device_type_tests(TestSparse, globals(), except_for='meta')
+instantiate_device_type_tests(TestSparse, globals())
 if __name__ == '__main__':
     run_tests()

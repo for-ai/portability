@@ -35,37 +35,40 @@ from torch.testing._internal.common_methods_invocations import (
     SpectralFuncInfo,
     BinaryUfuncInfo,
 )
-from torch.testing._internal.common_device_type import ops, instantiate_device_type_tests
+from torch.testing._internal.common_device_type import ops
 from torch.testing._internal.common_nn import NNTestCase
 import numpy as np
 import torch
 import torch.utils._pytree as pytree
+from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+
 
 class TestNLLLoss(TestCase):
-    def test_lt(self):
+    def test_lt(self, device):
         def helper(shape):
             cpu_x = torch.randn(shape, device='cpu', dtype=torch.float)
             cpu_y = torch.randn(shape, device='cpu', dtype=torch.float)
-            mps_x = cpu_x.detach().clone().to('mps')
-            mps_y = cpu_y.detach().clone().to('mps')
+            mps_x = cpu_x.detach().clone().to(device)
+            mps_y = cpu_y.detach().clone().to(device)
             result_mps = torch.lt(mps_x, mps_y)
             result_cpu = torch.lt(cpu_x, cpu_y)
 
-            self.assertEqual(result_cpu, result_mps.to('cpu'))
+            self.assertEqual(result_cpu, result_mps.to(device))
 
         helper((2, 3, 4, 5))
 
-    def test_lt_scalar(self):
+    def test_lt_scalar(self, device):
         def helper(shape):
             cpu_x = torch.randn(shape, device='cpu', dtype=torch.float)
-            mps_x = cpu_x.detach().clone().to('mps')
+            mps_x = cpu_x.detach().clone().to(device)
             result_mps = torch.lt(mps_x, 0.0)
             result_cpu = torch.lt(cpu_x, 0.0)
 
-            self.assertEqual(result_cpu, result_mps.to('cpu'))
+            self.assertEqual(result_cpu, result_mps.to(device))
 
         helper((2, 3, 4, 5))
 
+instantiate_device_type_tests(TestNLLLoss, globals())
 
 if __name__ == "__main__":
     run_tests()

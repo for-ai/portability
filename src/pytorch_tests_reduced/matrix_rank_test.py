@@ -20,7 +20,7 @@ from torch.testing._internal.common_utils import \
      make_fullrank_matrices_with_distinct_singular_values,
      freeze_rng_state, IS_SANDCASTLE)
 from torch.testing._internal.common_device_type import \
-    (instantiate_device_type_tests, dtypes, has_cusolver,
+    (dtypes, has_cusolver,
      onlyCPU, skipCUDAIf, skipCUDAIfNoMagma, skipCPUIfNoLapack, precisionOverride,
      skipCUDAIfNoMagmaAndNoCusolver, skipCUDAIfRocm, onlyNativeDeviceTypes, dtypesIfCUDA,
      onlyCUDA, skipCUDAVersionIn, skipMeta, skipCUDAIfNoCusolver, dtypesIfMPS)
@@ -32,6 +32,7 @@ from torch.testing._internal.common_dtype import (
 from torch.testing._internal.common_cuda import SM53OrLater, tf32_on_and_off, CUDA11OrLater, CUDA9, _get_magma_version, \
     _get_torch_cuda_version
 from torch.distributions.binomial import Binomial
+from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
 
 # Protects against includes accidentally setting the default dtype
 # NOTE: jit_metaprogramming_utils sets the default dtype to double!
@@ -41,8 +42,8 @@ assert torch.get_default_dtype() is torch.float32
 
 class TestLinalg(TestCase):
 
-    @skipCUDAIfNoMagma
-    @skipCPUIfNoLapack
+    # @skipCUDAIfNoMagma
+    # @skipCPUIfNoLapack
     @dtypes(*floating_and_complex_types())
     def test_matrix_rank(self, device, dtype):
         matrix_rank = torch.linalg.matrix_rank
@@ -84,8 +85,8 @@ class TestLinalg(TestCase):
         for (shape0, shape1), batch in zip(itertools.product(shapes, reversed(shapes)), batches):
             run_test(shape0, shape1, batch)
 
-    @skipCUDAIfNoMagma
-    @skipCPUIfNoLapack
+    # @skipCUDAIfNoMagma
+    # @skipCPUIfNoLapack
     @dtypes(*floating_and_complex_types())
     def test_matrix_rank_atol(self, device, dtype):
 
@@ -113,8 +114,8 @@ class TestLinalg(TestCase):
         for (shape0, shape1), batch in zip(itertools.product(shapes, reversed(shapes)), batches):
             run_test_atol(shape0, shape1, batch)
 
-    @skipCUDAIfNoMagma
-    @skipCPUIfNoLapack
+    # @skipCUDAIfNoMagma
+    # @skipCPUIfNoLapack
     @dtypes(torch.float64)
     def test_matrix_rank_atol_rtol(self, device, dtype):
         make_fullrank = make_fullrank_matrices_with_distinct_singular_values
@@ -139,9 +140,9 @@ class TestLinalg(TestCase):
             result = torch.linalg.matrix_rank(a, atol=tol_value, rtol=tol_value)
             self.assertEqual(result, 2)  # there are 2 singular values above max(0.81, 1.5*0.81)
 
-    @skipCUDAIfNoMagma
-    @skipCPUIfNoLapack
-    @skipCUDAVersionIn([(11, 6), (11, 7)])  # https://github.com/pytorch/pytorch/issues/75391
+    # @skipCUDAIfNoMagma
+    # @skipCPUIfNoLapack
+    # @skipCUDAVersionIn([(11, 6), (11, 7)])  # https://github.com/pytorch/pytorch/issues/75391
     @dtypes(*floating_and_complex_types())
     def test_matrix_rank_empty(self, device, dtype):
         matrix_rank = torch.linalg.matrix_rank
@@ -177,8 +178,8 @@ class TestLinalg(TestCase):
             run_test(0, 3, batch)
             run_test(3, 0, batch)
 
-    @skipCUDAIfNoMagma
-    @skipCPUIfNoLapack
+    # @skipCUDAIfNoMagma
+    # @skipCPUIfNoLapack
     @dtypes(*floating_and_complex_types())
     def test_matrix_rank_out_errors_and_warnings(self, device, dtype):
         # dtypes should be safely castable
@@ -203,8 +204,8 @@ class TestLinalg(TestCase):
             self.assertEqual(len(w), 1)
             self.assertTrue("An output with one or more elements was resized" in str(w[-1].message))
 
-    @skipCUDAIfNoMagma
-    @skipCPUIfNoLapack
+    # @skipCUDAIfNoMagma
+    # @skipCPUIfNoLapack
     @dtypes(*floating_and_complex_types())
     def test_matrix_rank_basic(self, device, dtype):
         matrix_rank = torch.linalg.matrix_rank

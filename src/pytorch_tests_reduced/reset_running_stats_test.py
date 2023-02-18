@@ -7,7 +7,7 @@ from torch.testing._internal.common_utils import _assertGradAndGradgradChecks, g
     GRADCHECK_NONDET_TOL
 import torch.testing._internal.hypothesis_utils as hu
 from hypothesis import given
-from torch.testing._internal.common_device_type import instantiate_device_type_tests, dtypes, \
+from torch.testing._internal.common_device_type import dtypes, \
     dtypesIfCUDA, precisionOverride, skipCUDAIfCudnnVersionLessThan, onlyCUDA, onlyCPU, \
     skipCUDAIfRocm, skipCUDAIf, skipCUDAIfNotRocm, \
     onlyNativeDeviceTypes, deviceCountAtLeast, largeTensorTest, expectedFailureMeta, skipMeta, get_all_device_types
@@ -45,6 +45,7 @@ from functools import partial
 from collections import OrderedDict
 
 import torch
+from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
 
 # TODO: remove this global setting
 # NN tests use double as the default dtype
@@ -115,14 +116,14 @@ class TestNNDeviceType(NNTestCase):
                          (running_mean1 + running_mean2) / 2)
         self.assertEqual(module.running_var, (running_var1 + running_var2) / 2)
 
-    @dtypes(torch.float)
-    @dtypesIfCUDA(torch.float, torch.bfloat16)
+    @dtypes(torch.float, torch.bfloat16)
+    # @dtypesIfCUDA(torch.float, torch.bfloat16)
     def test_batchnorm_simple_average(self, device, dtype):
         self._test_batchnorm_simple_average(device, dtype)
 
-        if self.device_type == 'cuda' and self.has_cudnn():
-            with torch.backends.cudnn.flags(enabled=False):
-                self._test_batchnorm_simple_average(device, dtype)
+        # if self.device_type == 'cuda' and self.has_cudnn():
+        #     with torch.backends.cudnn.flags(enabled=False):
+        #         self._test_batchnorm_simple_average(device, dtype)
 
 
 instantiate_device_type_tests(TestNNDeviceType, globals())
