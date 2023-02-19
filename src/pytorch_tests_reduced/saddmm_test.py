@@ -106,9 +106,9 @@ class TestSparse(TestSparseBase):
 
     # @onlyCPU
     @coalescedonoff
-    @onlyAcceleratedDeviceTypes
+    # @onlyAcceleratedDeviceTypes
     @dtypes(torch.double, torch.cdouble)
-    def test_saddmm(self, device, dtype):
+    def test_saddmm(self, device, dtype, coalesced):
         def test_shape(di, dj, dk, nnz):
             x = self._gen_sparse(2, nnz, [di, dj], dtype, device, coalesced)[0]
             t = self._gen_sparse(2, nnz, [di, dk], dtype, device, coalesced)[0]
