@@ -188,7 +188,7 @@ class TestDropoutNNDeviceType(NNTestCase):
         for b, c in product(range(B), range(C)):
             self.assertTrue(result[b, c].count_nonzero() in (0, channel_numel))
 
-    @expectedFailureXLA  # seems like freeze_rng_state is not honoured by XLA
+    # @expectedFailureXLA  # seems like freeze_rng_state is not honoured by XLA
     def test_Dropout1d(self, device):
         with set_default_dtype(torch.double):
             N, C, L = random.randint(10, 15), random.randint(
@@ -214,7 +214,7 @@ class TestDropoutNNDeviceType(NNTestCase):
             self._test_dropoutNd_channel_zero(
                 nn.Dropout1d(p=0.5, inplace=True).to(device), input)
 
-    @expectedFailureXLA  # seems like freeze_rng_state is not honoured by XLA
+    # @expectedFailureXLA  # seems like freeze_rng_state is not honoured by XLA
     def test_Dropout2d(self, device):
         b = random.randint(1, 5)
         w = random.randint(1, 5)
@@ -252,7 +252,7 @@ class TestDropoutNNDeviceType(NNTestCase):
         self._test_dropoutNd_channel_zero(
             nn.Dropout2d(p=0.5, inplace=True).to(device), input)
 
-    @expectedFailureXLA  # seems like freeze_rng_state is not honoured by XLA
+    # @expectedFailureXLA  # seems like freeze_rng_state is not honoured by XLA
     def test_Dropout3d(self, device):
         b = random.randint(1, 5)
         w = random.randint(1, 5)
