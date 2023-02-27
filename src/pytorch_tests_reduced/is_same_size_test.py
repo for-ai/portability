@@ -35,7 +35,6 @@ from multiprocessing.reduction import ForkingPickler
 from torch.testing._internal.common_device_type import (
     expectedFailureMeta,
     expectedFailureXLA,
-    instantiate_device_type_tests,
     onlyCUDA, onlyCPU,
     dtypes, dtypesIfCUDA, dtypesIfCPU, deviceCountAtLeast,
     skipMeta,
@@ -51,6 +50,10 @@ from torch.testing._internal.common_dtype import (
     all_types_and, floating_types, floating_and_complex_types,
 )
 
+from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+from ..utils.timer_wrapper import pytorch_op_timer
+
+
 # Protects against includes accidentally setting the default dtype
 # assert torch.get_default_dtype() is torch.float32
 
@@ -64,15 +67,21 @@ AMPERE_OR_ROCM = TEST_WITH_ROCM or tf32_is_not_fp32()
 class TestTorch(TestCase):
     exact_dtype = True
 
-    def test_is_same_size(self):
-        t1 = torch.empty(3, 4, 9, 10)
-        t2 = torch.empty(3, 4)
-        t3 = torch.empty(1, 9, 3, 3)
-        t4 = torch.empty(3, 4, 9, 10)
+    def test_is_same_size(self, device):
+        t1 = torch.empty(3, 4, 9, 10, device=device)
+        t2 = torch.empty(3, 4, device=device)
+        t3 = torch.empty(1, 9, 3, 3, device=device)
+        t4 = torch.empty(3, 4, 9, 10, device=device)
 
-        self.assertFalse(t1.is_same_size(t2))
-        self.assertFalse(t1.is_same_size(t3))
-        self.assertTrue(t1.is_same_size(t4))
+        with pytorch_op_timer():
+            result = t1.is_same_size(t2)
+        self.assertFalse(result)
+        with pytorch_op_timer():
+            result = t1.is_same_size(t3)
+        self.assertFalse(result)
+        with pytorch_op_timer():
+            result = t1.is_same_size(t4)
+        self.assertTrue(result)
 
 
 instantiate_device_type_tests(TestTorch, globals())
