@@ -14,6 +14,7 @@ from torch.testing._internal.logging_tensor import LoggingTensor
 
 from hypothesis import given
 import torch.testing._internal.hypothesis_utils as hu
+from ..utils.timer_wrapper import pytorch_op_timer
 
 
 # Utilities for parametrizing the tensor constructors used in autograd tests
@@ -149,7 +150,8 @@ class TestAutogradFunctional(TestCase):
         with self.assertRaisesRegex(RuntimeError, "v has invalid size: should be torch.Size"):
             res = autogradF.jvp(foo, inp, v[:2])
 
-        res = autogradF.jvp(foo, inp, v)[1]
+        with pytorch_op_timer():
+            res = autogradF.jvp(foo, inp, v)[1]
         self._assert_same_struct(res, foo(inp))
 
     @base_and_logging_tensor
@@ -165,13 +167,15 @@ class TestAutogradFunctional(TestCase):
         v = ctors.rand(4, device=device)
         with self.assertRaisesRegex(RuntimeError, "Output 0 of the user-provided function does not require gradients."):
             res = autogradF.jvp(foo, inp, v, strict=True)
-        res = autogradF.jvp(foo, inp, v, strict=False)
+        with pytorch_op_timer():
+            res = autogradF.jvp(foo, inp, v, strict=False)
         self._assert_same_struct(res[1], res[0])
         self.assertEqual(res[1].abs().sum(), 0.)
 
         with self.assertRaisesRegex(RuntimeError, "The output of the user-provided function is independent of input 0"):
             res = autogradF.jvp(bar, inp, v, strict=True)
-        res = autogradF.jvp(bar, inp, v, strict=False)
+        with pytorch_op_timer():
+            res = autogradF.jvp(bar, inp, v, strict=False)
         self._assert_same_struct(res[1], res[0])
         self.assertEqual(res[1].abs().sum(), 0.)
 
@@ -182,7 +186,8 @@ class TestAutogradFunctional(TestCase):
         inp.requires_grad_()
         with self.assertRaisesRegex(RuntimeError, "jacobian of the user-provided function is independent of input 0."):
             res = autogradF.jvp(foo, inp, v, create_graph=True, strict=True)
-        res = autogradF.jvp(foo, inp, v, create_graph=True, strict=False)
+        with pytorch_op_timer():
+            res = autogradF.jvp(foo, inp, v, create_graph=True, strict=False)
         self._assert_same_struct(res[1], inp)
         self.assertEqual(res[1], v)
 
@@ -193,7 +198,9 @@ class TestAutogradFunctional(TestCase):
         inputs = ctors.rand(4, 4, device=device)
         v = ctors.ones(4, 4, device=device)
         with torch.no_grad():
-            res = autogradF.jvp(reducer, inputs, v)
+
+            with pytorch_op_timer():
+                res = autogradF.jvp(reducer, inputs, v)
         self.assertIsNone(res[0].grad_fn)
         self.assertIsNone(res[1].grad_fn)
         self.assertNotEqual(res[1], ctors.zeros(4, 4))
@@ -201,7 +208,8 @@ class TestAutogradFunctional(TestCase):
         inputs.requires_grad_()
         v.requires_grad_()
         with torch.no_grad():
-            res = autogradF.jvp(reducer, inputs, v, create_graph=True)
+            with pytorch_op_timer():
+                res = autogradF.jvp(reducer, inputs, v, create_graph=True)
         self.assertIsNotNone(res[0].grad_fn)
         self.assertIsNotNone(res[1].grad_fn)
         self.assertNotEqual(res[1], ctors.zeros(4, 4))
@@ -212,7 +220,8 @@ class TestAutogradFunctional(TestCase):
             return x.sum(dim=1)
         inputs = ctors.rand(4, 4, device=device)
         v = ctors.ones(4, 4, device=device)
-        res = autogradF.jvp(reducer, inputs, v)
+        with pytorch_op_timer():
+            res = autogradF.jvp(reducer, inputs, v)
         self._assert_same_struct(res[1], res[0])
         self.assertIsNone(res[0].grad_fn)
         self.assertIsNone(res[1].grad_fn)
@@ -222,7 +231,10 @@ class TestAutogradFunctional(TestCase):
 
         inputs = (ctors.rand(2), ctors.rand(2))
         v = (ctors.ones(2), ctors.ones(2))
-        out, jvp_val = autogradF.jvp(adder, inputs, v)
+
+        with pytorch_op_timer():
+            out, jvp_val = autogradF.jvp(adder, inputs, v)
+
         self._assert_same_struct(jvp_val, out)
         self.assertIsNone(out.grad_fn)
         self.assertIsNone(jvp_val[0].grad_fn)
@@ -233,7 +245,9 @@ class TestAutogradFunctional(TestCase):
 
         inputs = (ctors.rand(2), ctors.rand(2))
         v = (ctors.tensor([1., 0.]), ctors.tensor([1., 0.]))
-        out, jvp_val = autogradF.jvp(adder, inputs, v)
+
+        with pytorch_op_timer():
+            out, jvp_val = autogradF.jvp(adder, inputs, v)
         self._assert_same_struct(jvp_val, out)
         self.assertIsNone(out[0].grad_fn)
         self.assertIsNone(out[1].grad_fn)
@@ -246,7 +260,9 @@ class TestAutogradFunctional(TestCase):
             return x.sum()
         inputs = ctors.rand(4, 4, device=device)
         v = ctors.ones(4, 4, device=device)
-        res = autogradF.jvp(reducer, inputs, v)
+
+        with pytorch_op_timer():
+            res = autogradF.jvp(reducer, inputs, v)
         self._assert_same_struct(res[0], ctors.zeros([]))
         self._assert_same_struct(res[1], res[0])
 
@@ -254,11 +270,14 @@ class TestAutogradFunctional(TestCase):
             return x.unsqueeze(0).repeat(4)
         inputs = ctors.rand([], device=device)
         v = ctors.ones([], device=device)
-        res = autogradF.jvp(expander, inputs, v)
+
+        with pytorch_op_timer():
+            res = autogradF.jvp(expander, inputs, v)
         self._assert_same_struct(res[0], ctors.zeros(4))
         self._assert_same_struct(res[1], res[0])
 
-        res = autogradF.jvp(expander, inputs)
+        with pytorch_op_timer():
+            res = autogradF.jvp(expander, inputs)
         self._assert_same_struct(res[0], ctors.zeros(4))
         self._assert_same_struct(res[1], res[0])
 
@@ -271,7 +290,9 @@ class TestAutogradFunctional(TestCase):
 
         inputs.requires_grad_()
         v.requires_grad_()
-        res = autogradF.jvp(reducer, inputs, v, create_graph=True)
+
+        with pytorch_op_timer():
+            res = autogradF.jvp(reducer, inputs, v, create_graph=True)
         self._assert_same_struct(res[1], res[0])
         self.assertIsNotNone(res[0].grad_fn)
         self.assertIsNotNone(res[1].grad_fn)
@@ -295,7 +316,9 @@ class TestAutogradFunctional(TestCase):
             v = args[2:]
 
             x = x.cos()
-            val, grad = autogradF.jvp(adder, (x, y), v, create_graph=True)
+
+            with pytorch_op_timer():
+                val, grad = autogradF.jvp(adder, (x, y), v, create_graph=True)
 
             return val[0].exp() + val[1].exp() + grad[0].exp() + grad[1].exp() + x.exp() + y.exp()
 
@@ -312,7 +335,9 @@ class TestAutogradFunctional(TestCase):
         v = ctors.rand(4, device=device)
 
         jac = autogradF.jacobian(foo, inputs)
-        jvp = autogradF.jvp(foo, inputs, v)[1]
+
+        with pytorch_op_timer():
+            jvp = autogradF.jvp(foo, inputs, v)[1]
         vjp = autogradF.vjp(foo, inputs, v)[1]
 
         self.assertEqual(jvp, torch.mm(jac, v.unsqueeze(1)).squeeze(1))
