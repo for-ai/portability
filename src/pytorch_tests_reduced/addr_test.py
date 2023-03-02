@@ -28,6 +28,7 @@ from torch.testing._internal.common_dtype import (
 # NOTE: jit_metaprogramming_utils sets the default dtype to double!
 torch.set_default_dtype(torch.float32)
 assert torch.get_default_dtype() is torch.float32
+from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
 
 if TEST_SCIPY:
     import scipy
@@ -46,13 +47,13 @@ def setLinalgBackendsToDefaultFinally(fn):
 
 
 class TestLinalg(TestCase):
-    def setUp(self):
-        super(self.__class__, self).setUp()
-        torch.backends.cuda.matmul.allow_tf32 = False
+    # def setUp(self):
+    #     super(self.__class__, self).setUp()
+    #     torch.backends.cuda.matmul.allow_tf32 = False
 
-    def tearDown(self):
-        torch.backends.cuda.matmul.allow_tf32 = True
-        super(self.__class__, self).tearDown()
+    # def tearDown(self):
+    #     torch.backends.cuda.matmul.allow_tf32 = True
+    #     super(self.__class__, self).tearDown()
 
     exact_dtype = True
 

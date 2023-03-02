@@ -44,6 +44,7 @@ from torch.distributions.transforms import (AffineTransform, CatTransform, ExpTr
 from torch.distributions.utils import (probs_to_logits, lazy_property, tril_matrix_to_vec,
                                        vec_to_tril_matrix)
 from torch.nn.functional import softmax
+from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
 
 # load_tests from torch.testing._internal.common_utils is used to automatically filter tests for
 # sharding on sandcastle. This line silences flake warnings
@@ -92,95 +93,15 @@ class TestDistributions(DistributionsTestCase):
         s = distribution.sample()
         if not distribution.support.is_discrete:
             s = s.detach().requires_grad_()
-
         expected_shape = distribution.batch_shape + distribution.event_shape
         self.assertEqual(s.size(), expected_shape)
-
         def apply_fn(s, *params):
             return dist_ctor(*params).log_prob(s)
-
         gradcheck(apply_fn, (s,) + tuple(ctor_params), raise_exception=True)
-
-    def _check_forward_ad(self, fn):
-        with fwAD.dual_level():
-            x = torch.tensor(1.)
-            t = torch.tensor(1.)
-            dual = fwAD.make_dual(x, t)
-            dual_out = fn(dual)
-            self.assertEqual(torch.count_nonzero(fwAD.unpack_dual(dual_out).tangent).item(), 0)
-
-    def _check_log_prob(self, dist, asset_fn):
-        # checks that the log_prob matches a reference function
-        s = dist.sample()
-        log_probs = dist.log_prob(s)
-        log_probs_data_flat = log_probs.view(-1)
-        s_data_flat = s.view(len(log_probs_data_flat), -1)
-        for i, (val, log_prob) in enumerate(zip(s_data_flat, log_probs_data_flat)):
-            asset_fn(i, val.squeeze(), log_prob)
-
-    def _check_sampler_sampler(self, torch_dist, ref_dist, message, multivariate=False,
-                               circular=False, num_samples=10000, failure_rate=1e-3):
-        # Checks that the .sample() method matches a reference function.
-        torch_samples = torch_dist.sample((num_samples,)).squeeze()
-        torch_samples = torch_samples.cpu().numpy()
-        ref_samples = ref_dist.rvs(num_samples).astype(np.float64)
-        if multivariate:
-            # Project onto a random axis.
-            axis = np.random.normal(size=(1,) + torch_samples.shape[1:])
-            axis /= np.linalg.norm(axis)
-            torch_samples = (axis * torch_samples).reshape(num_samples, -1).sum(-1)
-            ref_samples = (axis * ref_samples).reshape(num_samples, -1).sum(-1)
-        samples = [(x, +1) for x in torch_samples] + [(x, -1) for x in ref_samples]
-        if circular:
-            samples = [(np.cos(x), v) for (x, v) in samples]
-        shuffle(samples)  # necessary to prevent stable sort from making uneven bins for discrete
-        samples.sort(key=lambda x: x[0])
-        samples = np.array(samples)[:, 1]
-
-        # Aggregate into bins filled with roughly zero-mean unit-variance RVs.
-        num_bins = 10
-        samples_per_bin = len(samples) // num_bins
-        bins = samples.reshape((num_bins, samples_per_bin)).mean(axis=1)
-        stddev = samples_per_bin ** -0.5
-        threshold = stddev * scipy.special.erfinv(1 - 2 * failure_rate / num_bins)
-        message = '{}.sample() is biased:\n{}'.format(message, bins)
-        for bias in bins:
-            self.assertLess(-threshold, bias, message)
-            self.assertLess(bias, threshold, message)
-
-    @unittest.skipIf(not TEST_NUMPY, "NumPy not found")
-    def _check_sampler_discrete(self, torch_dist, ref_dist, message,
-                                num_samples=10000, failure_rate=1e-3):
-        """Runs a Chi2-test for the support, but ignores tail instead of combining"""
-        torch_samples = torch_dist.sample((num_samples,)).squeeze()
-        torch_samples = torch_samples.cpu().numpy()
-        unique, counts = np.unique(torch_samples, return_counts=True)
-        pmf = ref_dist.pmf(unique)
-        pmf = pmf / pmf.sum()  # renormalize to 1.0 for chisq test
-        msk = (counts > 5) & ((pmf * num_samples) > 5)
-        self.assertGreater(pmf[msk].sum(), 0.9, "Distribution is too sparse for test; try increasing num_samples")
-        # Add a remainder bucket that combines counts for all values
-        # below threshold, if such values exist (i.e. mask has False entries).
-        if not msk.all():
-            counts = np.concatenate([counts[msk], np.sum(counts[~msk], keepdims=True)])
-            pmf = np.concatenate([pmf[msk], np.sum(pmf[~msk], keepdims=True)])
-        chisq, p = scipy.stats.chisquare(counts, pmf * num_samples)
-        self.assertGreater(p, failure_rate, message)
-
-    def _check_enumerate_support(self, dist, examples):
-        for params, expected in examples:
-            params = {k: torch.tensor(v) for k, v in params.items()}
-            d = dist(**params)
-            actual = d.enumerate_support(expand=False)
-            expected = torch.tensor(expected, dtype=actual.dtype)
-            self.assertEqual(actual, expected)
-            actual = d.enumerate_support(expand=True)
-            expected_with_expand = expected.expand((-1,) + d.batch_shape + d.event_shape)
-            self.assertEqual(actual, expected_with_expand)
-
-    def test_multinomial_1d(self):
+        
+    def test_multinomial_1d(self, device):
         total_count = 10
-        p = torch.tensor([0.1, 0.2, 0.3], requires_grad=True)
+        p = torch.tensor([0.1, 0.2, 0.3], requires_grad=True, device=device)
         self.assertEqual(Multinomial(total_count, p).sample().size(), (3,))
         self.assertEqual(Multinomial(total_count, p).sample((2, 2)).size(), (2, 2, 3))
         self.assertEqual(Multinomial(total_count, p).sample((1,)).size(), (1, 3))
@@ -207,7 +128,7 @@ class TestDistributions(DistributionsTestCase):
         expected = scipy.stats.multinomial.entropy(total_count, dist.probs.detach().numpy())
         self.assertEqual(dist.entropy(), expected, atol=1e-3, rtol=0)
 
-    def test_multinomial_2d(self):
+    def test_multinomial_2d(self, device):
         total_count = 10
         probabilities = [[0.1, 0.2, 0.3], [0.5, 0.3, 0.2]]
         probabilities_1 = [[1.0, 0.0], [0.0, 1.0]]
@@ -222,41 +143,41 @@ class TestDistributions(DistributionsTestCase):
 
         # sample check for extreme value of probs
         self.assertEqual(Multinomial(total_count, s).sample(),
-                         torch.tensor([[total_count, 0], [0, total_count]], dtype=torch.float64))
+                         torch.tensor([[total_count, 0], [0, total_count]], dtype=torch.float64, device=device))
 
 
 class TestDistributionShapes(DistributionsTestCase):
-    def setUp(self):
-        super(TestDistributionShapes, self).setUp()
-        self.scalar_sample = 1
-        self.tensor_sample_1 = torch.ones(3, 2)
-        self.tensor_sample_2 = torch.ones(3, 2, 3)
-
-    def tearDown(self):
-        super(TestDistributionShapes, self).tearDown()
-
-
-    def test_multinomial_shape(self):
-        dist = Multinomial(10, torch.tensor([[0.6, 0.3], [0.6, 0.3], [0.6, 0.3]]))
+    def test_multinomial_shape(self, device):
+        scalar_sample = 1
+        tensor_sample_1 = torch.ones(3, 2, device=device)
+        tensor_sample_2 = torch.ones(3, 2, 3, device=device)
+        
+        dist = Multinomial(10, torch.tensor([[0.6, 0.3], [0.6, 0.3], [0.6, 0.3]], device=device))
         self.assertEqual(dist._batch_shape, torch.Size((3,)))
         self.assertEqual(dist._event_shape, torch.Size((2,)))
         self.assertEqual(dist.sample().size(), torch.Size((3, 2)))
         self.assertEqual(dist.sample((3, 2)).size(), torch.Size((3, 2, 3, 2)))
-        self.assertEqual(dist.log_prob(self.tensor_sample_1).size(), torch.Size((3,)))
-        self.assertRaises(ValueError, dist.log_prob, self.tensor_sample_2)
-        self.assertEqual(dist.log_prob(torch.ones(3, 1, 2)).size(), torch.Size((3, 3)))
+        self.assertEqual(dist.log_prob(tensor_sample_1).size(), torch.Size((3,)))
+        self.assertRaises(ValueError, dist.log_prob, tensor_sample_2)
+        self.assertEqual(dist.log_prob(torch.ones(3, 1, 2, device=device)).size(), torch.Size((3, 3)))
 
 
 class TestNumericalStability(DistributionsTestCase):
 
-    def test_multinomial_log_prob_with_logits(self):
+    def test_multinomial_log_prob_with_logits(self, device):
         for dtype in ([torch.float, torch.double]):
-            p = torch.tensor([-inf, 0], dtype=dtype, requires_grad=True)
+            p = torch.tensor([-inf, 0], dtype=dtype, requires_grad=True, device=device)
             multinomial = Multinomial(10, logits=p)
-            log_pdf_prob_1 = multinomial.log_prob(torch.tensor([0, 10], dtype=dtype))
+            log_pdf_prob_1 = multinomial.log_prob(torch.tensor([0, 10], dtype=dtype, device=device))
             self.assertEqual(log_pdf_prob_1.item(), 0)
-            log_pdf_prob_0 = multinomial.log_prob(torch.tensor([10, 0], dtype=dtype))
+            log_pdf_prob_0 = multinomial.log_prob(torch.tensor([10, 0], dtype=dtype, device=device))
             self.assertEqual(log_pdf_prob_0.item(), -inf)
+
+
+instantiate_device_type_tests(TestNumericalStability, globals())
+instantiate_device_type_tests(TestDistributions, globals())
+instantiate_device_type_tests(TestDistributionShapes, globals())
+
 
 if __name__ == '__main__' and torch._C.has_lapack:
     run_tests()
