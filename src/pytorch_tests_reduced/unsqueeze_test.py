@@ -13,12 +13,15 @@ from torch.testing._internal.common_utils import (
     numpy_to_torch_dtype_dict,
 )
 from torch.testing._internal.common_device_type import \
-    (instantiate_device_type_tests, onlyCPU,
+    (onlyCPU,
      dtypes, onlyNativeDeviceTypes, skipMeta)
 from torch.testing._internal.common_dtype import (
     all_types_and_complex_and, complex_types, all_types_and, floating_and_complex_types_and,
 )
 
+
+from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+from ..utils.timer_wrapper import pytorch_op_timer
 
 class TestViewOps(TestCase):
     def is_view_of(self, base, other):
