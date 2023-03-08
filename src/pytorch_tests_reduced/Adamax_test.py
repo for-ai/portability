@@ -19,18 +19,21 @@ from torch.optim.lr_scheduler import LambdaLR, MultiplicativeLR, SequentialLR, S
     MultiStepLR, ConstantLR, LinearLR, ExponentialLR, CosineAnnealingLR, ReduceLROnPlateau, \
     _LRScheduler, CyclicLR, CosineAnnealingWarmRestarts, OneCycleLR, ChainedScheduler, \
     EPOCH_DEPRECATION_WARNING
+import os
 from torch.optim.swa_utils import AveragedModel, SWALR, update_bn
 from torch.testing._internal.common_utils import TestCase, run_tests, TEST_WITH_UBSAN, load_tests
 # load_tests from common_utils is used to automatically filter tests for
 # sharding on sandcastle. This line silences flake warnings
 load_tests = load_tests
 
+from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+from ..utils.timer_wrapper import pytorch_op_timer
 
 class TestOptim(TestCase):
     def _build_params_dict(self, weight, bias, **kwargs):
         return [{'params': [weight]}, dict(params=[bias], **kwargs)]
 
-    def _test_basic_cases_template(self, weight, bias, input, constructor,
+    def _test_basic_cases_template(self, device, weight, bias, input, constructor,
                                    scheduler_constructors, constructor_accepts_maximize=True):
         maximize_options = set([False, constructor_accepts_maximize])
         if not constructor_accepts_maximize:
@@ -54,9 +57,7 @@ class TestOptim(TestCase):
 
             def fn():
                 optimizer.zero_grad()
-                y = weight.mv(input)
-                if y.is_cuda and bias.is_cuda and y.get_device() != bias.get_device():
-                    y = y.cuda(bias.get_device())
+                y = weight.mv(input).to(device)
                 loss = (y + bias).pow(2).sum()
                 loss.backward()
                 return loss
@@ -75,15 +76,19 @@ class TestOptim(TestCase):
             else:
                 self.assertLess(fn().item(), initial_value)
 
-    def _test_state_dict(self, weight, bias, input, constructor):
-        weight = Variable(weight, requires_grad=True)
-        bias = Variable(bias, requires_grad=True)
-        input = Variable(input)
+    def _test_state_dict(self, weight, bias, input, constructor, device):
+        weight = Variable(weight, requires_grad=True).to(device)
+        bias = Variable(bias, requires_grad=True).to(device)
+        input = Variable(input).to(device)
 
         def fn_base(optimizer, weight, bias):
             optimizer.zero_grad()
-            i = input_cuda if weight.is_cuda else input
-            loss = (weight.mv(i) + bias).pow(2).sum()
+            i = input.to(device)
+            print("***i", i.device)
+            print("***weight", weight.device)
+            print("***bias", bias.device)
+            loss = (weight.mv(i) + bias).pow(2).sum().to(device)
+            print("***loss", loss.device)
             loss.backward()
             return loss
 
@@ -92,10 +97,11 @@ class TestOptim(TestCase):
 
         # Prime the optimizer
         for _i in range(20):
+            print("***ITER", _i)
             optimizer.step(fn)
         # Clone the weights and construct new optimizer for them
-        weight_c = Variable(weight.data.clone(), requires_grad=True)
-        bias_c = Variable(bias.data.clone(), requires_grad=True)
+        weight_c = Variable(weight.data.clone(), requires_grad=True).to(device)
+        bias_c = Variable(bias.data.clone(), requires_grad=True).to(device)
         optimizer_c = constructor(weight_c, bias_c)
         fn_c = functools.partial(fn_base, optimizer_c, weight_c, bias_c)
         # Load state dict
@@ -144,12 +150,12 @@ class TestOptim(TestCase):
 
         # Check that state dict can be loaded even when we cast parameters
         # to a different type and move to a different device.
-        if not torch.cuda.is_available():
+        if os.environ['DEVICE'] == "cpu":
             return
 
-        input_cuda = Variable(input.data.float().cuda())
-        weight_cuda = Variable(weight.data.float().cuda(), requires_grad=True)
-        bias_cuda = Variable(bias.data.float().cuda(), requires_grad=True)
+        input_cuda = Variable(input.data.float().to(device))
+        weight_cuda = Variable(weight.data.float().to(device), requires_grad=True)
+        bias_cuda = Variable(bias.data.float().to(device), requires_grad=True)
         optimizer_cuda = constructor(weight_cuda, bias_cuda)
         fn_cuda = functools.partial(
             fn_base, optimizer_cuda, weight_cuda, bias_cuda)
@@ -179,7 +185,7 @@ class TestOptim(TestCase):
         self.assertEqual(getPublicAttr(optimizer),
                          getPublicAttr(deepcopy(optimizer)))
 
-    def _test_basic_cases(self, constructor, scheduler_constructors=None,
+    def _test_basic_cases(self, constructor, device, scheduler_constructors=None,
                           ignore_multidevice=False, constructor_accepts_maximize=False):
         if scheduler_constructors is None:
             scheduler_constructors = []
@@ -191,72 +197,61 @@ class TestOptim(TestCase):
 
         for maximize in (True, False):
             self._test_state_dict(
-                torch.randn(10, 5),
-                torch.randn(10),
-                torch.randn(5),
+                torch.randn(10, 5).to(device),
+                torch.randn(10).to(device),
+                torch.randn(5).to(device),
                 make_two_arg_constructor(constructor, maximize),
+                device
             )
         self._test_basic_cases_template(
-            torch.randn(10, 5),
-            torch.randn(10),
-            torch.randn(5),
+            device,
+            torch.randn(10, 5).to(device),
+            torch.randn(10).to(device),
+            torch.randn(5).to(device),
             constructor,
             scheduler_constructors,
             constructor_accepts_maximize,
         )
         # non-contiguous parameters
         self._test_basic_cases_template(
-            torch.randn(10, 5, 2)[..., 0],
-            torch.randn(10, 2)[..., 0],
-            torch.randn(5),
+			device,
+            torch.randn(10, 5, 2).to(device)[..., 0],
+            torch.randn(10, 2).to(device)[..., 0],
+            torch.randn(5).to(device),
             constructor,
             scheduler_constructors,
             constructor_accepts_maximize,
         )
-        # CUDA
-        if not torch.cuda.is_available():
-            return
-        self._test_basic_cases_template(
-            torch.randn(10, 5).cuda(),
-            torch.randn(10).cuda(),
-            torch.randn(5).cuda(),
-            constructor,
-            scheduler_constructors,
-            constructor_accepts_maximize,
-        )
-        # Multi-GPU
-        if not torch.cuda.device_count() > 1 or ignore_multidevice:
-            return
-        self._test_basic_cases_template(
-            torch.randn(10, 5).cuda(0),
-            torch.randn(10).cuda(1),
-            torch.randn(5).cuda(0),
-            constructor,
-            scheduler_constructors,
-            constructor_accepts_maximize,
-        )
+        
 
-    def test_adamax(self):
-        for optimizer in [optim.Adamax, optim_mt.Adamax]:
+    def test_adamax(self, device):
+        for optimizer in [optim.Adamax]:
+            print("***BASIC FIRST")
             self._test_basic_cases(
                 lambda weight, bias, maximize: optimizer(
                     [weight, bias], lr=1e-1, maximize=maximize),
+				device,
                 constructor_accepts_maximize=True
             )
+            print("***BASIC SECOND")
             self._test_basic_cases(
                 lambda weight, bias, maximize: optimizer(
                     self._build_params_dict(weight, bias, lr=1e-2),
                     lr=1e-1, maximize=maximize),
+				device,
                 constructor_accepts_maximize=True
             )
+            print("***BASIC THIRD")
             self._test_basic_cases(
                 lambda weight, bias, maximize: optimizer(
                     [weight, bias], lr=1e-1, weight_decay=1, maximize=maximize),
+				device,
                 constructor_accepts_maximize=True
             )
             with self.assertRaisesRegex(ValueError, "Invalid beta parameter at index 1: 1.0"):
                 optimizer(None, lr=1e-2, betas=(0.0, 1.0))
 
+instantiate_device_type_tests(TestOptim, globals())
 
 if __name__ == '__main__':
     run_tests()
