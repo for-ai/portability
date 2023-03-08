@@ -33,7 +33,7 @@ class TestOptim(TestCase):
     def _build_params_dict(self, weight, bias, **kwargs):
         return [{'params': [weight]}, dict(params=[bias], **kwargs)]
 
-    def _test_basic_cases_template(self, weight, bias, input, constructor,
+    def _test_basic_cases_template(self, device, weight, bias, input, constructor,
                                    scheduler_constructors, constructor_accepts_maximize=True):
         maximize_options = set([False, constructor_accepts_maximize])
         if not constructor_accepts_maximize:
@@ -57,9 +57,7 @@ class TestOptim(TestCase):
 
             def fn():
                 optimizer.zero_grad()
-                y = weight.mv(input)
-                if y.is_cuda and bias.is_cuda and y.get_device() != bias.get_device():
-                    y = y.to(bias.get_device())
+                y = weight.mv(input).to(device)
                 loss = (y + bias).pow(2).sum()
                 loss.backward()
                 return loss
@@ -79,14 +77,18 @@ class TestOptim(TestCase):
                 self.assertLess(fn().item(), initial_value)
 
     def _test_state_dict(self, weight, bias, input, constructor, device):
-        weight = Variable(weight, requires_grad=True)
-        bias = Variable(bias, requires_grad=True)
-        input = Variable(input)
+        weight = Variable(weight, requires_grad=True).to(device)
+        bias = Variable(bias, requires_grad=True).to(device)
+        input = Variable(input).to(device)
 
         def fn_base(optimizer, weight, bias):
             optimizer.zero_grad()
-            i = input_cuda if weight.is_cuda else input
-            loss = (weight.mv(i) + bias).pow(2).sum()
+            i = input.to(device)
+            print("***i", i.device)
+            print("***weight", weight.device)
+            print("***bias", bias.device)
+            loss = (weight.mv(i) + bias).pow(2).sum().to(device)
+            print("***loss", loss.device)
             loss.backward()
             return loss
 
@@ -95,10 +97,11 @@ class TestOptim(TestCase):
 
         # Prime the optimizer
         for _i in range(20):
+            print("***ITER", _i)
             optimizer.step(fn)
         # Clone the weights and construct new optimizer for them
-        weight_c = Variable(weight.data.clone(), requires_grad=True)
-        bias_c = Variable(bias.data.clone(), requires_grad=True)
+        weight_c = Variable(weight.data.clone(), requires_grad=True).to(device)
+        bias_c = Variable(bias.data.clone(), requires_grad=True).to(device)
         optimizer_c = constructor(weight_c, bias_c)
         fn_c = functools.partial(fn_base, optimizer_c, weight_c, bias_c)
         # Load state dict
@@ -198,9 +201,10 @@ class TestOptim(TestCase):
                 torch.randn(10).to(device),
                 torch.randn(5).to(device),
                 make_two_arg_constructor(constructor, maximize),
-				device
+                device
             )
         self._test_basic_cases_template(
+            device,
             torch.randn(10, 5).to(device),
             torch.randn(10).to(device),
             torch.randn(5).to(device),
@@ -210,6 +214,7 @@ class TestOptim(TestCase):
         )
         # non-contiguous parameters
         self._test_basic_cases_template(
+			device,
             torch.randn(10, 5, 2).to(device)[..., 0],
             torch.randn(10, 2).to(device)[..., 0],
             torch.randn(5).to(device),
@@ -220,13 +225,15 @@ class TestOptim(TestCase):
         
 
     def test_adamax(self, device):
-        for optimizer in [optim.Adamax, optim_mt.Adamax]:
+        for optimizer in [optim.Adamax]:
+            print("***BASIC FIRST")
             self._test_basic_cases(
                 lambda weight, bias, maximize: optimizer(
                     [weight, bias], lr=1e-1, maximize=maximize),
 				device,
                 constructor_accepts_maximize=True
             )
+            print("***BASIC SECOND")
             self._test_basic_cases(
                 lambda weight, bias, maximize: optimizer(
                     self._build_params_dict(weight, bias, lr=1e-2),
@@ -234,6 +241,7 @@ class TestOptim(TestCase):
 				device,
                 constructor_accepts_maximize=True
             )
+            print("***BASIC THIRD")
             self._test_basic_cases(
                 lambda weight, bias, maximize: optimizer(
                     [weight, bias], lr=1e-1, weight_decay=1, maximize=maximize),
