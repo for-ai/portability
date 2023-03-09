@@ -43,24 +43,24 @@ class TestConvolutionNN(NNTestCase):
     _do_cuda_memory_leak_check = True
     _do_cuda_non_default_stream = True
 
-    def test_Conv2d_module_same_padding(self):
+    def test_Conv2d_module_same_padding(self, device):
         # Compare module against functional:
         # without strides/dilation, both symmetric and asymmetric padding
-        x = torch.rand(1, 1, 9, 20)
+        x = torch.rand(1, 1, 9, 20, device=device)
         module = nn.Conv2d(in_channels=1, out_channels=1, kernel_size=(5, 10),
-                           padding='same')
+                           padding='same', device=device)
         expect = F.conv2d(x, module.weight, module.bias, padding='same')
         self.assertEqual(expect, module(x))
 
         # with dilation, symmetric padding
         module = nn.Conv2d(in_channels=1, out_channels=1, kernel_size=(3, 4),
-                           padding='same', dilation=(1, 2))
+                           padding='same', dilation=(1, 2), device=device)
         expect = F.conv2d(x, module.weight, module.bias, padding='same', dilation=(1, 2))
         self.assertEqual(expect, module(x))
 
         # Test non-zero padding_mode, requiring explicit padding
         module = nn.Conv2d(in_channels=1, out_channels=1, kernel_size=(3, 4),
-                           padding='same', padding_mode='reflect')
+                           padding='same', padding_mode='reflect', device=device)
         x_padded = F.pad(x, [1, 2, 1, 1], mode='reflect')
         expect = F.conv2d(x_padded, module.weight, module.bias, padding='valid')
         self.assertEqual(expect, module(x))
@@ -68,15 +68,15 @@ class TestConvolutionNN(NNTestCase):
 
         # Test connstruction with invalid padding string raises
         with self.assertRaisesRegex(ValueError, 'Invalid padding string'):
-            module = nn.Conv2d(in_channels=3, out_channels=33, kernel_size=10, padding='foo')
+            module = nn.Conv2d(in_channels=3, out_channels=33, kernel_size=10, padding='foo', device=device)
 
         # Test connstruction with same padding and strides raises
         with self.assertRaisesRegex(ValueError, "padding='same'"):
-            module = nn.Conv2d(in_channels=3, out_channels=33, kernel_size=10, padding='same', stride=2)
+            module = nn.Conv2d(in_channels=3, out_channels=33, kernel_size=10, padding='same', stride=2, device=device)
         with self.assertRaisesRegex(ValueError, "padding='same'"):
-            module = nn.Conv2d(in_channels=3, out_channels=33, kernel_size=10, padding='same', stride=(1, 3))
+            module = nn.Conv2d(in_channels=3, out_channels=33, kernel_size=10, padding='same', stride=(1, 3), device=device)
         with self.assertRaisesRegex(ValueError, "padding='same'"):
-            module = nn.Conv2d(in_channels=3, out_channels=33, kernel_size=10, padding='same', stride=(4, 1))
+            module = nn.Conv2d(in_channels=3, out_channels=33, kernel_size=10, padding='same', stride=(4, 1), device=device)
 
     def test_Conv2d_inconsistent_types(self, device):
         inputs = torch.randn(4, 1, 7, 7, dtype=torch.float, device=device)
@@ -104,19 +104,19 @@ class TestConvolutionNN(NNTestCase):
             # but it should work with the same type
             nn.functional.conv2d(inputs.float(), weights.float(), bias.float())
 
-    def test_Conv2d_1x1(self):
+    def test_Conv2d_1x1(self, device):
         in_channels = 2
         out_channels = 2
-        mod = torch.nn.Conv2d(2, 2, 1, bias=False).to(dtype=torch.double)
-        input = torch.randn(1, in_channels, 5, 5, requires_grad=True, dtype=torch.double)
+        mod = torch.nn.Conv2d(2, 2, 1, bias=False).to(dtype=torch.double).to(device)
+        input = torch.randn(1, in_channels, 5, 5, requires_grad=True, dtype=torch.double, device=device)
         for enabled in (False, True):
             with torch.backends.mkldnn.flags(enabled=enabled):
                 gradcheck(F.conv2d, (input, mod.weight))
 
-    def test_Conv2d_OneDNN(self):
+    def test_Conv2d_OneDNN(self, device):
         def run_once(group_val=24, dilation=1):
-            ifm = torch.ones([1, group_val, 6, 6], dtype=torch.float32)
-            weights = torch.ones([group_val, 1, 3, 3], dtype=torch.float32)
+            ifm = torch.ones([1, group_val, 6, 6], dtype=torch.float32, device=device)
+            weights = torch.ones([group_val, 1, 3, 3], dtype=torch.float32, device=device)
             op = torch.nn.Conv2d(
                 in_channels=group_val,
                 out_channels=group_val,
@@ -126,12 +126,13 @@ class TestConvolutionNN(NNTestCase):
                 dilation=[dilation, dilation],
                 groups=group_val,
                 bias=False,
-                padding_mode='zeros'
+                padding_mode='zeros',
+                device=device
             )
 
             op.weight.data = weights
             res = op(ifm)
-            grad_in = torch.ones(res.shape, dtype=torch.float32)
+            grad_in = torch.ones(res.shape, dtype=torch.float32, device=device)
             res.backward(grad_in)
             return op.weight.grad
 
@@ -161,13 +162,13 @@ class TestConvolutionNN(NNTestCase):
             # but it should work with the same type
             nn.functional.conv2d(inputs.float(), weights.float(), bias.float())
 
-    def test_Conv2d_missing_argument(self):
+    def test_Conv2d_missing_argument(self, device):
         c = nn.Conv2d(3, 3, 3)
         self.assertRaises(TypeError, lambda: c(None))
 
-    def test_Conv2d_backward_twice(self):
-        input = torch.randn(2, 3, 5, 5)
-        c = nn.Conv2d(3, 3, 3)
+    def test_Conv2d_backward_twice(self, device):
+        input = torch.randn(2, 3, 5, 5, device=device)
+        c = nn.Conv2d(3, 3, 3, device=device)
         o1 = c(input)
         o1.sum().backward()
         self.assertRaisesRegex(RuntimeError, 'Specify retain_graph=True',
