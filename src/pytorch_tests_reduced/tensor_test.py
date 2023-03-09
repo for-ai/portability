@@ -65,7 +65,8 @@ from ..utils.timer_wrapper import pytorch_op_timer
 
 class TestTorch(TestCase):
     def test_tensor_set(self, device):
-        t1 = torch.tensor([], device=device)
+        with pytorch_op_timer():
+            t1 = torch.tensor([], device=device)
         t2 = torch.empty(3, 4, 9, 10).uniform_()
         t1.set_(t2)
         self.assertEqual(t1.storage()._cdata, t2.storage()._cdata)
@@ -83,7 +84,8 @@ class TestTorch(TestCase):
         self.assertEqual(t1.stride(), stride)
 
         # test argument names
-        t1 = torch.tensor([])
+        with pytorch_op_timer():
+            t1 = torch.tensor([])
         # 1. case when source is tensor
         t1.set_(source=t2)
         self.assertEqual(t1.storage()._cdata, t2.storage()._cdata)
@@ -96,8 +98,10 @@ class TestTorch(TestCase):
         self.assertEqual(t1.size(), size)
         self.assertEqual(t1.stride(), stride)
 
-        t1 = torch.tensor([True, True], dtype=torch.bool)
-        t2 = torch.tensor([False, False], dtype=torch.bool)
+        with pytorch_op_timer():
+            t1 = torch.tensor([True, True], dtype=torch.bool, device=device)
+        with pytorch_op_timer():
+            t2 = torch.tensor([False, False], dtype=torch.bool, device=device)
         t1.set_(t2)
         self.assertEqual(t1.storage()._cdata, t2.storage()._cdata)
 

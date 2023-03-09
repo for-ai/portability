@@ -31,8 +31,9 @@ from torch.testing._internal.common_utils import dtype2prec_DONTUSE
 from torch.testing._internal.common_cuda import tf32_on_and_off, tf32_is_not_fp32
 
 from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests, onlyGPU, onlyTPU, skipCUDAIfNoCudnn
-AMPERE_OR_ROCM = TEST_WITH_ROCM or tf32_is_not_fp32()
+from ..utils.timer_wrapper import pytorch_op_timer
 import os
+AMPERE_OR_ROCM = TEST_WITH_ROCM or tf32_is_not_fp32()
 
 
 if TEST_SCIPY:
@@ -47,20 +48,23 @@ class TestConvolutionNN(NNTestCase):
         # Compare module against functional:
         # without strides/dilation, both symmetric and asymmetric padding
         x = torch.rand(1, 1, 9, 20, device=device)
-        module = nn.Conv2d(in_channels=1, out_channels=1, kernel_size=(5, 10),
+        with pytorch_op_timer():
+            module = nn.Conv2d(in_channels=1, out_channels=1, kernel_size=(5, 10),
                            padding='same', device=device)
         expect = F.conv2d(x, module.weight, module.bias, padding='same')
         self.assertEqual(expect, module(x))
 
         # with dilation, symmetric padding
-        module = nn.Conv2d(in_channels=1, out_channels=1, kernel_size=(3, 4),
-                           padding='same', dilation=(1, 2), device=device)
+        with pytorch_op_timer():
+            module = nn.Conv2d(in_channels=1, out_channels=1, kernel_size=(3, 4),
+                            padding='same', dilation=(1, 2), device=device)
         expect = F.conv2d(x, module.weight, module.bias, padding='same', dilation=(1, 2))
         self.assertEqual(expect, module(x))
 
         # Test non-zero padding_mode, requiring explicit padding
-        module = nn.Conv2d(in_channels=1, out_channels=1, kernel_size=(3, 4),
-                           padding='same', padding_mode='reflect', device=device)
+        with pytorch_op_timer():
+            module = nn.Conv2d(in_channels=1, out_channels=1, kernel_size=(3, 4),
+                            padding='same', padding_mode='reflect', device=device)
         x_padded = F.pad(x, [1, 2, 1, 1], mode='reflect')
         expect = F.conv2d(x_padded, module.weight, module.bias, padding='valid')
         self.assertEqual(expect, module(x))
@@ -107,7 +111,9 @@ class TestConvolutionNN(NNTestCase):
     def test_Conv2d_1x1(self, device):
         in_channels = 2
         out_channels = 2
-        mod = torch.nn.Conv2d(2, 2, 1, bias=False).to(dtype=torch.double).to(device)
+
+        with pytorch_op_timer():
+            mod = torch.nn.Conv2d(2, 2, 1, bias=False).to(dtype=torch.double).to(device)
         input = torch.randn(1, in_channels, 5, 5, requires_grad=True, dtype=torch.double, device=device)
         for enabled in (False, True):
             with torch.backends.mkldnn.flags(enabled=enabled):
@@ -117,18 +123,20 @@ class TestConvolutionNN(NNTestCase):
         def run_once(group_val=24, dilation=1):
             ifm = torch.ones([1, group_val, 6, 6], dtype=torch.float32, device=device)
             weights = torch.ones([group_val, 1, 3, 3], dtype=torch.float32, device=device)
-            op = torch.nn.Conv2d(
-                in_channels=group_val,
-                out_channels=group_val,
-                kernel_size=[3, 3],
-                stride=[2, 2],
-                padding=[1, 1],
-                dilation=[dilation, dilation],
-                groups=group_val,
-                bias=False,
-                padding_mode='zeros',
-                device=device
-            )
+
+            with pytorch_op_timer():
+                op = torch.nn.Conv2d(
+                    in_channels=group_val,
+                    out_channels=group_val,
+                    kernel_size=[3, 3],
+                    stride=[2, 2],
+                    padding=[1, 1],
+                    dilation=[dilation, dilation],
+                    groups=group_val,
+                    bias=False,
+                    padding_mode='zeros',
+                    device=device
+                )
 
             op.weight.data = weights
             res = op(ifm)
@@ -168,7 +176,9 @@ class TestConvolutionNN(NNTestCase):
 
     def test_Conv2d_backward_twice(self, device):
         input = torch.randn(2, 3, 5, 5, device=device)
-        c = nn.Conv2d(3, 3, 3, device=device)
+
+        with pytorch_op_timer():
+            c = nn.Conv2d(3, 3, 3, device=device)
         o1 = c(input)
         o1.sum().backward()
         self.assertRaisesRegex(RuntimeError, 'Specify retain_graph=True',
@@ -185,19 +195,24 @@ class TestConvolutionNN(NNTestCase):
         if AMPERE_OR_ROCM:
             dev_dtypes += [("cuda", torch.bfloat16)]
         for device, dtype in dev_dtypes:
-            m = nn.Conv2d(4, 4, kernel_size=3, groups=2, bias=False).to(device, dtype)
+
+            with pytorch_op_timer():
+                m = nn.Conv2d(4, 4, kernel_size=3, groups=2, bias=False).to(device, dtype)
             i = torch.randn(2, 4, 6, 6, device=device, dtype=dtype, requires_grad=True)
             output = m(i)
             grad_output = torch.randn(2, 4, 4, 4, device=device, dtype=dtype)
             output.backward(grad_output)
 
-            m1 = nn.Conv2d(2, 2, kernel_size=3, bias=False).to(device, dtype)
+
+            with pytorch_op_timer():
+                m1 = nn.Conv2d(2, 2, kernel_size=3, bias=False).to(device, dtype)
             m1.weight.data.copy_(m.weight.data[:2])
             i1 = i.data[:, :2].contiguous().requires_grad_(True)
             output1 = m1(i1)
             output1.backward(grad_output[:, :2].contiguous())
 
-            m2 = nn.Conv2d(2, 2, kernel_size=3, bias=False).to(device, dtype)
+            with pytorch_op_timer():
+                m2 = nn.Conv2d(2, 2, kernel_size=3, bias=False).to(device, dtype)
             m2.weight.data.copy_(m.weight.data[2:])
             i2 = i.data[:, 2:].contiguous().requires_grad_(True)
             output2 = m2(i2)
@@ -224,19 +239,22 @@ class TestConvolutionNN(NNTestCase):
         if AMPERE_OR_ROCM:
             dev_dtypes += [("cuda", torch.bfloat16)]
         for device, dtype in dev_dtypes:
-            m = nn.Conv2d(4, 16, kernel_size=3, groups=2, bias=False).to(device, dtype)
+            with pytorch_op_timer():
+                m = nn.Conv2d(4, 16, kernel_size=3, groups=2, bias=False).to(device, dtype)
             i = torch.randn(2, 4, 6, 6, device=device, dtype=dtype, requires_grad=True)
             output = m(i)
             grad_output = torch.randn(2, 16, 4, 4, device=device, dtype=dtype)
             output.backward(grad_output)
 
-            m1 = nn.Conv2d(2, 8, kernel_size=3, bias=False).to(device, dtype)
+            with pytorch_op_timer():
+                m1 = nn.Conv2d(2, 8, kernel_size=3, bias=False).to(device, dtype)
             m1.weight.data.copy_(m.weight.data[:8])
             i1 = i.data[:, :2].contiguous().requires_grad_(True)
             output1 = m1(i1)
             output1.backward(grad_output[:, :8].contiguous())
 
-            m2 = nn.Conv2d(2, 8, kernel_size=3, bias=False).to(device, dtype)
+            with pytorch_op_timer():
+                m2 = nn.Conv2d(2, 8, kernel_size=3, bias=False).to(device, dtype)
             m2.weight.data.copy_(m.weight.data[8:])
             i2 = i.data[:, 2:].contiguous().requires_grad_(True)
             output2 = m2(i2)
@@ -261,8 +279,10 @@ class TestConvolutionNNDeviceType(NNTestCase):
     def test_Conv2d_deterministic_cudnn(self, device, dtype):
         inputs = torch.randn(2, 3, 5, 5, device=device, dtype=dtype, requires_grad=True)
         with cudnn.flags(enabled=True, benchmark=True, deterministic=True):
-            conv1 = torch.nn.Conv2d(3, 3, 3).to(device, dtype)
-            conv2 = torch.nn.Conv2d(3, 3, 3).to(device, dtype)
+            with pytorch_op_timer():
+                conv1 = torch.nn.Conv2d(3, 3, 3).to(device, dtype)
+            with pytorch_op_timer():
+                conv2 = torch.nn.Conv2d(3, 3, 3).to(device, dtype)
             conv2.bias.data.copy_(conv1.bias.data)
             conv2.weight.data.copy_(conv1.weight.data)
             out1 = conv1(inputs)
@@ -280,8 +300,10 @@ class TestConvolutionNNDeviceType(NNTestCase):
     def test_Conv2d_deterministic_cudnn(self, device, dtype):
         inputs = torch.randn(2, 3, 5, 5, device=device, dtype=dtype, requires_grad=True)
         with cudnn.flags(enabled=True, benchmark=True, deterministic=True):
-            conv1 = torch.nn.Conv2d(3, 3, 3).to(device, dtype)
-            conv2 = torch.nn.Conv2d(3, 3, 3).to(device, dtype)
+            with pytorch_op_timer():
+                conv1 = torch.nn.Conv2d(3, 3, 3).to(device, dtype)
+            with pytorch_op_timer():
+                conv2 = torch.nn.Conv2d(3, 3, 3).to(device, dtype)
             conv2.bias.data.copy_(conv1.bias.data)
             conv2.weight.data.copy_(conv1.weight.data)
             out1 = conv1(inputs)
@@ -308,7 +330,8 @@ class TestConvolutionNNDeviceType(NNTestCase):
 
         def run_test(benchmark):
             with torch.backends.cudnn.flags(benchmark=benchmark):
-                conv = torch.nn.Conv2d(256, 256, kernel_size=3, padding=1).to(device, dtype)
+                with pytorch_op_timer():
+                    conv = torch.nn.Conv2d(256, 256, kernel_size=3, padding=1).to(device, dtype)
                 for size in sizes:
                     x = torch.randn(size, device=device, dtype=dtype)
                     out = conv(x.detach().clone().requires_grad_())
@@ -325,7 +348,8 @@ class TestConvolutionNNDeviceType(NNTestCase):
     @torch.backends.cudnn.flags(enabled=True, benchmark=False)
     def test_Conv2d_depthwise_naive_groups(self, device, dtype):
         for depth_multiplier in [1, 2]:
-            m = nn.Conv2d(2, 2 * depth_multiplier, kernel_size=3, groups=2).to(device, dtype)
+            with pytorch_op_timer():
+                m = nn.Conv2d(2, 2 * depth_multiplier, kernel_size=3, groups=2).to(device, dtype)
             i = torch.randn(2, 2, 6, 6, device=device, dtype=dtype).div_(2).requires_grad_()
             output = m(i)
             grad_output = torch.randn(2, 2 * depth_multiplier, 4, 4, device=device, dtype=dtype) / 2
@@ -333,14 +357,16 @@ class TestConvolutionNNDeviceType(NNTestCase):
 
             offset = 1 * depth_multiplier
 
-            m1 = nn.Conv2d(1, 1 * depth_multiplier, kernel_size=3).to(device, dtype)
+            with pytorch_op_timer():
+                m1 = nn.Conv2d(1, 1 * depth_multiplier, kernel_size=3).to(device, dtype)
             m1.weight.data = m.weight.data[:offset].clone()
             m1.bias.data = m.bias.data[:offset].clone()
             i1 = i.detach()[:, :1].clone().requires_grad_()
             output1 = m1(i1)
             output1.backward(grad_output[:, :offset].contiguous())
 
-            m2 = nn.Conv2d(1, 1 * depth_multiplier, kernel_size=3).to(device, dtype)
+            with pytorch_op_timer():
+                m2 = nn.Conv2d(1, 1 * depth_multiplier, kernel_size=3).to(device, dtype)
             m2.weight.data.copy_(m.weight.data[offset:])
             m2.bias.data.copy_(m.bias.data[offset:])
             i2 = i.detach()[:, 1:].clone().requires_grad_()
@@ -371,7 +397,8 @@ class TestConvolutionNNDeviceType(NNTestCase):
     @torch.backends.cudnn.flags(enabled=True, benchmark=False)
     def test_Conv2d_depthwise_naive_groups(self, device, dtype):
         for depth_multiplier in [1, 2]:
-            m = nn.Conv2d(2, 2 * depth_multiplier, kernel_size=3, groups=2).to(device, dtype)
+            with pytorch_op_timer():
+                m = nn.Conv2d(2, 2 * depth_multiplier, kernel_size=3, groups=2).to(device, dtype)
             i = torch.randn(2, 2, 6, 6, device=device, dtype=dtype).div_(2).requires_grad_()
             output = m(i)
             grad_output = torch.randn(2, 2 * depth_multiplier, 4, 4, device=device, dtype=dtype) / 2
@@ -379,14 +406,16 @@ class TestConvolutionNNDeviceType(NNTestCase):
 
             offset = 1 * depth_multiplier
 
-            m1 = nn.Conv2d(1, 1 * depth_multiplier, kernel_size=3).to(device, dtype)
+            with pytorch_op_timer():
+                m1 = nn.Conv2d(1, 1 * depth_multiplier, kernel_size=3).to(device, dtype)
             m1.weight.data = m.weight.data[:offset].clone()
             m1.bias.data = m.bias.data[:offset].clone()
             i1 = i.detach()[:, :1].clone().requires_grad_()
             output1 = m1(i1)
             output1.backward(grad_output[:, :offset].contiguous())
 
-            m2 = nn.Conv2d(1, 1 * depth_multiplier, kernel_size=3).to(device, dtype)
+            with pytorch_op_timer():
+                m2 = nn.Conv2d(1, 1 * depth_multiplier, kernel_size=3).to(device, dtype)
             m2.weight.data.copy_(m.weight.data[offset:])
             m2.bias.data.copy_(m.bias.data[offset:])
             i2 = i.detach()[:, 1:].clone().requires_grad_()
@@ -411,13 +440,15 @@ class TestConvolutionNNDeviceType(NNTestCase):
     @onlyAcceleratedDeviceTypes
     def test_Conv2d_size_1_kernel(self, device):
         x_cpu = torch.randn(2, 3, 5, 5, device=device)
-        conv_cpu = torch.nn.Conv2d(3, 3, kernel_size=1).to(device)
+        with pytorch_op_timer():
+            conv_cpu = torch.nn.Conv2d(3, 3, kernel_size=1).to(device)
         y_cpu = conv_cpu(x_cpu)
         y = torch.rand_like(y_cpu, device=device)
         y_cpu.backward(y)
 
         with cudnn.flags(enabled=False):
-            conv_cuda = torch.nn.Conv2d(3, 3, kernel_size=1).to(device)
+            with pytorch_op_timer():
+                conv_cuda = torch.nn.Conv2d(3, 3, kernel_size=1).to(device)
             conv_cuda.bias.data.copy_(conv_cpu.bias.data)
             conv_cuda.weight.data.copy_(conv_cpu.weight.data)
             y_cuda = conv_cuda(x_cpu.to(device))
@@ -432,20 +463,23 @@ class TestConvolutionNNDeviceType(NNTestCase):
     @torch.backends.cudnn.flags(enabled=True, benchmark=False)
     def test_Conv2d_naive_groups(self, device, dtype):
         # Check that grouped convolutions matches two half convolutions
-        m = nn.Conv2d(4, 4, kernel_size=3, groups=2).to(device, dtype)
+        with pytorch_op_timer():
+            m = nn.Conv2d(4, 4, kernel_size=3, groups=2).to(device, dtype)
         i = torch.randn(2, 4, 6, 6, device=device, dtype=dtype, requires_grad=True)
         output = m(i)
         grad_output = torch.randn(2, 4, 4, 4, device=device, dtype=dtype)
         output.backward(grad_output)
 
-        m1 = nn.Conv2d(2, 2, kernel_size=3).to(device, dtype)
+        with pytorch_op_timer():
+            m1 = nn.Conv2d(2, 2, kernel_size=3).to(device, dtype)
         m1.weight.data.copy_(m.weight.data[:2])
         m1.bias.data.copy_(m.bias.data[:2])
         i1 = i.data[:, :2].contiguous().requires_grad_(True)
         output1 = m1(i1)
         output1.backward(grad_output[:, :2].contiguous())
 
-        m2 = nn.Conv2d(2, 2, kernel_size=3).to(device, dtype)
+        with pytorch_op_timer():
+            m2 = nn.Conv2d(2, 2, kernel_size=3).to(device, dtype)
         m2.weight.data.copy_(m.weight.data[2:])
         m2.bias.data.copy_(m.bias.data[2:])
         i2 = i.data[:, 2:].contiguous().requires_grad_(True)
