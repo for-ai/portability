@@ -57,6 +57,7 @@ from collections import OrderedDict
 from tempfile import NamedTemporaryFile
 
 import torch
+from ..utils.timer_wrapper import pytorch_op_timer
 
 # TODO: remove this global setting
 # NN tests use double as the default dtype
@@ -94,21 +95,25 @@ class TestNN(NNTestCase):
         module = nn.Linear(5, 5, device=device)
         for p in module.parameters():
             p.requires_grad = False
-        module.zero_grad()
+        with pytorch_op_timer():            
+            module.zero_grad()
 
         module.weight.requires_grad = True
-        module.zero_grad()
+        with pytorch_op_timer():           
+            module.zero_grad()
         self.assertIsNone(module.weight.grad)  # uninitialized grad
 
         module(i).sum().backward()
         self.assertIsNotNone(module.weight.grad)
         self.assertGreater(module.weight.grad.data.abs().sum(), 0)
-        module.zero_grad()
+        with pytorch_op_timer():            
+            module.zero_grad()
         self.assertEqual(module.weight.grad.data,
                          module.weight.data.clone().zero_())
 
         module.bias.requires_grad = True
-        module.zero_grad()
+        with pytorch_op_timer():
+            module.zero_grad()
         self.assertIsNotNone(module.weight.grad)
         self.assertIsNone(module.bias.grad)
         module(i).sum().backward()
@@ -116,14 +121,16 @@ class TestNN(NNTestCase):
         self.assertIsNotNone(module.bias.grad)
         self.assertGreater(module.weight.grad.data.abs().sum(), 0)
         self.assertGreater(module.bias.grad.data.abs().sum(), 0)
-        module.zero_grad()
+        with pytorch_op_timer():
+            module.zero_grad()
         self.assertEqual(module.weight.grad.data,
                          module.weight.data.clone().zero_())
         self.assertEqual(module.bias.grad.data,
                          module.bias.data.clone().zero_())
         print(module.weight.device)
         # Force set to None.
-        module.zero_grad(set_to_none=True)
+        with pytorch_op_timer():
+            module.zero_grad(set_to_none=True)
         self.assertIsNone(module.weight.grad)
 
 

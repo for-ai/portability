@@ -65,7 +65,7 @@ from torch.testing._internal.common_cuda import tf32_on_and_off, tf32_is_not_fp3
 from torch.types import _TensorOrTensors
 
 from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
-
+from ..utils.timer_wrapper import pytorch_op_timer
 AMPERE_OR_ROCM = TEST_WITH_ROCM or tf32_is_not_fp32()
 
 # load_tests from common_utils is used to automatically filter tests for
@@ -98,7 +98,8 @@ class TestNN(NNTestCase):
         net.block = block
         net.add_module('empty', None)
 
-        state_dict = net.state_dict()
+        with pytorch_op_timer():
+            state_dict = net.state_dict()
         self.assertEqual(len(state_dict), 10)
         self.assertEqual(len(state_dict._metadata), 6)
         self.assertIn('', state_dict._metadata)
@@ -135,7 +136,8 @@ class TestNN(NNTestCase):
                 self.assertEqual(v.data_ptr(), param.data_ptr())
 
         l = nn.Linear(5, 5, device=device)
-        state_dict = l.state_dict()
+        with pytorch_op_timer():
+            state_dict = l.state_dict()
         self.assertEqual(len(state_dict), 2)
         self.assertEqual(len(state_dict._metadata), 1)
         self.assertIn('', state_dict._metadata)
@@ -149,7 +151,9 @@ class TestNN(NNTestCase):
             self.assertEqual(state_dict['bias'].data_ptr(), l.bias.data_ptr())
 
         # Reference https://github.com/pytorch/pytorch/pull/75507#issuecomment-1110291545
-        self.assertNotWarn(lambda: l.state_dict(destination=dict()), "Should not warn kwarg destination w/o _metadata")
+        with pytorch_op_timer():
+            test_1 = lambda: l.state_dict(destination=dict())
+            self.assertNotWarn(test_1, "Should not warn kwarg destination w/o _metadata")
 
 def _hook_to_pickle(*args, **kwargs):
     pass
@@ -159,7 +163,8 @@ class TestStateDictHooks(TestCase):
     def test_load_state_dict_pre_hook(self, device):
 
         m = nn.Linear(10, 10, device=device)
-        m_state_dict = m.state_dict()
+        with pytorch_op_timer():
+            m_state_dict = m.state_dict()
 
         m_load = nn.Linear(10, 10, device=device)
 
@@ -232,7 +237,8 @@ class TestStateDictHooks(TestCase):
 
         for ctor in [MyModuleContainer, lambda x: x]:
             m = ctor(MyModule())
-            state_dict = m.state_dict()
+            with pytorch_op_timer():
+                state_dict = m.state_dict()
             if isinstance(m, MyModuleContainer):
                 mod = m.mod
             else:
@@ -273,7 +279,8 @@ class TestStateDictHooks(TestCase):
             nested.my_post_load_hook,
         )
         # Hook must be called even if it is wrapped
-        ret = wrapped.load_state_dict(wrapped.state_dict(), strict=False)
+        with pytorch_op_timer():
+            ret = wrapped.load_state_dict(wrapped.state_dict(), strict=False)
         self.assertEqual(hook_called, 1)
         # Ensure that the hook modified missing_keys and unexpected_keys
         missing = ret.missing_keys
@@ -283,13 +290,15 @@ class TestStateDictHooks(TestCase):
         # When called with strict=True, the error raised should mention the
         # missing and unexpected keys the hook added.
         with self.assertRaisesRegex(RuntimeError, "foo.*\n.*bar"):
-            wrapped.load_state_dict(wrapped.state_dict(), strict=True)
+            with pytorch_op_timer():
+                wrapped.load_state_dict(wrapped.state_dict(), strict=True)
         self.assertEqual(hook_called, 2)
         # Removing the hook via handle.remove() should cause it not to
         # fire anymore.
         handle.remove()
         # Hook did not run so it should not have added any keys
-        ret = wrapped.load_state_dict(wrapped.state_dict(), strict=False)
+        with pytorch_op_timer():
+            ret = wrapped.load_state_dict(wrapped.state_dict(), strict=False)
         self.assertEqual(ret.missing_keys, [])
         self.assertEqual(ret.unexpected_keys, [])
         # hook_called should not have been incremented
@@ -300,7 +309,8 @@ class TestStateDictHooks(TestCase):
             incompatible_keys.unexpected_keys.clear()
 
         nested.register_load_state_dict_post_hook(load_hook_clear_incompatible)
-        state_dict = wrapped.state_dict()
+        with pytorch_op_timer():
+            state_dict = wrapped.state_dict()
         state_dict["extra"] = torch.ones(1, device=device)
         # load state_dict with strict=True should not throw.
         ret = wrapped.load_state_dict(state_dict, strict=True)
@@ -316,7 +326,8 @@ class TestStateDictHooks(TestCase):
 
         for m in [nn.Softmin(10), nn.Softmax(10), nn.LogSoftmax(10)]:
             called = False
-            sd = deepcopy(m.state_dict())
+            with pytorch_op_timer():
+                sd = deepcopy(m.state_dict())
             self.assertTrue(hasattr(m, '_load_state_dict_post_hooks'))
             # Simulate an older model that did not have this attr
             delattr(m, '_load_state_dict_post_hooks')

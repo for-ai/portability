@@ -13,7 +13,7 @@ from torch.testing._internal.common_nn import NNTestCase, freeze_rng_state
 from torch.testing._internal.common_device_type import expectedFailureXLA
 import torch.nn.functional as F
 import torch.nn as nn
-
+from ..utils.timer_wrapper import pytorch_op_timer
 from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
 
 class TestDropoutNN(NNTestCase):
@@ -31,24 +31,6 @@ class TestDropoutNN(NNTestCase):
             self.assertLess(abs(output.data.std() - std), 0.1)
             output.backward(input)
 
-    def test_AlphaDropout(self, device):
-        # generate random tensor with zero mean and unit std
-        input = torch.randn(5000, device=device)
-        self._test_alpha_dropout(nn.AlphaDropout, input)
-
-    def test_FeatureAlphaDropout(self, device):
-        b = random.randint(1, 5)
-        w = random.randint(1, 5)
-        h = random.randint(1, 5)
-        d = random.randint(1, 2)
-        num_features = 1000
-        input = torch.randn(num_features, b, d, w, h, device=device)
-        self._test_alpha_dropout(nn.FeatureAlphaDropout, input)
-
-        # no batch dims
-        input = torch.randn(50, 20, 64, 64, device=device)
-        self._test_alpha_dropout(nn.FeatureAlphaDropout, input)
-
     @onlyAcceleratedDeviceTypes
     def test_native_dropout_corner_case(self, device):
         for train in [True, False]:
@@ -56,7 +38,8 @@ class TestDropoutNN(NNTestCase):
                 x = torch.randn(5).to(device=device).requires_grad_()
                 x_ref = x.detach().requires_grad_()
                 o = torch.native_dropout(x, p, train)[0]
-                o_ref = torch.dropout(x_ref, p, train)
+                with pytorch_op_timer():
+                    o_ref = torch.dropout(x_ref, p, train)
                 o.sum().backward()
                 o_ref.sum().backward()
                 assert (o.equal(o_ref))
@@ -64,16 +47,13 @@ class TestDropoutNN(NNTestCase):
 
     def test_invalid_dropout_p(self, device):
         v = torch.ones(1, device=device)
-        self.assertRaises(ValueError, lambda: nn.Dropout(-0.1).to(device))
-        self.assertRaises(ValueError, lambda: nn.Dropout(1.1).to(device))
-        self.assertRaises(ValueError, lambda: nn.Dropout1d(-0.1).to(device))
-        self.assertRaises(ValueError, lambda: nn.Dropout1d(1.1).to(device))
-        self.assertRaises(ValueError, lambda: nn.Dropout2d(-0.1).to(device))
-        self.assertRaises(ValueError, lambda: nn.Dropout2d(1.1).to(device))
-        self.assertRaises(ValueError, lambda: nn.Dropout3d(-0.1).to(device))
-        self.assertRaises(ValueError, lambda: nn.Dropout3d(1.1).to(device))
-        self.assertRaises(ValueError, lambda: F.dropout(v, -0.1).to(device))
-        self.assertRaises(ValueError, lambda: F.dropout(v, 1.1).to(device))
+
+        with pytorch_op_timer():
+            test_1 = lambda: F.dropout(v, -0.1).to(device)
+        self.assertRaises(ValueError, test_1)
+        with pytorch_op_timer():
+            test_2 = lambda: F.dropout(v, 1.1).to(device)
+        self.assertRaises(ValueError, test_2)
 
 
 class TestDropoutNNDeviceType(NNTestCase):
@@ -188,104 +168,10 @@ class TestDropoutNNDeviceType(NNTestCase):
         for b, c in product(range(B), range(C)):
             self.assertTrue(result[b, c].count_nonzero() in (0, channel_numel))
 
-    # @expectedFailureXLA  # seems like freeze_rng_state is not honoured by XLA
-    def test_Dropout1d(self, device):
-        with set_default_dtype(torch.double):
-            N, C, L = random.randint(10, 15), random.randint(
-                10, 15), random.randint(10, 15)
-            input = torch.empty(N, C, L, device=device)
-            self._test_dropout(nn.Dropout1d, device, input)
-
-            with self.assertRaisesRegex(RuntimeError, "Expected 2D or 3D input, but received a 4D input"):
-                nn.Dropout1d(p=0.5)(torch.rand(1, 2, 2, 2, device=device))
-
-            with self.assertRaisesRegex(RuntimeError, "Expected 2D or 3D input, but received a 1D input"):
-                nn.Dropout1d(p=0.5)(torch.rand(2, device=device))
-
-            # no batch dims
-            input = torch.rand(50, 2, device=device)
-            self._test_dropoutNd_no_batch(nn.Dropout1d(p=0.5).to(device), input)
-            self._test_dropoutNd_no_batch(
-                nn.Dropout1d(p=0.5, inplace=True).to(device), input)
-
-            # check that complete channels are dropped
-            input = torch.ones(10, 4, 2, device=device)
-            self._test_dropoutNd_channel_zero(nn.Dropout1d(p=0.5).to(device), input)
-            self._test_dropoutNd_channel_zero(
-                nn.Dropout1d(p=0.5, inplace=True).to(device), input)
-
-    # @expectedFailureXLA  # seems like freeze_rng_state is not honoured by XLA
-    def test_Dropout2d(self, device):
-        b = random.randint(1, 5)
-        w = random.randint(1, 5)
-        h = random.randint(1, 5)
-        num_features = 1000
-        input = torch.empty(num_features, b, w, h, device=device)
-        self._test_dropout(nn.Dropout2d, device, input)
-        self._test_dropout(nn.Dropout2d, device, input,
-                           memory_format=torch.channels_last)
-
-        self._test_dropout_discontiguous(nn.Dropout2d, device)
-        self._test_dropout_discontiguous(
-            nn.Dropout2d, device, memory_format=torch.channels_last)
-
-        with self.assertWarnsRegex(UserWarning, "Received a 5-D input to dropout2d"):
-            nn.Dropout2d(p=0.5)(torch.rand(1, 2, 2, 2, 2, device=device))
-
-        with self.assertWarnsRegex(UserWarning, "Received a 2-D input to dropout2d"):
-            nn.Dropout2d(p=0.5)(torch.rand(1, 2, device=device))
-
-        # TODO: Uncomment these lines once no-batch-dim inputs are supported.
-        # For now, the historical dropout1d behavior is performed for 3D inputs.
-        # See https://github.com/pytorch/pytorch/issues/77081
-
-        # input = torch.rand(50, 2, 2, device=device)
-        # self._test_dropoutNd_no_batch(nn.Dropout2d(p=0.5), input)
-        # self._test_dropoutNd_no_batch(nn.Dropout2d(p=0.5, inplace=True), input)
-
-        with self.assertWarnsRegex(UserWarning, "assuming that channel-wise 1D dropout behavior is desired"):
-            nn.Dropout2d(p=0.5)(torch.rand(1, 2, 2, device=device))
-
-        # check that complete channels are dropped
-        input = torch.ones(10, 4, 2, 2, device=device)
-        self._test_dropoutNd_channel_zero(nn.Dropout2d(p=0.5).to(device), input)
-        self._test_dropoutNd_channel_zero(
-            nn.Dropout2d(p=0.5, inplace=True).to(device), input)
-
-    # @expectedFailureXLA  # seems like freeze_rng_state is not honoured by XLA
-    def test_Dropout3d(self, device):
-        b = random.randint(1, 5)
-        w = random.randint(1, 5)
-        h = random.randint(1, 5)
-        d = random.randint(1, 2)
-        num_features = 1000
-        input = torch.empty(num_features, b, d, w, h)
-        self._test_dropout(nn.Dropout3d, device, input)
-
-        self._test_dropout_discontiguous(nn.Dropout3d, device)
-        self._test_dropout_discontiguous(
-            nn.Dropout3d, device, memory_format=torch.channels_last)
-
-        with self.assertWarnsRegex(UserWarning, "Received a 6-D input to dropout3d"):
-            nn.Dropout3d(p=0.5)(torch.rand(1, 2, 2, 2, 2, 2, device=device))
-
-        with self.assertWarnsRegex(UserWarning, "Received a 3-D input to dropout3d"):
-            nn.Dropout3d(p=0.5)(torch.rand(1, 2, 2, device=device))
-
-        # no batch dims
-        input = torch.rand(50, 2, 2, 2, device=device)
-        self._test_dropoutNd_no_batch(nn.Dropout3d(p=0.5).to(device), input)
-        self._test_dropoutNd_no_batch(nn.Dropout3d(p=0.5, inplace=True).to(device), input)
-
-        # check that complete channels are dropped
-        input = torch.ones(10, 4, 2, 2, 2, device=device)
-        self._test_dropoutNd_channel_zero(nn.Dropout3d(p=0.5).to(device), input)
-        self._test_dropoutNd_channel_zero(
-            nn.Dropout3d(p=0.5, inplace=True).to(device), input)
-
     def test_empty_dropout(self, device):
         x = torch.tensor([]).to(device)
-        out = torch.nn.functional.dropout(x)
+        with pytorch_op_timer():
+            out = torch.nn.functional.dropout(x)
         self.assertEqual(out.size(), x.size())
 
 

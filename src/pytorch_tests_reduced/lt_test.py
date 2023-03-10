@@ -41,7 +41,7 @@ import numpy as np
 import torch
 import torch.utils._pytree as pytree
 from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
-
+from ..utils.timer_wrapper import pytorch_op_timer
 
 class TestNLLLoss(TestCase):
     def test_lt(self, device):
@@ -50,8 +50,10 @@ class TestNLLLoss(TestCase):
             cpu_y = torch.randn(shape, device='cpu', dtype=torch.float)
             mps_x = cpu_x.detach().clone().to(device)
             mps_y = cpu_y.detach().clone().to(device)
-            result_mps = torch.lt(mps_x, mps_y)
-            result_cpu = torch.lt(cpu_x, cpu_y)
+            with pytorch_op_timer():
+                result_mps = torch.lt(mps_x, mps_y)
+            with pytorch_op_timer():
+                result_cpu = torch.lt(cpu_x, cpu_y)
 
             self.assertEqual(result_cpu, result_mps.to(device))
 
@@ -61,8 +63,10 @@ class TestNLLLoss(TestCase):
         def helper(shape):
             cpu_x = torch.randn(shape, device='cpu', dtype=torch.float)
             mps_x = cpu_x.detach().clone().to(device)
-            result_mps = torch.lt(mps_x, 0.0)
-            result_cpu = torch.lt(cpu_x, 0.0)
+            with pytorch_op_timer():
+                result_mps = torch.lt(mps_x, 0.0)
+            with pytorch_op_timer():
+                result_cpu = torch.lt(cpu_x, 0.0)
 
             self.assertEqual(result_cpu, result_mps.to(device))
 
