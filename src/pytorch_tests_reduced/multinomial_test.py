@@ -45,6 +45,7 @@ from torch.distributions.utils import (probs_to_logits, lazy_property, tril_matr
                                        vec_to_tril_matrix)
 from torch.nn.functional import softmax
 from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+from ..utils.timer_wrapper import pytorch_op_timer
 
 # load_tests from torch.testing._internal.common_utils is used to automatically filter tests for
 # sharding on sandcastle. This line silences flake warnings
@@ -89,7 +90,8 @@ class TestDistributions(DistributionsTestCase):
 
     def _gradcheck_log_prob(self, dist_ctor, ctor_params):
         # performs gradient checks on log_prob
-        distribution = dist_ctor(*ctor_params)
+        with pytorch_op_timer():
+            distribution = dist_ctor(*ctor_params)
         s = distribution.sample()
         if not distribution.support.is_discrete:
             s = s.detach().requires_grad_()
@@ -102,24 +104,33 @@ class TestDistributions(DistributionsTestCase):
     def test_multinomial_1d(self, device):
         total_count = 10
         p = torch.tensor([0.1, 0.2, 0.3], requires_grad=True, device=device)
-        self.assertEqual(Multinomial(total_count, p).sample().size(), (3,))
-        self.assertEqual(Multinomial(total_count, p).sample((2, 2)).size(), (2, 2, 3))
-        self.assertEqual(Multinomial(total_count, p).sample((1,)).size(), (1, 3))
+        with pytorch_op_timer():
+            test_1 = Multinomial(total_count, p).sample().size()
+        self.assertEqual(test_1, (3,))
+        with pytorch_op_timer():
+            test_2 = Multinomial(total_count, p).sample((2, 2)).size()
+            self.assertEqual(test_2, (2, 2, 3))
+        with pytorch_op_timer():
+            test_3 = Multinomial(total_count, p).sample((1,)).size()
+        self.assertEqual(test_3, (1, 3))
         self._gradcheck_log_prob(lambda p: Multinomial(total_count, p), [p])
         self._gradcheck_log_prob(lambda p: Multinomial(total_count, None, p.log()), [p])
-        self.assertRaises(NotImplementedError, Multinomial(10, p).rsample)
+        with pytorch_op_timer():
+            test_4 = Multinomial(10, p).rsample
+        self.assertRaises(NotImplementedError, test_4)
 
     @unittest.skipIf(not TEST_NUMPY, "NumPy not found")
     def test_multinomial_1d_log_prob_and_entropy(self):
         total_count = 10
         p = torch.tensor([0.1, 0.2, 0.3], requires_grad=True)
-        dist = Multinomial(total_count, probs=p)
+        with pytorch_op_timer():
+            dist = Multinomial(total_count, probs=p)
         x = dist.sample()
         log_prob = dist.log_prob(x)
         expected = torch.tensor(scipy.stats.multinomial.logpmf(x.numpy(), n=total_count, p=dist.probs.detach().numpy()))
         self.assertEqual(log_prob, expected)
-
-        dist = Multinomial(total_count, logits=p.log())
+        with pytorch_op_timer():
+            dist = Multinomial(total_count, logits=p.log())
         x = dist.sample()
         log_prob = dist.log_prob(x)
         expected = torch.tensor(scipy.stats.multinomial.logpmf(x.numpy(), n=total_count, p=dist.probs.detach().numpy()))
@@ -134,15 +145,22 @@ class TestDistributions(DistributionsTestCase):
         probabilities_1 = [[1.0, 0.0], [0.0, 1.0]]
         p = torch.tensor(probabilities, requires_grad=True)
         s = torch.tensor(probabilities_1, requires_grad=True)
-        self.assertEqual(Multinomial(total_count, p).sample().size(), (2, 3))
-        self.assertEqual(Multinomial(total_count, p).sample(sample_shape=(3, 4)).size(), (3, 4, 2, 3))
-        self.assertEqual(Multinomial(total_count, p).sample((6,)).size(), (6, 2, 3))
+        with pytorch_op_timer():
+            test_1 = Multinomial(total_count, p).sample().size()
+        self.assertEqual(test_1, (2, 3))
+        with pytorch_op_timer():   
+            test_2 = Multinomial(total_count, p).sample(sample_shape=(3, 4)).size()         
+        self.assertEqual(test_2, (3, 4, 2, 3))
+        with pytorch_op_timer():
+            test_3 = Multinomial(total_count, p).sample((6,)).size()
+        self.assertEqual(test_3, (6, 2, 3))
         set_rng_seed(0)
         self._gradcheck_log_prob(lambda p: Multinomial(total_count, p), [p])
         self._gradcheck_log_prob(lambda p: Multinomial(total_count, None, p.log()), [p])
 
         # sample check for extreme value of probs
-        self.assertEqual(Multinomial(total_count, s).sample(),
+        with pytorch_op_timer():
+            self.assertEqual(Multinomial(total_count, s).sample(),
                          torch.tensor([[total_count, 0], [0, total_count]], dtype=torch.float64, device=device))
 
 
@@ -152,7 +170,8 @@ class TestDistributionShapes(DistributionsTestCase):
         tensor_sample_1 = torch.ones(3, 2, device=device)
         tensor_sample_2 = torch.ones(3, 2, 3, device=device)
         
-        dist = Multinomial(10, torch.tensor([[0.6, 0.3], [0.6, 0.3], [0.6, 0.3]], device=device))
+        with pytorch_op_timer():
+            dist = Multinomial(10, torch.tensor([[0.6, 0.3], [0.6, 0.3], [0.6, 0.3]], device=device))
         self.assertEqual(dist._batch_shape, torch.Size((3,)))
         self.assertEqual(dist._event_shape, torch.Size((2,)))
         self.assertEqual(dist.sample().size(), torch.Size((3, 2)))
@@ -167,7 +186,8 @@ class TestNumericalStability(DistributionsTestCase):
     def test_multinomial_log_prob_with_logits(self, device):
         for dtype in ([torch.float, torch.double]):
             p = torch.tensor([-inf, 0], dtype=dtype, requires_grad=True, device=device)
-            multinomial = Multinomial(10, logits=p)
+            with pytorch_op_timer():
+                multinomial = Multinomial(10, logits=p)
             log_pdf_prob_1 = multinomial.log_prob(torch.tensor([0, 10], dtype=dtype, device=device))
             self.assertEqual(log_pdf_prob_1.item(), 0)
             log_pdf_prob_0 = multinomial.log_prob(torch.tensor([10, 0], dtype=dtype, device=device))

@@ -27,7 +27,7 @@ from torch.testing._creation import float_to_corresponding_complex_type_map
 
 from torch.utils.dlpack import to_dlpack
 from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
-
+from ..utils.timer_wrapper import pytorch_op_timer
 
 class TestTensorCreation(TestCase):
     exact_dtype = True
@@ -36,14 +36,17 @@ class TestTensorCreation(TestCase):
     @suppress_warnings
     def test_range(self, device):
         torch.set_default_dtype(torch.float32)
-        res1 = torch.range(0, 1, device=device)
+        with pytorch_op_timer():
+            res1 = torch.range(0, 1, device=device)
         res2 = torch.tensor((), device=device)
-        torch.range(0, 1, device=device, out=res2)
+        with pytorch_op_timer():
+            torch.range(0, 1, device=device, out=res2)
         self.assertEqual(res1, res2, atol=0, rtol=0)
 
         # Check range for non-contiguous tensors.
         x = torch.zeros(2, 3, device=device)
-        torch.range(0, 3, device=device, out=x.narrow(1, 1, 2))
+        with pytorch_op_timer():
+            torch.range(0, 3, device=device, out=x.narrow(1, 1, 2))
         res2 = torch.tensor(((0, 0, 1), (0, 2, 3)),
                             device=device, dtype=torch.float32)
         self.assertEqual(x, res2, atol=1e-16, rtol=0)
@@ -51,21 +54,25 @@ class TestTensorCreation(TestCase):
         # Check negative
         res1 = torch.tensor((1, 0), device=device, dtype=torch.float32)
         res2 = torch.tensor((), device=device)
-        torch.range(1, 0, -1, device=device, out=res2)
+        with pytorch_op_timer():
+            torch.range(1, 0, -1, device=device, out=res2)
         self.assertEqual(res1, res2, atol=0, rtol=0)
 
         # Equal bounds
         res1 = torch.ones(1, device=device)
         res2 = torch.tensor((), device=device)
-        torch.range(1, 1, -1, device=device, out=res2)
+        with pytorch_op_timer():
+            torch.range(1, 1, -1, device=device, out=res2)
         self.assertEqual(res1, res2, atol=0, rtol=0)
-        torch.range(1, 1, 1, device=device, out=res2)
+        with pytorch_op_timer():
+            torch.range(1, 1, 1, device=device, out=res2)
         self.assertEqual(res1, res2, atol=0, rtol=0)
 
     # TODO: this test should be updated
     def test_range_warning(self, device):
         with warnings.catch_warnings(record=True) as w:
-            torch.range(0, 10, device=device)
+            with pytorch_op_timer():
+                torch.range(0, 10, device=device)
             self.assertEqual(len(w), 1)
 
 

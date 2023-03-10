@@ -50,7 +50,7 @@ from torch.testing._internal.common_cuda import TEST_CUDA, TEST_MULTIGPU, TEST_C
 from torch.testing._internal.common_nn import NNTestCase, NewModuleTest, CriterionTest, \
     module_tests, criterion_tests, loss_reference_fns, \
     ctcloss_reference, new_module_tests, single_batch_reference_fn
-from torch.testing._internal.common_device_type import instantiate_device_type_tests, dtypes, \
+from torch.testing._internal.common_device_type import dtypes, \
     dtypesIfCUDA, precisionOverride, skipCUDAIfCudnnVersionLessThan, onlyCUDA, onlyCPU, \
     skipCUDAIfRocm, skipCUDAIf, skipCUDAIfNotRocm, \
     deviceCountAtLeast, largeTensorTest, expectedFailureMeta, skipMeta, get_all_device_types
@@ -64,7 +64,7 @@ from torch.testing._internal.common_utils import dtype2prec_DONTUSE
 from torch.testing._internal.common_cuda import tf32_on_and_off, tf32_is_not_fp32, tf32_off, tf32_on
 from torch.types import _TensorOrTensors
 from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
-
+from ..utils.timer_wrapper import pytorch_op_timer
 
 AMPERE_OR_ROCM = TEST_WITH_ROCM or tf32_is_not_fp32()
 
@@ -93,11 +93,11 @@ class TestNN(NNTestCase):
         input_shape = (2, 5)
         log_prob1 = F.log_softmax(torch.randn(input_shape, device=device), 1).to(device)
         prob2 = F.softmax(torch.randn(input_shape, device=device), 1).to(device)
-
-        loss = nn.KLDivLoss(reduction='batchmean')
+        with pytorch_op_timer():
+            loss = nn.KLDivLoss(reduction='batchmean')
         l = loss(log_prob1, prob2)
-
-        loss_none_reduce = nn.KLDivLoss(reduction='sum')(log_prob1, prob2)
+        with pytorch_op_timer():
+            loss_none_reduce = nn.KLDivLoss(reduction='sum')(log_prob1, prob2)
         expected = loss_none_reduce / input_shape[0]
 
         self.assertEqual(l, expected)
@@ -106,11 +106,11 @@ class TestNN(NNTestCase):
         input_shape = (2, 5)
         log_prob1 = F.log_softmax(torch.randn(input_shape, device=device), 1).to(device)
         log_prob2 = F.log_softmax(torch.randn(input_shape, device=device), 1).to(device)
-
-        loss = nn.KLDivLoss(reduction='batchmean', log_target=True)
+        with pytorch_op_timer():
+            loss = nn.KLDivLoss(reduction='batchmean', log_target=True)
         l = loss(log_prob1, log_prob2)
-
-        loss_none_reduce = nn.KLDivLoss(reduction='sum', log_target=True)(log_prob1, log_prob2)
+        with pytorch_op_timer():
+            loss_none_reduce = nn.KLDivLoss(reduction='sum', log_target=True)(log_prob1, log_prob2)
         expected = loss_none_reduce / input_shape[0]
 
         self.assertEqual(l, expected)

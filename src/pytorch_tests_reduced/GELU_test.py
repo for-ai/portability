@@ -14,7 +14,7 @@ from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceler
 # TODO: remove this global setting
 # NN tests use double as the default dtype
 torch.set_default_dtype(torch.double)
-
+from ..utils.timer_wrapper import pytorch_op_timer
 
 class TestNNDeviceType(NNTestCase):
     @dtypes(torch.float)
@@ -36,8 +36,8 @@ class TestNNDeviceType(NNTestCase):
         def _test(activation, batch_first, training):
             def perm_fn(x):
                 return x.transpose(1, 0) if batch_first else x
-
-            model = nn.TransformerEncoderLayer(d_model, nhead, dim_feedforward, dropout,
+            with pytorch_op_timer():
+                model = nn.TransformerEncoderLayer(d_model, nhead, dim_feedforward, dropout,
                                                activation, batch_first=batch_first, device=device, dtype=dtype)
             if not training:
                 assert dropout == 0
@@ -93,7 +93,7 @@ class TestNNDeviceType(NNTestCase):
                                                 [2.42000277, 0.03800944, -0.60824798, -0.04754947]]], device=device, dtype=dtype))
             torch.testing.assert_close(
                 result, ref_output, rtol=rtol, atol=atol)
-        for activation, batch_first, training in product(('gelu', F.gelu, nn.GELU()), (True, False), (True, False)):
+        for activation, batch_first, training in product((nn.GELU(), nn.GELU()), (True, False), (True, False)):
             # Fast path requires inference mode.
             if training:
                 cm = contextlib.nullcontext()

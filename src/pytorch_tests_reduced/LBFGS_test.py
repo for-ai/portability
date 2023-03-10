@@ -8,7 +8,7 @@ from torch.autograd import Variable
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.testing._internal.common_utils import TestCase, run_tests
 from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
-
+from ..utils.timer_wrapper import pytorch_op_timer
 
 class TestOptim(TestCase):
     def _test_state_dict(self, weight, bias, input, constructor, device):
@@ -122,7 +122,8 @@ class TestOptim(TestCase):
 
         def make_two_arg_constructor(constructor, maximize: bool = False):
             if constructor_accepts_maximize:
-                return lambda weight, bias: constructor(weight, bias, maximize)
+                with pytorch_op_timer():
+                    return lambda weight, bias: constructor(weight, bias, maximize)
             return constructor
 
         for maximize in (True, False):
@@ -159,7 +160,7 @@ class TestOptim(TestCase):
         if not constructor_accepts_maximize:
             def three_arg_constructor(weight, bias, maximize):
                 self.assertFalse(maximize)
-                return constructor(weight, bias)
+                    return constructor(weight, bias)
         else:
             three_arg_constructor = constructor
 
@@ -167,7 +168,8 @@ class TestOptim(TestCase):
             weight = Variable(weight, requires_grad=True).to(device)
             bias = Variable(bias, requires_grad=True).to(device)
             input = Variable(input).to(device)
-            optimizer = three_arg_constructor(weight, bias, maximize)
+            with pytorch_op_timer():
+                optimizer = three_arg_constructor(weight, bias, maximize)
             schedulers = []
             for scheduler_constructor in scheduler_constructors:
                 schedulers.append(scheduler_constructor(optimizer))

@@ -28,6 +28,7 @@ from torch.testing._internal.common_dtype import (
     floating_and_complex_types_and, integral_types, floating_types_and,
 )
 from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+from ..utils.timer_wrapper import pytorch_op_timer
 
 
 if TEST_SCIPY:
@@ -116,11 +117,12 @@ class TestSparse(TestSparseBase):
             alpha = random.random()
             beta = random.random()
 
-            res = torch.saddmm(t, x, y, beta=beta, alpha=alpha)
+            with pytorch_op_timer():
+                res = torch.saddmm(t, x, y, beta=beta, alpha=alpha)
             expected = torch.addmm(self.safeToDense(t), self.safeToDense(x), y, beta=beta, alpha=alpha)
             self.assertEqual(self.safeToDense(res), expected)
-
-            res = torch.saddmm(t, x, y)
+            with pytorch_op_timer():
+                res = torch.saddmm(t, x, y)
             expected = torch.addmm(self.safeToDense(t), self.safeToDense(x), y)
             self.assertEqual(self.safeToDense(res), expected)
 

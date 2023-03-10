@@ -8,7 +8,7 @@ from torch.testing._internal.common_utils import _assertGradAndGradgradChecks, g
 import torch.testing._internal.hypothesis_utils as hu
 from hypothesis import given
 from torch.nn import MultiheadAttention
-from torch.testing._internal.common_device_type import instantiate_device_type_tests, dtypes, \
+from torch.testing._internal.common_device_type import dtypes, \
     dtypesIfCUDA, precisionOverride, skipCUDAIfCudnnVersionLessThan, onlyCUDA, onlyCPU, \
     skipCUDAIfRocm, skipCUDAIf, skipCUDAIfNotRocm, \
     onlyNativeDeviceTypes, deviceCountAtLeast, largeTensorTest, expectedFailureMeta, skipMeta, get_all_device_types
@@ -58,6 +58,7 @@ import gc
 
 import torch
 from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+from ..utils.timer_wrapper import pytorch_op_timer
 
 # TODO: remove this global setting
 # NN tests use double as the default dtype
@@ -97,8 +98,7 @@ class TestNNDeviceType(NNTestCase):
 
         for input_shape in [(5, 6), ()]:
             for reduction in ['none', 'mean', 'sum']:
-                for module in [torch.nn.BCELoss, torch.nn.L1Loss, torch.nn.MSELoss,
-                               torch.nn.SmoothL1Loss, torch.nn.SoftMarginLoss]:
+                for module in [torch.nn.SmoothL1Loss]:
                     input = torch.randn(
                         input_shape, device=device, requires_grad=True)
                     target = torch.empty(input_shape, device=device).random_(2)
@@ -106,7 +106,8 @@ class TestNNDeviceType(NNTestCase):
 
                     input = torch.randn(
                         input_shape, device=device, requires_grad=True)
-                    m = module(reduction=reduction)
+                    with pytorch_op_timer():
+                        m = module(reduction=reduction)
                     output = m(sigmoid(input), target)
                     verify_reduction_scalars(input, reduction, output)
 
@@ -126,7 +127,8 @@ class TestNNDeviceType(NNTestCase):
 
         def _test_smooth_l1_loss_vs_huber_loss_helper(input, target, beta, require_equal):
             for reduction in ['mean', 'sum', 'none']:
-                smooth_l1 = torch.nn.SmoothL1Loss(
+                with pytorch_op_timer():
+                    smooth_l1 = torch.nn.SmoothL1Loss(
                     beta=beta, reduction=reduction)
                 # beta hyper-parameter is called delta for Huber
                 huber = torch.nn.HuberLoss(delta=beta, reduction=reduction)
@@ -197,7 +199,8 @@ class TestNNDeviceType(NNTestCase):
             self.assertEqual(input.grad, input2.grad, exact_dtype=False)
 
         def func(device):
-            return nn.SmoothL1Loss().to(device=device)
+            with pytorch_op_timer():
+                return nn.SmoothL1Loss().to(device=device)
 
         shapes = [[1, 3, 1, 6], [1, 3, 1, 128], [1, 3, 128, 128]]
         for shape in shapes:

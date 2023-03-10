@@ -33,6 +33,7 @@ from torch.testing._internal.common_cuda import SM53OrLater, tf32_on_and_off, CU
     _get_torch_cuda_version
 from torch.distributions.binomial import Binomial
 from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+from ..utils.timer_wrapper import pytorch_op_timer
 
 # Protects against includes accidentally setting the default dtype
 # NOTE: jit_metaprogramming_utils sets the default dtype to double!
@@ -50,33 +51,50 @@ class TestLinalg(TestCase):
 
         def run_test(shape0, shape1, batch):
             a = torch.randn(*batch, shape0, shape1, dtype=dtype, device=device)
-            rank_a = matrix_rank(a)
+            with pytorch_op_timer():
+                rank_a = matrix_rank(a)
 
-            self.assertEqual(rank_a, matrix_rank(a.mH))
+            with pytorch_op_timer():
+                test_1 = matrix_rank(a.mH)
+            self.assertEqual(rank_a, test_1)
             aaH = torch.matmul(a, a.mH)
-            rank_aaH = matrix_rank(aaH)
-            rank_aaH_hermitian = matrix_rank(aaH, hermitian=True)
+            with pytorch_op_timer():            
+                rank_aaH = matrix_rank(aaH)
+            with pytorch_op_timer():                
+                rank_aaH_hermitian = matrix_rank(aaH, hermitian=True)
             self.assertEqual(rank_aaH, rank_aaH_hermitian)
             aHa = torch.matmul(a.mH, a)
-            self.assertEqual(matrix_rank(aHa), matrix_rank(aHa, hermitian=True))
+            
+            with pytorch_op_timer():
+                test_2 = matrix_rank(aHa)
+            with pytorch_op_timer():
+                test_3 = matrix_rank(aHa, hermitian=True)
+            self.assertEqual(test_2, test_3)
 
             # check against NumPy
             self.assertEqual(rank_a, np.linalg.matrix_rank(a.cpu().numpy()))
-            self.assertEqual(matrix_rank(a, 0.01), np.linalg.matrix_rank(a.cpu().numpy(), 0.01))
+            with pytorch_op_timer():
+                test_4 = matrix_rank(a, 0.01)
+            self.assertEqual(test_4, np.linalg.matrix_rank(a.cpu().numpy(), 0.01))
 
             self.assertEqual(rank_aaH, np.linalg.matrix_rank(aaH.cpu().numpy()))
-            self.assertEqual(matrix_rank(aaH, 0.01), np.linalg.matrix_rank(aaH.cpu().numpy(), 0.01))
+            with pytorch_op_timer():
+                test_5 = matrix_rank(aaH, 0.01)
+            self.assertEqual(test_5, np.linalg.matrix_rank(aaH.cpu().numpy(), 0.01))
 
             # hermitian flag for NumPy was added in 1.14.0
             if np.lib.NumpyVersion(np.__version__) >= '1.14.0':
                 self.assertEqual(rank_aaH_hermitian,
                                  np.linalg.matrix_rank(aaH.cpu().numpy(), hermitian=True))
-                self.assertEqual(matrix_rank(aaH, 0.01, True),
+                with pytorch_op_timer():
+                    test_6 = matrix_rank(aaH, 0.01, True)
+                self.assertEqual(test_6,
                                  np.linalg.matrix_rank(aaH.cpu().numpy(), 0.01, True))
 
             # check out= variant
             out = torch.empty(a.shape[:-2], dtype=torch.int64, device=device)
-            ans = matrix_rank(a, out=out)
+            with pytorch_op_timer():
+                ans = matrix_rank(a, out=out)
             self.assertEqual(ans, out)
             self.assertEqual(ans, rank_a)
 
@@ -102,8 +120,10 @@ class TestLinalg(TestCase):
             if a.ndim > 2:
                 tolerances.append(make_tensor(a.shape[-3], dtype=torch.float32, device=device, low=0))
             for tol in tolerances:
-                actual = torch.linalg.matrix_rank(a, atol=tol)
-                actual_tol = torch.linalg.matrix_rank(a, tol=tol)
+                with pytorch_op_timer():
+                    actual = torch.linalg.matrix_rank(a, atol=tol)
+                with pytorch_op_timer():
+                    actual_tol = torch.linalg.matrix_rank(a, tol=tol)
                 self.assertEqual(actual, actual_tol)
                 numpy_tol = tol if isinstance(tol, float) else tol.cpu().numpy()
                 expected = np.linalg.matrix_rank(a.cpu().numpy(), tol=numpy_tol)
@@ -129,15 +149,18 @@ class TestLinalg(TestCase):
         # test float and tensor variants
         for tol_value in [0.81, torch.tensor(0.81, device=device)]:
             # using rtol (relative tolerance) takes into account the largest singular value (1.5 in this case)
-            result = torch.linalg.matrix_rank(a, rtol=tol_value)
+            with pytorch_op_timer():
+                result = torch.linalg.matrix_rank(a, rtol=tol_value)
             self.assertEqual(result, 2)  # there are 2 singular values above 1.5*0.81 = 1.215
 
             # atol is used directly to compare with singular values
-            result = torch.linalg.matrix_rank(a, atol=tol_value)
+            with pytorch_op_timer():
+                result = torch.linalg.matrix_rank(a, atol=tol_value)
             self.assertEqual(result, 7)  # there are 7 singular values above 0.81
 
             # when both are specified the maximum tolerance is used
-            result = torch.linalg.matrix_rank(a, atol=tol_value, rtol=tol_value)
+            with pytorch_op_timer():
+                result = torch.linalg.matrix_rank(a, atol=tol_value, rtol=tol_value)
             self.assertEqual(result, 2)  # there are 2 singular values above max(0.81, 1.5*0.81)
 
     # @skipCUDAIfNoMagma
@@ -150,27 +173,41 @@ class TestLinalg(TestCase):
         # NumPy doesn't work for input with no elements
         def run_test(shape0, shape1, batch):
             a = torch.randn(*batch, shape0, shape1, dtype=dtype, device=device)
-            rank_a = matrix_rank(a)
+            with pytorch_op_timer():
+                rank_a = matrix_rank(a)
             expected = torch.zeros(batch, dtype=torch.int64, device=device)
-
-            self.assertEqual(rank_a, matrix_rank(a.mH))
+            with pytorch_op_timer():
+                test_1 = matrix_rank(a.mH)
+            self.assertEqual(rank_a, test_1)
 
             aaH = torch.matmul(a, a.mH)
-            rank_aaH = matrix_rank(aaH)
-            rank_aaH_hermitian = matrix_rank(aaH, hermitian=True)
+            with pytorch_op_timer():
+                rank_aaH = matrix_rank(aaH)
+            with pytorch_op_timer():
+                rank_aaH_hermitian = matrix_rank(aaH, hermitian=True)
             self.assertEqual(rank_aaH, rank_aaH_hermitian)
 
             aHa = torch.matmul(a.mH, a)
-            self.assertEqual(matrix_rank(aHa), matrix_rank(aHa, hermitian=True))
+            with pytorch_op_timer():
+                test_2 = matrix_rank(aHa)
+            with pytorch_op_timer():
+                test_3 = matrix_rank(aHa, hermitian=True)
+            self.assertEqual(test_2, test_3)
 
             self.assertEqual(rank_a, expected)
-            self.assertEqual(matrix_rank(a, 0.01), expected)
+            with pytorch_op_timer():
+                test_4 = matrix_rank(a, 0.01)
+            self.assertEqual(test_4, expected)
 
             self.assertEqual(rank_aaH, expected)
-            self.assertEqual(matrix_rank(aaH, 0.01), expected)
+            with pytorch_op_timer():
+                test_5 = matrix_rank(aaH, 0.01)
+            self.assertEqual(test_5, expected)
 
             self.assertEqual(rank_aaH_hermitian, expected)
-            self.assertEqual(matrix_rank(aaH, 0.01, True), expected)
+            with pytorch_op_timer():
+                test_6 = matrix_rank(aaH, 0.01, True)
+            self.assertEqual(test_6, expected)
 
         batches = ((), (4, ), (3, 5, ))
         for batch in batches:
@@ -186,20 +223,23 @@ class TestLinalg(TestCase):
         a = torch.eye(2, dtype=dtype, device=device)
         out = torch.empty(0, dtype=torch.bool, device=device)
         with self.assertRaisesRegex(RuntimeError, "but got result with dtype Bool"):
-            torch.linalg.matrix_rank(a, out=out)
+            with pytorch_op_timer():
+                torch.linalg.matrix_rank(a, out=out)
 
         # device should match
         if torch.cuda.is_available():
             wrong_device = 'cpu' if self.device_type != 'cpu' else 'cuda'
             out = torch.empty(0, dtype=dtype, device=wrong_device)
             with self.assertRaisesRegex(RuntimeError, "tensors to be on the same device"):
-                torch.linalg.matrix_rank(a, out=out)
+                with pytorch_op_timer():
+                    torch.linalg.matrix_rank(a, out=out)
 
         # if out tensor with wrong shape is passed a warning is given
         with warnings.catch_warnings(record=True) as w:
             out = torch.empty(3, dtype=dtype, device=device)
             # Trigger warning
-            torch.linalg.matrix_rank(a, out=out)
+            with pytorch_op_timer():
+                torch.linalg.matrix_rank(a, out=out)
             # Check warning occurs
             self.assertEqual(len(w), 1)
             self.assertTrue("An output with one or more elements was resized" in str(w[-1].message))
@@ -211,12 +251,20 @@ class TestLinalg(TestCase):
         matrix_rank = torch.linalg.matrix_rank
 
         a = torch.eye(10, dtype=dtype, device=device)
-        self.assertEqual(matrix_rank(a).item(), 10)
-        self.assertEqual(matrix_rank(a, hermitian=True).item(), 10)
+        with pytorch_op_timer():
+            test_1 = matrix_rank(a).item()
+        with pytorch_op_timer():
+            test_2 = matrix_rank(a, hermitian=True).item()
+        self.assertEqual(test_1, 10)
+        self.assertEqual(test_2, 10)
 
         a[5, 5] = 0
-        self.assertEqual(matrix_rank(a).item(), 9)
-        self.assertEqual(matrix_rank(a, hermitian=True).item(), 9)
+        with pytorch_op_timer():
+            test_3 = matrix_rank(a).item()
+        self.assertEqual(test_3, 9)
+        with pytorch_op_timer():
+            test_4 = matrix_rank(a, hermitian=True).item()
+        self.assertEqual(test_4, 9)
 
 
 instantiate_device_type_tests(TestLinalg, globals())

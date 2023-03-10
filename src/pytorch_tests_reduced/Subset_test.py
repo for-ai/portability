@@ -37,13 +37,14 @@ from torch.testing._internal.common_utils import (TestCase, run_tests, TEST_NUMP
                                                   load_tests, TEST_WITH_ASAN, TEST_WITH_TSAN, IS_SANDCASTLE,
                                                   IS_MACOS)
 from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
-
+from ..utils.timer_wrapper import pytorch_op_timer
 
 class TestDatasetRandomSplit(TestCase):
     def test_slicing_of_subset_of_dataset(self, device):
         # Testing slicing a subset initialized with a dataset
         dataset = TensorDataset(torch.tensor([1, 2, 3, 4, 5], device=device))
-        subset_of_dataset = Subset(dataset, [0, 1, 2, 3, 4])
+        with pytorch_op_timer():
+            subset_of_dataset = Subset(dataset, [0, 1, 2, 3, 4])
         self.assertEqual(subset_of_dataset[:], dataset[:])
         self.assertEqual(subset_of_dataset[1:2], dataset[1:2])
         self.assertEqual(subset_of_dataset[0:-1:2], dataset[0:-1:2])
@@ -56,8 +57,10 @@ class TestDatasetRandomSplit(TestCase):
     def test_slicing_of_subset_of_subset(self, device):
         # Testing slicing a subset initialized with a subset
         dataset = TensorDataset(torch.tensor([1, 2, 3, 4, 5], device=device))
-        subset_of_dataset = Subset(dataset, [0, 1, 2, 3, 4])
-        subset_of_subset = Subset(subset_of_dataset, [0, 1, 2, 3, 4])
+        with pytorch_op_timer():
+            subset_of_dataset = Subset(dataset, [0, 1, 2, 3, 4])
+        with pytorch_op_timer():
+            subset_of_subset = Subset(subset_of_dataset, [0, 1, 2, 3, 4])
         self.assertEqual(subset_of_subset[:], dataset[:])
         self.assertEqual(subset_of_subset[0:2], dataset[0:2])
         self.assertEqual(subset_of_subset[0:-1:2], dataset[0:-1:2])

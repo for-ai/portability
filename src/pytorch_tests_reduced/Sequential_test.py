@@ -58,7 +58,7 @@ from tempfile import NamedTemporaryFile
 
 import torch
 from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
-
+from ..utils.timer_wrapper import pytorch_op_timer
 # TODO: remove this global setting
 # NN tests use double as the default dtype
 torch.set_default_dtype(torch.double)
@@ -70,24 +70,36 @@ class TestNN(NNTestCase):
         l2 = nn.Linear(20, 30).to(device)
         l3 = nn.Linear(30, 40).to(device)
         l4 = nn.Linear(40, 50).to(device)
-        n = nn.Sequential(l1, l2, l3, l4).to(device)
+        with pytorch_op_timer():
+            n = nn.Sequential(l1, l2, l3, l4).to(device)
         self.assertIs(n[0], l1)
         self.assertIs(n[1], l2)
         self.assertIs(n[2], l3)
         self.assertIs(n[3], l4)
         self.assertIs(n[torch.tensor(3, dtype=torch.int64, device=device)], l4)
-        self.assertEqual(n[1:], nn.Sequential(l2, l3, l4).to(device))
-        self.assertEqual(n[3:], nn.Sequential(l4).to(device))
-        self.assertEqual(n[:-1], nn.Sequential(l1, l2, l3).to(device))
-        self.assertEqual(n[:-3], nn.Sequential(l1).to(device))
-        self.assertEqual(n[::-1], nn.Sequential(l4, l3, l2, l1).to(device))
+        with pytorch_op_timer():
+            test_1 = nn.Sequential(l2, l3, l4).to(device)
+        self.assertEqual(n[1:], test_1)
+        with pytorch_op_timer():
+            test_2 =  nn.Sequential(l4).to(device)
+        self.assertEqual(n[3:],test_2)
+        with pytorch_op_timer():
+            test_3 = nn.Sequential(l1, l2, l3).to(device)
+        self.assertEqual(n[:-1], test_3)
+        with pytorch_op_timer():
+            test_4 = nn.Sequential(l1).to(device)
+        self.assertEqual(n[:-3], test_4)
+        with pytorch_op_timer():
+            test_5 = nn.Sequential(l4, l3, l2, l1).to(device)
+        self.assertEqual(n[::-1], test_5)
 
     def test_Sequential_setitem(self, device):
         l1 = nn.Linear(10, 20).to(device)
         l2 = nn.Linear(20, 30).to(device)
         l3 = nn.Linear(30, 40).to(device)
         l4 = nn.Linear(40, 50).to(device)
-        n = nn.Sequential(l1, l2, l3).to(device)
+        with pytorch_op_timer():
+            n = nn.Sequential(l1, l2, l3).to(device)
         n[0] = l4
         n[-1] = l4
         n[torch.tensor(1, dtype=torch.int16, device=device)] = l1
@@ -100,11 +112,12 @@ class TestNN(NNTestCase):
         l2 = nn.Linear(20, 30).to(device)
         l3 = nn.Linear(30, 40).to(device)
         l4 = nn.Linear(40, 50).to(device)
-        n = nn.Sequential(OrderedDict([
+        with pytorch_op_timer():
+            n = nn.Sequential(OrderedDict([
             ('linear1', l1),
             ('linear2', l2),
             ('linear3', l3),
-        ])).to(device)
+            ])).to(device)
 
         n[0] = l4
         n[-1] = l4
@@ -116,23 +129,37 @@ class TestNN(NNTestCase):
         l2 = nn.Linear(20, 30).to(device)
         l3 = nn.Linear(30, 40).to(device)
         l4 = nn.Linear(40, 50).to(device)
-        n = nn.Sequential(l1, l2, l3, l4).to(device)
+        with pytorch_op_timer():
+            n = nn.Sequential(l1, l2, l3, l4).to(device)
         del n[-1]
-        self.assertEqual(n, nn.Sequential(l1, l2, l3).to(device))
+        with pytorch_op_timer():
+            test_1 = nn.Sequential(l1, l2, l3).to(device)
+        self.assertEqual(n, test_1)
         del n[1::2]
-        self.assertEqual(n, nn.Sequential(l1, l3).to(device))
+        with pytorch_op_timer():
+            test_2 = nn.Sequential(l1, l3).to(device)
+        self.assertEqual(n, test_2)
 
     def test_Sequential_append(self, device):
         l1 = nn.Linear(10, 20).to(device)
         l2 = nn.Linear(20, 30).to(device)
         l3 = nn.Linear(30, 40).to(device)
         l4 = nn.Linear(40, 50).to(device)
-        n = nn.Sequential(l1, l2, l3).to(device)
+        with pytorch_op_timer():
+            n = nn.Sequential(l1, l2, l3).to(device)
         n2 = n.append(l4)
-        self.assertEqual(n, nn.Sequential(l1, l2, l3, l4).to(device))
-        self.assertEqual(n2, nn.Sequential(l1, l2, l3, l4).to(device))
-        self.assertEqual(nn.Sequential(l1).append(
-            l2).append(l4).to(device), nn.Sequential(l1, l2, l4).to(device))
+        with pytorch_op_timer():
+            test_1 = nn.Sequential(l1, l2, l3, l4).to(device)
+        self.assertEqual(n, test_1)
+        with pytorch_op_timer():
+            test_2 = nn.Sequential(l1, l2, l3, l4).to(device)
+        self.assertEqual(n2, test_2)
+        
+        with pytorch_op_timer():
+            test_3 = nn.Sequential(l1, l2, l4).to(device)
+        with pytorch_op_timer():
+            test_4 = nn.Sequential(l1).append(l2).append(l4).to(device)
+        self.assertEqual(test_4, test_3)
 
 
 instantiate_device_type_tests(TestNN, globals())

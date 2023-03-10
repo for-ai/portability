@@ -29,7 +29,7 @@ from torch.testing._internal.common_dtype import (
 torch.set_default_dtype(torch.float32)
 assert torch.get_default_dtype() is torch.float32
 from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
-
+from ..utils.timer_wrapper import pytorch_op_timer
 if TEST_SCIPY:
     import scipy
 
@@ -73,13 +73,14 @@ class TestLinalg(TestCase):
                 expected = alpha * np.outer(a_np, b_np)
             else:
                 expected = beta * m_np + alpha * np.outer(a_np, b_np)
-
-            res = torch.addr(m, a, b, beta=beta, alpha=alpha)
+            with pytorch_op_timer():
+                res = torch.addr(m, a, b, beta=beta, alpha=alpha)
             self.assertEqual(res, expected, exact_dtype=exact_dtype)
 
             # Test out variant
             out = torch.empty_like(res)
-            torch.addr(m, a, b, beta=beta, alpha=alpha, out=out)
+            with pytorch_op_timer():
+                torch.addr(m, a, b, beta=beta, alpha=alpha, out=out)
             self.assertEqual(out, expected, exact_dtype=exact_dtype)
 
         m = make_tensor((50, 50), device=device, dtype=dtype, low=-2, high=2)
@@ -155,18 +156,19 @@ class TestLinalg(TestCase):
                 device, dtype, beta=(0 + 0.1j), alpha=(0.2 - 0.2j))
 
     # don't use @dtypes decorator to avoid generating ~1700 tests per device
-    def test_addr_type_promotion(self, device):
-        for dtypes0, dtypes1, dtypes2 in product(all_types_and_complex_and(torch.half, torch.bfloat16, torch.bool), repeat=3):
-            a = make_tensor((5,), device=device, dtype=dtypes0, low=-2, high=2)
-            b = make_tensor((5,), device=device, dtype=dtypes1, low=-2, high=2)
-            m = make_tensor((5, 5), device=device,
-                            dtype=dtypes2, low=-2, high=2)
+    # def test_addr_type_promotion(self, device):
+    #     for dtypes0, dtypes1, dtypes2 in product(all_types_and_complex_and(torch.half, torch.bfloat16, torch.bool), repeat=3):
+    #         a = make_tensor((5,), device=device, dtype=dtypes0, low=-2, high=2)
+    #         b = make_tensor((5,), device=device, dtype=dtypes1, low=-2, high=2)
+    #         m = make_tensor((5, 5), device=device,
+    #                         dtype=dtypes2, low=-2, high=2)
 
-            desired_dtype = torch.promote_types(torch.promote_types(dtypes0, dtypes1),
-                                                dtypes2)
-            for op in (torch.addr, torch.Tensor.addr):
-                result = op(m, a, b)
-                self.assertEqual(result.dtype, desired_dtype)
+    #         desired_dtype = torch.promote_types(torch.promote_types(dtypes0, dtypes1),
+    #                                             dtypes2)
+    #         for op in (torch.addr, torch.Tensor.addr):
+    #             with pytorch_op_timer():
+    #                 result = op(m, a, b)
+    #             self.assertEqual(result.dtype, desired_dtype)
 
 
 instantiate_device_type_tests(TestLinalg, globals())

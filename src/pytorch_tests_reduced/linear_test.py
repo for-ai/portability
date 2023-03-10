@@ -9,7 +9,7 @@ import torch.testing._internal.hypothesis_utils as hu
 from torch.testing import make_tensor
 from hypothesis import given
 from torch.nn import MultiheadAttention
-from torch.testing._internal.common_device_type import expectedFailureXLA, instantiate_device_type_tests, dtypes, \
+from torch.testing._internal.common_device_type import expectedFailureXLA, dtypes, \
     dtypesIfCUDA, precisionOverride, skipCUDAIfNoCudnn, skipCUDAIfCudnnVersionLessThan, onlyCUDA, onlyCPU, \
     skipCUDAIfRocm, skipCUDAIf, skipCUDAIfNotRocm, skipCUDAIfRocmVersionLessThan, skipCUDAIfNotMiopenSuggestNHWC, \
     onlyNativeDeviceTypes, deviceCountAtLeast, largeTensorTest, expectedFailureMeta, skipMeta, get_all_device_types, \
@@ -58,6 +58,7 @@ from tempfile import NamedTemporaryFile
 
 import torch
 from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+from ..utils.timer_wrapper import pytorch_op_timer
 
 # TODO: remove this global setting
 # NN tests use double as the default dtype
@@ -66,7 +67,8 @@ torch.set_default_dtype(torch.double)
 
 class TestNN(NNTestCase):
     def test_to(self, device):
-        m = nn.Linear(3, 5).to(device)
+        with pytorch_op_timer():
+            m = nn.Linear(3, 5).to(device)
         self.assertIs(m, m.to('cpu'))
         self.assertIs(m, m.to('cpu', dtype=torch.float32))
         self.assertEqual(m.double(), m.to(torch.float64))

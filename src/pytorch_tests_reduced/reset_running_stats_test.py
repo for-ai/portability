@@ -46,7 +46,7 @@ from collections import OrderedDict
 
 import torch
 from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
-
+from ..utils.timer_wrapper import pytorch_op_timer
 # TODO: remove this global setting
 # NN tests use double as the default dtype
 torch.set_default_dtype(torch.double)
@@ -91,7 +91,8 @@ class TestNNDeviceType(NNTestCase):
         self.assertNotEqual(running_var1, ones)
 
         # reset stats
-        module.reset_running_stats()
+        with pytorch_op_timer():
+            module.reset_running_stats()
         self.assertEqual(module.running_mean, zeros)
         self.assertEqual(module.running_var, ones)
 
@@ -103,7 +104,8 @@ class TestNNDeviceType(NNTestCase):
         self.assertNotEqual(running_var2, ones)
 
         # reset stats
-        module.reset_running_stats()
+        with pytorch_op_timer():
+            module.reset_running_stats()
         self.assertEqual(module.running_mean, zeros)
         self.assertEqual(module.running_var, ones)
 
