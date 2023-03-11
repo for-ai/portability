@@ -20,7 +20,7 @@ from torch.testing._internal.common_utils import \
      make_fullrank_matrices_with_distinct_singular_values,
      freeze_rng_state, IS_SANDCASTLE)
 from torch.testing._internal.common_device_type import \
-    (dtypes, has_cusolver,
+    (instantiate_device_type_tests, dtypes, has_cusolver,
      onlyCPU, skipCUDAIf, skipCUDAIfNoMagma, skipCPUIfNoLapack, precisionOverride,
      skipCUDAIfNoMagmaAndNoCusolver, skipCUDAIfRocm, onlyNativeDeviceTypes, dtypesIfCUDA,
      onlyCUDA, skipCUDAVersionIn, skipMeta, skipCUDAIfNoCusolver, dtypesIfMPS)
@@ -38,6 +38,7 @@ from torch.distributions.binomial import Binomial
 torch.set_default_dtype(torch.float32)
 assert torch.get_default_dtype() is torch.float32
 from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+from ..utils.timer_wrapper import pytorch_op_timer
 
 if TEST_SCIPY:
     import scipy
@@ -64,8 +65,8 @@ class TestLinalg(TestCase):
 
     exact_dtype = True
 
-    # @skipCPUIfNoLapack
-    # @skipCUDAIfNoCusolver
+    @skipCPUIfNoLapack
+    @skipCUDAIfNoCusolver
     @dtypes(*floating_and_complex_types())
     def test_ormqr(self, device, dtype):
 
@@ -108,8 +109,8 @@ class TestLinalg(TestCase):
         for batch, (m, n), fortran_contiguous in product(batches, product(ns, ns), [True, False]):
             run_test(batch, m, n, fortran_contiguous)
 
-    # @skipCPUIfNoLapack
-    # @skipCUDAIfNoCusolver
+    @skipCPUIfNoLapack
+    @skipCUDAIfNoCusolver
     @dtypes(*floating_and_complex_types())
     def test_ormqr_errors_and_warnings(self, device, dtype):
         test_cases = [
