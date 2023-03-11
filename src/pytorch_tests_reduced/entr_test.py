@@ -4,9 +4,11 @@ import torch
 
 from torch.testing._internal.jit_utils import JitTestCase
 from typing import List
+from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+from ..utils.timer_wrapper import pytorch_op_timer
 
 class TestAutodiffJit(JitTestCase):
-    def test_requires_grad_outputs_profiled_twice(self):
+    def test_requires_grad_outputs_profiled_twice(self, device):
         # the value "r" is used twice, by gammaln and by entr, so it is profiled twice.
         # So during autodiff graph formation the profile nodes are unmerged because
         # they are aliasing. Then the DifferentiableGraph doesn't have a profile
@@ -19,9 +21,9 @@ class TestAutodiffJit(JitTestCase):
 
         fn_s = torch.jit.script(fn)
 
-        a = torch.rand((10, 10), requires_grad=False)
-        b = torch.rand((10, 10), requires_grad=False)
-        c = torch.rand((10, 10), requires_grad=True)
+        a = torch.rand((10, 10), requires_grad=False, device=device)
+        b = torch.rand((10, 10), requires_grad=False, device=device)
+        c = torch.rand((10, 10), requires_grad=True, device=device)
 
         for i in range(4):
             y_s = fn_s(a, b, c)
@@ -31,3 +33,4 @@ class TestAutodiffJit(JitTestCase):
             self.assertEqual(y_s.requires_grad, y.requires_grad)
             # self.assertEqual(z_s.requires_grad, z.requires_grad)
 
+instantiate_device_type_tests(TestAutodiffJit, globals())

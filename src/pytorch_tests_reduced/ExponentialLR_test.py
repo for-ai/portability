@@ -42,17 +42,20 @@ from torch.testing._internal.common_utils import (
     skipIfRocm,
 )
 from typing import Dict, Any, Tuple
-
+from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+from ..utils.timer_wrapper import pytorch_op_timer
 
 class TestOptim(TestCase):
     def test_sgd(self):
+        with pytorch_op_timer():
+            test_1 = lambda opt: ExponentialLR(opt, gamma=0.99)
         self._test_basic_cases(
             lambda weight, bias, maximize, foreach: optim.SGD(
                 [weight, bias], lr=1e-3, maximize=maximize, foreach=foreach
             ),
-            [
+                        [
                 lambda opt: StepLR(opt, gamma=0.99, step_size=10),
-                lambda opt: ExponentialLR(opt, gamma=0.99),
+                test_1,
                 lambda opt: ReduceLROnPlateau(opt),
             ],
             constructor_accepts_maximize=True,
@@ -68,6 +71,7 @@ class TestOptim(TestCase):
         constructor_accepts_foreach=False,
         atol=None,
         rtol=None,
+        device=None
     ):
         if scheduler_constructors is None:
             scheduler_constructors = []
@@ -88,55 +92,60 @@ class TestOptim(TestCase):
             set([False, constructor_accepts_foreach]),
         ):
             self._test_state_dict(
-                torch.randn(10, 5),
-                torch.randn(10),
-                torch.randn(5),
+                torch.randn(10, 5, device=device),
+                torch.randn(10, device=device),
+                torch.randn(5, device=device),
                 make_two_arg_constructor(constructor, maximize, foreach),
                 atol=atol,
                 rtol=rtol,
+                device=device
             )
         self._test_basic_cases_template(
-            torch.randn(10, 5),
-            torch.randn(10),
-            torch.randn(5),
+            torch.randn(10, 5, device=device),
+            torch.randn(10, device=device),
+            torch.randn(5, device=device),
             constructor,
             scheduler_constructors,
             constructor_accepts_maximize,
             constructor_accepts_foreach,
+            device=device
         )
         # non-contiguous parameters
         self._test_basic_cases_template(
-            torch.randn(10, 5, 2)[..., 0],
-            torch.randn(10, 2)[..., 0],
-            torch.randn(5),
+            torch.randn(10, 5, 2, device=device)[..., 0],
+            torch.randn(10, 2, device=device)[..., 0],
+            torch.randn(5, device=device),
             constructor,
             scheduler_constructors,
             constructor_accepts_maximize,
             constructor_accepts_foreach,
+            device=device
         )
         # CUDA
         if not torch.cuda.is_available():
             return
         self._test_basic_cases_template(
-            torch.randn(10, 5).cuda(),
-            torch.randn(10).cuda(),
-            torch.randn(5).cuda(),
+            torch.randn(10, 5, device=device),
+            torch.randn(10, device=device),
+            torch.randn(5, device=device),
             constructor,
             scheduler_constructors,
             constructor_accepts_maximize,
             constructor_accepts_foreach,
+            device=device
         )
         # Multi-GPU
         if not torch.cuda.device_count() > 1 or ignore_multidevice:
             return
         self._test_basic_cases_template(
-            torch.randn(10, 5).cuda(0),
-            torch.randn(10).cuda(1),
-            torch.randn(5).cuda(0),
+            torch.randn(10, 5, device=device),
+            torch.randn(10, device=device),
+            torch.randn(5, device=device),
             constructor,
             scheduler_constructors,
             constructor_accepts_maximize,
             constructor_accepts_foreach,
+            device=device
         )
 
     def _test_basic_cases_template(
@@ -148,6 +157,7 @@ class TestOptim(TestCase):
         scheduler_constructors,
         constructor_accepts_maximize=True,
         constructor_accepts_foreach=False,
+        device=None
     ):
         maximize_options = set([False, constructor_accepts_maximize])
         foreach_options = set([False, constructor_accepts_foreach])
@@ -175,9 +185,9 @@ class TestOptim(TestCase):
 
         for maximize, foreach in itertools.product(maximize_options, foreach_options):
             with torch.no_grad():
-                weight = Parameter(weight_tensor.clone().detach())
-                bias = Parameter(bias_tensor.clone().detach())
-                input = input_tensor.clone().detach().requires_grad_()
+                weight = Parameter(weight_tensor.clone().detach()).to(device)
+                bias = Parameter(bias_tensor.clone().detach()).to(device)
+                input = input_tensor.clone().detach().requires_grad_().to(device)
             optimizer = four_arg_constructor(weight, bias, maximize, foreach)
             schedulers = []
             for scheduler_constructor in scheduler_constructors:
@@ -209,11 +219,11 @@ class TestOptim(TestCase):
             else:
                 self.assertLess(fn().item(), initial_value)
 
-    def _test_state_dict(self, weight, bias, input, constructor, atol=None, rtol=None):
-        weight = Parameter(weight)
-        bias = Parameter(bias)
+    def _test_state_dict(self, weight, bias, input, constructor, atol=None, rtol=None, device=None):
+        weight = Parameter(weight).to(device)
+        bias = Parameter(bias).to(device)
         with torch.no_grad():
-            input = input.clone().detach().requires_grad_()
+            input = input.clone().detach().requires_grad_().to(device)
 
         def fn_base(optimizer, weight, bias):
             optimizer.zero_grad()
@@ -327,6 +337,6 @@ class TestOptim(TestCase):
         self.assertEqual(getPublicAttr(optimizer),
                          getPublicAttr(deepcopy(optimizer)))
 
-
+instantiate_device_type_tests(TestOptim, globals())
 if __name__ == "__main__":
     run_tests()
