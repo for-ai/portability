@@ -160,7 +160,7 @@ class TestOptim(TestCase):
         if not constructor_accepts_maximize:
             def three_arg_constructor(weight, bias, maximize):
                 self.assertFalse(maximize)
-                    return constructor(weight, bias)
+                return constructor(weight, bias)
         else:
             three_arg_constructor = constructor
 
