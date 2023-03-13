@@ -36,6 +36,7 @@ import torch.autograd.forward_ad as fwAD
 from torch._six import inf, nan
 import torch
 
+import os
 from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
 from ..utils.timer_wrapper import pytorch_op_timer
 # TODO: remove this global setting
@@ -74,7 +75,6 @@ class TestNN(NNTestCase):
         return padded_tensor, lengths
 
     @dtypes(torch.float32)
-    @onlyAcceleratedDeviceTypes
     def test_to(self, device, dtype):
         m = nn.Linear(3, 5)
         with pytorch_op_timer():
@@ -88,26 +88,27 @@ class TestNN(NNTestCase):
         self.assertEqual(m.double(), result)
         self.assertRaises(RuntimeError, lambda: m.to('cpu', copy=True))
 
-        with pytorch_op_timer():
-            m2 = m.to(device)
-        with pytorch_op_timer():
-            result = m2.to(device)
-        self.assertIs(m2, result)
+        if os.environ['DEVICE'] != "cpu":
+            with pytorch_op_timer():
+                m2 = m.to(device)
+            with pytorch_op_timer():
+                result = m2.to(device)
+            self.assertIs(m2, result)
 
-        with pytorch_op_timer():
-            m2.to('cpu')
-        self.assertEqual(m, result)
-        with pytorch_op_timer():
-            result = m.to(device)
-        self.assertEqual(m2, result)
+            with pytorch_op_timer():
+                m2.to('cpu')
+            self.assertEqual(m, result)
+            with pytorch_op_timer():
+                result = m.to(device)
+            self.assertEqual(m2, result)
 
-        with pytorch_op_timer():
-            result = m2.to(dtype=torch.float32)
-        self.assertIs(m2, result)
+            with pytorch_op_timer():
+                result = m2.to(dtype=torch.float32)
+            self.assertIs(m2, result)
 
-        with pytorch_op_timer():
-            result = m2.to(dtype=torch.float64)
-        self.assertEqual(m2.double(), result)
+            with pytorch_op_timer():
+                result = m2.to(dtype=torch.float64)
+            self.assertEqual(m2.double(), result)
 
 
 instantiate_device_type_tests(TestNN, globals())
