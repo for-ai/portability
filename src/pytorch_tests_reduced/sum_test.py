@@ -32,7 +32,9 @@ from ..utils.timer_wrapper import pytorch_op_timer
 class TestSum(TestCase):
     def test_sum(self, device):
         t = torch.tensor([1, 2, 3], device=device)
-        self.assertEqual(torch.sum(t), torch.tensor(6))
+        with pytorch_op_timer():
+            result = torch.sum(t)
+        self.assertEqual(result, torch.tensor(6))
     
 instantiate_device_type_tests(TestSum, globals())
 
