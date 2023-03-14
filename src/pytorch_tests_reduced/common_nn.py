@@ -6469,5 +6469,6 @@ def _test_module_empty_input(test_case, module, inp, check_size=True, inference=
     if not inference:
         for p in module.parameters():
             if p.requires_grad:
+                print("***GRAD", p.grad, torch.zeros_like(p.grad))
                 test_case.assertEqual(p.grad, torch.zeros_like(p.grad))
         test_case.assertEqual(inp.grad, torch.zeros_like(inp))
