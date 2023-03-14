@@ -47,7 +47,8 @@ class TestOptim(TestCase):
             weight = Variable(weight, requires_grad=True)
             bias = Variable(bias, requires_grad=True)
             input = Variable(input)
-            optimizer = three_arg_constructor(weight, bias, maximize)
+            with pytorch_op_timer(): 
+                optimizer = three_arg_constructor(weight, bias, maximize)
             schedulers = []
             for scheduler_constructor in scheduler_constructors:
                 schedulers.append(scheduler_constructor(optimizer))
@@ -84,25 +85,22 @@ class TestOptim(TestCase):
         def fn_base(optimizer, weight, bias):
             optimizer.zero_grad()
             i = input.to(device)
-            print("***i", i.device)
-            print("***weight", weight.device)
-            print("***bias", bias.device)
+
             loss = (weight.mv(i) + bias).pow(2).sum().to(device)
-            print("***loss", loss.device)
             loss.backward()
             return loss
-
-        optimizer = constructor(weight, bias)
+        with pytorch_op_timer(): 
+            optimizer = constructor(weight, bias)
         fn = functools.partial(fn_base, optimizer, weight, bias)
 
         # Prime the optimizer
         for _i in range(20):
-            print("***ITER", _i)
             optimizer.step(fn)
         # Clone the weights and construct new optimizer for them
         weight_c = Variable(weight.data.clone(), requires_grad=True).to(device)
         bias_c = Variable(bias.data.clone(), requires_grad=True).to(device)
-        optimizer_c = constructor(weight_c, bias_c)
+        with pytorch_op_timer(): 
+            optimizer_c = constructor(weight_c, bias_c)
         fn_c = functools.partial(fn_base, optimizer_c, weight_c, bias_c)
         # Load state dict
         state_dict = deepcopy(optimizer.state_dict())
@@ -156,7 +154,8 @@ class TestOptim(TestCase):
         input_cuda = Variable(input.data.float().to(device))
         weight_cuda = Variable(weight.data.float().to(device), requires_grad=True)
         bias_cuda = Variable(bias.data.float().to(device), requires_grad=True)
-        optimizer_cuda = constructor(weight_cuda, bias_cuda)
+        with pytorch_op_timer():         
+            optimizer_cuda = constructor(weight_cuda, bias_cuda)
         fn_cuda = functools.partial(
             fn_base, optimizer_cuda, weight_cuda, bias_cuda)
 
@@ -192,7 +191,9 @@ class TestOptim(TestCase):
 
         def make_two_arg_constructor(constructor, maximize: bool = False):
             if constructor_accepts_maximize:
-                return lambda weight, bias: constructor(weight, bias, maximize)
+                with pytorch_op_timer(): 
+                    test_1 = lambda weight, bias: constructor(weight, bias, maximize)
+                return test_1
             return constructor
 
         for maximize in (True, False):
@@ -226,14 +227,12 @@ class TestOptim(TestCase):
 
     def test_adamax(self, device):
         for optimizer in [optim.Adamax]:
-            print("***BASIC FIRST")
             self._test_basic_cases(
                 lambda weight, bias, maximize: optimizer(
                     [weight, bias], lr=1e-1, maximize=maximize),
 				device,
                 constructor_accepts_maximize=True
             )
-            print("***BASIC SECOND")
             self._test_basic_cases(
                 lambda weight, bias, maximize: optimizer(
                     self._build_params_dict(weight, bias, lr=1e-2),
@@ -241,7 +240,7 @@ class TestOptim(TestCase):
 				device,
                 constructor_accepts_maximize=True
             )
-            print("***BASIC THIRD")
+        
             self._test_basic_cases(
                 lambda weight, bias, maximize: optimizer(
                     [weight, bias], lr=1e-1, weight_decay=1, maximize=maximize),
