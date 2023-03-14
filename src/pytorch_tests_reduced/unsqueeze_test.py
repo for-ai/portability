@@ -40,7 +40,8 @@ class TestViewOps(TestCase):
 
     def test_unsqueeze_view(self, device):
         t = torch.ones(5, 5, device=device)
-        v = torch.unsqueeze(t, 1)
+        with pytorch_op_timer():
+            v = torch.unsqueeze(t, 1)
         self.assertTrue(self.is_view_of(t, v))
 
         v[0, 0, 1] = 0

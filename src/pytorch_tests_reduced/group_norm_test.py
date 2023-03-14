@@ -36,6 +36,9 @@ import torch.backends.xnnpack
 
 from typing import Optional
 
+from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+from ..utils.timer_wrapper import pytorch_op_timer
+
 np_dtype = {
     torch.quint8 : np.uint8,
     torch.qint8 : np.int8,
@@ -207,9 +210,11 @@ class TestQuantizedOps(TestCase):
                             float(torch.unique(group_vals).shape[0]) / group_vals.numel() > 0.001
                             or group_vals.numel() < 5)
 
-                qY = torch.ops.quantized.group_norm(qX, num_groups, weight, bias, eps, Y_scale, Y_zero_point)
+                with pytorch_op_timer():
+                    qY = torch.ops.quantized.group_norm(qX, num_groups, weight, bias, eps, Y_scale, Y_zero_point)
 
-                dqY_hat = F.group_norm(dqX, num_groups=num_groups, weight=weight, bias=bias, eps=eps)
+                with pytorch_op_timer():
+                    dqY_hat = F.group_norm(dqX, num_groups=num_groups, weight=weight, bias=bias, eps=eps)
                 qY_hat = torch.quantize_per_tensor(dqY_hat, Y_scale, Y_zero_point, torch_type)
 
                 # Due to the numerics difference mentioned above between calculating
@@ -228,4 +233,5 @@ class TestQuantizedOps(TestCase):
                 self.assertTrue(pct_diff < 1e-6)
                 self.assertTrue(pct_diff_off_by_one < 0.01)
 
+instantiate_device_type_tests(TestQuantizedOps, globals())
     

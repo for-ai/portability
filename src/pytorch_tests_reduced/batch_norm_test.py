@@ -240,7 +240,8 @@ class TestNN(NNTestCase):
         wrong_sizes = [9, 11]
         for size in wrong_sizes:
             with self.assertRaises(RuntimeError):
-                F.batch_norm(input, torch.rand(size), running_var)
+                with pytorch_op_timer():
+                    F.batch_norm(input, torch.rand(size), running_var)
 
     def test_batchnorm_raises_error_if_running_var_is_not_same_size_as_input(self, device):
         input = torch.rand(2, 10, device=device)
@@ -248,7 +249,8 @@ class TestNN(NNTestCase):
         wrong_sizes = [9, 11]
         for size in wrong_sizes:
             with self.assertRaises(RuntimeError):
-                F.batch_norm(input, running_mean, torch.rand(size))
+                with pytorch_op_timer():
+                    F.batch_norm(input, running_mean, torch.rand(size))
 
     def test_batchnorm_raises_error_if_weight_is_not_same_size_as_input(self, device):
         input = torch.rand(2, 10, device=device)
@@ -257,7 +259,8 @@ class TestNN(NNTestCase):
         wrong_sizes = [9, 11]
         for size in wrong_sizes:
             with self.assertRaises(RuntimeError):
-                F.batch_norm(input, running_mean, running_var,
+                with pytorch_op_timer():
+                    F.batch_norm(input, running_mean, running_var,
                              weight=Parameter(torch.rand(size)))
 
     def test_batchnorm_raises_error_if_bias_is_not_same_size_as_input(self, device):
@@ -267,7 +270,8 @@ class TestNN(NNTestCase):
         wrong_sizes = [9, 11]
         for size in wrong_sizes:
             with self.assertRaises(RuntimeError):
-                F.batch_norm(input, running_mean, running_var,
+                with pytorch_op_timer():
+                    F.batch_norm(input, running_mean, running_var,
                              bias=Parameter(torch.rand(size)))
 
     def test_batchnorm_raises_error_if_running_var_or_running_mean_have_forward_grad(self, device):
