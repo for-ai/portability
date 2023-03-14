@@ -223,8 +223,7 @@ class TestLinalg(TestCase):
         a = torch.eye(2, dtype=dtype, device=device)
         out = torch.empty(0, dtype=torch.bool, device=device)
         with self.assertRaisesRegex(RuntimeError, "but got result with dtype Bool"):
-            with pytorch_op_timer():
-                torch.linalg.matrix_rank(a, out=out)
+            torch.linalg.matrix_rank(a, out=out)
 
         # device should match
         if torch.cuda.is_available():

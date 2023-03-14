@@ -151,9 +151,8 @@ class TestNN(NNTestCase):
             self.assertEqual(state_dict['bias'].data_ptr(), l.bias.data_ptr())
 
         # Reference https://github.com/pytorch/pytorch/pull/75507#issuecomment-1110291545
-        with pytorch_op_timer():
-            test_1 = lambda: l.state_dict(destination=dict())
-            self.assertNotWarn(test_1, "Should not warn kwarg destination w/o _metadata")
+        
+        self.assertNotWarn(lambda: l.state_dict(destination=dict()), "Should not warn kwarg destination w/o _metadata")
 
 def _hook_to_pickle(*args, **kwargs):
     pass
@@ -280,7 +279,8 @@ class TestStateDictHooks(TestCase):
         )
         # Hook must be called even if it is wrapped
         with pytorch_op_timer():
-            ret = wrapped.load_state_dict(wrapped.state_dict(), strict=False)
+            test_1 = wrapped.state_dict()
+        ret = wrapped.load_state_dict(test_1, strict=False)
         self.assertEqual(hook_called, 1)
         # Ensure that the hook modified missing_keys and unexpected_keys
         missing = ret.missing_keys
@@ -291,14 +291,16 @@ class TestStateDictHooks(TestCase):
         # missing and unexpected keys the hook added.
         with self.assertRaisesRegex(RuntimeError, "foo.*\n.*bar"):
             with pytorch_op_timer():
-                wrapped.load_state_dict(wrapped.state_dict(), strict=True)
+                test_2 = wrapped.state_dict()    
+            wrapped.load_state_dict(wrapped.state_dict(), strict=True)
         self.assertEqual(hook_called, 2)
         # Removing the hook via handle.remove() should cause it not to
         # fire anymore.
         handle.remove()
         # Hook did not run so it should not have added any keys
         with pytorch_op_timer():
-            ret = wrapped.load_state_dict(wrapped.state_dict(), strict=False)
+            test_3 = wrapped.state_dict()
+        ret = wrapped.load_state_dict(wrapped.state_dict(), strict=False)
         self.assertEqual(ret.missing_keys, [])
         self.assertEqual(ret.unexpected_keys, [])
         # hook_called should not have been incremented

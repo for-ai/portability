@@ -59,6 +59,7 @@ from torch.testing._internal.common_dtype import (
     all_types_and, floating_types, floating_and_complex_types, integral_types,
 )
 from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+from ..utils.timer_wrapper import pytorch_op_timer
 
 
 class TestTorch(TestCase):
@@ -78,27 +79,31 @@ class TestTorch(TestCase):
         self.assertEqual('cpu', cpu0.type)
         self.assertEqual(0, cpu0.index)
 
-        cuda = torch.device('cuda')
+        with pytorch_op_timer: 
+            cuda = torch.device('cuda')
         self.assertEqual('cuda', str(cuda))
         self.assertEqual('cuda', cuda.type)
         self.assertEqual(None, cuda.index)
 
-        cuda1 = torch.device('cuda:1')
+        with pytorch_op_timer: 
+            cuda1 = torch.device('cuda:1')
         self.assertEqual('cuda:1', str(cuda1))
         self.assertEqual('cuda', cuda1.type)
         self.assertEqual(1, cuda1.index)
 
-        cuda1 = torch.device('cuda', 1)
+        with pytorch_op_timer: 
+            cuda1 = torch.device('cuda', 1)
         self.assertEqual('cuda:1', str(cuda1))
         self.assertEqual('cuda', cuda1.type)
         self.assertEqual(1, cuda1.index)
 
-        cuda90 = torch.device('cuda', 90)
+        with pytorch_op_timer: 
+            cuda90 = torch.device('cuda', 90)
         self.assertEqual('cuda:90', str(cuda90))
         self.assertEqual('cuda', cuda90.type)
         self.assertEqual(90, cuda90.index)
 
-        self.assertRaises(RuntimeError, lambda: torch.device('cpu:-1'))
+        self.assertRaises(RuntimeError, lambda: torch.device('cpu:-1'))            
         self.assertRaises(RuntimeError, lambda: torch.device('cuda:-1'))
         self.assertRaises(RuntimeError, lambda: torch.device('cuda:2 '))
         self.assertRaises(RuntimeError, lambda: torch.device('cuda: 2'))

@@ -109,15 +109,13 @@ class TestDistributions(DistributionsTestCase):
         self.assertEqual(test_1, (3,))
         with pytorch_op_timer():
             test_2 = Multinomial(total_count, p).sample((2, 2)).size()
-            self.assertEqual(test_2, (2, 2, 3))
+        self.assertEqual(test_2, (2, 2, 3))
         with pytorch_op_timer():
             test_3 = Multinomial(total_count, p).sample((1,)).size()
         self.assertEqual(test_3, (1, 3))
         self._gradcheck_log_prob(lambda p: Multinomial(total_count, p), [p])
         self._gradcheck_log_prob(lambda p: Multinomial(total_count, None, p.log()), [p])
-        with pytorch_op_timer():
-            test_4 = Multinomial(10, p).rsample
-        self.assertRaises(NotImplementedError, test_4)
+        self.assertRaises(NotImplementedError, Multinomial(10, p).rsample)
 
     @unittest.skipIf(not TEST_NUMPY, "NumPy not found")
     def test_multinomial_1d_log_prob_and_entropy(self):
@@ -159,9 +157,8 @@ class TestDistributions(DistributionsTestCase):
         self._gradcheck_log_prob(lambda p: Multinomial(total_count, None, p.log()), [p])
 
         # sample check for extreme value of probs
-        with pytorch_op_timer():
-            self.assertEqual(Multinomial(total_count, s).sample(),
-                         torch.tensor([[total_count, 0], [0, total_count]], dtype=torch.float64, device=device))
+        self.assertEqual(Multinomial(total_count, s).sample(),
+                        torch.tensor([[total_count, 0], [0, total_count]], dtype=torch.float64, device=device))
 
 
 class TestDistributionShapes(DistributionsTestCase):

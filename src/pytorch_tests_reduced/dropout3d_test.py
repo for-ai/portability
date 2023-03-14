@@ -19,12 +19,8 @@ from ..utils.timer_wrapper import pytorch_op_timer
 class TestDropoutNN(NNTestCase):
     def test_invalid_dropout_p(self, device):
         v = torch.ones(1, device=device)
-        with pytorch_op_timer():
-            test_1 = lambda: nn.Dropout3d(-0.1).to(device)
-        self.assertRaises(ValueError, test_1)
-        with pytorch_op_timer():
-            test_2 = lambda: nn.Dropout3d(1.1).to(device)
-        self.assertRaises(ValueError, test_2)
+        self.assertRaises(ValueError, lambda: nn.Dropout3d(-0.1).to(device))
+        self.assertRaises(ValueError, lambda: nn.Dropout3d(1.1).to(device))
 
 class TestDropoutNNDeviceType(NNTestCase):
     def _test_dropout(self, cls, device, input, memory_format=torch.contiguous_format):
