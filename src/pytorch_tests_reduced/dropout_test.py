@@ -48,12 +48,8 @@ class TestDropoutNN(NNTestCase):
     def test_invalid_dropout_p(self, device):
         v = torch.ones(1, device=device)
 
-        with pytorch_op_timer():
-            test_1 = lambda: F.dropout(v, -0.1).to(device)
-        self.assertRaises(ValueError, test_1)
-        with pytorch_op_timer():
-            test_2 = lambda: F.dropout(v, 1.1).to(device)
-        self.assertRaises(ValueError, test_2)
+        self.assertRaises(ValueError, lambda: F.dropout(v, -0.1).to(device))
+        self.assertRaises(ValueError, lambda: F.dropout(v, 1.1).to(device))
 
 
 class TestDropoutNNDeviceType(NNTestCase):
