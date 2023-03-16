@@ -83,25 +83,30 @@ class TestLinalg(TestCase):
             C_left = make_tensor((*batch, n, m), dtype=dtype, device=device)
 
             expected = Q @ C_right
-            actual = torch.ormqr(reflectors, tau, C_right, left=True, transpose=False)
+            with pytorch_op_timer():
+                actual = torch.ormqr(reflectors, tau, C_right, left=True, transpose=False)
             self.assertEqual(expected, actual)
 
             expected = C_left @ Q
-            actual = torch.ormqr(reflectors, tau, C_left, left=False, transpose=False)
+            with pytorch_op_timer():
+                actual = torch.ormqr(reflectors, tau, C_left, left=False, transpose=False)
             self.assertEqual(expected, actual)
 
             expected = Q.mH @ C_right
-            actual = torch.ormqr(reflectors, tau, C_right, left=True, transpose=True)
+            with pytorch_op_timer():
+                actual = torch.ormqr(reflectors, tau, C_right, left=True, transpose=True)
             self.assertEqual(expected, actual)
 
             expected = C_left @ Q.mH
-            actual = torch.ormqr(reflectors, tau, C_left, left=False, transpose=True)
+            with pytorch_op_timer():
+                actual = torch.ormqr(reflectors, tau, C_left, left=False, transpose=True)
             self.assertEqual(expected, actual)
 
             # if tau is all zeros then the implicit matrix Q is the identity matrix
             # so the actual result should be C_right in this case
             zero_tau = torch.zeros_like(tau)
-            actual = torch.ormqr(reflectors, zero_tau, C_right, left=True, transpose=False)
+            with pytorch_op_timer():
+                actual = torch.ormqr(reflectors, zero_tau, C_right, left=True, transpose=False)
             self.assertEqual(C_right, actual)
 
         batches = [(), (0, ), (2, ), (2, 1)]
@@ -127,7 +132,8 @@ class TestLinalg(TestCase):
             tau = make_tensor(tau_size, dtype=dtype, device=device)
             c = make_tensor(c_size, dtype=dtype, device=device)
             with self.assertRaisesRegex(RuntimeError, error_regex):
-                torch.ormqr(a, tau, c)
+                with pytorch_op_timer():
+                    torch.ormqr(a, tau, c)
 
     
 instantiate_device_type_tests(TestLinalg, globals())
