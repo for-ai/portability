@@ -9,6 +9,7 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.testing._internal.common_utils import TestCase, run_tests
 from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
 from ..utils.timer_wrapper import pytorch_op_timer
+import os
 
 class TestOptim(TestCase):
     def _test_state_dict(self, weight, bias, input, constructor, device):
@@ -18,7 +19,7 @@ class TestOptim(TestCase):
 
         def fn_base(optimizer, weight, bias):
             optimizer.zero_grad()
-            i = input_cuda if weight.is_cuda else input
+            i = Variable(input.data.float().to(device)) if weight.is_cuda else input
             loss = (weight.mv(i) + bias).pow(2).sum()
             loss.backward()
             return loss
@@ -80,12 +81,12 @@ class TestOptim(TestCase):
 
         # Check that state dict can be loaded even when we cast parameters
         # to a different type and move to a different device.
-        if not torch.cuda.is_available():
+        if os.environ['DEVICE'] == 'cpu':
             return
 
-        input_cuda = Variable(input.data.float().cuda())
-        weight_cuda = Variable(weight.data.float().cuda(), requires_grad=True)
-        bias_cuda = Variable(bias.data.float().cuda(), requires_grad=True)
+        input_cuda = Variable(input.data.float().to(device))
+        weight_cuda = Variable(weight.data.float().to(device), requires_grad=True)
+        bias_cuda = Variable(bias.data.float().to(device), requires_grad=True)
         optimizer_cuda = constructor(weight_cuda, bias_cuda)
         fn_cuda = functools.partial(
             fn_base, optimizer_cuda, weight_cuda, bias_cuda)
@@ -180,8 +181,8 @@ class TestOptim(TestCase):
             def fn():
                 optimizer.zero_grad()
                 y = weight.mv(input)
-                if y.is_cuda and bias.is_cuda and y.get_device() != bias.get_device():
-                    y = y.cuda(bias.get_device())
+                if y.get_device() != bias.get_device():
+                    y = y.to(bias.get_device())
                 loss = (y + bias).pow(2).sum()
                 loss.backward()
                 return loss
