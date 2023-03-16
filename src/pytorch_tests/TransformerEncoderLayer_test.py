@@ -74,8 +74,8 @@ class TestNN(NNTestCase):
             dim_feedforward = 16
             dropout = 0.0
             device = torch.device("cuda" if use_cuda else "cpu")
-
-            layer = nn.TransformerEncoderLayer(
+            with pytorch_op_timer():
+                layer = nn.TransformerEncoderLayer(
                 d_model,
                 nhead,
                 dim_feedforward=dim_feedforward,
@@ -105,8 +105,8 @@ class TestNN(NNTestCase):
 
             encoder_layer = get_a_test_layer(use_cuda=use_cuda, activation=activation,
                                              batch_first=batch_first)
-
-            model = nn.TransformerEncoder(encoder_layer, 1).to(device)
+            with pytorch_op_timer():
+                model = nn.TransformerEncoder(encoder_layer, 1).to(device)
             if not training:
                 model = model.eval()
 
@@ -167,7 +167,8 @@ class TestNN(NNTestCase):
                 result, ref_output, rtol=1e-7, atol=1e-5)
 
             # test case 2, multiple layers no norm
-            model = nn.TransformerEncoder(
+            with pytorch_op_timer():
+                model = nn.TransformerEncoder(
                 encoder_layer, 2, enable_nested_tensor=False).to(device)
             if not training:
                 model = model.eval()
@@ -186,8 +187,8 @@ class TestNN(NNTestCase):
             self.assertEqual(tuple(result.shape), tuple(ref_output.shape))
             torch.testing.assert_close(
                 result, ref_output, rtol=1e-7, atol=1e-5)
-
-            model = nn.TransformerEncoder(
+            with pytorch_op_timer():
+                model = nn.TransformerEncoder(
                 encoder_layer, 6, enable_nested_tensor=False).to(device)
             if not training:
                 model = model.eval()
@@ -210,7 +211,8 @@ class TestNN(NNTestCase):
             # test case 3, multiple layers with norm
             # d_model = 4
             norm = nn.LayerNorm(4)
-            model = nn.TransformerEncoder(
+            with pytorch_op_timer()
+                model = nn.TransformerEncoder(
                 encoder_layer, 2, norm=norm, enable_nested_tensor=False).to(device)
             if not training:
                 model = model.eval()
@@ -229,8 +231,8 @@ class TestNN(NNTestCase):
             self.assertEqual(tuple(result.shape), tuple(ref_output.shape))
             torch.testing.assert_close(
                 result, ref_output, rtol=1e-7, atol=1e-5)
-
-            model = nn.TransformerEncoder(
+            with pytorch_op_timer()
+                model = nn.TransformerEncoder(
                 encoder_layer, 6, norm=norm, enable_nested_tensor=False).to(device)
             if not training:
                 model = model.eval()

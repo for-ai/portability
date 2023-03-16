@@ -17,7 +17,9 @@ class TestAutodiffJit(JitTestCase):
         # Note: this relies on gammaln and entr not having autodiff implementations.
         def fn(a, b, c):
             r = a.relu().relu()
-            return  torch.special.entr(r)
+            with pytorch_op_timer():
+                test_1 = torch.special.entr(r)
+            return  test_1
 
         fn_s = torch.jit.script(fn)
 

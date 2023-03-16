@@ -16,7 +16,7 @@ from torch.testing._internal.common_device_type import \
      onlyCUDA, dtypesIfCUDA, dtypesIfCPU, onlyCPU, largeTensorTest)
 
 from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
-# TODO: remove this
+from ..utils.timer_wrapper import pytorch_op_timer
 SIZE = 100
 
 
@@ -38,6 +38,7 @@ class TestSortAndSelect(TestCase):
 
         are_ordered = True
         for k in range(1, SIZE):
+            print(k)
             self.assertTrue(check_order(mxx[:, k - 1], mxx[:, k]),
                             'torch.sort ({}) values unordered for {}'.format(order, task))
 
@@ -69,15 +70,18 @@ class TestSortAndSelect(TestCase):
             x_vals, x_inds = torch.sort(x)
             self.assertEqual(x_vals, y)
             self.assertEqual(x_inds, y_inds)
-
             # Test use of result tensor
             res2val = torch.tensor((), device=device)
             res2ind = torch.tensor((), device=device, dtype=torch.long)
             torch.sort(x, out=(res2val, res2ind))
             self.assertEqual(res1val, res2val, atol=0, rtol=0)
             self.assertEqual(res1ind, res2ind, atol=0, rtol=0)
-            self.assertEqual(torch.argsort(x), res1ind)
-            self.assertEqual(x.argsort(), res1ind)
+            with pytorch_op_timer():
+                test_1 = torch.argsort(x)
+            self.assertEqual(test_1, res1ind)
+            with pytorch_op_timer():
+                test_2 = x.argsort()
+            self.assertEqual(test_2, res1ind)
 
             # Test sorting of random numbers
             self.assertIsOrdered('ascending', x, res2val, res2ind, 'random')
@@ -106,8 +110,12 @@ class TestSortAndSelect(TestCase):
             torch.sort(x, x.dim() - 1, True, out=(res2val, res2ind))
             self.assertEqual(res1val, res2val, atol=0, rtol=0)
             self.assertEqual(res1ind, res2ind, atol=0, rtol=0)
-            self.assertEqual(torch.argsort(x, x.dim() - 1, True), res1ind)
-            self.assertEqual(x.argsort(x.dim() - 1, True), res1ind)
+            with pytorch_op_timer():
+                test_3 = torch.argsort(x, x.dim() - 1, True)
+            self.assertEqual(test_3, res1ind)
+            with pytorch_op_timer():
+                test_4 = x.argsort(x.dim() - 1, True)
+            self.assertEqual(test_4, res1ind)
 
             # Test sorting of random numbers
             self.assertIsOrdered('descending', x, res2val, res2ind, 'random')
