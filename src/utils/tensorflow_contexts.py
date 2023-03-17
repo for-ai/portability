@@ -2,19 +2,21 @@ import tensorflow as tf
 import os
 from tensorflow.python.platform import test
 import contextlib
-
+from tensorflow.python.eager import context
 
 class PortabilityTestCase(test.TestCase):
     @contextlib.contextmanager
     def _constrain_devices_and_set_default(self, sess, use_gpu, force_gpu):
         """Set the session and its graph to global default and constrain devices."""
+        # print("*** running")
         if context.executing_eagerly():
             yield None
         else:
+
             with sess.graph.as_default(), sess.as_default():
                 # Use the name of an actual device if one is detected, or
                 # '/device:GPU:0' otherwise
-                device_name = self.gpu_device_name()
+                # device_name = self.gpu_device_name()
                 if os.environ['DEVICE'] == "tpu":
                     device_name = "/device:TPU:0"
                 elif os.environ['DEVICE'] == "gpu":

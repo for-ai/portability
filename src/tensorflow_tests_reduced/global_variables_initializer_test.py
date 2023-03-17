@@ -5,7 +5,7 @@ import operator
 
 from absl.testing import parameterized
 import numpy as np
-
+import tensorflow as tf
 from tensorflow.python.eager import context
 from tensorflow.python.eager import def_function
 from tensorflow.python.framework import constant_op
@@ -24,9 +24,10 @@ from tensorflow.python.ops import variables
 from tensorflow.python.platform import test
 from tensorflow.python.training import gradient_descent
 from tensorflow.python.util import compat
+from ..utils.tensorflow_contexts import PortabilityTestCase
 
 
-class VariablesTestCase(test.TestCase, parameterized.TestCase):
+class VariablesTestCase(PortabilityTestCase, parameterized.TestCase):
 
   @test_util.run_v1_only("b/120545219")
   def testInitialization(self):
@@ -312,7 +313,7 @@ class VariablesTestCase(test.TestCase, parameterized.TestCase):
       self.assertAllClose(np.ones((5, 5), np.float32), self.evaluate(var))
 
 
-class IsInitializedTest(test.TestCase):
+class IsInitializedTest(PortabilityTestCase):
 
   def testAssertVariablesInitialized(self):
     with ops.Graph().as_default(), self.cached_session() as sess:

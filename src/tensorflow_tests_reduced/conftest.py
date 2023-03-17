@@ -6,11 +6,35 @@ from ..utils.timer_wrapper import tensorflow_test_timer
 import gc
 import tensorflow as tf
 
-
+# @pytest.fixture(scope='session', autouse=True)
+def initialize_tpu(): 
+    # if os.environ['DEVICE'] == "tpu":
+    os.environ.TPU_NAME = 'local'
+    print("*** TPU_NAME", os.environ.TPU_NAME)
+    resolver = tf.distribute.cluster_resolver.TPUClusterResolver()
+    tf.config.experimental_connect_to_cluster(resolver)
+    tf.tpu.experimental.initialize_tpu_system(resolver)
+    tpu_devices = tf.config.list_logical_devices('TPU')
+    print("test device", tpu_devices)
+    
+initialize_tpu()
 def pytest_configure():
     pytest.tensorflow_test_times = {}
     pytest.test_name = ""
     pytest.test_i = 0
+    
+    
+    if os.environ['DEVICE'] == "tpu":
+        initialize_tpu()
+    #     # Create a TPUClusterResolver
+    #     resolver = tf.distribute.cluster_resolver.TPUClusterResolver()
+    #     # Connect to the TPU system
+    #     tf.config.experimental_connect_to_cluster(resolver)
+    #     # # Initialize the TPU system
+    #     tf.tpu.experimental.initialize_tpu_system(resolver)
+    #     # # Get the list of TPU devices
+    #     tpu_devices = tf.config.list_logical_devices('TPU')
+    #     print("test device", tpu_devices)
 
 
 @pytest.fixture(autouse=True, scope="session")
