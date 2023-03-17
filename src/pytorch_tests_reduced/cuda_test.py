@@ -79,25 +79,25 @@ class TestTorch(TestCase):
         self.assertEqual('cpu', cpu0.type)
         self.assertEqual(0, cpu0.index)
 
-        with pytorch_op_timer: 
+        with pytorch_op_timer(): 
             cuda = torch.device('cuda')
         self.assertEqual('cuda', str(cuda))
         self.assertEqual('cuda', cuda.type)
         self.assertEqual(None, cuda.index)
 
-        with pytorch_op_timer: 
+        with pytorch_op_timer(): 
             cuda1 = torch.device('cuda:1')
         self.assertEqual('cuda:1', str(cuda1))
         self.assertEqual('cuda', cuda1.type)
         self.assertEqual(1, cuda1.index)
 
-        with pytorch_op_timer: 
+        with pytorch_op_timer(): 
             cuda1 = torch.device('cuda', 1)
         self.assertEqual('cuda:1', str(cuda1))
         self.assertEqual('cuda', cuda1.type)
         self.assertEqual(1, cuda1.index)
 
-        with pytorch_op_timer: 
+        with pytorch_op_timer(): 
             cuda90 = torch.device('cuda', 90)
         self.assertEqual('cuda:90', str(cuda90))
         self.assertEqual('cuda', cuda90.type)

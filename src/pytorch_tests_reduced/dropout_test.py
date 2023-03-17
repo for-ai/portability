@@ -31,7 +31,7 @@ class TestDropoutNN(NNTestCase):
             self.assertLess(abs(output.data.std() - std), 0.1)
             output.backward(input)
 
-    @onlyAcceleratedDeviceTypes
+    # @onlyAcceleratedDeviceTypes
     def test_native_dropout_corner_case(self, device):
         for train in [True, False]:
             for p in [0.0, 1.0]:
