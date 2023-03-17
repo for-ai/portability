@@ -17,7 +17,7 @@ class PortabilityTestCase(test.TestCase):
                 device_name = self.gpu_device_name()
                 if os.environ['DEVICE'] == "tpu":
                     device_name = "/device:TPU:0"
-                elif os.environ['DEVICE'] == "tpu":
+                elif os.environ['DEVICE'] == "gpu":
                     device_name = "/device:GPU:0"
                 else:
                     device_name = "/device:CPU:0"
