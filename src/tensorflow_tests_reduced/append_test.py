@@ -13,7 +13,7 @@
 # limitations under the License.
 # ==============================================================================
 """Tests for lists module."""
-
+import sys
 from tensorflow.python.autograph.converters import lists
 from tensorflow.python.autograph.lang import special_functions
 from tensorflow.python.framework import dtypes
@@ -21,9 +21,10 @@ from tensorflow.python.ops import list_ops
 from tensorflow.python.autograph.core import converter_testing
 
 from ..utils.timer_wrapper import tensorflow_op_timer
+from ..utils.tensorflow_contexts import PortabilityTestCase
+import tensorflow as tf
 
-
-class ListTest(converter_testing.TestCase):
+class ListTest(converter_testing.TestCase, PortabilityTestCase):
     def test_list_append(self):
 
         def f():
@@ -32,12 +33,13 @@ class ListTest(converter_testing.TestCase):
                 l.append(2)
             l.append(3)
             return l
-
+        
         tr = self.transform(f, lists)
-
         tl = tr()
         r = list_ops.tensor_list_stack(tl, dtypes.int32)
+        
         self.assertAllEqual(self.evaluate(r), [1, 2, 3])
+
 
 
 if __name__ == '__main__':
