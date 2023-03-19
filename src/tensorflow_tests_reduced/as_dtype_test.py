@@ -16,7 +16,7 @@
 
 from absl.testing import parameterized
 import numpy as np
-
+import tensorflow as tf
 # pylint: disable=g-bad-import-order
 from tensorflow.python.framework import _dtypes
 # pylint: enable=g-bad-import-order
@@ -26,6 +26,7 @@ from tensorflow.core.function import trace_type
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import test_util
 from tensorflow.python.platform import googletest
+from ..utils.tensorflow_contexts import PortabilityTestCase
 
 
 def _is_numeric_dtype_enum(datatype_enum):
@@ -36,8 +37,8 @@ def _is_numeric_dtype_enum(datatype_enum):
   return datatype_enum not in non_numeric_dtypes
 
 
-class TypesTest(test_util.TensorFlowTestCase, parameterized.TestCase):
-
+# class TypesTest(test_util.TensorFlowTestCase, PortabilityTestCase,  parameterized.TestCase):
+class TypesTest(PortabilityTestCase, parameterized.TestCase):
   def testAllTypesConstructible(self):
     for datatype_enum in types_pb2.DataType.values():
       if datatype_enum == types_pb2.DT_INVALID:
@@ -66,6 +67,10 @@ class TypesTest(test_util.TensorFlowTestCase, parameterized.TestCase):
             dtypes.as_dtype(numpy_dtype))
 
   def testAllPybind11DTypeConvertibleToDType(self):
+    with self.cached_session(): 
+      a = tf.constant([1, 2, 3])
+      tf.print("*** device", a.device)
+    
     for datatype_enum in types_pb2.DataType.values():
       if datatype_enum == types_pb2.DT_INVALID:
         continue
