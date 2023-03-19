@@ -300,7 +300,7 @@ class TestNN(NNTestCase):
     def test_batchnorm_buffer_update_when_stats_are_not_tracked(self, device):
         input_size = (32, 4)
         # Instantiate BN with buffers that are not None
-        bn = nn.BatchNorm1d(input_size[1], track_running_stats=True)
+        bn = nn.BatchNorm1d(input_size[1], track_running_stats=True).to(device)
         # Use buffers for normalization but don't update them
         bn.track_running_stats = False
         # Store initial values
