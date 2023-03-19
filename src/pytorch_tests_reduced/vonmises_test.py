@@ -101,8 +101,8 @@ class TestDistributionShapes(DistributionsTestCase):
         self.assertEqual(von_mises._event_shape, torch.Size(()))
         self.assertEqual(von_mises.sample().size(), torch.Size((2,)))
         self.assertEqual(von_mises.sample(torch.Size((3, 2))).size(), torch.Size((3, 2, 2)))
-        self.assertEqual(von_mises.log_prob(self.tensor_sample_1).size(), torch.Size((3, 2)))
-        self.assertEqual(von_mises.log_prob(torch.ones(2, 1)).size(), torch.Size((2, 2)))
+        self.assertEqual(von_mises.log_prob(self.tensor_sample_1.to(device)).size(), torch.Size((3, 2)))
+        self.assertEqual(von_mises.log_prob(torch.ones(2, 1, device=device)).size(), torch.Size((2, 2)))
 
     def test_vonmises_shape_scalar_params(self, device):
         with pytorch_op_timer():
