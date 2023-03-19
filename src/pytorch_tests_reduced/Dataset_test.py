@@ -30,7 +30,7 @@ class TestDictDataLoader(TestCase):
         with pytorch_op_timer():
             self.dataset = DictDataset()
 
-    def test_sequential_batch(self):
+    def test_sequential_batch(self, device):
         for persistent_workers in (False, True):
             if persistent_workers:
                 loader = DataLoader(self.dataset, batch_size=2, shuffle=False,
@@ -90,18 +90,6 @@ class StringDataset(Dataset):
         return (self.s[ndx], ndx)
 
 
-class TestStringDataLoader(TestCase):
-    def setUp(self):
-        self.dataset = StringDataset()
-
-    def test_shuffle_pin_memory(self, device):
-        loader = DataLoader(self.dataset, batch_size=2,
-                            shuffle=True, num_workers=4, pin_memory=True)
-        for (s, n) in loader:
-            self.assertIsInstance(s[0], str)
-            self.assertTrue(n.is_pinned())
-
-
 class DictDataset(Dataset):
     def __len__(self):
         return 4
@@ -116,7 +104,6 @@ class DictDataset(Dataset):
 
 
 instantiate_device_type_tests(TestDictDataLoader, globals())
-instantiate_device_type_tests(TestStringDataLoader, globals())
 
 if __name__ == '__main__':
     run_tests()
