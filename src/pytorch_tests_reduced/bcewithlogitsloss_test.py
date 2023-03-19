@@ -70,12 +70,12 @@ class TestNLLLoss(TestCase):
                     output_logits, target
                 )
 
-            print(loss_logits, loss_sig)
+            # print(loss_logits, loss_sig)
 
             self.assertEqual(loss_logits, loss_sig)
 
             if reduction == 'none':
-                grad = torch.rand(x_size, y_size)
+                grad = torch.rand(x_size, y_size, device=device)
                 loss_sig.backward(grad)
                 loss_logits.backward(grad)
             else:
