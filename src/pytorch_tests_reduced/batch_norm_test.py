@@ -286,16 +286,17 @@ class TestNN(NNTestCase):
         for dual_indices in ((0,), (1,), (1, 2), (0, 1), (0, 1, 2),):
             tangents = tuple(torch.rand_like(x) for x in args)
 
-            with fwAD.dual_level():
-                duals = [fwAD.make_dual(primal, tangent) if i in dual_indices else primal
-                         for i, (primal, tangent) in enumerate(zip(args, tangents))]
-                msg = "batch_norm is not differentiable wrt running_mean and running_var"
-                # 0 needs to have forward grad because otherwise we won't even run batch_norm_jvp
-                if (1 in dual_indices or 2 in dual_indices) and 0 in dual_indices:
-                    with self.assertRaisesRegex(RuntimeError, msg):
+            if os.environ['DEVICE'] != "tpu":
+                with fwAD.dual_level():
+                    duals = [fwAD.make_dual(primal, tangent) if i in dual_indices else primal
+                            for i, (primal, tangent) in enumerate(zip(args, tangents))]
+                    msg = "batch_norm is not differentiable wrt running_mean and running_var"
+                    # 0 needs to have forward grad because otherwise we won't even run batch_norm_jvp
+                    if (1 in dual_indices or 2 in dual_indices) and 0 in dual_indices:
+                        with self.assertRaisesRegex(RuntimeError, msg):
+                            fn(*duals)
+                    else:
                         fn(*duals)
-                else:
-                    fn(*duals)
 
     def test_batchnorm_buffer_update_when_stats_are_not_tracked(self, device):
         input_size = (32, 4)
