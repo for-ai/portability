@@ -101,9 +101,9 @@ class TestConvolutionNN(NNTestCase):
         with torch.backends.cudnn.flags(enabled=False):
             if os.environ['DEVICE'] != "tpu":
                 # inconsistent types should raise an exception
-                result = nn.functional.conv2d(inputs, weights)
                 self.assertRaises(RuntimeError, lambda: nn.functional.conv2d(inputs, weights))
                 self.assertRaises(RuntimeError, lambda: nn.functional.conv2d(inputs, weights.float(), bias))
+                nn.functional.conv2d(inputs.float(), weights.float(), bias.float())
 
             # but it should work with the same type
             nn.functional.conv2d(inputs.float(), weights.float(), bias.float())

@@ -29,6 +29,7 @@ from torch.testing._internal.common_utils import TestCase, freeze_rng_state, run
     get_cycles_per_ms
 from torch.testing._internal.autocast_test_lists import AutocastTestLists
 from ..utils.timer_wrapper import pytorch_op_timer
+from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
 
 # load_tests from common_utils is used to automatically filter tests for
 # sharding on sandcastle. This line silences flake warnings
@@ -71,6 +72,7 @@ _cycles_per_ms = None
 
 
 class TestCuda(TestCase):
+    FIFTY_MIL_CYCLES = 50000000
 
     def _test_copy_sync_current_stream(self, x, y):
         x_plus_one = x + 1
@@ -112,17 +114,18 @@ class TestCuda(TestCase):
         self.assertEqual(y, x)
 
     # @unittest.skipIf(not TEST_MULTIGPU, "only one GPU detected")
+    # @onlyAcceleratedDeviceTypes
     def test_copy_streams(self):
         d0 = torch.device('cuda:0')
         x0 = torch.zeros(5, 5, device=d0)
 
-        d1 = torch.device('cuda:1')
+        d1 = torch.device('cuda:0')
         x1 = torch.zeros(5, 5, device=d1)
         self._test_copy_sync_current_stream(x0, x1)
 
         x2 = torch.zeros(5, 5, device=d0)
         self._test_copy_sync_current_stream(x0, x2)
 
-
+# instantiate_device_type_tests(TestCuda, globals())
 if __name__ == '__main__':
     run_tests()
