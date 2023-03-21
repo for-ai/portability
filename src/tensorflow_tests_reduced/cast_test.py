@@ -94,6 +94,7 @@ class CastOpTest(test.TestCase):
       self.assertAllClose(a, self.evaluate(b), rtol=1 / 128.)
     with self.cached_session():
       b = math_ops.cast(math_ops.cast(a, dtypes.bfloat16), dtypes.float32)
+      print("***B", b.device)
       self.assertAllClose(a, self.evaluate(b), rtol=1 / 128.)
 
   def testRandom(self):

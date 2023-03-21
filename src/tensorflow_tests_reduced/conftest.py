@@ -17,25 +17,15 @@ def initialize_tpu():
     tpu_devices = tf.config.list_logical_devices('TPU')
     print("test device", tpu_devices)
     
-initialize_tpu()
+
 def pytest_configure():
     pytest.tensorflow_test_times = {}
     pytest.test_name = ""
     pytest.test_i = 0
     
     
-    if os.environ['DEVICE'] == "tpu":
-        initialize_tpu()
-    #     # Create a TPUClusterResolver
-    #     resolver = tf.distribute.cluster_resolver.TPUClusterResolver()
-    #     # Connect to the TPU system
-    #     tf.config.experimental_connect_to_cluster(resolver)
-    #     # # Initialize the TPU system
-    #     tf.tpu.experimental.initialize_tpu_system(resolver)
-    #     # # Get the list of TPU devices
-    #     tpu_devices = tf.config.list_logical_devices('TPU')
-    #     print("test device", tpu_devices)
-
+    # if os.environ['DEVICE'] == "tpu":
+    #     initialize_tpu()
 
 @pytest.fixture(autouse=True, scope="session")
 def track_all():
@@ -53,8 +43,17 @@ def track_timing(request):
     pytest.test_name = test_file + ":" + pytest.test_name
 
     pytest.tensorflow_test_times[pytest.test_name] = {"operations": []}
-    with tensorflow_test_timer():
-        yield
+    print("***DEVICE CHOICE")
+    if os.environ['DEVICE'] == "tpu":
+        device_name = "/device:TPU:0"
+    elif os.environ['DEVICE'] == "gpu":
+        device_name = "/device:GPU:0"
+    else:
+        device_name = "/device:CPU:0"
+    print("***CONFTEST DEVICE", device_name)
+    with tf.device(device_name):
+        with tensorflow_test_timer():
+            yield
 
     if os.environ['DEVICE'] == "gpu":
         tf.keras.backend.clear_session()
