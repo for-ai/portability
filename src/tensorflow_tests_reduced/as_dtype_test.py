@@ -67,10 +67,6 @@ class TypesTest(PortabilityTestCase, parameterized.TestCase):
             dtypes.as_dtype(numpy_dtype))
 
   def testAllPybind11DTypeConvertibleToDType(self):
-    with self.cached_session(): 
-      a = tf.constant([1, 2, 3])
-      tf.print("*** device", a.device)
-    
     for datatype_enum in types_pb2.DataType.values():
       if datatype_enum == types_pb2.DT_INVALID:
         continue

@@ -24,10 +24,9 @@ from tensorflow.python.ops import variables
 from tensorflow.python.platform import test
 from tensorflow.python.training import gradient_descent
 from tensorflow.python.util import compat
-from ..utils.tensorflow_contexts import PortabilityTestCase
 
 
-class VariablesTestCase(PortabilityTestCase, parameterized.TestCase):
+class VariablesTestCase(test.TestCase, parameterized.TestCase):
 
   @test_util.run_v1_only("b/120545219")
   def testInitialization(self):
@@ -131,6 +130,7 @@ class VariablesTestCase(PortabilityTestCase, parameterized.TestCase):
   def testAssignDifferentShapesAllowed(self):
     var = variables.Variable(np.zeros(shape=[1, 1]),
                              shape=tensor_shape.TensorShape(None))
+    print("***VAR", var.device)
     self.evaluate(variables.global_variables_initializer())
     self.assertAllEqual(np.zeros(shape=[1, 1]), var.read_value())
     self.evaluate(var.assign(np.zeros(shape=[2, 2])))
@@ -313,7 +313,7 @@ class VariablesTestCase(PortabilityTestCase, parameterized.TestCase):
       self.assertAllClose(np.ones((5, 5), np.float32), self.evaluate(var))
 
 
-class IsInitializedTest(PortabilityTestCase):
+class IsInitializedTest(test.TestCase):
 
   def testAssertVariablesInitialized(self):
     with ops.Graph().as_default(), self.cached_session() as sess:
@@ -330,8 +330,10 @@ class IsInitializedTest(PortabilityTestCase):
     with ops.Graph().as_default(), self.cached_session() as sess:
       a = variables.Variable(array_ops.zeros([0, 2]))
       b = variables.Variable(array_ops.ones([2, 2]))
+      print("***A", a.device, sess.graph.device)
       objective = math_ops.reduce_sum(b + math_ops.matmul(
           a, a, transpose_a=True))
+      print("INITIALIZER", variables.global_variables_initializer())
       self.evaluate(variables.global_variables_initializer())
       do_opt = gradient_descent.GradientDescentOptimizer(0.1).minimize(
           objective)
