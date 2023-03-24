@@ -7,25 +7,10 @@ import gc
 import tensorflow as tf
 
 # @pytest.fixture(scope='session', autouse=True)
-def initialize_tpu(): 
-    # if os.environ['DEVICE'] == "tpu":
-    os.environ.TPU_NAME = 'local'
-    print("*** TPU_NAME", os.environ.TPU_NAME)
-    resolver = tf.distribute.cluster_resolver.TPUClusterResolver()
-    tf.config.experimental_connect_to_cluster(resolver)
-    tf.tpu.experimental.initialize_tpu_system(resolver)
-    tpu_devices = tf.config.list_logical_devices('TPU')
-    print("test device", tpu_devices)
-    
-
 def pytest_configure():
     pytest.tensorflow_test_times = {}
     pytest.test_name = ""
     pytest.test_i = 0
-    
-    
-    # if os.environ['DEVICE'] == "tpu":
-    #     initialize_tpu()
 
 @pytest.fixture(autouse=True, scope="session")
 def track_all():
@@ -43,14 +28,12 @@ def track_timing(request):
     pytest.test_name = test_file + ":" + pytest.test_name
 
     pytest.tensorflow_test_times[pytest.test_name] = {"operations": []}
-    print("***DEVICE CHOICE")
     if os.environ['DEVICE'] == "tpu":
         device_name = "/device:TPU:0"
     elif os.environ['DEVICE'] == "gpu":
         device_name = "/device:GPU:0"
     else:
         device_name = "/device:CPU:0"
-    print("***CONFTEST DEVICE", device_name)
     with tf.device(device_name):
         with tensorflow_test_timer():
             yield

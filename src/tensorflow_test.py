@@ -4,7 +4,10 @@ import sys
 from tensorflow.python.platform import test
 import contextlib
 from tensorflow.python.eager import context
-initialize_tpu()
+import os
+import tensorflow as tf
+# initialize_tpu()
+# tf.config.run_functions_eagerly(True)
 
 @contextlib.contextmanager
 def _constrain_devices_and_set_default(self, sess, use_gpu, force_gpu):
@@ -29,6 +32,6 @@ def _constrain_devices_and_set_default(self, sess, use_gpu, force_gpu):
             with sess.graph.device(device_name):
                 yield sess
 
-test.TestCase._constrain_devices_and_set_default = _constrain_devices_and_set_default
+# test.TestCase._constrain_devices_and_set_default = _constrain_devices_and_set_default
 
-retcode = pytest.main(["-x", "src/tensorflow_tests_reduced/" + sys.argv[1], "-s"])#, "-k", "testInitialization"])
+retcode = pytest.main(["-x", sys.argv[1], "-s"])
