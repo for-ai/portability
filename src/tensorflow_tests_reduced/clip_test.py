@@ -527,6 +527,7 @@ class ClipTest(test.TestCase):
         with self.session():
             x = constant_op.constant(
                 [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], shape=[2, 3])
+            print("***DEVICE", x.device)
             # Average norm = 0, no changes
             np_ans = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
             clip_norm = 0.9

@@ -26,7 +26,6 @@ from tensorflow.core.function import trace_type
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import test_util
 from tensorflow.python.platform import googletest
-from ..utils.tensorflow_contexts import PortabilityTestCase
 
 
 def _is_numeric_dtype_enum(datatype_enum):
@@ -37,8 +36,7 @@ def _is_numeric_dtype_enum(datatype_enum):
   return datatype_enum not in non_numeric_dtypes
 
 
-# class TypesTest(test_util.TensorFlowTestCase, PortabilityTestCase,  parameterized.TestCase):
-class TypesTest(PortabilityTestCase, parameterized.TestCase):
+class TypesTest(test_util.TensorFlowTestCase, parameterized.TestCase):
   def testAllTypesConstructible(self):
     for datatype_enum in types_pb2.DataType.values():
       if datatype_enum == types_pb2.DT_INVALID:

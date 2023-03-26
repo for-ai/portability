@@ -47,7 +47,6 @@ from tensorflow.python.ops import variables
 import tensorflow.python.ops.gradients  # pylint: disable=unused-import
 from tensorflow.python.platform import googletest
 from tensorflow.python.util import compat
-from ..utils.tensorflow_contexts import PortabilityTestCase
 import tensorflow as tf
 class ObjectWithName(object):
     
@@ -58,12 +57,9 @@ class ObjectWithName(object):
   def name(self):
     return self._name
 
-class CollectionTest(PortabilityTestCase, test_util.TensorFlowTestCase):
+class CollectionTest(test_util.TensorFlowTestCase):
 
   def test_get_collections(self):
-    with self.cached_session(): 
-      a = tf.constant([1, 2, 3])
-      tf.print("*** test",a.device) 
     g = ops.Graph()
     self.assertSequenceEqual(g.collections, [])
     g.add_to_collection("key", 12)
