@@ -21,10 +21,10 @@ from tensorflow.python.ops import list_ops
 from tensorflow.python.autograph.core import converter_testing
 
 from ..utils.timer_wrapper import tensorflow_op_timer
-from ..utils.tensorflow_contexts import PortabilityTestCase
+# from ..utils.tensorflow_contexts import PortabilityTestCase
 import tensorflow as tf
 
-class ListTest(converter_testing.TestCase, PortabilityTestCase):
+class ListTest(converter_testing.TestCase):
     def test_list_append(self):
 
         def f():
