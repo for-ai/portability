@@ -7,7 +7,6 @@ from tensorflow.python.eager import context
 import os
 import tensorflow as tf
 # initialize_tpu()
-# tf.config.run_functions_eagerly(True)
 
 
 def set_global_device():
@@ -31,12 +30,12 @@ _original_as_default = tf.Graph.as_default
 def custom_as_default(self, include_device=True):
     # Create a context manager using the original as_default method
 
-    print("***CONTEXT")
+    # print("***CONTEXT")
     if getattr(self, '_custom_device_set', False) or not include_device or getattr(self, '_custom_device_set', False):
         self._include_device = False
         # if not include_device:
         #     self._not_include_device = False
-        print("***SKIP")
+        # print("***SKIP")
         with _original_as_default(self):
             yield
     else:
@@ -66,4 +65,5 @@ def custom_as_default(self, include_device=True):
 # Monkey patch the Graph class
 tf.Graph.as_default = custom_as_default
 
-retcode = pytest.main(["-x", sys.argv[1], "-s"])
+retcode = pytest.main(["--forked", "-x", sys.argv[1], "-s"])
+#  "-k", "test_binary_cwise_ops"
