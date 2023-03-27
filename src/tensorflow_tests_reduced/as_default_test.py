@@ -48,16 +48,16 @@ _COS_DERIVATIVES = [math_ops.cos,
 
 class FunctionGradientsTest(test.TestCase, parameterized.TestCase):
 
-    def setUp(self):
-        super(FunctionGradientsTest, self).setUp()
-        cpus = config.list_physical_devices('CPU')
-        # Set 4 virtual CPUs
-        config.set_logical_device_configuration(cpus[0], [
-            context.LogicalDeviceConfiguration(),
-            context.LogicalDeviceConfiguration(),
-            context.LogicalDeviceConfiguration(),
-            context.LogicalDeviceConfiguration()
-        ])
+    # def setUp(self):
+    #     super(FunctionGradientsTest, self).setUp()
+    #     cpus = config.list_physical_devices('CPU')
+    #     # Set 4 virtual CPUs
+    #     config.set_logical_device_configuration(cpus[0], [
+    #         context.LogicalDeviceConfiguration(),
+    #         context.LogicalDeviceConfiguration(),
+    #         context.LogicalDeviceConfiguration(),
+    #         context.LogicalDeviceConfiguration()
+    #     ])
 
     def testGraphModeWithGradients(self):
         v = resource_variable_ops.ResourceVariable(1.0, name='v')
