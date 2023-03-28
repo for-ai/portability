@@ -26,6 +26,7 @@ from tensorflow.python.ops.numpy_ops import np_dtypes
 from tensorflow.python.ops.numpy_ops import np_math_ops
 from tensorflow.python.ops.numpy_ops import np_random
 from tensorflow.python.platform import test
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 class RandomTestBase(test.TestCase, parameterized.TestCase):
@@ -53,7 +54,8 @@ class StandardNormalTest(RandomTestBase):
 
     def setUp(self):
         self.np_func = np.random.standard_normal
-        self.onp_func = onp.random.standard_normal
+        with tensorflow_op_timer():
+            self.onp_func = onp.random.standard_normal
         super(StandardNormalTest, self).setUp()
 
     @parameterized.parameters((None,), ((),), ((1,),), ((1, 2),))

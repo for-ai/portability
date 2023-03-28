@@ -39,13 +39,15 @@ from tensorflow.python.ops import variables
 from tensorflow.python.platform import googletest
 from tensorflow.python.platform import test
 
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 class AdjustBrightnessTest(test_util.TensorFlowTestCase):
 
     def _testBrightness(self, x_np, y_np, delta, tol=1e-6):
         with self.cached_session():
             x = constant_op.constant(x_np, shape=x_np.shape)
-            y = image_ops.adjust_brightness(x, delta)
+            with tensorflow_op_timer():
+                y = image_ops.adjust_brightness(x, delta)
             y_tf = self.evaluate(y)
             self.assertAllClose(y_tf, y_np, tol)
 

@@ -37,6 +37,7 @@ from tensorflow.python.ops import variable_scope
 from tensorflow.python.ops import variables
 from tensorflow.python.platform import test
 from tensorflow.python.util import nest
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 _COS_DERIVATIVES = [math_ops.cos,
@@ -72,6 +73,8 @@ class FunctionGradientsTest(test.TestCase, parameterized.TestCase):
         self.assertAllEqual(step(), 2.0)
 
     def testGraphGradientVariable(self):
+        with tensorflow_op_timer():
+            ops.Graph().as_default()
         with ops.Graph().as_default(), self.cached_session():
             v = variables.Variable(1.0)
 

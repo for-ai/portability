@@ -34,6 +34,7 @@ from tensorflow.python.ops.numpy_ops import np_array_ops
 from tensorflow.python.ops.numpy_ops import np_arrays
 from tensorflow.python.ops.numpy_ops import np_math_ops
 from tensorflow.python.platform import test
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 _virtual_devices_ready = False
@@ -155,11 +156,15 @@ class ArrayCreationTest(test.TestCase):
         def run_test(arr):
             for fn in array_transforms:
                 arr = fn(arr)
+                with tensorflow_op_timer():
+                    test_2 = np_array_ops.diagflat(arr)
                 self.match(
                     np_array_ops.diagflat(arr),
                     np.diagflat(arr),
                     msg='diagflat({})'.format(arr))
                 for k in range(-3, 3):
+                    with tensorflow_op_timer():
+                        test_1 = np_array_ops.diagflat(arr, k)
                     self.match(
                         np_array_ops.diagflat(arr, k),
                         np.diagflat(arr, k),
