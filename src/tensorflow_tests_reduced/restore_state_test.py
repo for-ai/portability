@@ -35,7 +35,7 @@ from tensorflow.python.training import coordinator
 from tensorflow.python.training import input as input_lib
 from tensorflow.python.training import queue_runner_impl
 from tensorflow.python.util import compat
-
+from ..utils.timer_wrapper import tensorflow_op_timer
 prefix_path = "tensorflow/core/lib"
 
 # pylint: disable=invalid-name
@@ -161,6 +161,8 @@ class IdentityReaderTest(test.TestCase):
 
     self.evaluate(queue.enqueue_many([["Y", "Z"]]))
     self.evaluate(queue.close())
+    with tensorflow_op_timer():
+      test = reader.restore_state(state)
     self.evaluate(reader.restore_state(state))
     self.assertAllEqual(1, self.evaluate(produced))
     self._ExpectRead(key, value, b"Y")
