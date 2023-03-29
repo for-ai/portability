@@ -32,6 +32,7 @@ from tensorflow.python.ops import tensor_array_grad  # pylint: disable=unused-im
 from tensorflow.python.ops.parallel_for import control_flow_ops as pfor_control_flow_ops
 from tensorflow.python.ops.parallel_for.test_util import PForTestCase
 from tensorflow.python.platform import test
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 @test_util.run_all_in_graph_and_eager_modes
@@ -78,7 +79,12 @@ class MathTest(PForTestCase, parameterized.TestCase):
                 def loop_fn(i):
                     x1 = array_ops.gather(x, i)
                     y1 = array_ops.gather(y, i)
-                    outputs = [op(x, y), op(x1, y), op(
+                    if op == math_ops.igammac:
+                        with tensorflow_op_timer():
+                            outputs = [op(x, y), op(x1, y), op(
+                        x, y1), op(x1, y1), op(x1, x1)]
+                    else: 
+                        outputs = [op(x, y), op(x1, y), op(
                         x, y1), op(x1, y1), op(x1, x1)]
                     del output_dtypes[:]
                     output_dtypes.extend(t.dtype for t in outputs)

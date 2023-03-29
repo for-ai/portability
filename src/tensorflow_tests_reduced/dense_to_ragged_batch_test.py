@@ -29,6 +29,7 @@ from tensorflow.python.ops import math_ops
 from tensorflow.python.ops.ragged import ragged_concat_ops
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import test
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 def _make_scalar_ds(nrows):
@@ -119,7 +120,8 @@ class RaggedBatchTest(test_base.DatasetTestBase, parameterized.TestCase):
                 for _ in range(nrows)]
 
         # Batch the dataset, and check that batches match slices from `rows`.
-        batched_dataset = dataset.apply(
+        with tensorflow_op_timer():
+            batched_dataset = dataset.apply(
             batching.dense_to_ragged_batch(batch_size, drop_remainder))
         get_next = self.getNext(batched_dataset)
         for start_row in range(0, nrows, batch_size):
@@ -156,7 +158,8 @@ class RaggedBatchTest(test_base.DatasetTestBase, parameterized.TestCase):
 
         dataset = dataset_ops.Dataset.from_tensor_slices(np.arange(nrows))
         dataset = dataset.map(make_structure)
-        dataset = dataset.apply(batching.dense_to_ragged_batch(batch_size))
+        with tensorflow_op_timer():
+            dataset = dataset.apply(batching.dense_to_ragged_batch(batch_size))
         get_next = self.getNext(dataset)
 
         for i in range(0, nrows, batch_size):
