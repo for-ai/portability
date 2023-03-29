@@ -44,16 +44,14 @@ def custom_as_default(self, include_device=True):
 def pytest_runtest_call(item):
             # class CombinedContext:
     file_name = os.environ.get('PYTEST_CURRENT_TEST').split(":")[0]
+    print("***FILENAME")
     if file_name not in black_list:
+        print("***MONKEYPATCH")
         tf.Graph.as_default = custom_as_default
     testfunction = item.obj
     print("ITEM", item)
     print("***PATH", os.environ.get('PYTEST_CURRENT_TEST').split(":")[0])
 
-
-def pytest_runtest_call(item):
-    testfunction = item.obj
-    print("ITEM", item)
 
 def pytest_configure():
     pytest.tensorflow_test_times = {}
