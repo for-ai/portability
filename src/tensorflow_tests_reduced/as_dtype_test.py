@@ -26,6 +26,8 @@ from tensorflow.core.function import trace_type
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import test_util
 from tensorflow.python.platform import googletest
+# from ..utils.tensorflow_contexts import PortabilityTestCase
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 def _is_numeric_dtype_enum(datatype_enum):
@@ -36,6 +38,7 @@ def _is_numeric_dtype_enum(datatype_enum):
   return datatype_enum not in non_numeric_dtypes
 
 
+# class TypesTest(test_util.TensorFlowTestCase, PortabilityTestCase,  parameterized.TestCase):
 class TypesTest(test_util.TensorFlowTestCase, parameterized.TestCase):
   def testAllTypesConstructible(self):
     for datatype_enum in types_pb2.DataType.values():
@@ -48,18 +51,24 @@ class TypesTest(test_util.TensorFlowTestCase, parameterized.TestCase):
     for datatype_enum in types_pb2.DataType.values():
       if datatype_enum == types_pb2.DT_INVALID:
         continue
-      dt = dtypes.as_dtype(datatype_enum)
+      with tensorflow_op_timer():
+        dt = dtypes.as_dtype(datatype_enum)
       self.assertEqual(datatype_enum, dt.as_datatype_enum)
 
   def testAllTypesConvertibleToNumpyDtype(self):
     for datatype_enum in types_pb2.DataType.values():
       if not _is_numeric_dtype_enum(datatype_enum):
         continue
-      dtype = dtypes.as_dtype(datatype_enum)
+      with tensorflow_op_timer():
+        dtype = dtypes.as_dtype(datatype_enum)
       numpy_dtype = dtype.as_numpy_dtype
       _ = np.empty((1, 1, 1, 1), dtype=numpy_dtype)
       if dtype.base_dtype != dtypes.bfloat16:
         # NOTE(touts): Intentionally no way to feed a DT_BFLOAT16.
+        with tensorflow_op_timer():
+          test = dtypes.as_dtype(datatype_enum).base_dtype
+        with tensorflow_op_timer():
+          test = dtypes.as_dtype(numpy_dtype)
         self.assertEqual(
             dtypes.as_dtype(datatype_enum).base_dtype,
             dtypes.as_dtype(numpy_dtype))
@@ -69,6 +78,8 @@ class TypesTest(test_util.TensorFlowTestCase, parameterized.TestCase):
       if datatype_enum == types_pb2.DT_INVALID:
         continue
       dtype = _dtypes.DType(datatype_enum)
+      with tensorflow_op_timer():
+        test = dtypes.as_dtype(datatype_enum)
       self.assertEqual(dtypes.as_dtype(datatype_enum), dtype)
 
   def testInvalid(self):
@@ -78,6 +89,32 @@ class TypesTest(test_util.TensorFlowTestCase, parameterized.TestCase):
       dtypes.as_dtype(types_pb2.DT_INVALID)
 
   def testNumpyConversion(self):
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype(np.float32)
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype(np.float64)
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype(np.int32)
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype(np.int64)
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype(np.uint8)
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype(np.uint16)
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype(np.int16)
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype(np.int8)
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype(np.complex64)
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype(np.complex128)
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype(np.object_)
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype(np.array(["foo", "bar"]).dtype)
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype(np.bool_)
     self.assertIs(dtypes.float32, dtypes.as_dtype(np.float32))
     self.assertIs(dtypes.float64, dtypes.as_dtype(np.float64))
     self.assertIs(dtypes.int32, dtypes.as_dtype(np.int32))
@@ -97,12 +134,14 @@ class TypesTest(test_util.TensorFlowTestCase, parameterized.TestCase):
 
     class AnObject(object):
       dtype = "f4"
-
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype(AnObject)
     self.assertIs(dtypes.float32, dtypes.as_dtype(AnObject))
 
     class AnotherObject(object):
       dtype = np.dtype(np.complex64)
-
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype(AnotherObject)
     self.assertIs(dtypes.complex64, dtypes.as_dtype(AnotherObject))
 
   def testRealDtype(self):
@@ -115,6 +154,68 @@ class TypesTest(test_util.TensorFlowTestCase, parameterized.TestCase):
     self.assertIs(dtypes.complex128.real_dtype, dtypes.float64)
 
   def testStringConversion(self):
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype("float32")
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype("float64")
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype("int32")
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype("uint8")
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype("uint16")
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype("int16")
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype("int8")
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype("string")
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype("string")
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype("complex64")
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype("complex128")
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype("int64")
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype("bool")
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype("quint8")
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype("qint32")
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype("bfloat16")
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype("float32_ref")
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype("float64_ref")
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype("int32_ref")
+    with tensorflow_op_timer():
+      test =  dtypes.as_dtype("uint8_ref")
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype("int8_ref")
+    with tensorflow_op_timer():  
+      test = dtypes.as_dtype("int16_ref")
+    with tensorflow_op_timer():  
+      test = dtypes.as_dtype("int8_ref")
+    with tensorflow_op_timer():  
+      test = dtypes.as_dtype("complex64_ref")
+    with tensorflow_op_timer():  
+      test = dtypes.as_dtype("complex128_ref")
+    with tensorflow_op_timer():  
+      test=  dtypes.as_dtype("int64_ref")
+    with tensorflow_op_timer():  
+      test = dtypes.as_dtype("bool_ref")
+    with tensorflow_op_timer():   
+      test = dtypes.as_dtype("qint8_ref")
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype("quint8_ref")
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype("qint32_ref")
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype("bfloat16_ref")
     self.assertIs(dtypes.float32, dtypes.as_dtype("float32"))
     self.assertIs(dtypes.float64, dtypes.as_dtype("float64"))
     self.assertIs(dtypes.int32, dtypes.as_dtype("int32"))
@@ -245,7 +346,8 @@ class TypesTest(test_util.TensorFlowTestCase, parameterized.TestCase):
     for datatype_enum in types_pb2.DataType.values():
       if not _is_numeric_dtype_enum(datatype_enum):
         continue
-      dtype = dtypes.as_dtype(datatype_enum)
+      with tensorflow_op_timer():
+        dtype = dtypes.as_dtype(datatype_enum)
       numpy_dtype = dtype.as_numpy_dtype
 
       # ignore types for which there are no minimum/maximum (or we cannot
@@ -318,9 +420,15 @@ class TypesTest(test_util.TensorFlowTestCase, parameterized.TestCase):
     self.assertNotEqual(dtypes.float64, 2.1)
 
   def testPythonLongConversion(self):
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype(np.array(2**32).dtype)
     self.assertIs(dtypes.int64, dtypes.as_dtype(np.array(2**32).dtype))
 
   def testPythonTypesConversion(self):
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype(float)
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype(bool)
     self.assertIs(dtypes.float32, dtypes.as_dtype(float))
     self.assertIs(dtypes.bool, dtypes.as_dtype(bool))
 
@@ -328,6 +436,8 @@ class TypesTest(test_util.TensorFlowTestCase, parameterized.TestCase):
     for enum in dtypes._TYPE_TO_STRING:
       dtype = dtypes.DType(enum)
       ctor, args = dtype.__reduce__()
+      with tensorflow_op_timer():
+        test = dtypes.as_dtype
       self.assertEqual(ctor, dtypes.as_dtype)
       self.assertEqual(args, (dtype.name,))
       reconstructed = ctor(*args)
@@ -339,6 +449,8 @@ class TypesTest(test_util.TensorFlowTestCase, parameterized.TestCase):
 
   def testAsDtypeReturnsInternedVersion(self):
     dt = dtypes.DType(types_pb2.DT_VARIANT)
+    with tensorflow_op_timer():
+      test = dtypes.as_dtype(dt)
     self.assertIs(dtypes.as_dtype(dt), dtypes.variant)
 
   def testDTypeSubtypes(self):
