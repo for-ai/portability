@@ -26,6 +26,7 @@ from tensorflow.python.ops import tensor_array_grad  # pylint: disable=unused-im
 from tensorflow.python.ops.parallel_for import control_flow_ops as pfor_control_flow_ops
 from tensorflow.python.ops.parallel_for.test_util import PForTestCase
 from tensorflow.python.platform import test
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 @test_util.with_eager_op_as_function
@@ -38,6 +39,13 @@ class ArrayTest(PForTestCase):
 
     def loop_fn(i):
       x1 = array_ops.gather(x, i)
+      with tensorflow_op_timer():
+          test = array_ops.concat([x1, x1, y], axis=0)
+      with tensorflow_op_timer():
+          test = array_ops.concat([x1, x1, y], axis=-1)
+      with tensorflow_op_timer():
+          test = array_ops.concat([x1, x1, y],
+                           axis=constant_op.constant(0, dtype=dtypes.int64))
       return [
           array_ops.concat([x1, x1, y], axis=0),
           array_ops.concat([x1, x1, y], axis=-1),
