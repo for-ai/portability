@@ -69,7 +69,7 @@ class ReshapeTest(test.TestCase):
 
   def testBoolBasic(self):
     with tensorflow_op_timer():
-    x = np.arange(1., 7.).reshape([1, 6]) > 3
+      x = np.arange(1., 7.).reshape([1, 6]) > 3
     self._testBothReshape(x, [2, 3])
 
   def testFloatBasic(self):
