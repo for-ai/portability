@@ -22,6 +22,7 @@ from tensorflow.python.ops import variables as variables_module
 from tensorflow.python.ops.linalg import linalg as linalg_lib
 from tensorflow.python.ops.linalg import linear_operator_test_util
 from tensorflow.python.platform import test
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 rng = np.random.RandomState(2016)
@@ -72,7 +73,8 @@ class LinearOperatorZerosTest(
 
     operator = linalg_lib.LinearOperatorZeros(
         num_rows, batch_shape=batch_shape, dtype=dtype)
-    matrix = array_ops.zeros(shape=shape, dtype=dtype)
+    with tensorflow_op_timer():
+      matrix = array_ops.zeros(shape=shape, dtype=dtype)
 
     return operator, matrix
 
@@ -218,7 +220,8 @@ class LinearOperatorZerosNotSquareTest(
     operator = linalg_lib.LinearOperatorZeros(
         num_rows, num_columns, is_square=False, is_self_adjoint=False,
         batch_shape=batch_shape, dtype=dtype)
-    matrix = array_ops.zeros(shape=shape, dtype=dtype)
+    with tensorflow_op_timer():
+      matrix = array_ops.zeros(shape=shape, dtype=dtype)
 
     return operator, matrix
 
