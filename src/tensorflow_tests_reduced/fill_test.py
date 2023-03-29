@@ -32,6 +32,7 @@ from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.ops.ragged import ragged_map_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.util import tf_inspect
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 @test_util.with_eager_op_as_function
@@ -42,7 +43,8 @@ class RunEagerOpAsFunctionTest(test.TestCase):
         self._m_2_by_2 = random_ops.random_uniform((2, 2))
 
     def testArrayFill(self):
-        array_ops.fill(
+        with tensorflow_op_timer():
+            array_ops.fill(
             constant_op.constant([2], dtype=dtypes.int64), constant_op.constant(1))
 
 

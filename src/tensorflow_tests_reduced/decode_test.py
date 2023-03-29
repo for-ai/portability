@@ -20,62 +20,69 @@ from tensorflow.python.framework import test_util
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import string_ops
 from tensorflow.python.platform import test
+import tensorflow as tf
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 class AsStringOpTest(test.TestCase):
 
   @test_util.run_deprecated_v1
   def testFloat(self):
+
     float_inputs_ = [
         0, 1, -1, 0.5, 0.25, 0.125, float("INF"), float("NAN"), float("-INF")
     ]
 
     with self.cached_session():
-      for dtype in (dtypes.half, dtypes.bfloat16, dtypes.float32,
-                    dtypes.float64):
-        input_ = array_ops.placeholder(dtype)
 
-        output = string_ops.as_string(input_, shortest=True)
-        result = output.eval(feed_dict={input_: float_inputs_})
-        s = lambda strs: [x.decode("ascii") for x in strs]
-        self.assertAllEqual(s(result), ["%g" % x for x in float_inputs_])
+      device_name = "/device:GPU:0"
+      with tf.device(device_name):
+        for dtype in (dtypes.half, dtypes.bfloat16, dtypes.float32, dtypes.float64):
+          input_ = array_ops.placeholder(dtype)
 
-        output = string_ops.as_string(input_, scientific=True)
-        result = output.eval(feed_dict={input_: float_inputs_})
-        self.assertAllEqual(s(result), ["%e" % x for x in float_inputs_])
+          output = string_ops.as_string(input_, shortest=True)
+          result = output.eval(feed_dict={input_: float_inputs_})
+          with tensorflow_op_timer():
+            s = lambda strs: [x.decode("ascii") for x in strs]
+          self.assertAllEqual(s(result), ["%g" % x for x in float_inputs_])
 
-        output = string_ops.as_string(input_)
-        result = output.eval(feed_dict={input_: float_inputs_})
-        self.assertAllEqual(s(result), ["%f" % x for x in float_inputs_])
+          output = string_ops.as_string(input_, scientific=True)
+          result = output.eval(feed_dict={input_: float_inputs_})
+          print("***RESULT", result)
+          self.assertAllEqual(s(result), ["%e" % x for x in float_inputs_])
 
-        output = string_ops.as_string(input_, width=3)
-        result = output.eval(feed_dict={input_: float_inputs_})
-        self.assertAllEqual(s(result), ["%3f" % x for x in float_inputs_])
+          output = string_ops.as_string(input_)
+          result = output.eval(feed_dict={input_: float_inputs_})
+          self.assertAllEqual(s(result), ["%f" % x for x in float_inputs_])
 
-        output = string_ops.as_string(input_, width=3, fill="0")
-        result = output.eval(feed_dict={input_: float_inputs_})
-        self.assertAllEqual(s(result), ["%03f" % x for x in float_inputs_])
+          output = string_ops.as_string(input_, width=3)
+          result = output.eval(feed_dict={input_: float_inputs_})
+          self.assertAllEqual(s(result), ["%3f" % x for x in float_inputs_])
 
-        output = string_ops.as_string(input_, width=3, fill="0", shortest=True)
-        result = output.eval(feed_dict={input_: float_inputs_})
-        self.assertAllEqual(s(result), ["%03g" % x for x in float_inputs_])
+          output = string_ops.as_string(input_, width=3, fill="0")
+          result = output.eval(feed_dict={input_: float_inputs_})
+          self.assertAllEqual(s(result), ["%03f" % x for x in float_inputs_])
 
-        output = string_ops.as_string(input_, precision=10, width=3)
-        result = output.eval(feed_dict={input_: float_inputs_})
-        self.assertAllEqual(s(result), ["%03.10f" % x for x in float_inputs_])
+          output = string_ops.as_string(input_, width=3, fill="0", shortest=True)
+          result = output.eval(feed_dict={input_: float_inputs_})
+          self.assertAllEqual(s(result), ["%03g" % x for x in float_inputs_])
 
-        output = string_ops.as_string(
-            input_, precision=10, width=3, fill="0", shortest=True)
-        result = output.eval(feed_dict={input_: float_inputs_})
-        self.assertAllEqual(s(result), ["%03.10g" % x for x in float_inputs_])
+          output = string_ops.as_string(input_, precision=10, width=3)
+          result = output.eval(feed_dict={input_: float_inputs_})
+          self.assertAllEqual(s(result), ["%03.10f" % x for x in float_inputs_])
 
-      with self.assertRaisesOpError("Cannot select both"):
-        output = string_ops.as_string(input_, scientific=True, shortest=True)
-        output.eval(feed_dict={input_: float_inputs_})
+          output = string_ops.as_string(
+              input_, precision=10, width=3, fill="0", shortest=True)
+          result = output.eval(feed_dict={input_: float_inputs_})
+          self.assertAllEqual(s(result), ["%03.10g" % x for x in float_inputs_])
 
-      with self.assertRaisesOpError("Fill string must be one or fewer"):
-        output = string_ops.as_string(input_, fill="ab")
-        output.eval(feed_dict={input_: float_inputs_})
+        with self.assertRaisesOpError("Cannot select both"):
+          output = string_ops.as_string(input_, scientific=True, shortest=True)
+          output.eval(feed_dict={input_: float_inputs_})
+
+        with self.assertRaisesOpError("Fill string must be one or fewer"):
+          output = string_ops.as_string(input_, fill="ab")
+          output.eval(feed_dict={input_: float_inputs_})
 
   @test_util.run_deprecated_v1
   def testInt(self):
@@ -85,7 +92,8 @@ class AsStringOpTest(test.TestCase):
     int_dtypes = [dtypes.int8, dtypes.int32, dtypes.int64]
     uint_inputs = [0, 1, 127, 255, 101]
     uint_dtypes = [dtypes.uint8, dtypes.uint32, dtypes.uint64]
-    s = lambda strs: [x.decode("ascii") for x in strs]
+    with tensorflow_op_timer():
+      s = lambda strs: [x.decode("ascii") for x in strs]
 
     with self.cached_session():
       for dtypes_, inputs in [(int_dtypes, int_inputs),
@@ -121,7 +129,8 @@ class AsStringOpTest(test.TestCase):
   def testLargeInt(self):
     # Cannot use values outside -128..127 for test, because we're also
     # testing int8
-    s = lambda strs: [x.decode("ascii") for x in strs]
+    with tensorflow_op_timer():
+      s = lambda strs: [x.decode("ascii") for x in strs]
 
     with self.cached_session():
       input_ = array_ops.placeholder(dtypes.int32)
@@ -138,7 +147,8 @@ class AsStringOpTest(test.TestCase):
 
   @test_util.run_deprecated_v1
   def testHalfInt(self):
-    s = lambda strs: [x.decode("ascii") for x in strs]
+    with tensorflow_op_timer():
+      s = lambda strs: [x.decode("ascii") for x in strs]
 
     with self.cached_session():
       for dtype, np_dtype in [(dtypes.int16, np.int16),
@@ -152,7 +162,8 @@ class AsStringOpTest(test.TestCase):
   @test_util.run_deprecated_v1
   def testBool(self):
     bool_inputs_ = [False, True]
-    s = lambda strs: [x.decode("ascii") for x in strs]
+    with tensorflow_op_timer():
+      s = lambda strs: [x.decode("ascii") for x in strs]
 
     with self.cached_session():
       for dtype in (dtypes.bool,):
@@ -175,6 +186,8 @@ class AsStringOpTest(test.TestCase):
         input_ = array_ops.placeholder(dtype)
 
         def clean_nans(s_l):
+          with tensorflow_op_timer():
+            test = [s.decode("ascii").replace("-nan", "nan") for s in s_l]
           return [s.decode("ascii").replace("-nan", "nan") for s in s_l]
 
         output = string_ops.as_string(input_, shortest=True)
