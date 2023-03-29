@@ -36,6 +36,7 @@ from tensorflow.python.ops import variables
 from tensorflow.python.platform import test
 
 GRADIENT_TESTS_DTYPES = (dtypes.float16, dtypes.float32, dtypes.float64)
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 
@@ -49,7 +50,8 @@ class ScatterNdTensorTest(test.TestCase):
             indices = constant_op.constant([[4], [3], [1], [7]])
             updates = constant_op.constant([9, 10, 11, 12], dtype=dtype)
             t = array_ops.ones([8], dtype=dtype)
-            assigned = array_ops.tensor_scatter_update(t, indices, updates)
+            with tensorflow_op_timer():
+                assigned = array_ops.tensor_scatter_update(t, indices, updates)
             added = array_ops.tensor_scatter_add(t, indices, updates)
             subbed = array_ops.tensor_scatter_sub(t, indices, updates)
 
@@ -98,7 +100,8 @@ class ScatterNdTensorTest(test.TestCase):
             indices = constant_op.constant([[4], [3], [1], [7]])
             updates = constant_op.constant([0, 2, -1, 2], dtype=dtype)
             t = array_ops.ones([8], dtype=dtype)
-            assigned = array_ops.tensor_scatter_update(t, indices, updates)
+            with tensorflow_op_timer():
+                assigned = array_ops.tensor_scatter_update(t, indices, updates)
             min_result = array_ops.tensor_scatter_min(t, indices, updates)
             max_result = array_ops.tensor_scatter_max(t, indices, updates)
 
@@ -120,6 +123,8 @@ class ScatterNdTensorTest(test.TestCase):
                     [9, 10, 11, 12], dtype=dtype)  # pylint: disable=cell-var-from-loop
                 t = array_ops.ones(
                     [8], dtype=dtype)  # pylint: disable=cell-var-from-loop
+                with tensorflow_op_timer():
+                    test = array_ops.tensor_scatter_update(t, indices, updates)
 
                 return array_ops.tensor_scatter_update(t, indices, updates)
 
@@ -134,7 +139,8 @@ class ScatterNdTensorTest(test.TestCase):
             "hello", "hello", "hello", "hello", "hello", "hello", "hello", "hello"
         ],
             dtype=dtypes.string)
-        updated = array_ops.tensor_scatter_update(tensor, indices, updates)
+        with tensorflow_op_timer():
+            updated = array_ops.tensor_scatter_update(tensor, indices, updates)
 
         self.assertAllEqual(
             updated,
@@ -148,7 +154,8 @@ class ScatterNdTensorTest(test.TestCase):
             self.skipTest(
                 "Duplicate indices scatter is non-deterministic on GPU")
         a = array_ops.zeros([10, 1])
-        b = array_ops.tensor_scatter_update(a, [[5], [5]], [[4], [8]])
+        with tensorflow_op_timer():
+            b = array_ops.tensor_scatter_update(a, [[5], [5]], [[4], [8]])
         self.assertAllEqual(
             b,
             constant_op.constant([[0.], [0.], [0.], [0.], [0.], [8.], [0.], [0.],
@@ -160,7 +167,8 @@ class ScatterNdTensorTest(test.TestCase):
             self.skipTest(
                 "Duplicate indices scatter is non-deterministic on GPU")
         a = array_ops.zeros([10, 10])
-        b = array_ops.tensor_scatter_update(
+        with tensorflow_op_timer():
+            b = array_ops.tensor_scatter_update(
             a, [[5], [6], [6]],
             [math_ops.range(10),
              math_ops.range(11, 21),
@@ -185,9 +193,13 @@ class ScatterNdTensorDeterminismTest(ScatterNdTensorTest):
         a = array_ops.zeros([1])
         indices = array_ops.zeros([100000, 1], dtypes.int32)
         values = np.random.randn(100000)
+        with tensorflow_op_timer():
+            test = array_ops.tensor_scatter_update(a, indices, values)
         val = self.evaluate(
             array_ops.tensor_scatter_update(a, indices, values))
         for _ in range(5):
+            with tensorflow_op_timer():
+                test = array_ops.tensor_scatter_update(a, indices, values)
             val2 = self.evaluate(
                 array_ops.tensor_scatter_update(a, indices, values))
             self.assertAllEqual(val, val2)

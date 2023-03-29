@@ -7,6 +7,7 @@ from tensorflow.python.saved_model import loader
 from tensorflow.python.saved_model import signature_constants
 from tensorflow.python.saved_model import simple_save
 from tensorflow.python.saved_model import tag_constants
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 class SimpleSaveTest(test.TestCase):
@@ -50,7 +51,8 @@ class SimpleSaveTest(test.TestCase):
         var_y = self._init_and_validate_variable("var_y", 2)
         inputs = {"x": var_x}
         outputs = {"y": var_y}
-        simple_save.simple_save(sess, export_dir, inputs, outputs)
+        with tensorflow_op_timer():
+          simple_save.simple_save(sess, export_dir, inputs, outputs)
 
       # Restore the graph with a valid tag and check the global variables and
       # signature def map.
