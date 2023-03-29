@@ -207,7 +207,7 @@ class CollectionTest(test_util.TensorFlowTestCase):
       ops.add_to_collection("key", 100)
       # Collections are ordered.
       with tensorflow_op_timer():
-      test = g.get_collection("key")
+        test = ops.get_collection("key")
       self.assertEqual([90, 100], ops.get_collection("key"))
 
 
