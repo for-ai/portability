@@ -20,7 +20,7 @@ from tensorflow.python.ops import variables
 from tensorflow.python.platform import test
 from tensorflow.python.training import monitored_session
 from tensorflow.python.training import training_util
-
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 class GlobalStepTest(test.TestCase):
 
@@ -31,6 +31,8 @@ class GlobalStepTest(test.TestCase):
 
   def test_invalid_dtype(self):
     with ops.Graph().as_default() as g:
+      with tensorflow_op_timer():
+        test = training_util.get_global_step()
       self.assertIsNone(training_util.get_global_step())
       variables.VariableV1(
           0.0,
@@ -45,6 +47,8 @@ class GlobalStepTest(test.TestCase):
 
   def test_invalid_shape(self):
     with ops.Graph().as_default() as g:
+      with tensorflow_op_timer():
+        test = training_util.get_global_step()
       self.assertIsNone(training_util.get_global_step())
       variables.VariableV1(
           [0],
@@ -58,6 +62,8 @@ class GlobalStepTest(test.TestCase):
                            training_util.get_global_step, g)
 
   def test_create_global_step(self):
+    with tensorflow_op_timer():
+        test = training_util.get_global_step()
     self.assertIsNone(training_util.get_global_step())
     with ops.Graph().as_default() as g:
       global_step = training_util.create_global_step()
@@ -70,6 +76,8 @@ class GlobalStepTest(test.TestCase):
 
   def test_get_global_step(self):
     with ops.Graph().as_default() as g:
+      with tensorflow_op_timer():
+        test = training_util.get_global_step()
       self.assertIsNone(training_util.get_global_step())
       variables.VariableV1(
           0,
@@ -84,6 +92,8 @@ class GlobalStepTest(test.TestCase):
 
   def test_get_or_create_global_step(self):
     with ops.Graph().as_default() as g:
+      with tensorflow_op_timer():
+        test = training_util.get_global_step()
       self.assertIsNone(training_util.get_global_step())
       self._assert_global_step(training_util.get_or_create_global_step())
       self._assert_global_step(training_util.get_or_create_global_step(g))
