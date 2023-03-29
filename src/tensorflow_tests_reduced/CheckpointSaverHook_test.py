@@ -44,6 +44,7 @@ from tensorflow.python.training import checkpoint_utils
 from tensorflow.python.training import monitored_session
 from tensorflow.python.training import session_run_hook
 from tensorflow.python.training import training_util
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 MOCK_START_TIME = 1484695987.209386
 
@@ -96,7 +97,8 @@ class CheckpointSaverHookTest(test.TestCase):
 
     def test_saves_when_saver_and_scaffold_both_missing(self):
         with self.graph.as_default():
-            hook = basic_session_run_hooks.CheckpointSaverHook(
+            with tensorflow_op_timer():
+                hook = basic_session_run_hooks.CheckpointSaverHook(
                 self.model_dir, save_steps=1)
             hook.begin()
             self.scaffold.finalize()
@@ -126,7 +128,8 @@ class CheckpointSaverHookTest(test.TestCase):
 
     def test_save_secs_saves_in_first_step(self):
         with self.graph.as_default():
-            hook = basic_session_run_hooks.CheckpointSaverHook(
+            with tensorflow_op_timer():
+                hook = basic_session_run_hooks.CheckpointSaverHook(
                 self.model_dir, save_secs=2, scaffold=self.scaffold)
             hook.begin()
             self.scaffold.finalize()
@@ -141,7 +144,8 @@ class CheckpointSaverHookTest(test.TestCase):
     def test_save_secs_calls_listeners_at_begin_and_end(self):
         with self.graph.as_default():
             listener = MockCheckpointSaverListener()
-            hook = basic_session_run_hooks.CheckpointSaverHook(
+            with tensorflow_op_timer():
+                hook = basic_session_run_hooks.CheckpointSaverHook(
                 self.model_dir,
                 save_secs=2,
                 scaffold=self.scaffold,
@@ -168,7 +172,8 @@ class CheckpointSaverHookTest(test.TestCase):
             global_step = training_util.get_or_create_global_step()
             train_op = training_util._increment_global_step(1)
             listener = MockCheckpointSaverListener()
-            hook = basic_session_run_hooks.CheckpointSaverHook(
+            with tensorflow_op_timer():
+                hook = basic_session_run_hooks.CheckpointSaverHook(
                 self.model_dir,
                 save_steps=1,
                 scaffold=scaffold,
@@ -195,7 +200,8 @@ class CheckpointSaverHookTest(test.TestCase):
             training_util.get_or_create_global_step()
             train_op = training_util._increment_global_step(1)
             listener = MockCheckpointSaverListener()
-            hook = basic_session_run_hooks.CheckpointSaverHook(
+            with tensorflow_op_timer():
+                hook = basic_session_run_hooks.CheckpointSaverHook(
                 self.model_dir, save_steps=1, scaffold=scaffold, listeners=[listener])
             with monitored_session.SingularMonitoredSession(
                     hooks=[hook], scaffold=scaffold,
@@ -213,7 +219,8 @@ class CheckpointSaverHookTest(test.TestCase):
             global_step = training_util.get_or_create_global_step()
             train_op = training_util._increment_global_step(1)
             listener = MockCheckpointSaverListener()
-            hook = basic_session_run_hooks.CheckpointSaverHook(
+            with tensorflow_op_timer():
+                hook = basic_session_run_hooks.CheckpointSaverHook(
                 self.model_dir,
                 save_steps=1,
                 listeners=[listener])
@@ -245,7 +252,8 @@ class CheckpointSaverHookTest(test.TestCase):
             train_op = training_util._increment_global_step(1)
             listener1 = MockCheckpointSaverListener()
             listener2 = MockCheckpointSaverListener()
-            hook = basic_session_run_hooks.CheckpointSaverHook(
+            with tensorflow_op_timer():
+                hook = basic_session_run_hooks.CheckpointSaverHook(
                 self.model_dir,
                 save_steps=1,
                 listeners=[listener1, listener2])
@@ -277,7 +285,8 @@ class CheckpointSaverHookTest(test.TestCase):
     def test_save_secs_saves_periodically(self, mock_time):
         with self.graph.as_default():
             mock_time.return_value = MOCK_START_TIME
-            hook = basic_session_run_hooks.CheckpointSaverHook(
+            with tensorflow_op_timer():
+                hook = basic_session_run_hooks.CheckpointSaverHook(
                 self.model_dir, save_secs=2, scaffold=self.scaffold)
             hook.begin()
             self.scaffold.finalize()
@@ -322,7 +331,8 @@ class CheckpointSaverHookTest(test.TestCase):
         with self.graph.as_default():
             mock_time.return_value = MOCK_START_TIME
             listener = MockCheckpointSaverListener()
-            hook = basic_session_run_hooks.CheckpointSaverHook(
+            with tensorflow_op_timer():
+                hook = basic_session_run_hooks.CheckpointSaverHook(
                 self.model_dir,
                 save_secs=2,
                 scaffold=self.scaffold,
@@ -366,7 +376,8 @@ class CheckpointSaverHookTest(test.TestCase):
 
     def test_save_steps_saves_in_first_step(self):
         with self.graph.as_default():
-            hook = basic_session_run_hooks.CheckpointSaverHook(
+            with tensorflow_op_timer():
+                hook = basic_session_run_hooks.CheckpointSaverHook(
                 self.model_dir, save_steps=2, scaffold=self.scaffold)
             hook.begin()
             self.scaffold.finalize()
@@ -380,7 +391,8 @@ class CheckpointSaverHookTest(test.TestCase):
 
     def test_save_steps_saves_periodically(self):
         with self.graph.as_default():
-            hook = basic_session_run_hooks.CheckpointSaverHook(
+            with tensorflow_op_timer():
+                hook = basic_session_run_hooks.CheckpointSaverHook(
                 self.model_dir, save_steps=2, scaffold=self.scaffold)
             hook.begin()
             self.scaffold.finalize()
@@ -411,7 +423,8 @@ class CheckpointSaverHookTest(test.TestCase):
 
     def test_save_saves_at_end(self):
         with self.graph.as_default():
-            hook = basic_session_run_hooks.CheckpointSaverHook(
+            with tensorflow_op_timer():
+                hook = basic_session_run_hooks.CheckpointSaverHook(
                 self.model_dir, save_secs=2, scaffold=self.scaffold)
             hook.begin()
             self.scaffold.finalize()
@@ -427,7 +440,8 @@ class CheckpointSaverHookTest(test.TestCase):
 
     def test_save_checkpoint_before_first_train_step(self):
         with self.graph.as_default():
-            hook = basic_session_run_hooks.CheckpointSaverHook(
+            with tensorflow_op_timer():
+                hook = basic_session_run_hooks.CheckpointSaverHook(
                 self.model_dir, save_steps=2, scaffold=self.scaffold)
             hook.begin()
             self.scaffold.finalize()
@@ -452,7 +466,8 @@ class CheckpointSaverHookTest(test.TestCase):
 
     def test_save_graph_def(self):
         with self.graph.as_default():
-            hook = basic_session_run_hooks.CheckpointSaverHook(
+            with tensorflow_op_timer():
+                hook = basic_session_run_hooks.CheckpointSaverHook(
                 self.model_dir, save_steps=1, scaffold=self.scaffold,
                 save_graph_def=True)
             hook.begin()
@@ -474,7 +489,8 @@ class CheckpointSaverHookTest(test.TestCase):
 
     def test_save_graph_def_false(self):
         with self.graph.as_default():
-            hook = basic_session_run_hooks.CheckpointSaverHook(
+            with tensorflow_op_timer():
+                hook = basic_session_run_hooks.CheckpointSaverHook(
                 self.model_dir, save_steps=1, scaffold=self.scaffold,
                 save_graph_def=False)
             hook.begin()
