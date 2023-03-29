@@ -9,6 +9,8 @@ import tensorflow as tf
 # initialize_tpu()
 
 
+global disable_monkeypatch
+disable_monkeypatch = False
 def set_global_device():
     global global_device
     if os.environ['DEVICE'] == "tpu":
@@ -28,6 +30,7 @@ _original_as_default = tf.Graph.as_default
 
 @contextlib.contextmanager
 def custom_as_default(self, include_device=True):
+    print("***DISABLE MONKEYPATCh", disable_monkeypatch)
     # Create a context manager using the original as_default method
 
     # print("***CONTEXT")
@@ -63,7 +66,8 @@ def custom_as_default(self, include_device=True):
     # return CombinedContext()
 
 # Monkey patch the Graph class
-tf.Graph.as_default = custom_as_default
+# tf.Graph.as_default = custom_as_default
 
-retcode = pytest.main(["--forked", sys.argv[1], "-s"])
+# retcode = pytest.main(["--forked", sys.argv[1], "-s"])
+retcode = pytest.main([sys.argv[1], "-s"])
 #  "-k", "test_binary_cwise_ops"
