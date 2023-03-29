@@ -24,6 +24,7 @@ from tensorflow.python.ops import resource_variable_ops
 from tensorflow.python.ops import script_ops
 from tensorflow.python.ops.script_ops import numpy_function
 from tensorflow.python.platform import test
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 class NumpyFunctionTest(test.TestCase):
@@ -33,8 +34,8 @@ class NumpyFunctionTest(test.TestCase):
 
         def plus(a, b):
             return a + b
-
-        actual_result = script_ops.numpy_function(plus, [1, 2], dtypes.int32)
+        with tensorflow_op_timer():
+            actual_result = script_ops.numpy_function(plus, [1, 2], dtypes.int32)
         expect_result = constant_op.constant(3, dtypes.int32)
         self.assertAllEqual(actual_result, expect_result)
 
@@ -48,6 +49,8 @@ class NumpyFunctionTest(test.TestCase):
 
         @def_function.function
         def numpy_func_stateless(a, b):
+            with tensorflow_op_timer():
+                test = numpy_function(plus, [a, b], dtypes.int32, stateful=False)
             return numpy_function(plus, [a, b], dtypes.int32, stateful=False)
 
         @def_function.function
@@ -74,6 +77,8 @@ class NumpyFunctionTest(test.TestCase):
 
         @def_function.function
         def numpy_func_stateful(a, b):
+            with tensorflow_op_timer():
+                test = numpy_function(plus, [a, b], dtypes.int32, stateful=True)
             return numpy_function(plus, [a, b], dtypes.int32, stateful=True)
 
         @def_function.function

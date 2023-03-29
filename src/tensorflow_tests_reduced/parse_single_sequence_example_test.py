@@ -25,6 +25,7 @@ from tensorflow.python.feature_column import sequence_feature_column as sfc
 from tensorflow.python.ops import parsing_ops
 from tensorflow.python.platform import test
 from tensorflow.python.util import compat
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 class SequenceExampleParsingTest(test.TestCase):
@@ -74,7 +75,8 @@ class SequenceExampleParsingTest(test.TestCase):
         fc.numeric_column('float_ctx'),
         col_fn(col_name, col_arg)
     ]
-    context, seq_features = parsing_ops.parse_single_sequence_example(
+    with tensorflow_op_timer():
+      context, seq_features = parsing_ops.parse_single_sequence_example(
         example.SerializeToString(),
         context_features=fc.make_parse_example_spec_v2(columns[:2]),
         sequence_features=fc.make_parse_example_spec_v2(columns[2:]))

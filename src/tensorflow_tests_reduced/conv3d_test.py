@@ -30,6 +30,7 @@ import tensorflow.python.ops.nn_grad  # pylint: disable=unused-import
 from tensorflow.python.platform import test
 from tensorflow.python.util.compat import collections_abc
 from tensorflow.python.eager import context
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 def GetTestConfigs():
@@ -89,7 +90,8 @@ class Conv3DTest(test.TestCase):
       if data_format == "NCDHW":
         t1 = test_util.NHWCToNCHW(t1)
         strides = test_util.NHWCToNCHW(strides)
-      conv = nn_ops.conv3d(t1, t2, strides, padding=padding,
+      with tensorflow_op_timer():
+        conv = nn_ops.conv3d(t1, t2, strides, padding=padding,
                            data_format=data_format)
       if data_format == "NCDHW":
         conv = test_util.NCHWToNHWC(conv)
@@ -149,7 +151,8 @@ class Conv3DTest(test.TestCase):
           strides=strides,
           dilation_rate=dilation,
           data_format=data_format)
-      computed = nn_ops.conv3d(
+      with tensorflow_op_timer():
+        computed = nn_ops.conv3d(
           t1,
           t2,
           strides=full_strides,
@@ -200,9 +203,11 @@ class Conv3DTest(test.TestCase):
     filter_in = self._CreateNumpyTensor(filter_in_sizes)
     x1 = self._CreateNumpyTensor(tensor_in_sizes_batch)
     x2 = x1.reshape(tensor_in_sizes_expanded_batch)
-    conv1 = nn_ops.conv3d_v2(
+    with tensorflow_op_timer():
+      conv1 = nn_ops.conv3d_v2(
         x1, filter_in, strides=[1, 1, 1, 1, 1], padding="VALID")
-    conv2 = nn_ops.conv3d_v2(
+    with tensorflow_op_timer():
+      conv2 = nn_ops.conv3d_v2(
         x2, filter_in, strides=[1, 1, 1, 1, 1], padding="VALID")
     self.assertEqual(conv1.shape, tensor_in_sizes_batch)
     self.assertEqual(conv2.shape, tensor_in_sizes_expanded_batch)
@@ -393,7 +398,8 @@ class Conv3DTest(test.TestCase):
           input_data, shape=input_shape, dtype=data_type, name="input")
       filter_tensor = constant_op.constant(
           filter_data, shape=filter_shape, dtype=data_type, name="filter")
-      conv = nn_ops.conv3d(
+      with tensorflow_op_timer():
+        conv = nn_ops.conv3d(
           input_tensor,
           filter_tensor,
           strides=[1, 1, 1, 1, 1],
@@ -462,6 +468,8 @@ class Conv3DTest(test.TestCase):
     with self.assertRaisesRegex(
         errors_impl.InvalidArgumentError, "filter must not have zero elements"
         "|has a non-positive dimension"):
+      with tensorflow_op_timer():
+        test = nn_ops.conv3d(x1, filter_in, strides=[1, 1, 1, 1, 1], padding="SAME")
       self.evaluate(
           nn_ops.conv3d(x1, filter_in, strides=[1, 1, 1, 1, 1], padding="SAME"))
 
@@ -528,8 +536,8 @@ class Conv3DTest(test.TestCase):
         else:
           input_tensor = orig_input_tensor
           new_strides = strides
-
-        conv = nn_ops.conv3d(
+        with tensorflow_op_timer():
+          conv = nn_ops.conv3d(
             input_tensor,
             filter_tensor,
             new_strides,
@@ -813,7 +821,8 @@ class Conv3DTest(test.TestCase):
         if data_format == "NCDHW":
           full_strides = test_util.NHWCToNCHW(full_strides)
           full_dilations = test_util.NHWCToNCHW(full_dilations)
-        actual = nn_ops.conv3d(
+        with tensorflow_op_timer():
+          actual = nn_ops.conv3d(
             t1,
             t2,
             strides=full_strides,

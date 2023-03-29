@@ -32,6 +32,8 @@ from tensorflow.python.ops import tensor_array_grad  # pylint: disable=unused-im
 from tensorflow.python.ops.parallel_for import control_flow_ops as pfor_control_flow_ops
 from tensorflow.python.ops.parallel_for.test_util import PForTestCase
 from tensorflow.python.platform import test
+from ..utils.timer_wrapper import tensorflow_op_timer
+
 
 
 @test_util.run_all_in_graph_and_eager_modes
@@ -46,6 +48,9 @@ class CumProdTest(PForTestCase, parameterized.TestCase):
                     # pylint: disable=cell-var-from-loop
                     def loop_fn(i):
                         a = array_ops.gather(x, i)
+                        with tensorflow_op_timer():
+                            test = math_ops.cumprod(
+                            a, axis=axis, exclusive=exclusive, reverse=reverse)
                         return math_ops.cumprod(
                             a, axis=axis, exclusive=exclusive, reverse=reverse)
 
