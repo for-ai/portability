@@ -978,7 +978,7 @@ class SessionTest(test_util.TensorFlowTestCase):
         self.assertAllEqual(indices_out, indices)
         # Feed with IndexedSlicesValue, fetch IndexedSlicesValue
         with tensorflow_op_timer():
-        ind2_out = s.run(ind2, {
+         ind2_out = s.run(ind2, {
             ind: indexed_slices.IndexedSlicesValue(values, indices, dense_shape)
         })
         self.assertAllEqual(ind2_out.values, values)
@@ -1517,9 +1517,7 @@ class SessionTest(test_util.TensorFlowTestCase):
           test =sess.run(b'f:0')
         with tensorflow_op_timer():
           test =sess.run(r'f:0')
-        with tensorflow_op_timer():
-        with tensorflow_op_timer():
-        with tensorflow_op_timer():
+        
         self.assertEqual(42.0, sess.run('c:0'))
         self.assertEqual(42.0, sess.run(u'c:0'))
         self.assertEqual(42.0, sess.run(b'c:0'))
