@@ -18,6 +18,7 @@ from tensorflow.python.ops import resource_variable_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.platform import test
 from tensorflow.python.util import nest
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 try:
   import attr  # pylint:disable=g-import-not-at-top
@@ -83,7 +84,8 @@ class NestTest(parameterized.TestCase, test.TestCase):
     op_tuple = collections.namedtuple("op_tuple", "add, mul")
     inp_val = ab_tuple(a=2, b=3)
     inp_ops = ab_tuple(a=op_tuple(add=1, mul=2), b=op_tuple(add=2, mul=3))
-    out = nest.map_structure_up_to(
+    with tensorflow_op_timer():
+      out = nest.map_structure_up_to(
         inp_val, lambda val, ops: (val + ops.add) * ops.mul, inp_val, inp_ops)
     self.assertEqual(out.a, 6)
     self.assertEqual(out.b, 15)
@@ -91,7 +93,8 @@ class NestTest(parameterized.TestCase, test.TestCase):
     # Lists.
     data_list = [[2, 4, 6, 8], [[1, 3, 5, 7, 9], [3, 5, 7]]]
     name_list = ["evens", ["odds", "primes"]]
-    out = nest.map_structure_up_to(
+    with tensorflow_op_timer():
+      out = nest.map_structure_up_to(
         name_list, lambda name, sec: "first_{}_{}".format(len(sec), name),
         name_list, data_list)
     self.assertEqual(out, ["first_4_evens", ["first_5_odds", "first_3_primes"]])
@@ -99,7 +102,8 @@ class NestTest(parameterized.TestCase, test.TestCase):
     # Dicts.
     inp_val = dict(a=2, b=3)
     inp_ops = dict(a=dict(add=1, mul=2), b=dict(add=2, mul=3))
-    out = nest.map_structure_up_to(
+    with tensorflow_op_timer():
+      out = nest.map_structure_up_to(
         inp_val,
         lambda val, ops: (val + ops["add"]) * ops["mul"], inp_val, inp_ops)
     self.assertEqual(out["a"], 6)
@@ -118,7 +122,8 @@ class NestTest(parameterized.TestCase, test.TestCase):
     # Dict+custom mapping.
     inp_val = dict(a=2, b=3)
     inp_ops = _CustomMapping(a=dict(add=1, mul=2), b=dict(add=2, mul=3))
-    out = nest.map_structure_up_to(
+    with tensorflow_op_timer():
+      out = nest.map_structure_up_to(
         inp_val,
         lambda val, ops: (val + ops["add"]) * ops["mul"], inp_val, inp_ops)
     self.assertEqual(out["a"], 6)
