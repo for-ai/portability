@@ -6,24 +6,12 @@ from ..utils.tensorflow_timer_wrapper import tensorflow_test_timer
 import gc
 import tensorflow as tf
 import contextlib
+from ..tensorflow_test import set_global_device, device_context, global_device
 
-black_list = ["src/tensorflow_tests_reduced/run_test.py"]
+black_list = ["src/tensorflow_tests_reduced/run_test.py", "src/tensorflow_tests_reduced/get_global_step_test.py", "src/tensorflow_tests_reduced/eval_test.py", "src/tensorflow_tests_reduced/smart_cond_test.py"]
 
 _original_as_default = tf.Graph.as_default
 
-def set_global_device():
-    global global_device
-    if os.environ['DEVICE'] == "tpu":
-        global_device = "/device:TPU:0"
-    elif os.environ['DEVICE'] == "gpu":
-        global_device = "/device:GPU:0"
-    else:
-        global_device = "/device:CPU:0"
-
-@contextlib.contextmanager
-def device_context():
-    with tf.device(global_device):
-        yield
 # Save the original as_default method
 set_global_device()
 
@@ -67,7 +55,6 @@ def pytest_runtest_call(item):
     testfunction = item.obj
     print("ITEM", item)
 
-# @pytest.fixture(scope='session', autouse=True)
 def pytest_configure():
     pytest.tensorflow_test_times = {}
     pytest.test_name = ""
@@ -87,7 +74,6 @@ def track_timing(request):
         'PYTEST_CURRENT_TEST').split(':')[-1].split(' ')[0]
     test_file = str(request.node.fspath).split("/")[-1]
     pytest.test_name = test_file + ":" + pytest.test_name
-    tf.debugging.set_log_device_placement(True)
 
     pytest.tensorflow_test_times[pytest.test_name] = {"operations": []}
     tf.debugging.set_log_device_placement(True)
