@@ -39,7 +39,6 @@ python = ">=3.8,<3.11"
 datasets = "^2.4.0"
 tqdm = "^4.64.0"
 beautifulsoup4 = "^4.11.1"
-torch = "~1.12.1"
 matplotlib = "^3.6.0"
 numpy = "^1.23.3"
 seaborn = "^0.12.0"
@@ -52,6 +51,7 @@ hypothesis = "^6.58.0"
 cmake = "^3.13.3"
 pytest-xdist = "^3.2.1"
 pytest-forked = "^1.6.0"
+portpicker = "^1.5.2"
 
 
 [tool.poetry.dev-dependencies]

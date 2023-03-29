@@ -68,6 +68,5 @@ def custom_as_default(self, include_device=True):
 # Monkey patch the Graph class
 # tf.Graph.as_default = custom_as_default
 
-# retcode = pytest.main(["--forked", sys.argv[1], "-s"])
 retcode = pytest.main([sys.argv[1], "-s"])
 #  "-k", "test_binary_cwise_ops"

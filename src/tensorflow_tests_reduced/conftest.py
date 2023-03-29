@@ -62,6 +62,11 @@ def pytest_runtest_call(item):
     print("ITEM", item)
     print("***PATH", os.environ.get('PYTEST_CURRENT_TEST').split(":")[0])
 
+
+def pytest_runtest_call(item):
+    testfunction = item.obj
+    print("ITEM", item)
+
 # @pytest.fixture(scope='session', autouse=True)
 def pytest_configure():
     pytest.tensorflow_test_times = {}

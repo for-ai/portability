@@ -94,11 +94,5 @@ class ReferenceTest(reference_test_base.TestCase):
     def test_tf_print(self):
         self.assertFunctionMatchesEager(tf_print, 0)
 
-    # def test_my_print(self): 
-    #     import tensorflow as tf
-    #     a = np.array([1, 2, 3])
-    #     b = tf.constant(a)
-    #     tf.print("***", a)
-
 if __name__ == '__main__':
     tf.test.main()
