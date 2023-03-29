@@ -2,7 +2,7 @@
 import pytest
 import os
 import json
-from ..utils.timer_wrapper import tensorflow_test_timer
+from ..utils.tensorflow_timer_wrapper import tensorflow_test_timer
 import gc
 import tensorflow as tf
 import contextlib
@@ -82,7 +82,8 @@ def track_timing(request):
         'PYTEST_CURRENT_TEST').split(':')[-1].split(' ')[0]
     test_file = str(request.node.fspath).split("/")[-1]
     pytest.test_name = test_file + ":" + pytest.test_name
-    
+    tf.debugging.set_log_device_placement(True)
+
     pytest.tensorflow_test_times[pytest.test_name] = {"operations": []}
     tf.debugging.set_log_device_placement(True)
     if os.environ['DEVICE'] == "tpu":

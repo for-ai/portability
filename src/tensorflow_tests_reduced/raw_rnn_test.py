@@ -53,6 +53,7 @@ from tensorflow.python.trackable import autotrackable
 from tensorflow.python.util import nest
 
 
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 
@@ -95,8 +96,8 @@ class RawRNNTest(test.TestCase):
         return (elements_finished, next_input, next_state, emit_output, None)
 
       reuse_scope = variable_scope.get_variable_scope()
-
-      outputs_ta, final_state, _ = rnn.raw_rnn(cell, loop_fn, scope=reuse_scope)
+      with tensorflow_op_timer():
+        outputs_ta, final_state, _ = rnn.raw_rnn(cell, loop_fn, scope=reuse_scope)
       outputs = outputs_ta.stack()
 
       reuse_scope.reuse_variables()
@@ -205,8 +206,8 @@ class RawRNNTest(test.TestCase):
             lambda: inputs_ta.read(time_))
         return (elements_finished, next_input, next_state, emit_output,
                 loop_state)
-
-      r = rnn.raw_rnn(cell, loop_fn)
+      with tensorflow_op_timer():
+        r = rnn.raw_rnn(cell, loop_fn)
       loop_state = r[-1]
       self.assertEqual([10], self.evaluate(loop_state))
 
@@ -248,8 +249,8 @@ class RawRNNTest(test.TestCase):
             lambda: inputs_ta.read(time_))
         return (elements_finished, next_input, next_state, emit_output,
                 loop_state)
-
-      r = rnn.raw_rnn(cell, loop_fn)
+      with tensorflow_op_timer():
+        r = rnn.raw_rnn(cell, loop_fn)
       loop_state = r[-1]
       loop_state = loop_state.stack()
       self.assertAllEqual([1, 2, 2 + 2, 4 + 3, 7 + 4], loop_state)
@@ -290,8 +291,8 @@ class RawRNNTest(test.TestCase):
             lambda: array_ops.zeros([batch_size, input_depth], dtype=dtypes.float32),
             lambda: inputs_ta.read(time_))
         return (elements_finished, next_input, next_state, emit_output, None)
-
-      r = rnn.raw_rnn(cell, loop_fn)
+      with tensorflow_op_timer():
+        r = rnn.raw_rnn(cell, loop_fn)
       output_ta = r[0]
       self.assertEqual(2, len(output_ta))
       self.assertEqual([dtypes.int32, dtypes.int64],
@@ -356,7 +357,8 @@ class RawRNNTest(test.TestCase):
             lambda: array_ops.zeros([batch_size, input_depth], dtype=dtypes.float32),
             lambda: inputs_ta.read(time_))
         return (elements_finished, next_input, next_state, emit_output, None)
-
+      with tensorflow_op_timer():
+        test = rnn.raw_rnn(cell, loop_fn, scope=scope)
       return rnn.raw_rnn(cell, loop_fn, scope=scope)
 
     self._testScope(factory, use_outer_scope=True)

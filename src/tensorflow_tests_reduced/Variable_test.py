@@ -77,6 +77,7 @@ from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.ops.signal import fft_ops
 from tensorflow.python.platform import test
 from tensorflow.python.util import nest
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 class VariableTest(PForTestCase):
@@ -88,7 +89,8 @@ class VariableTest(PForTestCase):
 
         def f(z):
             if not a_var:
-                a_var.append(variables.Variable(lambda: y, name="a"))
+                with tensorflow_op_timer():
+                    a_var.append(variables.Variable(lambda: y, name="a"))
             return math_ops.matmul(z, a_var[0] / 16)
 
         pfor_control_flow_ops.vectorized_map(f, x)
@@ -99,7 +101,8 @@ class VariableTest(PForTestCase):
         y = array_ops.ones(shape=(2, 3), dtype=dtypes.float32)
 
         def f(z):
-            a_var = variables.Variable(lambda: y, name="a") / 4
+            with tensorflow_op_timer():
+                a_var = variables.Variable(lambda: y, name="a") / 4
             return math_ops.matmul(z, a_var / 16)
 
         # Note that this error is only raised under v2 behavior.

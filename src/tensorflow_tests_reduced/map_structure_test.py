@@ -27,6 +27,7 @@ from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import test
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 class NestTest(test_base.DatasetTestBase, parameterized.TestCase):
@@ -35,17 +36,22 @@ class NestTest(test_base.DatasetTestBase, parameterized.TestCase):
     def testMapStructure(self):
         structure1 = (((1, 2), 3), 4, (5, 6))
         structure2 = (((7, 8), 9), 10, (11, 12))
-        structure1_plus1 = nest.map_structure(lambda x: x + 1, structure1)
+        with tensorflow_op_timer():
+            structure1_plus1 = nest.map_structure(lambda x: x + 1, structure1)
         nest.assert_same_structure(structure1, structure1_plus1)
         self.assertAllEqual(
             [2, 3, 4, 5, 6, 7],
             nest.flatten(structure1_plus1))
-        structure1_plus_structure2 = nest.map_structure(
+        with tensorflow_op_timer():
+            structure1_plus_structure2 = nest.map_structure(
             lambda x, y: x + y, structure1, structure2)
         self.assertEqual(
             (((1 + 7, 2 + 8), 3 + 9), 4 + 10, (5 + 11, 6 + 12)),
             structure1_plus_structure2)
-
+        with tensorflow_op_timer():
+            test = nest.map_structure(lambda x: x - 1, 4)
+        with tensorflow_op_timer():
+            test = nest.map_structure(lambda x, y: x + y, 3, 4)
         self.assertEqual(3, nest.map_structure(lambda x: x - 1, 4))
 
         self.assertEqual(7, nest.map_structure(lambda x, y: x + y, 3, 4))

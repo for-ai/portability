@@ -6,13 +6,15 @@ from tensorflow.python.framework import errors_impl
 from tensorflow.python.framework import test_util
 from tensorflow.python.ops import math_ops
 from tensorflow.python.platform import test
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 class RangeTest(test.TestCase):
 
     def _Range(self, start, limit, delta):
         with self.cached_session():
-            tf_ans = math_ops.range(start, limit, delta, name="range")
+            with tensorflow_op_timer():
+                tf_ans = math_ops.range(start, limit, delta, name="range")
             self.assertEqual([len(np.arange(start, limit, delta))],
                              tf_ans.get_shape())
             return self.evaluate(tf_ans)
@@ -29,11 +31,15 @@ class RangeTest(test.TestCase):
         self.assertTrue(
             np.array_equal(
                 self._Range(100, 500, 100), np.array([100, 200, 300, 400])))
+        with tensorflow_op_timer():
+            test = math_ops.range(0, 5, 1).dtype
         self.assertEqual(math_ops.range(0, 5, 1).dtype, dtypes.int32)
 
     @test_util.run_deprecated_v1
     def testLimitOnly(self):
         with self.session():
+            with tensorflow_op_timer():
+                test = math_ops.range(5)
             self.assertAllEqual(np.arange(5), math_ops.range(5))
 
     def testEmpty(self):
@@ -50,6 +56,8 @@ class RangeTest(test.TestCase):
         self.assertTrue(
             np.allclose(
                 self._Range(100., 500., 100.), np.array([100, 200, 300, 400])))
+        with tensorflow_op_timer():
+            test = math_ops.range(0., 5., 1.).dtype
         self.assertEqual(math_ops.range(0., 5., 1.).dtype, dtypes.float32)
 
     def testNegativeDelta(self):
@@ -65,6 +73,33 @@ class RangeTest(test.TestCase):
         zero_int64 = math_ops.cast(0, dtypes.int64)
         zero_float32 = math_ops.cast(0, dtypes.float32)
         zero_float64 = math_ops.cast(0, dtypes.float64)
+        with tensorflow_op_timer():
+            test = math_ops.range(zero_int32, 0, 1).dtype
+        with tensorflow_op_timer():
+            test = math_ops.range(zero_int64, 0, 1).dtype
+        with tensorflow_op_timer():
+            test = math_ops.range(
+            zero_float32, 0, 1).dtype
+        with tensorflow_op_timer():
+            test = math_ops.range(
+            zero_float64, 0, 1).dtype
+        with tensorflow_op_timer():
+            test = math_ops.range(zero_int32, zero_int64, 1).dtype
+        with tensorflow_op_timer():
+            test = math_ops.range(zero_int64, zero_float32, 1).dtype
+        with tensorflow_op_timer():
+            test = math_ops.range(zero_float32, zero_float64, 1).dtype
+        with tensorflow_op_timer():
+            test = math_ops.range(zero_float64, zero_int32, 1).dtype
+        with tensorflow_op_timer():
+            test = math_ops.range(0, 0, 1, dtype=dtypes.int32).dtype
+        with tensorflow_op_timer():
+            test = math_ops.range(0, 0, 1, dtype=dtypes.int64).dtype
+        with tensorflow_op_timer():
+            test = math_ops.range(0, 0, 1, dtype=dtypes.float32).dtype
+        with tensorflow_op_timer():
+            test = math_ops.range(0, 0, 1, dtype=dtypes.float64).dtype
+        
 
         self.assertEqual(math_ops.range(zero_int32, 0, 1).dtype, dtypes.int32)
         self.assertEqual(math_ops.range(zero_int64, 0, 1).dtype, dtypes.int64)
@@ -93,7 +128,8 @@ class RangeTest(test.TestCase):
 
     def testMixedDType(self):
         # Test case for GitHub issue 35710
-        tf_ans = math_ops.range(
+        with tensorflow_op_timer():
+            tf_ans = math_ops.range(
             constant_op.constant(4, dtype=dtypes.int32), dtype=dtypes.int64)
         self.assertAllEqual(self.evaluate(tf_ans), np.array([0, 1, 2, 3]))
 

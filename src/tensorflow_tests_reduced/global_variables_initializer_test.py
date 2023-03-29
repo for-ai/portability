@@ -24,6 +24,7 @@ from tensorflow.python.ops import variables
 from tensorflow.python.platform import test
 from tensorflow.python.training import gradient_descent
 from tensorflow.python.util import compat
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 class VariablesTestCase(test.TestCase, parameterized.TestCase):
@@ -50,7 +51,8 @@ class VariablesTestCase(test.TestCase, parameterized.TestCase):
 
       with self.assertRaisesOpError("Attempting to use uninitialized value"):
         self.evaluate(var1)
-
+      with tensorflow_op_timer():
+        test = variables.global_variables_initializer()
       self.evaluate(variables.global_variables_initializer())
 
       self.assertAllClose(0.0, self.evaluate(var0))
@@ -80,7 +82,8 @@ class VariablesTestCase(test.TestCase, parameterized.TestCase):
       self.assertEqual([3, 6], depdep.get_shape())
       self.assertEqual([3, 6], depdep.get_shape())
       self.assertEqual([3, 6], depdep.shape)
-
+      with tensorflow_op_timer():
+        test =variables.global_variables_initializer()
       self.evaluate(variables.global_variables_initializer())
 
       self.assertAllClose(self.evaluate(rnd), self.evaluate(dep))
@@ -95,6 +98,8 @@ class VariablesTestCase(test.TestCase, parameterized.TestCase):
       plus_one = var.assign_add(1.0)
       minus_one = var.assign_sub(2.0)
       four = var.assign(4.0)
+      with tensorflow_op_timer():
+        test =variables.global_variables_initializer()
       self.evaluate(variables.global_variables_initializer())
       self.assertAllClose(0.0, self.evaluate(var))
 
@@ -114,6 +119,8 @@ class VariablesTestCase(test.TestCase, parameterized.TestCase):
       plus_one = var.assign_add(1.0)
       minus_one = var.assign_sub(2.0)
       four = var.assign(4.0)
+      with tensorflow_op_timer():
+        test =variables.global_variables_initializer()
       self.evaluate(variables.global_variables_initializer())
       self.assertAllClose(0.0, self.evaluate(var))
 
@@ -131,6 +138,8 @@ class VariablesTestCase(test.TestCase, parameterized.TestCase):
     var = variables.Variable(np.zeros(shape=[1, 1]),
                              shape=tensor_shape.TensorShape(None))
     print("***VAR", var.device)
+    with tensorflow_op_timer():
+        test =variables.global_variables_initializer()
     self.evaluate(variables.global_variables_initializer())
     self.assertAllEqual(np.zeros(shape=[1, 1]), var.read_value())
     self.evaluate(var.assign(np.zeros(shape=[2, 2])))
@@ -142,7 +151,8 @@ class VariablesTestCase(test.TestCase, parameterized.TestCase):
       zero = constant_op.constant(0, dtype=dtype)
       var = variables.Variable(zero)
       count_up_to = var.count_up_to(3)
-
+      with tensorflow_op_timer():
+        test =variables.global_variables_initializer()
       self.evaluate(variables.global_variables_initializer())
       self.assertEqual(0, self.evaluate(var))
 
@@ -168,6 +178,8 @@ class VariablesTestCase(test.TestCase, parameterized.TestCase):
     with self.cached_session():
       var_x = variables.Variable(2.0)
       var_y = variables.Variable(3.0)
+      with tensorflow_op_timer():
+        test =variables.global_variables_initializer()
       self.evaluate(variables.global_variables_initializer())
       self.assertAllClose(2.0, self.evaluate(var_x))
       self.assertAllClose(3.0, self.evaluate(var_y))
@@ -181,6 +193,8 @@ class VariablesTestCase(test.TestCase, parameterized.TestCase):
       variable_mul = math_ops.matmul(zero_size_const, zero_size_var)
       const_mul = math_ops.matmul(
           zero_size_const, zero_size_const, transpose_b=True)
+      with tensorflow_op_timer():
+        test =variables.global_variables_initializer()
       self.evaluate(variables.global_variables_initializer())
       variable_output = self.evaluate(variable_mul)
       self.assertAllClose(self.evaluate(const_mul), variable_output)
@@ -226,7 +240,8 @@ class VariablesTestCase(test.TestCase, parameterized.TestCase):
       var_m = variables.Variable([[2.0, 3.0]])
       matmul = var_m.__matmul__([[10.0], [20.0]])
       rmatmul = var_m.__rmatmul__([[10.0], [20.0]])
-
+      with tensorflow_op_timer():
+        test =variables.global_variables_initializer()
       self.evaluate(variables.global_variables_initializer())
       self.assertAllClose([2.0], self.evaluate(add))
       self.assertAllClose([3.0], self.evaluate(radd))
@@ -264,6 +279,8 @@ class VariablesTestCase(test.TestCase, parameterized.TestCase):
   def testSession(self):
     with self.cached_session() as sess:
       var = variables.Variable([1, 12])
+      with tensorflow_op_timer():
+        test =variables.global_variables_initializer()
       self.evaluate(variables.global_variables_initializer())
       self.assertAllClose([1, 12], self.evaluate(var))
 
@@ -289,6 +306,8 @@ class VariablesTestCase(test.TestCase, parameterized.TestCase):
 
       with self.assertRaises(errors_impl.FailedPreconditionError):
         self.evaluate(v2)
+      with tensorflow_op_timer():
+        test =variables.global_variables_initializer()
       self.evaluate(variables.global_variables_initializer())
       self.assertAllClose(np.negative(value), self.evaluate(v2))
 
@@ -298,6 +317,8 @@ class VariablesTestCase(test.TestCase, parameterized.TestCase):
       a = variables.Variable([1, 2, 3], dtype=dtypes.float32)
       b = variables.Variable(a.initialized_value() + 2)
       c = variables.Variable(b.initialized_value() + 2)
+      with tensorflow_op_timer():
+        test =variables.global_variables_initializer()
       self.evaluate(variables.global_variables_initializer())
       self.assertAllEqual(self.evaluate(a), [1, 2, 3])
       self.assertAllEqual(self.evaluate(b), [3, 4, 5])
@@ -307,6 +328,8 @@ class VariablesTestCase(test.TestCase, parameterized.TestCase):
   def testLoad(self):
     with self.cached_session():
       var = variables.Variable(np.zeros((5, 5), np.float32))
+      with tensorflow_op_timer():
+        test =variables.global_variables_initializer()
       self.evaluate(variables.global_variables_initializer())
       var.load(np.ones((5, 5), np.float32))
 
@@ -322,6 +345,8 @@ class IsInitializedTest(test.TestCase):
       _ = v, w
       uninited = variables.report_uninitialized_variables()
       self.assertAllEqual(np.array([b"v", b"w"]), self.evaluate(uninited))
+      with tensorflow_op_timer():
+        test =variables.global_variables_initializer()
       self.evaluate(variables.global_variables_initializer())
       self.assertEqual(0, self.evaluate(uninited).size)
 
@@ -334,6 +359,8 @@ class IsInitializedTest(test.TestCase):
       objective = math_ops.reduce_sum(b + math_ops.matmul(
           a, a, transpose_a=True))
       print("INITIALIZER", variables.global_variables_initializer())
+      with tensorflow_op_timer():
+        test =variables.global_variables_initializer()
       self.evaluate(variables.global_variables_initializer())
       do_opt = gradient_descent.GradientDescentOptimizer(0.1).minimize(
           objective)
@@ -352,6 +379,8 @@ class ObsoleteIsInitializedTest(test.TestCase):
       inited = variables.assert_variables_initialized()
       with self.assertRaisesOpError("Attempting to use uninitialized value"):
         self.evaluate(inited)
+      with tensorflow_op_timer():
+        test =variables.global_variables_initializer()
       self.evaluate(variables.global_variables_initializer())
       self.evaluate(inited)
 
@@ -400,6 +429,8 @@ class ObsoleteIsInitializedTest(test.TestCase):
       assign_list = pv_1.assign([c_0, c_1])
       assign_part_value = pv_1.assign_add(assign_ones)
       assign_part_var = pv_1.assign_sub(pv_0)
+      with tensorflow_op_timer():
+        test =variables.global_variables_initializer()
       self.evaluate(variables.global_variables_initializer())
 
       self.assertEqual([1.0], self.evaluate(plus_delta[0]))

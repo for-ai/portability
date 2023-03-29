@@ -36,6 +36,7 @@ from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import random_ops
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import test
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 class AssertEqualTest(test.TestCase):
@@ -47,7 +48,8 @@ class AssertEqualTest(test.TestCase):
     if context.executing_eagerly():
       self.assertIs(check_op, None)
     else:
-      self.assertEqual(check_op.type, "NoOp")
+      with tensorflow_op_timer():
+        self.assertEqual(check_op.type, "NoOp")
 
 
 class EnsureShapeTest(test.TestCase):
@@ -57,13 +59,15 @@ class EnsureShapeTest(test.TestCase):
   def testStaticShape(self):
     placeholder = array_ops.placeholder(dtypes.int32)
     ensure_shape_op = check_ops.ensure_shape(placeholder, (3, 3, 3))
-    self.assertEqual(ensure_shape_op.get_shape(), (3, 3, 3))
+    with tensorflow_op_timer():
+      self.assertEqual(ensure_shape_op.get_shape(), (3, 3, 3))
 
   @test_util.run_deprecated_v1
   def testStaticShape_MergesShapes(self):
     placeholder = array_ops.placeholder(dtypes.int32, shape=(None, None, 3))
     ensure_shape_op = check_ops.ensure_shape(placeholder, (5, 4, None))
-    self.assertEqual(ensure_shape_op.get_shape(), (5, 4, 3))
+    with tensorflow_op_timer():
+      self.assertEqual(ensure_shape_op.get_shape(), (5, 4, 3))
 
   @test_util.run_deprecated_v1
   def testStaticShape_RaisesErrorWhenRankIncompatible(self):
@@ -82,7 +86,8 @@ class EnsureShapeTest(test.TestCase):
     placeholder = array_ops.placeholder(dtypes.int32)
     derived = placeholder / 3
     ensure_shape_op = check_ops.ensure_shape(derived, None)
-    self.assertEqual(ensure_shape_op.get_shape(), None)
+    with tensorflow_op_timer():
+      self.assertEqual(ensure_shape_op.get_shape(), None)
 
 if __name__ == "__main__":
   test.main()

@@ -62,7 +62,7 @@ from tensorflow.python.ops import variables
 import tensorflow.python.ops.gradients  # pylint: disable=unused-import
 from tensorflow.python.platform import googletest
 from tensorflow.python.util import compat
-
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 @test_util.run_all_in_graph_and_eager_modes
 class IndexedSlicesTest(test_util.TensorFlowTestCase):
@@ -77,7 +77,8 @@ class IndexedSlicesTest(test_util.TensorFlowTestCase):
 
     dense_shape = constant_op.constant([3, 2])
     y = indexed_slices.IndexedSlices(values, indices, dense_shape)
-    tensor = ops.convert_to_tensor(y, name="tensor")
+    with tensorflow_op_timer():
+      tensor = ops.convert_to_tensor(y, name="tensor")
     self.assertAllEqual(tensor.shape, y.shape)
     self.assertAllEqual(self.evaluate(tensor), [[2, 3], [0, 0], [5, 7]])
 
@@ -87,7 +88,8 @@ class OperationTest(test_util.TensorFlowTestCase):
   @test_util.run_in_graph_and_eager_modes
   def testConvertToTensorNestedArray(self):
     values = [[2], [3], [5], [7]]
-    tensor = ops.convert_to_tensor(values)
+    with tensorflow_op_timer():
+      tensor = ops.convert_to_tensor(values)
     self.assertAllEqual((4, 1), tensor.get_shape().as_list())
     self.assertAllEqual(values, self.evaluate(tensor))
 
@@ -95,26 +97,31 @@ class OperationTest(test_util.TensorFlowTestCase):
     with context.eager_mode():
       t = constant_op.constant(1)
       self.assertTrue(isinstance(t, ops.EagerTensor))
-      converted = ops.convert_to_tensor(t)
+      with tensorflow_op_timer():
+        converted = ops.convert_to_tensor(t)
       self.assertTrue(isinstance(converted, ops.EagerTensor))
-      converted = ops.convert_to_tensor(1)
+      with tensorflow_op_timer():
+        converted = ops.convert_to_tensor(1)
       self.assertTrue(isinstance(converted, ops.EagerTensor))
 
   @test_util.run_in_graph_and_eager_modes
   def testConvertToTensorNestedTuple(self):
     values = ((2,), (3,), (5,), (7,))
-    tensor = ops.convert_to_tensor(values)
+    with tensorflow_op_timer():
+      tensor = ops.convert_to_tensor(values)
     self.assertAllEqual((4, 1), tensor.get_shape().as_list())
     self.assertAllEqual(values, self.evaluate(ops.convert_to_tensor(values)))
 
   @test_util.run_in_graph_and_eager_modes
   def testConvertToTensorNestedTensors(self):
     values = ((2,), (3,), (5,), (7,))
-    tensor = ops.convert_to_tensor(
+    with tensorflow_op_timer():
+      tensor = ops.convert_to_tensor(
         [constant_op.constant(row) for row in values])
     self.assertAllEqual((4, 1), tensor.get_shape().as_list())
     self.assertAllEqual(values, self.evaluate(tensor))
-    tensor = ops.convert_to_tensor(
+    with tensorflow_op_timer():
+      tensor = ops.convert_to_tensor(
         [[constant_op.constant(v) for v in row] for row in values])
     self.assertAllEqual((4, 1), tensor.get_shape().as_list())
     self.assertAllEqual(values, self.evaluate(tensor))
@@ -122,7 +129,8 @@ class OperationTest(test_util.TensorFlowTestCase):
   @test_util.run_in_graph_and_eager_modes
   def testConvertToTensorNestedMix(self):
     values = ([2], (3,), [constant_op.constant(5)], constant_op.constant([7]))
-    tensor = ops.convert_to_tensor(values)
+    with tensorflow_op_timer():
+      tensor = ops.convert_to_tensor(values)
     self.assertAllEqual((4, 1), tensor.get_shape().as_list())
     self.assertAllEqual(((2,), (3,), (5,), (7,)), self.evaluate(tensor))
 
@@ -134,13 +142,15 @@ class OperationTest(test_util.TensorFlowTestCase):
 
     # Convert empty tensor to anything.
     values = []
-    tensor = ops.convert_to_tensor(values, preferred_dtype=dtypes.int64)
+    with tensorflow_op_timer():
+      tensor = ops.convert_to_tensor(values, preferred_dtype=dtypes.int64)
     self.assertEqual(dtypes.int64, tensor.dtype)
 
     # The preferred dtype is a type error and will convert to
     # float32 instead.
     values = [1.23]
-    tensor = ops.convert_to_tensor(values, preferred_dtype=dtypes.int64)
+    with tensorflow_op_timer():
+      tensor = ops.convert_to_tensor(values, preferred_dtype=dtypes.int64)
     self.assertEqual(dtypes.float32, tensor.dtype)
 
   @test_util.run_in_graph_and_eager_modes
@@ -148,11 +158,13 @@ class OperationTest(test_util.TensorFlowTestCase):
     with self.assertRaises(TypeError):
       # Forcing an invalid dtype should fail with a type error.
       values = [1.23]
-      ops.convert_to_tensor(values, dtype=dtypes.int64)
+      with tensorflow_op_timer():
+        ops.convert_to_tensor(values, dtype=dtypes.int64)
 
   @test_util.run_in_graph_and_eager_modes
   def testConvertToLongLongTensorType(self):
-    tensor = ops.convert_to_tensor(
+    with tensorflow_op_timer():
+      tensor = ops.convert_to_tensor(
         # Get a numpy array of dtype NPY_LONGLONG
         np.prod(constant_op.constant([1])._shape_tuple()),
         dtype=dtypes.int64)
@@ -172,8 +184,8 @@ class OperationTest(test_util.TensorFlowTestCase):
         return constant_op.constant((1, 2, 3), dtype=dtype, name=name)
 
     tc = TensorCompatible()
-
-    tensor = ops.convert_to_tensor(tc, dtype=dtypes.int32)
+    with tensorflow_op_timer():
+      tensor = ops.convert_to_tensor(tc, dtype=dtypes.int32)
     self.assertEqual(tensor.dtype, dtypes.int32)
     self.assertAllEqual((1, 2, 3), self.evaluate(tensor))
 

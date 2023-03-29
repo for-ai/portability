@@ -53,6 +53,7 @@ from tensorflow.python.ops.ragged.row_partition import RowPartition
 
 from tensorflow.python.platform import googletest
 from tensorflow.python.util import nest
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 def int32array(values):
@@ -70,6 +71,8 @@ class RaggedTensorTest(test_util.TensorFlowTestCase, parameterized.TestCase):
   def testGetShape(self):
     rt = RaggedTensor.from_row_splits(b'a b c d e f g'.split(),
                                       [0, 2, 5, 6, 6, 7])
+    with tensorflow_op_timer():
+      test = rt.get_shape().as_list()
     self.assertEqual(rt.shape.as_list(), rt.get_shape().as_list())
 
  
