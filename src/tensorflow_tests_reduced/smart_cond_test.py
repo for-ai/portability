@@ -24,6 +24,7 @@ from tensorflow.python.ops import control_flow_ops
 from tensorflow.python.ops import math_ops
 from tensorflow.python.platform import googletest
 from ..tensorflow_test import device_context
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 def raise_exception():
@@ -38,7 +39,8 @@ class SmartCondTest(test_util.TensorFlowTestCase):
             with session.Session():
                 x = constant_op.constant(2)
                 y = constant_op.constant(5)
-                z = smart_cond.smart_cond(True, lambda: math_ops.multiply(x, 16),
+                with tensorflow_op_timer():
+                    z = smart_cond.smart_cond(True, lambda: math_ops.multiply(x, 16),
                                           lambda: math_ops.multiply(y, 5))
                 self.assertEqual(z.eval(), 32)
 
@@ -48,7 +50,8 @@ class SmartCondTest(test_util.TensorFlowTestCase):
             with session.Session():
                 x = constant_op.constant(4)
                 y = constant_op.constant(3)
-                z = smart_cond.smart_cond(False, lambda: math_ops.multiply(x, 16),
+                with tensorflow_op_timer():
+                    z = smart_cond.smart_cond(False, lambda: math_ops.multiply(x, 16),
                                           lambda: math_ops.multiply(y, 3))
                 self.assertEqual(z.eval(), 9)
 
@@ -57,7 +60,8 @@ class SmartCondTest(test_util.TensorFlowTestCase):
             with session.Session():
                 with device_context():
                     x = array_ops.placeholder(dtype=dtypes.int32)
-                    y = smart_cond.smart_cond(x > 0, lambda: constant_op.constant(1),
+                    with tensorflow_op_timer():
+                        y = smart_cond.smart_cond(x > 0, lambda: constant_op.constant(1),
                                             lambda: constant_op.constant(2))
                     self.assertEqual(y.eval(feed_dict={x: 1}), 1)
                     self.assertEqual(y.eval(feed_dict={x: -1}), 2)
@@ -70,7 +74,8 @@ class SmartCondTest(test_util.TensorFlowTestCase):
                     y = constant_op.constant(2)
                     # x * y > 0 can be evaluated at graph construction time, so the false
                     # branch shouldn't be evaluated at all.
-                    z = smart_cond.smart_cond(x * y > 0, lambda: constant_op.constant(1),
+                    with tensorflow_op_timer():
+                        z = smart_cond.smart_cond(x * y > 0, lambda: constant_op.constant(1),
                                             raise_exception)
                     self.assertEqual(z.eval(feed_dict={x: 1}), 1)
 
@@ -79,8 +84,9 @@ class SmartCondTest(test_util.TensorFlowTestCase):
             with session.Session():
                 with device_context():
                     x = array_ops.placeholder_with_default(1, shape=())
-                    y = smart_cond.smart_cond(x > 0, lambda: constant_op.constant(1),
-                                            lambda: constant_op.constant(2))
+                    with tensorflow_op_timer():
+                        y = smart_cond.smart_cond(x > 0, lambda: constant_op.constant(1),
+                                                lambda: constant_op.constant(2))
                     self.assertEqual(y.eval(), 1)
                     self.assertEqual(y.eval(feed_dict={x: -1}), 2)
 

@@ -30,6 +30,7 @@ from tensorflow.python.platform import test
 from tensorflow.python.training import coordinator
 from tensorflow.python.training import monitored_session
 from tensorflow.python.training import queue_runner_impl
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 _MockOp = collections.namedtuple("MockOp", ["name"])
@@ -46,7 +47,8 @@ class QueueRunnerTest(test.TestCase):
       count_up_to = var.count_up_to(3)
       queue = data_flow_ops.FIFOQueue(10, dtypes.float32)
       self.evaluate(variables.global_variables_initializer())
-      qr = queue_runner_impl.QueueRunner(queue, [count_up_to])
+      with tensorflow_op_timer():
+        qr = queue_runner_impl.QueueRunner(queue, [count_up_to])
       threads = qr.create_threads(sess)
       self.assertEqual(sorted(t.name for t in threads),
                        ["QueueRunnerThread-fifo_queue-CountUpTo:0"])
@@ -67,7 +69,8 @@ class QueueRunnerTest(test.TestCase):
       var1 = variables.VariableV1(zero64)
       count_up_to_30 = var1.count_up_to(30)
       queue = data_flow_ops.FIFOQueue(10, dtypes.float32)
-      qr = queue_runner_impl.QueueRunner(queue, [count_up_to_3, count_up_to_30])
+      with tensorflow_op_timer():
+        qr = queue_runner_impl.QueueRunner(queue, [count_up_to_3, count_up_to_30])
       threads = qr.create_threads(sess)
       self.assertEqual(sorted(t.name for t in threads),
                        ["QueueRunnerThread-fifo_queue-CountUpTo:0",
@@ -84,7 +87,8 @@ class QueueRunnerTest(test.TestCase):
   def testExceptionsCaptured(self):
     with self.cached_session() as sess:
       queue = data_flow_ops.FIFOQueue(10, dtypes.float32)
-      qr = queue_runner_impl.QueueRunner(queue, [_MockOp("i fail"),
+      with tensorflow_op_timer():
+        qr = queue_runner_impl.QueueRunner(queue, [_MockOp("i fail"),
                                                  _MockOp("so fail")])
       threads = qr.create_threads(sess)
       self.evaluate(variables.global_variables_initializer())
@@ -105,7 +109,8 @@ class QueueRunnerTest(test.TestCase):
       q1 = data_flow_ops.FIFOQueue(30, dtypes.float32)
       enqueue1 = q1.enqueue((q0.dequeue(),))
       dequeue1 = q1.dequeue()
-      qr = queue_runner_impl.QueueRunner(q1, [enqueue1])
+      with tensorflow_op_timer():
+        qr = queue_runner_impl.QueueRunner(q1, [enqueue1])
       threads = qr.create_threads(sess)
       for t in threads:
         t.start()
@@ -133,7 +138,8 @@ class QueueRunnerTest(test.TestCase):
       count_up_to = var.count_up_to(3)
       queue = data_flow_ops.FIFOQueue(10, dtypes.float32)
       self.evaluate(variables.global_variables_initializer())
-      qr = queue_runner_impl.QueueRunner(queue, [count_up_to])
+      with tensorflow_op_timer():
+        qr = queue_runner_impl.QueueRunner(queue, [count_up_to])
       # As the coordinator to stop.  The queue runner should
       # finish immediately.
       coord = coordinator.Coordinator()
@@ -152,7 +158,8 @@ class QueueRunnerTest(test.TestCase):
   def testRequestStopOnException(self):
     with self.cached_session() as sess:
       queue = data_flow_ops.FIFOQueue(10, dtypes.float32)
-      qr = queue_runner_impl.QueueRunner(queue, [_MockOp("not an op")])
+      with tensorflow_op_timer():
+        qr = queue_runner_impl.QueueRunner(queue, [_MockOp("not an op")])
       coord = coordinator.Coordinator()
       threads = qr.create_threads(sess, coord)
       for t in threads:
@@ -167,7 +174,8 @@ class QueueRunnerTest(test.TestCase):
       queue = data_flow_ops.FIFOQueue(2, dtypes.float32)
       enqueue = queue.enqueue((10.0,))
       dequeue = queue.dequeue()
-      qr = queue_runner_impl.QueueRunner(queue, [enqueue])
+      with tensorflow_op_timer():
+        qr = queue_runner_impl.QueueRunner(queue, [enqueue])
       coord = coordinator.Coordinator()
       qr.create_threads(sess, coord, start=True)
       # Dequeue one element and then request stop.
@@ -187,7 +195,8 @@ class QueueRunnerTest(test.TestCase):
         queue = data_flow_ops.FIFOQueue(10, dtypes.float32)
         self.evaluate(variables.global_variables_initializer())
         coord = coordinator.Coordinator()
-        qr = queue_runner_impl.QueueRunner(queue, [count_up_to])
+        with tensorflow_op_timer():
+          qr = queue_runner_impl.QueueRunner(queue, [count_up_to])
         # NOTE that this test does not actually start the threads.
         threads = qr.create_threads(sess, coord=coord)
         other_threads = qr.create_threads(other_sess, coord=coord)
@@ -202,7 +211,8 @@ class QueueRunnerTest(test.TestCase):
       queue = data_flow_ops.FIFOQueue(10, dtypes.float32)
       self.evaluate(variables.global_variables_initializer())
       coord = coordinator.Coordinator()
-      qr = queue_runner_impl.QueueRunner(queue, [count_up_to])
+      with tensorflow_op_timer():
+        qr = queue_runner_impl.QueueRunner(queue, [count_up_to])
       threads = []
       # NOTE that this test does not actually start the threads.
       threads.extend(qr.create_threads(sess, coord=coord))
@@ -217,7 +227,8 @@ class QueueRunnerTest(test.TestCase):
       count_up_to = var.count_up_to(3)
       queue = data_flow_ops.FIFOQueue(10, dtypes.float32)
       self.evaluate(variables.global_variables_initializer())
-      qr = queue_runner_impl.QueueRunner(queue, [count_up_to,
+      with tensorflow_op_timer():
+        qr = queue_runner_impl.QueueRunner(queue, [count_up_to,
                                                  _MockOp("bad_op")])
       threads = qr.create_threads(sess, start=True)
       self.assertEqual(sorted(t.name for t in threads),
@@ -239,7 +250,8 @@ class QueueRunnerTest(test.TestCase):
   def testName(self):
     with ops.name_scope("scope"):
       queue = data_flow_ops.FIFOQueue(10, dtypes.float32, name="queue")
-    qr = queue_runner_impl.QueueRunner(queue, [control_flow_ops.no_op()])
+    with tensorflow_op_timer():
+      qr = queue_runner_impl.QueueRunner(queue, [control_flow_ops.no_op()])
     self.assertEqual("scope/queue", qr.name)
     queue_runner_impl.add_queue_runner(qr)
     self.assertEqual(
@@ -252,7 +264,8 @@ class QueueRunnerTest(test.TestCase):
     count_up_to = var.count_up_to(3)
     queue = data_flow_ops.FIFOQueue(10, dtypes.float32)
     init_op = variables.global_variables_initializer()
-    qr = queue_runner_impl.QueueRunner(queue, [count_up_to])
+    with tensorflow_op_timer():
+      qr = queue_runner_impl.QueueRunner(queue, [count_up_to])
     queue_runner_impl.add_queue_runner(qr)
     with self.cached_session() as sess:
       init_op.run()
@@ -269,7 +282,8 @@ class QueueRunnerTest(test.TestCase):
     count_up_to = var.count_up_to(3)
     queue = data_flow_ops.FIFOQueue(10, dtypes.float32)
     init_op = variables.global_variables_initializer()
-    qr = queue_runner_impl.QueueRunner(queue, [count_up_to])
+    with tensorflow_op_timer():
+      qr = queue_runner_impl.QueueRunner(queue, [count_up_to])
     queue_runner_impl.add_queue_runner(qr)
     with self.cached_session():
       init_op.run()
@@ -282,7 +296,8 @@ class QueueRunnerTest(test.TestCase):
     count_up_to = var.count_up_to(3)
     queue = data_flow_ops.FIFOQueue(10, dtypes.float32)
     init_op = variables.global_variables_initializer()
-    qr = queue_runner_impl.QueueRunner(queue, [count_up_to])
+    with tensorflow_op_timer():
+      qr = queue_runner_impl.QueueRunner(queue, [count_up_to])
     queue_runner_impl.add_queue_runner(qr)
     with self.cached_session():
       init_op.run()
@@ -299,7 +314,8 @@ class QueueRunnerTest(test.TestCase):
       count_up_to = var.count_up_to(3)
       queue = data_flow_ops.FIFOQueue(10, dtypes.float32)
       init_op = variables.global_variables_initializer()
-      qr = queue_runner_impl.QueueRunner(queue, [count_up_to])
+      with tensorflow_op_timer():
+        qr = queue_runner_impl.QueueRunner(queue, [count_up_to])
       queue_runner_impl.add_queue_runner(qr)
     with self.session(graph=graph) as sess:
       init_op.run()
@@ -317,14 +333,17 @@ class QueueRunnerTest(test.TestCase):
       enqueue_op = control_flow_ops.no_op(name="enqueue")
       close_op = control_flow_ops.no_op(name="close")
       cancel_op = control_flow_ops.no_op(name="cancel")
-      qr0 = queue_runner_impl.QueueRunner(
+      with tensorflow_op_timer():
+        qr0 = queue_runner_impl.QueueRunner(
           queue, [enqueue_op],
           close_op,
           cancel_op,
           queue_closed_exception_types=(errors_impl.OutOfRangeError,
                                         errors_impl.CancelledError))
-      qr0_proto = queue_runner_impl.QueueRunner.to_proto(qr0)
-      qr0_recon = queue_runner_impl.QueueRunner.from_proto(qr0_proto)
+      with tensorflow_op_timer():
+        qr0_proto = queue_runner_impl.QueueRunner.to_proto(qr0)
+      with tensorflow_op_timer():
+        qr0_recon = queue_runner_impl.QueueRunner.from_proto(qr0_proto)
       self.assertEqual("queue", qr0_recon.queue.name)
       self.assertEqual(1, len(qr0_recon.enqueue_ops))
       self.assertEqual(enqueue_op, qr0_recon.enqueue_ops[0])
@@ -337,7 +356,8 @@ class QueueRunnerTest(test.TestCase):
       # Assert we reconstruct an OutOfRangeError for QueueRunners
       # created before QueueRunnerDef had a queue_closed_exception_types field.
       del qr0_proto.queue_closed_exception_types[:]
-      qr0_legacy_recon = queue_runner_impl.QueueRunner.from_proto(qr0_proto)
+      with tensorflow_op_timer():
+        qr0_legacy_recon = queue_runner_impl.QueueRunner.from_proto(qr0_proto)
       self.assertEqual("queue", qr0_legacy_recon.queue.name)
       self.assertEqual(1, len(qr0_legacy_recon.enqueue_ops))
       self.assertEqual(enqueue_op, qr0_legacy_recon.enqueue_ops[0])

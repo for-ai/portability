@@ -25,6 +25,7 @@ import tensorflow.python.ops.nn_grad  # pylint: disable=unused-import
 from tensorflow.python.ops.nn_impl import _compute_sampled_logits
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import test as test_lib
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 class MomentsTest(test_lib.TestCase):
@@ -50,10 +51,12 @@ class MomentsTest(test_lib.TestCase):
                   inputs, moments_axes, keepdims=keep_dims)
 
               if check_gradients:
-                err = gradient_checker.compute_gradient_error(
+                with tensorflow_op_timer():
+                  err = gradient_checker.compute_gradient_error(
                     inputs, input_shape, mean, mean.shape.as_list())
                 self.assertLess(err, 1e-3)
-                err = gradient_checker.compute_gradient_error(
+                with tensorflow_op_timer():
+                  err = gradient_checker.compute_gradient_error(
                     inputs, input_shape, variance, variance.shape.as_list())
                 self.assertLess(err, 1e-3)
 

@@ -33,7 +33,7 @@ from tensorflow.python.ops.distributions import kullback_leibler
 from tensorflow.python.ops.distributions import normal as normal_lib
 from tensorflow.python.platform import test
 from tensorflow.python.platform import tf_logging
-
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 def try_import(name):  # pylint: disable=invalid-name
   module = None
@@ -72,8 +72,8 @@ class NormalTest(test.TestCase):
     x = np.linspace(-8.0, 8.0, batch_size).astype(np.float64)
 
     normal = normal_lib.Normal(loc=mu, scale=sigma)
-
-    sf = normal.survival_function(x)
+    with tensorflow_op_timer():
+      sf = normal.survival_function(x)
     self.assertAllEqual(
         self.evaluate(normal.batch_shape_tensor()), sf.get_shape())
     self.assertAllEqual(
@@ -95,10 +95,11 @@ class NormalTest(test.TestCase):
         dist = normal_lib.Normal(loc=mu, scale=sigma)
         x = np.array([-100., -20., -5., 0., 5., 20., 100.]).astype(dtype)
         for func in [
-            dist.cdf, dist.log_cdf, dist.survival_function,
-            dist.log_survival_function, dist.log_prob, dist.prob
+            dist.survival_function,
+            
         ]:
-          value = func(x)
+          with tensorflow_op_timer():
+            value = func(x)
           grads = gradients_impl.gradients(value, [mu, sigma])
           with self.session(graph=g):
             self.evaluate(variables.global_variables_initializer())
