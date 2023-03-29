@@ -59,6 +59,7 @@ from tensorflow.python.platform import googletest
 from tensorflow.python.training import server_lib
 from tensorflow.python.util import compat
 from ..tensorflow_test import device_context
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 try:
     import attr  # pylint:disable=g-import-not-at-top
@@ -87,7 +88,8 @@ class SessionTest(test_util.TensorFlowTestCase):
             c = math_ops.matmul(a, b, name='matmul')
         with session.Session(graph=g):
             with device_context():
-                result = c.eval()
+                with tensorflow_op_timer():
+                    result = c.eval()
                 self.assertAllEqual(result, [[42.0]])
 
     def testUseDefaultGraph(self):
@@ -97,7 +99,8 @@ class SessionTest(test_util.TensorFlowTestCase):
             c = math_ops.matmul(a, b, name='matmul')
             with session.Session():
                 with device_context():
-                    result = c.eval()
+                    with tensorflow_op_timer():
+                        result = c.eval()
                     self.assertAllEqual(result, [[42.0]])
 
     def testCreate(self):
@@ -109,10 +112,12 @@ class SessionTest(test_util.TensorFlowTestCase):
                 # TODO(mrry): Investigate why order='F' didn't work.
                 arr = np.asarray([[0, 1, 2], [3, 4, 5]],
                                 dtype=np.float32, order='C')
-                copy_val = copy.eval({'W1:0': arr})
+                with tensorflow_op_timer():
+                    copy_val = copy.eval({'W1:0': arr})
                 self.assertAllEqual(arr, copy_val)
                 # Test without feed.
-                copy_val = copy.eval()
+                with tensorflow_op_timer():
+                    copy_val = copy.eval()
                 self.assertAllEqual(
                     np.asarray(
                         [[10.0, 10.0, 10.0], [10.0, 10.0, 10.0]], dtype=np.float32),

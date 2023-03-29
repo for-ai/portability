@@ -46,6 +46,7 @@ from tensorflow.python.trackable import autotrackable
 from tensorflow.python.training.saver import export_meta_graph
 from tensorflow.python.util import compat
 from tensorflow.python.util import nest
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 class _GraphMerger(object):
@@ -170,8 +171,9 @@ class VariablesToConstantsTest(test.TestCase):
         """Tests that a single variable is properly converted to a constant."""
 
         with ops.Graph().as_default():
-            with variable_scope.variable_scope("", use_resource=False):
-                _ = variable_scope.get_variable("x", initializer=1.0)
+            with tensorflow_op_timer():
+                with variable_scope.variable_scope("", use_resource=False):
+                    _ = variable_scope.get_variable("x", initializer=1.0)
             with session_lib.Session() as sess:
                 sess.run(variables.global_variables_initializer())
                 variable_graph_def = sess.graph.as_graph_def()
