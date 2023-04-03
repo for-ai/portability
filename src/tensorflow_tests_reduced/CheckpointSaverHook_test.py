@@ -273,14 +273,14 @@ class CheckpointSaverHookTest(test.TestCase):
                     global_step_val = sess.raw_session().run(global_step)
                 listener1_counts = listener1.get_counts()
                 listener2_counts = listener2.get_counts()
-            self.assertEqual(2, global_step_val)
-            self.assertEqual({
-                'begin': 1,
-                'before_save': 3,
-                'after_save': 3,
-                'end': 1
-            }, listener1_counts)
-            self.assertEqual(listener1_counts, listener2_counts)
+        self.assertEqual(2, global_step_val)
+        self.assertEqual({
+            'begin': 1,
+            'before_save': 3,
+            'after_save': 3,
+            'end': 1
+        }, listener1_counts)
+        self.assertEqual(listener1_counts, listener2_counts)
 
         with ops.Graph().as_default():
             global_step = training_util.get_or_create_global_step()
