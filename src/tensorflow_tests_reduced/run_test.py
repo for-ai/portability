@@ -60,6 +60,7 @@ from tensorflow.python.training import server_lib
 from tensorflow.python.util import compat
 import tensorflow as tf
 from ..tensorflow_test import device_context
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 try:
   import attr  # pylint:disable=g-import-not-at-top
@@ -88,7 +89,8 @@ class SessionTest(test_util.TensorFlowTestCase):
       with device_context():
         inp = constant_op.constant(10.0, name='W1')
         print("***INP", inp.device)
-        results = s.run([inp])
+        with tensorflow_op_timer():
+          results = s.run([inp])
         self.assertAllEqual([10.0], results)
 
     pool = config_pb.session_inter_op_thread_pool.add()
@@ -96,7 +98,8 @@ class SessionTest(test_util.TensorFlowTestCase):
     with session.Session(config=config_pb) as s:
       with device_context():
         inp = constant_op.constant(20.0, name='W2')
-        results = s.run([inp])
+        with tensorflow_op_timer():
+          results = s.run([inp])
         self.assertAllEqual([20.0], results)
 
     pool = config_pb.session_inter_op_thread_pool.add()
@@ -108,7 +111,8 @@ class SessionTest(test_util.TensorFlowTestCase):
     with session.Session(config=config_pb) as s:
       with device_context():
         inp = constant_op.constant(30.0, name='W2')
-        results = s.run([inp], options=run_options)
+        with tensorflow_op_timer():
+          results = s.run([inp], options=run_options)
         self.assertAllEqual([30.0], results)
 
   def testErrorsReported(self):
@@ -137,9 +141,11 @@ class SessionTest(test_util.TensorFlowTestCase):
     with session.Session() as sess:
       with device_context():
         a = constant_op.constant(42.0)
-        res = sess.run(a)
+        with tensorflow_op_timer():
+          res = sess.run(a)
         self.assertEqual(42.0, res)
-        res = sess.run(a.op)  # An op, not a tensor.
+        with tensorflow_op_timer():
+          res = sess.run(a.op)  # An op, not a tensor.
         self.assertIsNone(res)
         tensor_runner = sess.make_callable(a)
         res = tensor_runner()
@@ -152,9 +158,11 @@ class SessionTest(test_util.TensorFlowTestCase):
     with session.Session() as sess:
       with device_context():
         a = constant_op.constant(42.0)
-        res = sess.run(a.name)
+        with tensorflow_op_timer():
+          res = sess.run(a.name)
         self.assertEqual(42.0, res)
-        res = sess.run(a.op)  # An op, not a tensor.
+        with tensorflow_op_timer():
+          res = sess.run(a.op)  # An op, not a tensor.
         self.assertIsNone(res)
 
   def testFetchList(self):
@@ -165,7 +173,8 @@ class SessionTest(test_util.TensorFlowTestCase):
           c = constant_op.constant(44.0)
           v = variables.Variable([54.0])
           assign = v.assign([63.0])
-          res = sess.run([a, b, c, a.name, assign.op])
+          with tensorflow_op_timer():
+            res = sess.run([a, b, c, a.name, assign.op])
           self.assertIsInstance(res, list)
           self.assertEqual([42.0, None, 44.0, 42.0, None], res)
           list_runner = sess.make_callable([a, b, c, a.name, assign.op])
@@ -179,7 +188,8 @@ class SessionTest(test_util.TensorFlowTestCase):
         a = constant_op.constant(42.0)
         b = control_flow_ops.no_op()  # An op, not a tensor.
         c = constant_op.constant(44.0)
-        res = sess.run((a, b, c, a.name))
+        with tensorflow_op_timer():
+          res = sess.run((a, b, c, a.name))
         self.assertIsInstance(res, tuple)
         self.assertEqual((42.0, None, 44.0, 42.0), res)
         tuple_runner = sess.make_callable((a, b, c, a.name))
@@ -196,7 +206,8 @@ class SessionTest(test_util.TensorFlowTestCase):
         a = constant_op.constant(42.0)
         b = control_flow_ops.no_op()  # An op, not a tensor.
         c = constant_op.constant(44.0)
-        res = sess.run(ABC(a, b, c))
+        with tensorflow_op_timer():
+          res = sess.run(ABC(a, b, c))
         self.assertIsInstance(res, ABC)
         self.assertEqual(42.0, res.a)
         self.assertIsNone(res.b)
@@ -214,7 +225,8 @@ class SessionTest(test_util.TensorFlowTestCase):
         a = constant_op.constant(42.0)
         b = control_flow_ops.no_op()  # An op, not a tensor.
         c = constant_op.constant(44.0)
-        res = sess.run({'a': a, 'b': b, 'c': c})
+        with tensorflow_op_timer():
+          res = sess.run({'a': a, 'b': b, 'c': c})
         self.assertIsInstance(res, dict)
         self.assertEqual(42.0, res['a'])
         self.assertIsNone(res['b'])
@@ -226,7 +238,8 @@ class SessionTest(test_util.TensorFlowTestCase):
         a = constant_op.constant(42.0)
         b = control_flow_ops.no_op()  # An op, not a tensor.
         c = constant_op.constant(44.0)
-        res = sess.run(collections.OrderedDict([(3, a), (2, b), (1, c)]))
+        with tensorflow_op_timer():
+          res = sess.run(collections.OrderedDict([(3, a), (2, b), (1, c)]))
         self.assertIsInstance(res, collections.OrderedDict)
         self.assertEqual([3, 2, 1], list(res.keys()))
         self.assertEqual(42.0, res[3])
@@ -253,12 +266,13 @@ class SessionTest(test_util.TensorFlowTestCase):
     sample = SampleAttr(t1, t2)
     with session.Session() as sess:
       with device_context():
-        result = sess.run(sample)
+        with tensorflow_op_timer():
+          result = sess.run(sample)
         self.assertIsInstance(result, SampleAttr)
         self.assertAllEqual(val1, result.field1)
         self.assertAllEqual(val2, result.field2)
-
-        result = sess.run(sample, feed_dict={sample.field1: val3})
+        with tensorflow_op_timer():
+          result = sess.run(sample, feed_dict={sample.field1: val3})
         self.assertIsInstance(result, SampleAttr)
         self.assertAllEqual(val3, result.field1)
         self.assertAllEqual(val2, result.field2)
@@ -290,7 +304,8 @@ class SessionTest(test_util.TensorFlowTestCase):
 
     with session.Session() as sess:
       with device_context():
-        result = sess.run(sample)
+        with tensorflow_op_timer():
+          result = sess.run(sample)
         self.assertIsInstance(result, SampleAttr)
         self.assertIsInstance(result.field0, SampleAttr)
         self.assertIsInstance(result.field0.field0, SampleAttr)
@@ -318,8 +333,8 @@ class SessionTest(test_util.TensorFlowTestCase):
       with device_context():
         a_val = 11.0
         a = constant_op.constant(a_val)
-
-        res = sess.run([[], tuple(), {}])
+        with tensorflow_op_timer():
+          res = sess.run([[], tuple(), {}])
         self.assertIsInstance(res, list)
         self.assertEqual(3, len(res))
         self.assertIsInstance(res[0], list)
@@ -328,8 +343,8 @@ class SessionTest(test_util.TensorFlowTestCase):
         self.assertEqual(0, len(res[1]))
         self.assertIsInstance(res[2], dict)
         self.assertEqual(0, len(res[2]))
-
-        res = sess.run([[], tuple(), {}, a])
+        with tensorflow_op_timer():
+          res = sess.run([[], tuple(), {}, a])
         self.assertIsInstance(res, list)
         self.assertEqual(4, len(res))
         self.assertIsInstance(res[0], list)
@@ -356,7 +371,8 @@ class SessionTest(test_util.TensorFlowTestCase):
         test_dct = {'a': a.name, 'c': c, 'b': b}
         test_dct_types = [dict, frozendict, defaultdict]
         # List of lists, tuples, namedtuple, dict, frozendict, and defaultdict
-        res = sess.run([
+        with tensorflow_op_timer():
+          res = sess.run([
             [a, b, c],
             (a, b, c),
             ABC(a=a, b=b, c=c),
@@ -388,7 +404,8 @@ class SessionTest(test_util.TensorFlowTestCase):
           self.assertEqual(c_val, r['c'])
         self.assertEqual(res[5].default_factory, str)
         # Tuple of lists, tuples, namedtuple, dict, frozendict, and defaultdict
-        res = sess.run(([a, b, c], (a.name, b, c), ABC(a=a, b=b,
+        with tensorflow_op_timer():
+          res = sess.run(([a, b, c], (a.name, b, c), ABC(a=a, b=b,
                                                       c=c), dict(test_dct),
                         frozendict(test_dct), defaultdict(str, test_dct)))
         self.assertIsInstance(res, tuple)
@@ -416,7 +433,8 @@ class SessionTest(test_util.TensorFlowTestCase):
         self.assertEqual(res[5].default_factory, str)
 
         # Namedtuple of lists, tuples, namedtuples, dict, frozendict, defaultdict
-        res = sess.run(
+        with tensorflow_op_timer():
+          res = sess.run(
             DEFGHI(
                 d=[a, b, c],
                 e=(a, b, c),
@@ -456,7 +474,8 @@ class SessionTest(test_util.TensorFlowTestCase):
         self.assertEqual(c_val, res.i['c'])
         self.assertEqual(res.i.default_factory, str)
         # Dict of lists, tuples, namedtuples, dict, frozendict, defaultdict
-        res = sess.run({
+        with tensorflow_op_timer():
+          res = sess.run({
             'd': [a, b, c],
             'e': (a, b, c),
             'f': ABC(a=a, b=b, c=c),
@@ -495,16 +514,20 @@ class SessionTest(test_util.TensorFlowTestCase):
         a = constant_op.constant(1.0, shape=[1, 2])
         b = constant_op.constant(2.0, shape=[2, 3])
         c = math_ops.matmul(a, b)
-        results_with_list = s.run([c])
+        with tensorflow_op_timer():
+          results_with_list = s.run([c])
         self.assertAllEqual([[4.0, 4.0, 4.0]], results_with_list[0])
-        results_with_single = s.run(c)
+        with tensorflow_op_timer():
+          results_with_single = s.run(c)
         self.assertAllEqual([[4.0, 4.0, 4.0]], results_with_single)
         results_with_get = c.eval()
         self.assertAllEqual([[4.0, 4.0, 4.0]], results_with_get)
-        a_val, b_val = s.run([a, b])  # Test multiple fetches.
+        with tensorflow_op_timer():
+          a_val, b_val = s.run([a, b])  # Test multiple fetches.
         self.assertAllEqual([[1.0, 1.0]], a_val)
         self.assertAllEqual([[2.0, 2.0, 2.0], [2.0, 2.0, 2.0]], b_val)
-        results_with_dict = s.run({'a': [a], 'b': b, 'z': [a, b]})
+        with tensorflow_op_timer():
+          results_with_dict = s.run({'a': [a], 'b': b, 'z': [a, b]})
         self.assertAllEqual([[1.0, 1.0]], results_with_dict['a'][0])
         self.assertAllEqual([[2.0, 2.0, 2.0], [2.0, 2.0, 2.0]],
                             results_with_dict['b'])
@@ -512,7 +535,8 @@ class SessionTest(test_util.TensorFlowTestCase):
         self.assertAllEqual(results_with_dict['b'], results_with_dict['z'][1])
 
         # Test nested structures
-        results_with_nested_list = s.run([[[a, b], b], a, [a, b]])
+        with tensorflow_op_timer():
+          results_with_nested_list = s.run([[[a, b], b], a, [a, b]])
         self.assertAllEqual([[1.0, 1.0]], results_with_nested_list[0][0][0])
         self.assertAllEqual([[2.0, 2.0, 2.0], [2.0, 2.0, 2.0]],
                             results_with_nested_list[0][0][1])
@@ -535,19 +559,23 @@ class SessionTest(test_util.TensorFlowTestCase):
           tf_y = constant_op.constant(y)
           tf_xy = math_ops.add(tf_x, tf_y)
           # Single fetch
-          xy = s.run(tf_xy)
+          with tensorflow_op_timer():
+            xy = s.run(tf_xy)
           self.assertEqual(scalar, type(xy))
           self.assertEqual(x + y, xy)
           # List fetch
-          xy, = s.run([tf_xy])
+          with tensorflow_op_timer():
+            xy, = s.run([tf_xy])
           self.assertEqual(scalar, type(xy))
           self.assertEqual(x + y, xy)
           # Dict fetch
-          xy = s.run({'xy': tf_xy})['xy']
+          with tensorflow_op_timer():
+            xy = s.run({'xy': tf_xy})['xy']
           self.assertEqual(scalar, type(xy))
           self.assertEqual(x + y, xy)
           # Nested list fetch
-          xy = s.run([[[tf_xy]], tf_xy, [tf_xy]])
+          with tensorflow_op_timer():
+            xy = s.run([[[tf_xy]], tf_xy, [tf_xy]])
           self.assertAllEqual(xy, [[[x + y]], x + y, [x + y]])
           self.assertEqual(scalar, type(xy[0][0][0]))
           self.assertEqual(scalar, type(xy[1]))
@@ -558,8 +586,10 @@ class SessionTest(test_util.TensorFlowTestCase):
       with device_context():
         a = constant_op.constant(1.0, shape=[1, 2])
         v = variables.Variable(a, name='testFetchOperationObject_v')
-        s.run(v.initializer)
-        v_val = s.run(v)
+        with tensorflow_op_timer():
+          s.run(v.initializer)
+        with tensorflow_op_timer():  
+          v_val = s.run(v)
         self.assertAllEqual([[1.0, 1.0]], v_val)
 
   def testFetchSparseTensor(self):
@@ -572,48 +602,57 @@ class SessionTest(test_util.TensorFlowTestCase):
             constant_op.constant(indices), constant_op.constant(values),
             constant_op.constant(shape))
         # Single fetch, use as tuple
-        sp_out = s.run(sp)
+        with tensorflow_op_timer():
+          sp_out = s.run(sp)
         indices_out, values_out, shape_out = sp_out
         self.assertAllEqual(indices_out, indices)
         self.assertAllEqual(values_out, values)
         self.assertAllEqual(shape_out, shape)
         # Single fetch, use as SparseTensorValue
-        sp_out = s.run(sp)
+        with tensorflow_op_timer():
+          sp_out = s.run(sp)
         self.assertAllEqual(sp_out.indices, indices)
         self.assertAllEqual(sp_out.values, values)
         self.assertAllEqual(sp_out.dense_shape, shape)
         # Tuple fetch, use as tuple
-        indices_out, values_out, shape_out = s.run(sp)
+        with tensorflow_op_timer():
+          indices_out, values_out, shape_out = s.run(sp)
         self.assertAllEqual(indices_out, indices)
         self.assertAllEqual(values_out, values)
         self.assertAllEqual(shape_out, shape)
         # List fetch, use as tuple
-        (indices_out, values_out, shape_out), = s.run([sp])
+        with tensorflow_op_timer():
+          (indices_out, values_out, shape_out), = s.run([sp])
         self.assertAllEqual(indices_out, indices)
         self.assertAllEqual(values_out, values)
         self.assertAllEqual(shape_out, shape)
         # List fetch, use as SparseTensorValue
-        sp_out, = s.run([sp])
+        with tensorflow_op_timer():
+          sp_out, = s.run([sp])
         self.assertAllEqual(sp_out.indices, indices)
         self.assertAllEqual(sp_out.values, values)
         self.assertAllEqual(sp_out.dense_shape, shape)
         # Dict fetch (single value), use as tuple
-        indices_out, values_out, shape_out = s.run({'sp': sp})['sp']
+        with tensorflow_op_timer():
+          indices_out, values_out, shape_out = s.run({'sp': sp})['sp']
         self.assertAllEqual(indices_out, indices)
         self.assertAllEqual(values_out, values)
         self.assertAllEqual(shape_out, shape)
         # Dict fetch (list value), use as tuple
-        (indices_out, values_out, shape_out), = s.run({'sp': [sp]})['sp']
+        with tensorflow_op_timer():
+          (indices_out, values_out, shape_out), = s.run({'sp': [sp]})['sp']
         self.assertAllEqual(indices_out, indices)
         self.assertAllEqual(values_out, values)
         self.assertAllEqual(shape_out, shape)
         # Dict fetch, use as SparseTensorValue
-        sp_out = s.run({'sp': sp})['sp']
+        with tensorflow_op_timer():
+          sp_out = s.run({'sp': sp})['sp']
         self.assertAllEqual(sp_out.indices, indices)
         self.assertAllEqual(sp_out.values, values)
         self.assertAllEqual(sp_out.dense_shape, shape)
         # Nested list fetch use as tuple
-        sp_out = s.run([[[sp]], sp])
+        with tensorflow_op_timer():
+          sp_out = s.run([[[sp]], sp])
         indices_out, values_out, shape_out = sp_out[0][0][0]
         self.assertAllEqual(indices_out, indices)
         self.assertAllEqual(values_out, values)
@@ -623,7 +662,8 @@ class SessionTest(test_util.TensorFlowTestCase):
         self.assertAllEqual(values_out, values)
         self.assertAllEqual(shape_out, shape)
         # Nested list fetch, use as SparseTensorValue
-        sp_out = s.run([[[sp]], sp])
+        with tensorflow_op_timer():
+          sp_out = s.run([[[sp]], sp])
         self.assertAllEqual(sp_out[0][0][0].indices, indices)
         self.assertAllEqual(sp_out[0][0][0].values, values)
         self.assertAllEqual(sp_out[0][0][0].dense_shape, shape)
@@ -647,7 +687,8 @@ class SessionTest(test_util.TensorFlowTestCase):
         sp_shape = array_ops.identity(sp.dense_shape)
         sp2 = sparse_tensor.SparseTensor(sp_indices, sp_values, sp_shape)
         # Feed with tuple
-        indices_out, values_out, shape_out = s.run(
+        with tensorflow_op_timer():
+          indices_out, values_out, shape_out = s.run(
             [sp_indices, sp_values, sp_shape], {
                 sp: (indices, values, shape)
             })
@@ -655,12 +696,14 @@ class SessionTest(test_util.TensorFlowTestCase):
         self.assertAllEqual(values_out, values)
         self.assertAllEqual(shape_out, shape)
         # Feed with tuple, fetch sp directly
-        sp_out = s.run(sp, {sp: (indices, values, shape)})
+        with tensorflow_op_timer():
+          sp_out = s.run(sp, {sp: (indices, values, shape)})
         self.assertAllEqual(sp_out.indices, indices)
         self.assertAllEqual(sp_out.values, values)
         self.assertAllEqual(sp_out.dense_shape, shape)
         # Feed with SparseTensorValue
-        indices_out, values_out, shape_out = s.run(
+        with tensorflow_op_timer():
+          indices_out, values_out, shape_out = s.run(
             [sp_indices, sp_values, sp_shape], {
                 sp: sparse_tensor.SparseTensorValue(indices, values, shape)
             })
@@ -668,14 +711,16 @@ class SessionTest(test_util.TensorFlowTestCase):
         self.assertAllEqual(values_out, values)
         self.assertAllEqual(shape_out, shape)
         # Feed with SparseTensorValue, fetch SparseTensorValue
-        sp2_out = s.run(sp2, {
+        with tensorflow_op_timer():
+          sp2_out = s.run(sp2, {
             sp: sparse_tensor.SparseTensorValue(indices, values, shape)
         })
         self.assertAllEqual(sp2_out.indices, indices)
         self.assertAllEqual(sp2_out.values, values)
         self.assertAllEqual(sp2_out.dense_shape, shape)
         # Feed SparseTensorValue and fetch sp directly.
-        sp_out = s.run(sp, {
+        with tensorflow_op_timer():
+          sp_out = s.run(sp, {
             sp: sparse_tensor.SparseTensorValue(indices, values, shape)
         })
         self.assertAllEqual(sp_out.indices, indices)
@@ -694,7 +739,8 @@ class SessionTest(test_util.TensorFlowTestCase):
         sp_shape = array_ops.identity(sp.dense_shape)
         sp2 = sparse_tensor.SparseTensor(sp_indices, sp_values, sp_shape)
         # Feed with tuple
-        indices_out, values_out, shape_out = s.run(
+        with tensorflow_op_timer():
+          indices_out, values_out, shape_out = s.run(
             [sp_indices, sp_values, sp_shape], {
                 sp: (indices, values, shape)
             })
@@ -702,7 +748,8 @@ class SessionTest(test_util.TensorFlowTestCase):
         self.assertAllEqual(values_out, values)
         self.assertAllEqual(shape_out, shape)
         # Feed with SparseTensorValue
-        indices_out, values_out, shape_out = s.run(
+        with tensorflow_op_timer():
+          indices_out, values_out, shape_out = s.run(
             [sp_indices, sp_values, sp_shape], {
                 sp: sparse_tensor.SparseTensorValue(indices, values, shape)
             })
@@ -710,7 +757,8 @@ class SessionTest(test_util.TensorFlowTestCase):
         self.assertAllEqual(values_out, values)
         self.assertAllEqual(shape_out, shape)
         # Feed with SparseTensorValue, fetch SparseTensorValue
-        sp2_out = s.run(sp2, {
+        with tensorflow_op_timer():
+          sp2_out = s.run(sp2, {
             sp: sparse_tensor.SparseTensorValue(indices, values, shape)
         })
         self.assertAllEqual(sp2_out.indices, indices)
@@ -730,7 +778,8 @@ class SessionTest(test_util.TensorFlowTestCase):
         sp_shape = array_ops.identity(sp.dense_shape)
         sp2 = sparse_tensor.SparseTensor(sp_indices, sp_values, sp_shape)
         # Feed with tuple
-        indices_out, values_out, shape_out = s.run(
+        with tensorflow_op_timer():
+          indices_out, values_out, shape_out = s.run(
             [sp_indices, sp_values, sp_shape], {
                 sp: (indices, values, shape)
             })
@@ -738,7 +787,8 @@ class SessionTest(test_util.TensorFlowTestCase):
         self.assertAllEqual(values_out, values)
         self.assertAllEqual(shape_out, shape)
         # Feed with SparseTensorValue
-        indices_out, values_out, shape_out = s.run(
+        with tensorflow_op_timer():
+          indices_out, values_out, shape_out = s.run(
             [sp_indices, sp_values, sp_shape], {
                 sp: sparse_tensor.SparseTensorValue(indices, values, shape)
             })
@@ -746,7 +796,8 @@ class SessionTest(test_util.TensorFlowTestCase):
         self.assertAllEqual(values_out, values)
         self.assertAllEqual(shape_out, shape)
         # Feed with SparseTensorValue, fetch SparseTensorValue
-        sp2_out = s.run(sp2, {
+        with tensorflow_op_timer():
+          sp2_out = s.run(sp2, {
             sp: sparse_tensor.SparseTensorValue(indices, values, shape)
         })
         self.assertAllEqual(sp2_out.indices, indices)
@@ -767,7 +818,8 @@ class SessionTest(test_util.TensorFlowTestCase):
         sp_values = array_ops.identity(sp.values)
         sp_shape = array_ops.identity(sp.dense_shape)
         # Feed with tuple
-        indices_out, values_out, shape_out = s.run(
+        with tensorflow_op_timer():
+          indices_out, values_out, shape_out = s.run(
             [sp_indices, sp_values, sp_shape], {
                 sp: (indices, values)
             })
@@ -785,28 +837,33 @@ class SessionTest(test_util.TensorFlowTestCase):
             constant_op.constant(values), constant_op.constant(indices),
             constant_op.constant(dense_shape))
         # Single fetch, use as tuple
-        ind_out = s.run(ind)
+        with tensorflow_op_timer():
+          ind_out = s.run(ind)
         values_out, indices_out, dense_shape_out = ind_out
         self.assertAllEqual(values_out, values)
         self.assertAllEqual(indices_out, indices)
         self.assertAllEqual(dense_shape_out, dense_shape)
         # Single fetch, use as IndexedSlicesValue
-        ind_out = s.run(ind)
+        with tensorflow_op_timer():
+          ind_out = s.run(ind)
         self.assertAllEqual(ind_out.values, values)
         self.assertAllEqual(ind_out.indices, indices)
         self.assertAllEqual(ind_out.dense_shape, dense_shape)
         # Tuple fetch, use as tuple
-        values_out, indices_out, dense_shape_out = s.run(ind)
+        with tensorflow_op_timer():
+          values_out, indices_out, dense_shape_out = s.run(ind)
         self.assertAllEqual(values_out, values)
         self.assertAllEqual(indices_out, indices)
         self.assertAllEqual(dense_shape_out, dense_shape)
         # List fetch, use as tuple
-        (values_out, indices_out, dense_shape_out), = s.run([ind])
+        with tensorflow_op_timer():
+          (values_out, indices_out, dense_shape_out), = s.run([ind])
         self.assertAllEqual(values_out, values)
         self.assertAllEqual(indices_out, indices)
         self.assertAllEqual(dense_shape_out, dense_shape)
         # List fetch, use as IndexedSlicesValue
-        ind_out, = s.run([ind])
+        with tensorflow_op_timer():
+          ind_out, = s.run([ind])
         self.assertAllEqual(ind_out.values, values)
         self.assertAllEqual(ind_out.indices, indices)
         self.assertAllEqual(ind_out.dense_shape, dense_shape)
@@ -828,7 +885,8 @@ class SessionTest(test_util.TensorFlowTestCase):
         ind2 = indexed_slices.IndexedSlices(ind_values, ind_indices,
                                             ind_dense_shape)
         # Feed with tuple
-        values_out, indices_out, dense_shape_out = s.run(
+        with tensorflow_op_timer():
+          values_out, indices_out, dense_shape_out = s.run(
             [ind_values, ind_indices, ind_dense_shape], {
                 ind: (values, indices, dense_shape)
             })
@@ -836,14 +894,16 @@ class SessionTest(test_util.TensorFlowTestCase):
         self.assertAllEqual(indices_out, indices)
         self.assertAllEqual(dense_shape_out, dense_shape)
         # Feed with IndexedSlicesValue
-        values_out, indices_out, dense_shape_out = s.run([
+        with tensorflow_op_timer():
+          values_out, indices_out, dense_shape_out = s.run([
             ind_values, ind_indices, ind_dense_shape
         ], {ind: indexed_slices.IndexedSlicesValue(values, indices, dense_shape)})
         self.assertAllEqual(values_out, values)
         self.assertAllEqual(indices_out, indices)
         self.assertAllEqual(dense_shape_out, dense_shape)
         # Feed with IndexedSlicesValue, fetch IndexedSlicesValue
-        ind2_out = s.run(ind2, {
+        with tensorflow_op_timer():
+          ind2_out = s.run(ind2, {
             ind: indexed_slices.IndexedSlicesValue(values, indices, dense_shape)
         })
         self.assertAllEqual(ind2_out.values, values)
@@ -859,28 +919,33 @@ class SessionTest(test_util.TensorFlowTestCase):
         ind = indexed_slices.IndexedSlices(
             constant_op.constant(values), constant_op.constant(indices), None)
         # Single fetch, use as tuple
-        ind_out = s.run(ind)
+        with tensorflow_op_timer():
+          ind_out = s.run(ind)
         values_out, indices_out, dense_shape_out = ind_out
         self.assertAllEqual(values_out, values)
         self.assertAllEqual(indices_out, indices)
         self.assertAllEqual(dense_shape_out, dense_shape)
         # Single fetch, use as IndexedSlicesValue
-        ind_out = s.run(ind)
+        with tensorflow_op_timer():
+          ind_out = s.run(ind)
         self.assertAllEqual(ind_out.values, values)
         self.assertAllEqual(ind_out.indices, indices)
         self.assertAllEqual(ind_out.dense_shape, dense_shape)
         # Tuple fetch, use as tuple
-        values_out, indices_out, dense_shape_out = s.run(ind)
+        with tensorflow_op_timer():
+          values_out, indices_out, dense_shape_out = s.run(ind)
         self.assertAllEqual(values_out, values)
         self.assertAllEqual(indices_out, indices)
         self.assertAllEqual(dense_shape_out, dense_shape)
         # List fetch, use as tuple
-        (values_out, indices_out, dense_shape_out), = s.run([ind])
+        with tensorflow_op_timer():
+          (values_out, indices_out, dense_shape_out), = s.run([ind])
         self.assertAllEqual(values_out, values)
         self.assertAllEqual(indices_out, indices)
         self.assertAllEqual(dense_shape_out, dense_shape)
         # List fetch, use as IndexedSlicesValue
-        ind_out, = s.run([ind])
+        with tensorflow_op_timer():
+          ind_out, = s.run([ind])
         self.assertAllEqual(ind_out.values, values)
         self.assertAllEqual(ind_out.indices, indices)
         self.assertAllEqual(ind_out.dense_shape, dense_shape)
@@ -898,19 +963,22 @@ class SessionTest(test_util.TensorFlowTestCase):
         ind_indices = array_ops.identity(ind.indices)
         ind2 = indexed_slices.IndexedSlices(ind_values, ind_indices)
         # Feed with tuple
-        values_out, indices_out = s.run([ind_values, ind_indices], {
+        with tensorflow_op_timer():
+          values_out, indices_out = s.run([ind_values, ind_indices], {
             ind: (values, indices)
         })
         self.assertAllEqual(values_out, values)
         self.assertAllEqual(indices_out, indices)
         # Feed with IndexedSlicesValue
-        values_out, indices_out = s.run([ind_values, ind_indices], {
+        with tensorflow_op_timer():
+          values_out, indices_out = s.run([ind_values, ind_indices], {
             ind: indexed_slices.IndexedSlicesValue(values, indices, dense_shape)
         })
         self.assertAllEqual(values_out, values)
         self.assertAllEqual(indices_out, indices)
         # Feed with IndexedSlicesValue, fetch IndexedSlicesValue
-        ind2_out = s.run(ind2, {
+        with tensorflow_op_timer():
+         ind2_out = s.run(ind2, {
             ind: indexed_slices.IndexedSlicesValue(values, indices, dense_shape)
         })
         self.assertAllEqual(ind2_out.values, values)
@@ -923,12 +991,14 @@ class SessionTest(test_util.TensorFlowTestCase):
         a = constant_op.constant(1.0, shape=[1, 2])
         b = constant_op.constant(2.0, shape=[2, 3])
         c = math_ops.matmul(a, b)
-        c_val = s.run(c)
+        with tensorflow_op_timer():
+          c_val = s.run(c)
         self.assertAllEqual([[4.0, 4.0, 4.0]], c_val)
         d = constant_op.constant([1.0, 2.0, 3.0], shape=[3, 1])
         e = math_ops.matmul(c, d)
         # Extend will happen here.
-        e_val = s.run(e)
+        with tensorflow_op_timer():
+          e_val = s.run(e)
         self.assertAllEqual([[24.0]], e_val)
 
   def testExtendWithStatefulOperations(self):
@@ -938,7 +1008,8 @@ class SessionTest(test_util.TensorFlowTestCase):
         b = constant_op.constant(2.0, shape=[2, 3])
         c = math_ops.matmul(a, b)
         v = variables.Variable(c, name='testExtendWithStatefulOperations_v')
-        v.initializer.run()
+        with tensorflow_op_timer():
+          v.initializer.run()
         v_val = v.eval()
         self.assertAllEqual([[4.0, 4.0, 4.0]], v_val)
         d = constant_op.constant(3.0, shape=[2, 3])
@@ -949,7 +1020,8 @@ class SessionTest(test_util.TensorFlowTestCase):
         self.assertAllEqual([[6.0, 6.0, 6.0]], e_val)
         v_val = v.eval()
         self.assertAllEqual([[4.0, 4.0, 4.0]], v_val)
-        s.run(assign_e_to_v)
+        with tensorflow_op_timer():
+          s.run(assign_e_to_v)
         v_val = v.eval()
         self.assertAllEqual([[6.0, 6.0, 6.0]], v_val)
 
@@ -965,8 +1037,10 @@ class SessionTest(test_util.TensorFlowTestCase):
         q = variables.Variable(b, name='testExtendWithGroupBy_q')
         # Extend will happen here.
         init = control_flow_ops.group(p.initializer, q.initializer)
-        s.run(init)
-        p_val, q_val = s.run([p, q])
+        with tensorflow_op_timer():
+          s.run(init)
+        with tensorflow_op_timer():
+          p_val, q_val = s.run([p, q])
 
         self.assertAllEqual([[1.0, 1.0]], p_val)
         self.assertAllEqual([[2.0, 2.0]], q_val)
@@ -982,7 +1056,8 @@ class SessionTest(test_util.TensorFlowTestCase):
         self.assertEqual(ops.get_default_graph(), b.graph)
         c = math_ops.matmul(a, b)
         v = variables.Variable(c, name='testDefaultGraph_v')
-        v.initializer.run()
+        with tensorflow_op_timer():
+          v.initializer.run()
         v_val = v.eval()
         self.assertAllEqual([[4.0, 4.0, 4.0]], v_val)
         d = constant_op.constant(3.0, shape=[2, 3])
@@ -992,7 +1067,8 @@ class SessionTest(test_util.TensorFlowTestCase):
         self.assertAllEqual([[6.0, 6.0, 6.0]], e_val)
         v_val = v.eval()
         self.assertAllEqual([[4.0, 4.0, 4.0]], v_val)
-        s.run(assign_e_to_v)
+        with tensorflow_op_timer():
+          s.run(assign_e_to_v)
         v_val = v.eval()
         self.assertAllEqual([[6.0, 6.0, 6.0]], v_val)
         self.assertEqual(ops.get_default_graph(), s.graph)
@@ -1011,7 +1087,8 @@ class SessionTest(test_util.TensorFlowTestCase):
         continue_event.wait()
 
         assign_c_to_v = state_ops.assign(v, c)
-        v.initializer.run()
+        with tensorflow_op_timer():
+          v.initializer.run()
         assign_c_to_v.eval()
         v_val = v.eval()
         self.assertAllEqual([[4.0, 4.0, 4.0]], v_val)
@@ -1022,7 +1099,8 @@ class SessionTest(test_util.TensorFlowTestCase):
         self.assertAllEqual([[6.0, 6.0, 6.0]], e_val)
         v_val = v.eval()
         self.assertAllEqual([[4.0, 4.0, 4.0]], v_val)
-        s.run(assign_e_to_v)
+        with tensorflow_op_timer():
+          s.run(assign_e_to_v)
         v_val = v.eval()
         self.assertAllEqual([[6.0, 6.0, 6.0]], v_val)
         self.assertEqual(ops.get_default_graph(), s.graph)
@@ -1102,14 +1180,14 @@ class SessionTest(test_util.TensorFlowTestCase):
     with session.Session() as s:
       with device_context():
         x = array_ops.zeros([2])
-
-        y = s.run(2 * x, feed_dict={x: np.ones(2).astype(np.float32)})
+        with tensorflow_op_timer():
+          y = s.run(2 * x, feed_dict={x: np.ones(2).astype(np.float32)})
         self.assertAllEqual(y, 2 * np.ones(2))
-
-        y = s.run(2 * x, feed_dict={x.name: np.ones(2).astype(np.float32)})
+        with tensorflow_op_timer():
+          y = s.run(2 * x, feed_dict={x.name: np.ones(2).astype(np.float32)})
         self.assertAllEqual(y, 2 * np.ones(2))
-
-        y = s.run(2 * x, feed_dict={x: [1, 1]})
+        with tensorflow_op_timer():
+          y = s.run(2 * x, feed_dict={x: [1, 1]})
         assert (y == 2 * np.ones(2)).all()
 
         # Test nested tuple keys
@@ -1117,7 +1195,8 @@ class SessionTest(test_util.TensorFlowTestCase):
             (array_ops.zeros([2]),))
         result = [z[0][0][0] * 2, z[1] * 2, z[2][0] * 2]
         values = (((np.array([1, 1]),),), np.array([2, 2]), (np.array([3, 3]),))
-        result_value = s.run(result, feed_dict={z: values})
+        with tensorflow_op_timer():
+          result_value = s.run(result, feed_dict={z: values})
         self.assertAllEqual(result_value[0], 2 * np.ones(2))
         self.assertAllEqual(result_value[1], 2 * np.array([2, 2]))
         self.assertAllEqual(result_value[2], 2 * np.array([3, 3]))
@@ -1143,7 +1222,8 @@ class SessionTest(test_util.TensorFlowTestCase):
               RuntimeError,
               lambda e: 'Attempted to use a closed Session.' in str(e)):
             while True:
-              sess.run(c)
+              with tensorflow_op_timer():
+                sess.run(c)
 
         t = threading.Thread(target=update_thread)
         t.start()
@@ -1184,7 +1264,8 @@ class SessionTest(test_util.TensorFlowTestCase):
     session.InteractiveSession._active_session_count = 0  # pylint: disable=protected-access
 
     sess = session.InteractiveSession()
-    sess.run(constant_op.constant(4.0))  # Run so that the session is "opened".
+    with tensorflow_op_timer():
+      sess.run(constant_op.constant(4.0))  # Run so that the session is "opened".
     sess.close()
     # Opening and closing interactive sessions serially should not warn.
     with warnings.catch_warnings(record=True) as w:
@@ -1239,6 +1320,8 @@ class SessionTest(test_util.TensorFlowTestCase):
       with device_context():
         with session.Session(graph=g) as sess2:
           with device_context():
+            with tensorflow_op_timer():
+              test = sess1.run(c), sess2.run(c)
             self.assertAllEqual(sess1.run(c), sess2.run(c))
 
   def testDuplicatedInputs(self):
@@ -1246,7 +1329,8 @@ class SessionTest(test_util.TensorFlowTestCase):
       with device_context():
         a = constant_op.constant(1.0, shape=[1, 2])
         b = constant_op.constant(2.0, shape=[1, 3])
-        a_val, b_val, a2_val = sess.run([a, b, a])
+        with tensorflow_op_timer():
+          a_val, b_val, a2_val = sess.run([a, b, a])
         self.assertAllEqual(a_val, [[1.0, 1.0]])
         self.assertAllEqual(b_val, [[2.0, 2.0, 2.0]])
         self.assertAllEqual(a2_val, [[1.0, 1.0]])
@@ -1275,7 +1359,19 @@ class SessionTest(test_util.TensorFlowTestCase):
               np_array = np.sqrt(np_array.astype(np_dtype))
             else:
               np_array = np_array.astype(np_dtype)
-
+            with tensorflow_op_timer():
+              test = sess.run(out_t, feed_dict={
+                                    feed_t: np_array
+                                })
+            with tensorflow_op_timer():
+              sess.run(feed_t, feed_dict={
+                                    feed_t: np_array
+                                })
+            with tensorflow_op_timer():
+              sess.run(
+                [out_t, feed_t], feed_dict={
+                    feed_t: np_array
+                })
             self.assertAllEqual(np_array,
                                 sess.run(out_t, feed_dict={
                                     feed_t: np_array
@@ -1303,13 +1399,16 @@ class SessionTest(test_util.TensorFlowTestCase):
       with device_context():
         a = variables.Variable(42.0)
         b = state_ops.assign_add(a, 1.0)
-        sess.run(a.initializer)
+        with tensorflow_op_timer():
+          sess.run(a.initializer)
         tensor_runner = sess.make_callable(b.op, accept_options=True)
         run_options = config_pb2.RunOptions(
             trace_level=config_pb2.RunOptions.FULL_TRACE)
         run_metadata = config_pb2.RunMetadata()
         self.assertEqual(0, len(run_metadata.step_stats.dev_stats))
         tensor_runner(options=run_options, run_metadata=run_metadata)
+        with tensorflow_op_timer():
+          test = sess.run(a)
         self.assertEqual(43.0, sess.run(a))
         self.assertGreater(len(run_metadata.step_stats.dev_stats), 0)
 
@@ -1357,12 +1456,19 @@ class SessionTest(test_util.TensorFlowTestCase):
                             dtype=np.object_).reshape(shape)
           feed_t = array_ops.placeholder(dtype=dtypes.string, shape=shape)
           c = array_ops.identity(feed_t)
+          with tensorflow_op_timer():
+            test = sess.run(c, feed_dict={feed_t: c_list})
           self.assertAllEqual(sess.run(c, feed_dict={feed_t: c_list}), c_list)
+          with tensorflow_op_timer():
+            test = sess.run(feed_t, feed_dict={
+                  feed_t: c_list
+              })
           self.assertAllEqual(
               sess.run(feed_t, feed_dict={
                   feed_t: c_list
               }), c_list)
-          c_v, feed_v = sess.run([c, feed_t], feed_dict={feed_t: c_list})
+          with tensorflow_op_timer():
+            c_v, feed_v = sess.run([c, feed_t], feed_dict={feed_t: c_list})
           self.assertAllEqual(c_v, c_list)
           self.assertAllEqual(feed_v, c_list)
 
@@ -1379,7 +1485,39 @@ class SessionTest(test_util.TensorFlowTestCase):
         self.assertIsInstance(d.name, six.text_type)
         self.assertIsInstance(e.name, six.text_type)
         self.assertIsInstance(f.name, six.text_type)
-
+        with tensorflow_op_timer():
+          test = sess.run('c:0')
+        with tensorflow_op_timer():
+          test = sess.run(u'c:0')
+        with tensorflow_op_timer():
+          test =sess.run(b'c:0')
+        with tensorflow_op_timer():
+          test =sess.run(r'c:0')
+        with tensorflow_op_timer():
+          test =sess.run('d:0')
+        with tensorflow_op_timer():
+          test =sess.run(u'd:0')
+        with tensorflow_op_timer():
+          test =sess.run(b'd:0')
+        with tensorflow_op_timer():
+          test =sess.run(r'd:0')
+        with tensorflow_op_timer():
+          test =sess.run('e:0')
+        with tensorflow_op_timer():
+          test =sess.run(u'e:0')
+        with tensorflow_op_timer():
+          test =sess.run(b'e:0')
+        with tensorflow_op_timer():
+          test =sess.run(r'e:0')
+        with tensorflow_op_timer():
+          test =sess.run('f:0')
+        with tensorflow_op_timer():
+          test =sess.run(u'f:0')
+        with tensorflow_op_timer():
+          test =sess.run(b'f:0')
+        with tensorflow_op_timer():
+          test =sess.run(r'f:0')
+        
         self.assertEqual(42.0, sess.run('c:0'))
         self.assertEqual(42.0, sess.run(u'c:0'))
         self.assertEqual(42.0, sess.run(b'c:0'))
@@ -1442,13 +1580,14 @@ class SessionTest(test_util.TensorFlowTestCase):
 
     with ops.device('/cpu:0'):
       with session.Session() as sess:
-        sess.run(constant_op.constant(1.0))
+        with tensorflow_op_timer():
+          sess.run(constant_op.constant(1.0))
         self.assertFalse(run_metadata.HasField('step_stats'))
-
-        sess.run(constant_op.constant(1.0), run_metadata=run_metadata)
+        with tensorflow_op_timer():
+          sess.run(constant_op.constant(1.0), run_metadata=run_metadata)
         self.assertFalse(run_metadata.HasField('step_stats'))
-
-        sess.run(
+        with tensorflow_op_timer():
+          sess.run(
             constant_op.constant(1.0),
             options=run_options,
             run_metadata=run_metadata)
@@ -1464,16 +1603,18 @@ class SessionTest(test_util.TensorFlowTestCase):
     with ops.device('/cpu:0'):
       with session.Session() as sess:
         # all combinations are valid
-        sess.run(constant_op.constant(1.0), options=None, run_metadata=None)
-        sess.run(
+        with tensorflow_op_timer():
+          sess.run(constant_op.constant(1.0), options=None, run_metadata=None)
+        with tensorflow_op_timer():
+          sess.run(
             constant_op.constant(1.0), options=None, run_metadata=run_metadata)
         self.assertFalse(run_metadata.HasField('step_stats'))
-
-        sess.run(
+        with tensorflow_op_timer():
+          sess.run(
             constant_op.constant(1.0), options=run_options, run_metadata=None)
         self.assertFalse(run_metadata.HasField('step_stats'))
-
-        sess.run(
+        with tensorflow_op_timer():
+          sess.run(
             constant_op.constant(1.0),
             options=run_options,
             run_metadata=run_metadata)
@@ -1511,7 +1652,8 @@ class SessionTest(test_util.TensorFlowTestCase):
         d = math_ops.multiply(c, c)
       for step in range(120):
         run_metadata = config_pb2.RunMetadata()
-        sess.run(
+        with tensorflow_op_timer():
+          sess.run(
             d,
             feed_dict={a: 1.0},
             options=run_options,
@@ -1525,9 +1667,11 @@ class SessionTest(test_util.TensorFlowTestCase):
     run_options = config_pb2.RunOptions(output_partition_graphs=True)
     a = constant_op.constant(1)
     run_metadata = config_pb2.RunMetadata()
-    sess.run(a, options=run_options, run_metadata=run_metadata)
+    with tensorflow_op_timer():
+      sess.run(a, options=run_options, run_metadata=run_metadata)
     self.assertGreater(len(run_metadata.partition_graphs), 0)
-    sess.run(a, run_metadata=run_metadata)
+    with tensorflow_op_timer():
+      sess.run(a, run_metadata=run_metadata)
     self.assertEqual(len(run_metadata.partition_graphs), 0)
 
   @test_util.run_v1_only('b/120545219')
@@ -1551,7 +1695,10 @@ class SessionTest(test_util.TensorFlowTestCase):
     config_pb = config_pb2.ConfigProto(operation_timeout_in_ms=10000)
     with session.Session(config=config_pb) as sess:
       for _ in range(num_epochs):
-        sess.run(enqueue_op)
+        with tensorflow_op_timer():
+          sess.run(enqueue_op)
+      with tensorflow_op_timer():
+        test = sess.run(q.size())
       self.assertEqual(sess.run(q.size()), num_epochs * 2)
 
   @test_util.run_v1_only('b/120545219')
@@ -1575,9 +1722,11 @@ class SessionTest(test_util.TensorFlowTestCase):
       np1 = np.array([1.0, 1.5, 2.0, 2.5])
       np2 = np.array([3.0, 3.5, 4.0, 4.5])
       squared_tensor = SquaredTensor(np2)
-      squared_eval = sess.run(squared_tensor)
+      with tensorflow_op_timer():
+        squared_eval = sess.run(squared_tensor)
       self.assertAllClose(np2 * np2, squared_eval)
-      squared_eval = sess.run(
+      with tensorflow_op_timer():
+        squared_eval = sess.run(
           squared_tensor, feed_dict={
               squared_tensor: np1 * np1
           })
@@ -1643,9 +1792,11 @@ class SessionTest(test_util.TensorFlowTestCase):
     x = constant_op.constant(1.0)
     with session.Session(target=target) as sess:
       with ops.device('/device:GPU:0'):
-        sess.run(x)
+        with tensorflow_op_timer():
+          sess.run(x)
         f = foo(x)
-        result = sess.run(f)
+        with tensorflow_op_timer():
+          result = sess.run(f)
         self.assertEqual(result, 2.0)
 
 

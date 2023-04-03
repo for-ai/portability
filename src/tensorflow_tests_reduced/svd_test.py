@@ -33,6 +33,8 @@ from tensorflow.python.ops import stateless_random_ops
 from tensorflow.python.ops import variables
 from tensorflow.python.platform import benchmark
 from tensorflow.python.platform import test
+from ..utils.timer_wrapper import tensorflow_op_timer
+
 
 
 def _AddTest(test_class, op_name, testcase_name, fn):
@@ -76,8 +78,12 @@ class SvdOpTest(test.TestCase):
         matrix = stateless_random_ops.stateless_random_normal(shape, seed)
         with test_util.deterministic_ops():
             if test_util.is_gpu_available(cuda_only=True):
+                with tensorflow_op_timer():
+                    test = linalg_ops.svd(matrix)
                 s1, u1, v1 = self.evaluate(linalg_ops.svd(matrix))
                 for _ in range(5):
+                    with tensorflow_op_timer():
+                        test = linalg_ops.svd(matrix)
                     s2, u2, v2 = self.evaluate(linalg_ops.svd(matrix))
                     self.assertAllEqual(s1, s2)
                     self.assertAllEqual(u1, u2)
@@ -89,7 +95,8 @@ class SvdOpTest(test.TestCase):
         # The input to svd should be a tensor of at least rank 2.
         for bad_val in [np.nan, np.inf]:
             matrix = np.array([[1, bad_val], [0, 1]])
-            s, u, v = linalg_ops.svd(matrix, compute_uv=True)
+            with tensorflow_op_timer():
+                s, u, v = linalg_ops.svd(matrix, compute_uv=True)
             s, u, v = self.evaluate([s, u, v])
             for i in range(2):
                 self.assertTrue(np.isnan(s[i]))
@@ -110,15 +117,18 @@ class SvdOpTest(test.TestCase):
                     shape, seed)
                 self.assertAllEqual(matrix1, matrix2)
                 if compute_uv_:
-                    s1, u1, v1 = linalg_ops.svd(
+                    with tensorflow_op_timer():
+                        s1, u1, v1 = linalg_ops.svd(
                         matrix1, compute_uv=compute_uv_, full_matrices=full_matrices_)
                     s2, u2, v2 = linalg_ops.svd(
                         matrix2, compute_uv=compute_uv_, full_matrices=full_matrices_)
                     all_ops += [s1, s2, u1, u2, v1, v2]
                 else:
-                    s1 = linalg_ops.svd(
+                    with tensorflow_op_timer():
+                        s1 = linalg_ops.svd(
                         matrix1, compute_uv=compute_uv_, full_matrices=full_matrices_)
-                    s2 = linalg_ops.svd(
+                    with tensorflow_op_timer():
+                        s2 = linalg_ops.svd(
                         matrix2, compute_uv=compute_uv_, full_matrices=full_matrices_)
                     all_ops += [s1, s2]
         val = self.evaluate(all_ops)
@@ -128,6 +138,8 @@ class SvdOpTest(test.TestCase):
     @test_util.run_in_graph_and_eager_modes(use_gpu=True)
     def testEmptyBatches(self):
         matrices = constant_op.constant(1.0, shape=[0, 2, 2])
+        with tensorflow_op_timer(): 
+            test = linalg_ops.svd(matrices)
         s, u, v = self.evaluate(linalg_ops.svd(matrices))
         self.assertAllEqual(s, np.zeros([0, 2]))
         self.assertAllEqual(u, np.zeros([0, 2, 2]))
@@ -205,7 +217,8 @@ def _GetSvdOpTest(dtype_, shape_, use_static_shape_, compute_uv_,
             x_tf = array_ops.placeholder(dtype_)
 
         if compute_uv_:
-            s_tf, u_tf, v_tf = linalg_ops.svd(
+            with tensorflow_op_timer(): 
+                s_tf, u_tf, v_tf = linalg_ops.svd(
                 x_tf, compute_uv=compute_uv_, full_matrices=full_matrices_)
             if use_static_shape_:
                 s_tf_val, u_tf_val, v_tf_val = self.evaluate(
@@ -215,7 +228,8 @@ def _GetSvdOpTest(dtype_, shape_, use_static_shape_, compute_uv_,
                     s_tf_val, u_tf_val, v_tf_val = sess.run([s_tf, u_tf, v_tf],
                                                             feed_dict={x_tf: x_np})
         else:
-            s_tf = linalg_ops.svd(
+            with tensorflow_op_timer(): 
+                s_tf = linalg_ops.svd(
                 x_tf, compute_uv=compute_uv_, full_matrices=full_matrices_)
             if use_static_shape_:
                 s_tf_val = self.evaluate(s_tf)
@@ -251,7 +265,8 @@ class SvdGradOpTest(test.TestCase):
 
 
 def _NormalizingSvd(tf_a, full_matrices_):
-    tf_s, tf_u, tf_v = linalg_ops.svd(
+    with tensorflow_op_timer(): 
+        tf_s, tf_u, tf_v = linalg_ops.svd(
         tf_a, compute_uv=True, full_matrices=full_matrices_)
     # Singular vectors are only unique up to an arbitrary phase. We normalize
     # the vectors such that the first component of u (if m >=n) or v (if n > m)
@@ -339,7 +354,8 @@ def _GetSvdGradGradOpTest(dtype_, shape_, compute_uv_, full_matrices_):
                 tf_s, tf_u, tf_v = _NormalizingSvd(tf_a, full_matrices_)
                 outputs = [tf_s, tf_u, tf_v]
             else:
-                tf_s = linalg_ops.svd(tf_a, compute_uv=False)
+                with tensorflow_op_timer(): 
+                    tf_s = linalg_ops.svd(tf_a, compute_uv=False)
                 outputs = [tf_s]
             outputs_sums = [math_ops.reduce_sum(o) for o in outputs]
             tf_func_outputs = math_ops.add_n(outputs_sums)
@@ -392,7 +408,8 @@ class SVDBenchmark(test.Benchmark):
                 matrix_value = np.random.uniform(
                     low=-1.0, high=1.0, size=shape_).astype(np.float32)
                 matrix = variables.Variable(matrix_value)
-                u, s, v = linalg_ops.svd(matrix)
+                with tensorflow_op_timer(): 
+                    u, s, v = linalg_ops.svd(matrix)
                 self.evaluate(variables.global_variables_initializer())
                 self.run_op_benchmark(
                     sess,
@@ -407,7 +424,8 @@ class SVDBenchmark(test.Benchmark):
                     matrix_value = np.random.uniform(
                         low=-1.0, high=1.0, size=shape_).astype(np.float32)
                     matrix = variables.Variable(matrix_value)
-                    u, s, v = linalg_ops.svd(matrix)
+                    with tensorflow_op_timer(): 
+                        u, s, v = linalg_ops.svd(matrix)
                     self.evaluate(variables.global_variables_initializer())
                     self.run_op_benchmark(
                         sess,

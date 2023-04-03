@@ -21,6 +21,7 @@ from tensorflow.python.ops import tensor_array_ops
 from tensorflow.python.ops import variables
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import googletest
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 @test_util.run_all_in_graph_and_eager_modes
@@ -29,10 +30,10 @@ class LogSumExpTest(test_util.TensorFlowTestCase):
     def testReduceLogSumExp(self):
         for dtype in [np.float32, np.double]:
             x_np = np.random.rand(5, 5).astype(dtype)
-            with test_util.use_gpu():
+            with tensorflow_op_timer():
                 y_tf_np = math_ops.reduce_logsumexp(x_np)
-                y_np = np.log(np.sum(np.exp(x_np)))
-                self.assertAllClose(y_tf_np, y_np)
+            y_np = np.log(np.sum(np.exp(x_np)))
+            self.assertAllClose(y_tf_np, y_np)
 
 
 if __name__ == "__main__":

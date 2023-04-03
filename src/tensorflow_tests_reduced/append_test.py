@@ -23,6 +23,7 @@ from tensorflow.python.autograph.core import converter_testing
 from ..utils.timer_wrapper import tensorflow_op_timer
 # from ..utils.tensorflow_contexts import PortabilityTestCase
 import tensorflow as tf
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 class ListTest(converter_testing.TestCase):
     def test_list_append(self):
@@ -31,7 +32,8 @@ class ListTest(converter_testing.TestCase):
             l = special_functions.tensor_list([1])
             with tensorflow_op_timer():
                 l.append(2)
-            l.append(3)
+            with tensorflow_op_timer():
+                l.append(3)
             return l
         
         tr = self.transform(f, lists)

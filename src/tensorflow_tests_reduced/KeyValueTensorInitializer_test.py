@@ -53,6 +53,7 @@ from tensorflow.python.trackable import autotrackable
 from tensorflow.python.training import saver
 from tensorflow.python.training import server_lib
 from tensorflow.python.util import compat
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 class BaseLookupTableTest(test.TestCase):
@@ -88,7 +89,8 @@ SKIP_ANONYMOUS_IN_TF1_REASON = (
 class KeyValueTensorInitializerTest(BaseLookupTableTest):
 
   def test_string(self, is_anonymous):
-    init = lookup_ops.KeyValueTensorInitializer(
+    with tensorflow_op_timer():
+      init = lookup_ops.KeyValueTensorInitializer(
         ("brain", "salad", "surgery"), (0, 1, 2), dtypes.string, dtypes.int64)
     table = self.getHashTable()(
         init, default_value=-1, experimental_is_anonymous=is_anonymous)
@@ -96,7 +98,8 @@ class KeyValueTensorInitializerTest(BaseLookupTableTest):
 
   def test_multiple_tables(self, is_anonymous):
     with ops.name_scope("table_scope"):
-      init1 = lookup_ops.KeyValueTensorInitializer(
+      with tensorflow_op_timer():
+        init1 = lookup_ops.KeyValueTensorInitializer(
           ("brain", "salad", "surgery"), (0, 1, 2), dtypes.string, dtypes.int64)
       table1 = self.getHashTable()(
           init1, default_value=-1, experimental_is_anonymous=is_anonymous)
@@ -104,7 +107,8 @@ class KeyValueTensorInitializerTest(BaseLookupTableTest):
         self.assertEqual("hash_table", table1.name)
         self.assertEqual("table_scope/hash_table",
                          table1.resource_handle.op.name)
-      init2 = lookup_ops.KeyValueTensorInitializer(
+      with tensorflow_op_timer():
+        init2 = lookup_ops.KeyValueTensorInitializer(
           ("brain", "salad", "surgery"), (0, 1, 2), dtypes.string, dtypes.int64)
       table2 = self.getHashTable()(
           init2, default_value=-1, experimental_is_anonymous=is_anonymous)
@@ -114,14 +118,16 @@ class KeyValueTensorInitializerTest(BaseLookupTableTest):
                          table2.resource_handle.op.name)
 
   def test_int64(self, is_anonymous):
-    init = lookup_ops.KeyValueTensorInitializer((42, 1, -1000), (0, 1, 2),
+    with tensorflow_op_timer():
+      init = lookup_ops.KeyValueTensorInitializer((42, 1, -1000), (0, 1, 2),
                                                 dtypes.int64, dtypes.int64)
     table = self.getHashTable()(
         init, default_value=-1, experimental_is_anonymous=is_anonymous)
     self.initialize_table(table)
 
   def test_int32(self, is_anonymous):
-    init = lookup_ops.KeyValueTensorInitializer((42, 1, -1000), (0, 1, 2),
+    with tensorflow_op_timer():
+      init = lookup_ops.KeyValueTensorInitializer((42, 1, -1000), (0, 1, 2),
                                                 dtypes.int32, dtypes.int64)
     with self.assertRaises(errors_impl.OpError):
       table = self.getHashTable()(

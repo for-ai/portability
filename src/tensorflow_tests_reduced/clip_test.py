@@ -25,6 +25,7 @@ from tensorflow.python.ops.numpy_ops import np_arrays
 from tensorflow.python.ops.numpy_ops import np_math_ops
 from tensorflow.python.platform import test
 from tensorflow.python.ops.numpy_ops import np_config
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 class MathTest(test.TestCase, parameterized.TestCase):
 
@@ -99,6 +100,8 @@ class MathTest(test.TestCase, parameterized.TestCase):
       check_dtype = kwargs.pop('check_dtype', True)
       for fn in self.array_transforms:
         arr = fn(arr)
+        with tensorflow_op_timer():
+          test = np_math_ops.clip(arr, *args, **kwargs)
         self.match(
             np_math_ops.clip(arr, *args, **kwargs),
             np.clip(arr, *args, **kwargs),
