@@ -30,6 +30,7 @@ from tensorflow.python.ops import gradient_checker
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import variables
 from tensorflow.python.platform import test
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 # The maximum input rank to test.
 _MAX_RANK = 5
@@ -98,33 +99,28 @@ class ReductionUnknownShape(test.TestCase):
   @test_util.run_deprecated_v1
   def testBasic(self):
     with self.cached_session():
-      for dtype, reductions in [(dtypes.float32,
-                                 (math_ops.reduce_mean)),
-                                (dtypes.bool, (math_ops.reduce_all,
-                                               math_ops.reduce_any))]:
-        for reduction in reductions:
-          x = array_ops.placeholder(
-              dtype=dtype, shape=None)  # Some tensor w/ unknown shape.
-          with tensorflow_op_timer():
-            y = reduction(x)
-          self.assertEqual(y.shape, ())
+      for dtype, reduction in [(dtypes.float32,
+                                 (math_ops.reduce_mean))]:
+        x = array_ops.placeholder(
+            dtype=dtype, shape=None)  # Some tensor w/ unknown shape.
+        with tensorflow_op_timer():
+          y = reduction(x)
+        self.assertEqual(y.shape, ())
 
 
 class ReductionInvalidKeepdims(test.TestCase):
 
   def testBasic(self):
     # Test case for GitHub issue 46700.
-    for dtype, reductions in [
+    for dtype, reduction in [
         (dtypes.float32, (math_ops.reduce_mean)),
-        (dtypes.bool, (math_ops.reduce_all, math_ops.reduce_any))
     ]:
-      for reduction in reductions:
-        with self.assertRaisesRegex(ValueError, "The truth value"):
-          x = True if dtype == dtypes.bool else 1
-          with tensorflow_op_timer():
-            y = reduction(
-              input_tensor=x, keepdims=np.array([63600, 1], dtype=np.float16))
-          self.evaluate(y)
+      with self.assertRaisesRegex(ValueError, "The truth value"):
+        x = True if dtype == dtypes.bool else 1
+        with tensorflow_op_timer():
+          y = reduction(
+            input_tensor=x, keepdims=np.array([63600, 1], dtype=np.float16))
+        self.evaluate(y)
 
 
 class BaseReductionTest(test.TestCase):
