@@ -79,7 +79,7 @@ class NumpyFunctionTest(test.TestCase):
         def numpy_func_stateful(a, b):
             with tensorflow_op_timer():
                 test = numpy_function(plus, [a, b], dtypes.int32, stateful=True)
-            return numpy_function(plus, [a, b], dtypes.int32, stateful=True)
+            return test
 
         @def_function.function
         def func_stateful(a, b):
