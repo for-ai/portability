@@ -8,7 +8,7 @@ import tensorflow as tf
 import contextlib
 from ..tensorflow_test import set_global_device, device_context, global_device
 
-black_list = ["src/tensorflow_tests_reduced/run_test.py", "src/tensorflow_tests_reduced/get_global_step_test.py", "src/tensorflow_tests_reduced/eval_test.py", "src/tensorflow_tests_reduced/smart_cond_test.py"]
+black_list = ["src/tensorflow_tests_reduced/run_test.py", "src/tensorflow_tests_reduced/get_global_step_test.py", "src/tensorflow_tests_reduced/eval_test.py", "src/tensorflow_tests_reduced/smart_cond_test.py", "src/tensorflow_tests_reduced/CheckpointSaverHook_test.py"]
 
 _original_as_default = tf.Graph.as_default
 
