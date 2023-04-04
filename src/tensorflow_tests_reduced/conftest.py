@@ -18,24 +18,15 @@ set_global_device()
 
 @contextlib.contextmanager
 def custom_as_default(self, include_device=True):
-    # print("***DISABLE MONKEYPATCh", disable_monkeypatch)
     # Create a context manager using the original as_default method
 
     # print("***CONTEXT")
     if getattr(self, '_custom_device_set', False) or not include_device or getattr(self, '_custom_device_set', False):
         self._include_device = False
-        # if not include_device:
-        #     self._not_include_device = False
-        # print("***SKIP")
         with _original_as_default(self):
             yield
     else:
         self._custom_device_set = True
-
-        print("GLOBAL DEVICE", global_device)
-        # Create a device context manager
-
-        # Combine the two context managers
 
         with _original_as_default(self):
             with device_context():
@@ -44,14 +35,10 @@ def custom_as_default(self, include_device=True):
 def pytest_runtest_call(item):
             # class CombinedContext:
     file_name = os.environ.get('PYTEST_CURRENT_TEST').split(":")[0]
-    print("***FILENAME")
     if file_name not in black_list:
-        print("***MONKEYPATCH")
         tf.Graph.as_default = custom_as_default
     testfunction = item.obj
     print("ITEM", item)
-    print("***PATH", os.environ.get('PYTEST_CURRENT_TEST').split(":")[0])
-
 
 def pytest_configure():
     pytest.tensorflow_test_times = {}
@@ -61,7 +48,7 @@ def pytest_configure():
 @pytest.fixture(autouse=True, scope="session")
 def track_all():
     yield
-    print("AFTER SESSION", pytest.tensorflow_test_times)
+    # print("AFTER SESSION", pytest.tensorflow_test_times)
     f = open("tensorflow_test_timing.json", "w")
     f.write(json.dumps(pytest.tensorflow_test_times, indent=4, sort_keys=True))
 
@@ -74,7 +61,7 @@ def track_timing(request):
     pytest.test_name = test_file + ":" + pytest.test_name
 
     pytest.tensorflow_test_times[pytest.test_name] = {"operations": []}
-    tf.debugging.set_log_device_placement(True)
+    # tf.debugging.set_log_device_placement(True)
     if os.environ['DEVICE'] == "tpu":
         device_name = "/device:TPU:0"
     elif os.environ['DEVICE'] == "gpu":

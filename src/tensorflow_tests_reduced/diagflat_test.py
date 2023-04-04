@@ -35,6 +35,7 @@ from tensorflow.python.ops.numpy_ops import np_arrays
 from tensorflow.python.ops.numpy_ops import np_math_ops
 from tensorflow.python.platform import test
 from ..utils.timer_wrapper import tensorflow_op_timer
+from tensorflow.python.framework import test_util
 
 
 _virtual_devices_ready = False
@@ -56,6 +57,7 @@ def set_up_virtual_devices():
 
 class ArrayCreationTest(test.TestCase):
     def setUp(self):
+        np_math_ops.enable_numpy_methods_on_tensor()
         super(ArrayCreationTest, self).setUp()
         # set_up_virtual_devices()
         python_shapes = [
@@ -185,8 +187,5 @@ class ArrayCreationTest(test.TestCase):
         run_test(np.arange(8).reshape((2, 2, 2)).tolist())
 
 
-ops.enable_eager_execution()
-ops.enable_numpy_style_type_promotion()
-np_math_ops.enable_numpy_methods_on_tensor()
 if __name__ == '__main__':
     test.main()
