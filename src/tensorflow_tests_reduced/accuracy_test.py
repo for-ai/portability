@@ -34,6 +34,7 @@ from tensorflow.python.ops import variables
 import tensorflow.python.ops.data_flow_grad  # pylint: disable=unused-import
 import tensorflow.python.ops.nn_grad  # pylint: disable=unused-import
 from tensorflow.python.platform import test
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 NAN = float('nan')
 
@@ -173,7 +174,8 @@ class AccuracyTest(test.TestCase):
 
   @test_util.run_deprecated_v1
   def testVars(self):
-    metrics.accuracy(
+    with tensorflow_op_timer():
+      metrics.accuracy(
         predictions=array_ops.ones((10, 1)),
         labels=array_ops.ones((10, 1)),
         name='my_accuracy')
@@ -183,7 +185,8 @@ class AccuracyTest(test.TestCase):
   @test_util.run_deprecated_v1
   def testMetricsCollection(self):
     my_collection_name = '__metrics__'
-    mean, _ = metrics.accuracy(
+    with tensorflow_op_timer():
+      mean, _ = metrics.accuracy(
         predictions=array_ops.ones((10, 1)),
         labels=array_ops.ones((10, 1)),
         metrics_collections=[my_collection_name])
@@ -192,7 +195,8 @@ class AccuracyTest(test.TestCase):
   @test_util.run_deprecated_v1
   def testUpdatesCollection(self):
     my_collection_name = '__updates__'
-    _, update_op = metrics.accuracy(
+    with tensorflow_op_timer():
+      _, update_op = metrics.accuracy(
         predictions=array_ops.ones((10, 1)),
         labels=array_ops.ones((10, 1)),
         updates_collections=[my_collection_name])
@@ -219,7 +223,8 @@ class AccuracyTest(test.TestCase):
         (10, 3), maxval=3, dtype=dtypes_lib.int64, seed=1)
     labels = random_ops.random_uniform(
         (10, 3), maxval=3, dtype=dtypes_lib.int64, seed=1)
-    accuracy, update_op = metrics.accuracy(labels, predictions)
+    with tensorflow_op_timer():
+      accuracy, update_op = metrics.accuracy(labels, predictions)
 
     with self.cached_session():
       self.evaluate(variables.local_variables_initializer())
@@ -253,8 +258,8 @@ class AccuracyTest(test.TestCase):
       _enqueue_vector(sess, labels_queue, [1])
       _enqueue_vector(sess, labels_queue, [2])
       labels = labels_queue.dequeue()
-
-      accuracy, update_op = metrics.accuracy(labels, predictions)
+      with tensorflow_op_timer():
+        accuracy, update_op = metrics.accuracy(labels, predictions)
 
       self.evaluate(variables.local_variables_initializer())
       for _ in range(3):
@@ -267,7 +272,8 @@ class AccuracyTest(test.TestCase):
     predictions = array_ops.ones((40, 1))
     labels = array_ops.ones((40,))
     with self.cached_session():
-      accuracy, update_op = metrics.accuracy(labels, predictions)
+      with tensorflow_op_timer():
+        accuracy, update_op = metrics.accuracy(labels, predictions)
 
       self.evaluate(variables.local_variables_initializer())
       self.assertEqual(1.0, self.evaluate(update_op))
@@ -278,7 +284,8 @@ class AccuracyTest(test.TestCase):
     predictions = array_ops.ones((40, 1))
     labels = array_ops.ones((40,))
     with self.cached_session():
-      accuracy, update_op = metrics.accuracy(labels, predictions, weights=2.0)
+      with tensorflow_op_timer():
+        accuracy, update_op = metrics.accuracy(labels, predictions, weights=2.0)
 
       self.evaluate(variables.local_variables_initializer())
       self.assertEqual(1.0, self.evaluate(update_op))
@@ -293,7 +300,8 @@ class AccuracyTest(test.TestCase):
                                     1)  # shape 3, 1
 
     with self.cached_session():
-      accuracy, update_op = metrics.accuracy(labels, predictions, weights)
+      with tensorflow_op_timer():
+        accuracy, update_op = metrics.accuracy(labels, predictions, weights)
 
       self.evaluate(variables.local_variables_initializer())
       # if streaming_accuracy does not flatten the weight, accuracy would be
@@ -314,7 +322,8 @@ class AccuracyTest(test.TestCase):
     feed_dict = {weights_placeholder: weights}
 
     with self.cached_session():
-      accuracy, update_op = metrics.accuracy(labels, predictions,
+      with tensorflow_op_timer():
+        accuracy, update_op = metrics.accuracy(labels, predictions,
                                              weights_placeholder)
 
       self.evaluate(variables.local_variables_initializer())
@@ -353,8 +362,8 @@ class AccuracyTest(test.TestCase):
       _enqueue_vector(sess, weights_queue, [0])
       _enqueue_vector(sess, weights_queue, [0])
       weights = weights_queue.dequeue()
-
-      accuracy, update_op = metrics.accuracy(labels, predictions, weights)
+      with tensorflow_op_timer():
+        accuracy, update_op = metrics.accuracy(labels, predictions, weights)
 
       self.evaluate(variables.local_variables_initializer())
       for _ in range(3):
