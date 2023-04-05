@@ -42,6 +42,8 @@ class MathTest(test.TestCase, parameterized.TestCase):
         lambda x: np_array_ops.array(x, dtype=np.float64),
     ]
     self.types = [np.int32, np.int64, np.float32, np.float64]
+    np_math_ops.enable_numpy_methods_on_tensor()
+
   def match(self, actual, expected, msg='', check_dtype=True):
     self.assertIsInstance(actual, np_arrays.ndarray)
     if check_dtype:
@@ -132,9 +134,8 @@ class MathTest(test.TestCase, parameterized.TestCase):
     run_test([[1, 2, 3], [4, 5, 6]], [2, 0, 2], 5, check_dtype=False)
     run_test([[1, 2, 3], [4, 5, 6]], 0, [5, 3, 1], check_dtype=False)
 
-np_config.enable_numpy_behavior()
-if __name__ == '__main__':
-  ops.enable_eager_execution()
-  ops.enable_numpy_style_type_promotion()
-  np_math_ops.enable_numpy_methods_on_tensor()
-  test.main()
+# if __name__ == '__main__':
+  # ops.enable_eager_execution()
+  # ops.enable_numpy_style_type_promotion()
+  # np_math_ops.enable_numpy_methods_on_tensor()
+  # test.main()
