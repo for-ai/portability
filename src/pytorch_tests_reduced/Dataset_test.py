@@ -64,11 +64,11 @@ class TestDictDataLoader(TestCase):
 
     def test_pin_memory_device(self, device):
         loader = DataLoader(self.dataset, batch_size=2,
-                            pin_memory=True, pin_memory_device='cuda')
+                            pin_memory=True, pin_memory_device=device)
         for sample in loader:
-            self.assertTrue(sample['a_tensor'].is_pinned(device='cuda'))
+            self.assertTrue(sample['a_tensor'].is_pinned(device=device))
             self.assertTrue(sample['another_dict']
-                            ['a_number'].is_pinned(device='cuda'))
+                            ['a_number'].is_pinned(device=device))
 
     def test_pin_memory_with_only_device(self, device):
         loader = DataLoader(self.dataset, batch_size=2,

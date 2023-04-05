@@ -52,6 +52,8 @@ cmake = "^3.13.3"
 pytest-xdist = "^3.2.1"
 pytest-forked = "^1.6.0"
 portpicker = "^1.5.2"
+detect-test-pollution = {path="/Users/frasermince/Programming/detect-test-pollution", develop = true}
+torch = "~1.12.0"
 
 
 [tool.poetry.dev-dependencies]

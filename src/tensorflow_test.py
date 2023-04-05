@@ -1,5 +1,4 @@
 import pytest
-from setup_tf_tpu import initialize_tpu
 import sys
 from tensorflow.python.platform import test
 import contextlib
@@ -31,7 +30,7 @@ _original_as_default = tf.Graph.as_default
 @contextlib.contextmanager
 def _constrain_devices_and_set_default(self, sess, use_gpu, force_gpu):
      """Set the session and its graph to global default and constrain devices."""
-     print("***DEVICE CHOICE***")
+    #  print("***DEVICE CHOICE***")
      # print("*** running")
      if context.executing_eagerly():
         yield None
@@ -41,7 +40,7 @@ def _constrain_devices_and_set_default(self, sess, use_gpu, force_gpu):
             # Use the name of an actual device if one is detected, or
             # '/device:GPU:0' otherwise
             # device_name = self.gpu_device_name()
-            print("***DEVICE CHOICE")
+            # print("***DEVICE CHOICE")
             if os.environ['DEVICE'] == "tpu":
                 device_name = "/device:TPU:0"
             elif os.environ['DEVICE'] == "gpu":
@@ -69,7 +68,7 @@ def custom_as_default(self, include_device=True):
     else:
         self._custom_device_set = True
 
-        print("GLOBAL DEVICE", global_device)
+        # print("GLOBAL DEVICE", global_device)
         # Create a device context manager
 
         # Combine the two context managers

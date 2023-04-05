@@ -4,6 +4,7 @@ import time
 import functools
 import pytest
 import os
+import torch
 
 try:
     # Import the TPUProfiler class from the torch_xla package
