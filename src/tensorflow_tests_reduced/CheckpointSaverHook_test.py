@@ -46,6 +46,7 @@ from tensorflow.python.training import session_run_hook
 from tensorflow.python.training import training_util
 from ..utils.timer_wrapper import tensorflow_op_timer
 from ..tensorflow_test import device_context
+import tensorflow as tf
 
 MOCK_START_TIME = 1484695987.209386
 
@@ -104,7 +105,7 @@ class CheckpointSaverHookTest(test.TestCase):
                     self.model_dir, save_steps=1)
                 hook.begin()
                 self.scaffold.finalize()
-                with session_lib.Session() as sess:
+                with session_lib.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess: 
                     sess.run(self.scaffold.init_op)
                     mon_sess = monitored_session._HookedSession(sess, [hook])
                     mon_sess.run(self.train_op)
@@ -136,7 +137,7 @@ class CheckpointSaverHookTest(test.TestCase):
                     self.model_dir, save_secs=2, scaffold=self.scaffold)
                 hook.begin()
                 self.scaffold.finalize()
-                with session_lib.Session() as sess:
+                with session_lib.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
                     sess.run(self.scaffold.init_op)
                     mon_sess = monitored_session._HookedSession(sess, [hook])
                     mon_sess.run(self.train_op)
@@ -156,7 +157,7 @@ class CheckpointSaverHookTest(test.TestCase):
                     listeners=[listener])
                 hook.begin()
                 self.scaffold.finalize()
-                with session_lib.Session() as sess:
+                with session_lib.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
                     sess.run(self.scaffold.init_op)
                     mon_sess = monitored_session._HookedSession(sess, [hook])
                     mon_sess.run(self.train_op)  # hook runs here
@@ -184,6 +185,7 @@ class CheckpointSaverHookTest(test.TestCase):
                     scaffold=scaffold,
                     listeners=[listener])
                 with monitored_session.SingularMonitoredSession(
+                        config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True),
                         hooks=[hook],
                         scaffold=scaffold,
                         checkpoint_dir=self.model_dir) as sess:
@@ -210,6 +212,7 @@ class CheckpointSaverHookTest(test.TestCase):
                     hook = basic_session_run_hooks.CheckpointSaverHook(
                     self.model_dir, save_steps=1, scaffold=scaffold, listeners=[listener])
                 with monitored_session.SingularMonitoredSession(
+                        config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True),
                         hooks=[hook], scaffold=scaffold,
                         checkpoint_dir=self.model_dir) as sess:
                     sess.run(train_op)
@@ -232,6 +235,7 @@ class CheckpointSaverHookTest(test.TestCase):
                     save_steps=1,
                     listeners=[listener])
                 with monitored_session.SingularMonitoredSession(
+                        config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True),
                         hooks=[hook],
                         checkpoint_dir=self.model_dir) as sess:
                     sess.run(train_op)
@@ -249,6 +253,7 @@ class CheckpointSaverHookTest(test.TestCase):
             with ops.Graph().as_default():
                 global_step = training_util.get_or_create_global_step()
                 with monitored_session.SingularMonitoredSession(
+                        config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True),
                         checkpoint_dir=self.model_dir) as sess2:
                     global_step_saved_val = sess2.run(global_step)
             self.assertEqual(2, global_step_saved_val)
@@ -266,6 +271,7 @@ class CheckpointSaverHookTest(test.TestCase):
                     save_steps=1,
                     listeners=[listener1, listener2])
                 with monitored_session.SingularMonitoredSession(
+                        config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True),
                         hooks=[hook],
                         checkpoint_dir=self.model_dir) as sess:
                     sess.run(train_op)
@@ -285,6 +291,7 @@ class CheckpointSaverHookTest(test.TestCase):
         with ops.Graph().as_default():
             global_step = training_util.get_or_create_global_step()
             with monitored_session.SingularMonitoredSession(
+                    config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True),
                     checkpoint_dir=self.model_dir) as sess2:
                 global_step_saved_val = sess2.run(global_step)
         self.assertEqual(2, global_step_saved_val)
@@ -300,7 +307,7 @@ class CheckpointSaverHookTest(test.TestCase):
                 hook.begin()
                 self.scaffold.finalize()
 
-                with session_lib.Session() as sess:
+                with session_lib.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
                     sess.run(self.scaffold.init_op)
                     mon_sess = monitored_session._HookedSession(sess, [hook])
 
@@ -349,7 +356,7 @@ class CheckpointSaverHookTest(test.TestCase):
                     listeners=[listener])
                 hook.begin()
                 self.scaffold.finalize()
-                with session_lib.Session() as sess:
+                with session_lib.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
                     sess.run(self.scaffold.init_op)
                     mon_sess = monitored_session._HookedSession(sess, [hook])
 
@@ -392,7 +399,7 @@ class CheckpointSaverHookTest(test.TestCase):
                     self.model_dir, save_steps=2, scaffold=self.scaffold)
                 hook.begin()
                 self.scaffold.finalize()
-                with session_lib.Session() as sess:
+                with session_lib.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
                     sess.run(self.scaffold.init_op)
                     mon_sess = monitored_session._HookedSession(sess, [hook])
                     mon_sess.run(self.train_op)
@@ -408,7 +415,7 @@ class CheckpointSaverHookTest(test.TestCase):
                     self.model_dir, save_steps=2, scaffold=self.scaffold)
                 hook.begin()
                 self.scaffold.finalize()
-                with session_lib.Session() as sess:
+                with session_lib.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
                     sess.run(self.scaffold.init_op)
                     mon_sess = monitored_session._HookedSession(sess, [hook])
                     mon_sess.run(self.train_op)
@@ -441,7 +448,7 @@ class CheckpointSaverHookTest(test.TestCase):
                     self.model_dir, save_secs=2, scaffold=self.scaffold)
                 hook.begin()
                 self.scaffold.finalize()
-                with session_lib.Session() as sess:
+                with session_lib.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
                     sess.run(self.scaffold.init_op)
                     mon_sess = monitored_session._HookedSession(sess, [hook])
                     mon_sess.run(self.train_op)
@@ -459,7 +466,7 @@ class CheckpointSaverHookTest(test.TestCase):
                     self.model_dir, save_steps=2, scaffold=self.scaffold)
                 hook.begin()
                 self.scaffold.finalize()
-                with session_lib.Session() as sess:
+                with session_lib.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
                     mon_sess = monitored_session._HookedSession(sess, [hook])
                     sess.run(self.scaffold.init_op)
                     hook.after_create_session(sess, None)
@@ -487,7 +494,7 @@ class CheckpointSaverHookTest(test.TestCase):
                     save_graph_def=True)
                 hook.begin()
                 self.scaffold.finalize()
-                with session_lib.Session() as sess:
+                with session_lib.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
                     sess.run(self.scaffold.init_op)
                     mon_sess = monitored_session._HookedSession(sess, [hook])
                     sess.run(self.scaffold.init_op)
@@ -511,7 +518,7 @@ class CheckpointSaverHookTest(test.TestCase):
                     save_graph_def=False)
                 hook.begin()
                 self.scaffold.finalize()
-                with session_lib.Session() as sess:
+                with session_lib.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
                     sess.run(self.scaffold.init_op)
                     mon_sess = monitored_session._HookedSession(sess, [hook])
                     sess.run(self.scaffold.init_op)
