@@ -67,7 +67,7 @@ class TestTorch(TestCase):
     def test_tensor_set(self, device):
         with pytorch_op_timer():
             t1 = torch.tensor([], device=device)
-        t2 = torch.empty(3, 4, 9, 10).uniform_()
+        t2 = torch.empty(3, 4, 9, 10).uniform_().to(device)
         t1.set_(t2)
         self.assertEqual(t1.storage()._cdata, t2.storage()._cdata)
         size = torch.Size([9, 3, 4, 10])
@@ -85,7 +85,7 @@ class TestTorch(TestCase):
 
         # test argument names
         with pytorch_op_timer():
-            t1 = torch.tensor([])
+            t1 = torch.tensor([], device=device)
         # 1. case when source is tensor
         t1.set_(source=t2)
         self.assertEqual(t1.storage()._cdata, t2.storage()._cdata)

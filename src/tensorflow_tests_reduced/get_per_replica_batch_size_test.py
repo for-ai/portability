@@ -18,6 +18,7 @@ from tensorflow.python.ops import variables
 from tensorflow.python.platform import test
 from tensorflow.python.training import server_lib
 from tensorflow.python.util import nest
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 class InputContextTest(test.TestCase):
@@ -32,6 +33,8 @@ class InputContextTest(test.TestCase):
     def testPerReplicaBatchSize(self):
         input_context = distribute_lib.InputContext(
             num_input_pipelines=2, input_pipeline_id=1, num_replicas_in_sync=6)
+        with tensorflow_op_timer():
+            test = input_context.get_per_replica_batch_size(12)
         self.assertEqual(2, input_context.get_per_replica_batch_size(12))
         with self.assertRaises(ValueError):
             input_context.get_per_replica_batch_size(13)

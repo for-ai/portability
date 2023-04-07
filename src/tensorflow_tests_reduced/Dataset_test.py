@@ -25,6 +25,7 @@ from tensorflow.core.framework import graph_pb2
 from tensorflow.python.data.experimental.ops import testing
 from tensorflow.python.data.kernel_tests import test_base
 from tensorflow.python.data.ops import dataset_ops
+from tensorflow.python.data.ops import debug_mode
 from tensorflow.python.data.ops import optional_ops
 from tensorflow.python.data.ops import options as options_lib
 from tensorflow.python.data.ops import readers
@@ -45,19 +46,22 @@ from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import lookup_ops
 from tensorflow.python.ops import random_ops
 from tensorflow.python.platform import test
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 class DatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
 
   @combinations.generate(test_base.default_test_combinations())
   def testAsSerializedGraph(self):
-    dataset = dataset_ops.Dataset.range(10)
+    with tensorflow_op_timer():
+      dataset = dataset_ops.Dataset.range(10)
     graph = graph_pb2.GraphDef().FromString(
         self.evaluate(dataset._as_serialized_graph()))
     self.assertTrue(any(node.op == "RangeDataset" for node in graph.node))
 
   def testAsSerializedGraphStateful(self):
-    dataset = dataset_ops.Dataset.range(10).map(
+    with tensorflow_op_timer():
+      dataset = dataset_ops.Dataset.range(10).map(
         lambda _: random_ops.random_uniform(()))
     with self.assertRaises(errors.FailedPreconditionError):
       self.evaluate(
@@ -73,7 +77,8 @@ class DatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
     vals = [10, 11]
     initializer = self.lookupTableInitializer(init_source, vals)
     table = lookup_ops.StaticHashTable(initializer, -1)
-    dataset = dataset_ops.Dataset.range(3)
+    with tensorflow_op_timer():
+      dataset = dataset_ops.Dataset.range(3)
     dataset = dataset.map(table.lookup)
     self.evaluate(lookup_ops.tables_initializer())
     round_tripped = self.graphRoundTrip(dataset)
@@ -85,7 +90,8 @@ class DatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
   @combinations.generate(test_base.eager_only_combinations())
   def testAsFunctionWithMap(self):
     with ops.device("CPU"):
-      original_dataset = dataset_ops.Dataset.range(5).map(lambda x: x * 2)
+      with tensorflow_op_timer():
+        original_dataset = dataset_ops.Dataset.range(5).map(lambda x: x * 2)
       fn = original_dataset._trace_variant_creation()
       variant = fn()
 
@@ -96,7 +102,8 @@ class DatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
   @combinations.generate(test_base.eager_only_combinations())
   def testAsFunctionWithMapInFlatMap(self):
     with ops.device("CPU"):
-      original_dataset = dataset_ops.Dataset.range(5).flat_map(
+      with tensorflow_op_timer():
+        original_dataset = dataset_ops.Dataset.range(5).flat_map(
           lambda x: dataset_ops.Dataset.range(5).map(lambda x: x * 2))
       fn = original_dataset._trace_variant_creation()
       variant = fn()
@@ -134,18 +141,20 @@ class DatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
   def testFromGeneratorInputs(self):
     def gen():
       yield 42
-
-    dataset = dataset_ops.Dataset.from_generator(gen, dtypes.int32)
+    with tensorflow_op_timer():
+      dataset = dataset_ops.Dataset.from_generator(gen, dtypes.int32)
     self._testNumInputs(dataset, 1)
 
   @combinations.generate(test_base.default_test_combinations())
   def testFromTensorsInputs(self):
-    dataset = dataset_ops.Dataset.from_tensors([42])
+    with tensorflow_op_timer():
+      dataset = dataset_ops.Dataset.from_tensors([42])
     self._testNumInputs(dataset, 0)
 
   @combinations.generate(test_base.default_test_combinations())
   def testRangeInputs(self):
-    dataset = dataset_ops.Dataset.range(10)
+    with tensorflow_op_timer():
+      dataset = dataset_ops.Dataset.range(10)
     self._testNumInputs(dataset, 0)
 
   @combinations.generate(test_base.default_test_combinations())
@@ -161,7 +170,8 @@ class DatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
   @combinations.generate(
       combinations.combine(tf_api_version=1, mode=["eager", "graph"]))
   def testDatasetComplexSourceInputs(self):
-    dataset_fn = dataset_ops.Dataset.from_sparse_tensor_slices(
+    with tensorflow_op_timer():
+      dataset_fn = dataset_ops.Dataset.from_sparse_tensor_slices(
         sparse_tensor.SparseTensor(
             indices=np.array([[0, 0], [1, 0], [2, 0]]),
             values=np.array([0, 0, 0]),
@@ -169,7 +179,8 @@ class DatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
     self.assertEmpty(dataset_fn._inputs())
 
   def _testUnaryInputs(self, dataset_fn):
-    input_dataset = dataset_ops.Dataset.range(0)
+    with tensorflow_op_timer():
+      input_dataset = dataset_ops.Dataset.range(0)
     self.assertEqual([input_dataset], dataset_fn(input_dataset)._inputs())
 
   @combinations.generate(test_base.default_test_combinations())
@@ -223,13 +234,15 @@ class DatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
 
   @combinations.generate(test_base.default_test_combinations())
   def testUnaryTransformationInputsApply(self):
-    input_dataset = dataset_ops.Dataset.range(0)
+    with tensorflow_op_timer():
+      input_dataset = dataset_ops.Dataset.range(0)
     dataset = input_dataset.apply(lambda dataset: dataset.cache())
 
     self.assertEqual([input_dataset], dataset._inputs())
 
   def _testInputsWithInterleaveFn(self, dataset_fn, interleave_parallelism):
-    input_dataset = dataset_ops.Dataset.range(0)
+    with tensorflow_op_timer():
+      input_dataset = dataset_ops.Dataset.range(0)
     dataset = input_dataset.interleave(
         lambda x: dataset_ops.Dataset.range(0),
         cycle_length=2,
@@ -246,7 +259,8 @@ class DatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
 
   @combinations.generate(test_base.default_test_combinations())
   def testDebugString(self):
-    dataset = dataset_ops.Dataset.range(10)
+    with tensorflow_op_timer():
+      dataset = dataset_ops.Dataset.range(10)
     dataset = dataset.map(lambda x: x**2)
     dataset = dataset.filter(lambda x: x > 10)
     debug_string = dataset.__debug_string__()
@@ -256,13 +270,16 @@ class DatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
   @combinations.generate(test_base.default_test_combinations())
   def testNoWarnings(self):
     with test.mock.patch.object(warnings, "warn") as mock_log:
-      dataset_ops.Dataset.range(0).interleave(
+      with tensorflow_op_timer():
+        dataset_ops.Dataset.range(0).interleave(
           lambda x: dataset_ops.Dataset.range(0), cycle_length=2)
       self.assertEmpty(mock_log.call_args_list)
 
   def _testBinaryInputs(self, dataset_fn):
-    input1 = dataset_ops.Dataset.range(0)
-    input2 = dataset_ops.Dataset.range(1)
+    with tensorflow_op_timer():
+      input1 = dataset_ops.Dataset.range(0)
+    with tensorflow_op_timer():
+      input2 = dataset_ops.Dataset.range(1)
     self.assertEqual([input1, input2], dataset_fn(input1, input2)._inputs())
 
   @combinations.generate(test_base.default_test_combinations())
@@ -276,32 +293,38 @@ class DatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
 
   @combinations.generate(test_base.default_test_combinations())
   def testZipOneInputs(self):
-    input_datasets = dataset_ops.Dataset.range(0)
+    with tensorflow_op_timer():
+      input_datasets = dataset_ops.Dataset.range(0)
     self._testVariadicInputs(dataset_ops.Dataset.zip, input_datasets)
 
   @combinations.generate(test_base.default_test_combinations())
   def testZipNestInputs(self):
-    input_datasets = (dataset_ops.Dataset.range(0),
+    with tensorflow_op_timer():
+      input_datasets = (dataset_ops.Dataset.range(0),
                       (dataset_ops.Dataset.range(1),
                        dataset_ops.Dataset.range(2)))
     self._testVariadicInputs(dataset_ops.Dataset.zip, input_datasets)
 
   @combinations.generate(test_base.default_test_combinations())
   def testZipTupleInputs(self):
-    input_datasets = (dataset_ops.Dataset.range(0),
+    with tensorflow_op_timer():
+      input_datasets = (dataset_ops.Dataset.range(0),
                       dataset_ops.Dataset.range(1))
     self._testVariadicInputs(dataset_ops.Dataset.zip, input_datasets)
 
   @combinations.generate(test_base.default_test_combinations())
   def testFunctions(self):
-    dataset = dataset_ops.Dataset.range(5).map(lambda x: x * 2)
+    with tensorflow_op_timer():
+      dataset = dataset_ops.Dataset.range(5).map(lambda x: x * 2)
     self.assertLen(dataset._functions(), 1)
 
   @combinations.generate(test_base.default_test_combinations())
   def testCollectInputs(self):
-    ds1 = dataset_ops.Dataset.range(0)
+    with tensorflow_op_timer():
+      ds1 = dataset_ops.Dataset.range(0)
     ds2 = ds1.concatenate(ds1)
-    ds3 = dataset_ops.Dataset.zip((ds2, ds1, ds2))
+    with tensorflow_op_timer():
+      ds3 = dataset_ops.Dataset.zip((ds2, ds1, ds2))
 
     inputs = []
     queue = [ds3]
@@ -316,7 +339,8 @@ class DatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
     self.assertEqual(1, inputs.count(ds3))
 
   def _testDatasetSpec(self, tf_value, expected_element_structure):
-    dataset = dataset_ops.Dataset.from_tensors(0).map(lambda _: tf_value)
+    with tensorflow_op_timer():
+      dataset = dataset_ops.Dataset.from_tensors(0).map(lambda _: tf_value)
     dataset_structure = structure.type_spec_from_value(dataset)
     self.assertIsInstance(dataset_structure, dataset_ops.DatasetSpec)
 
@@ -398,7 +422,8 @@ class DatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
   @combinations.generate(
       combinations.combine(tf_api_version=[1], mode=["graph"]))
   def testSameGraphErrorOneShot(self):
-    dataset = dataset_ops.Dataset.range(10)
+    with tensorflow_op_timer():
+      dataset = dataset_ops.Dataset.range(10)
     with ops.Graph().as_default():
       with self.assertRaisesRegex(ValueError,
                                   "make sure that the dataset is created in "
@@ -408,7 +433,8 @@ class DatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
   @combinations.generate(
       combinations.combine(tf_api_version=[1], mode=["graph"]))
   def testSameGraphErrorInitializable(self):
-    dataset = dataset_ops.Dataset.range(10)
+    with tensorflow_op_timer():
+      dataset = dataset_ops.Dataset.range(10)
     with ops.Graph().as_default():
       with self.assertRaisesRegex(ValueError,
                                   "make sure that the dataset is created in "
@@ -422,7 +448,8 @@ class DatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
   def testEagerIteration(self, execution_mode):
     with context.execution_mode(execution_mode):
       val = 0
-      dataset = dataset_ops.Dataset.range(10)
+      with tensorflow_op_timer():
+        dataset = dataset_ops.Dataset.range(10)
       for foo in dataset:
         self.assertEqual(val, foo.numpy())
         val += 1
@@ -438,9 +465,11 @@ class DatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
       return accumulator
 
     with ops.device("CPU"):
-      first_dataset = dataset_ops.Dataset.range(10)
+      with tensorflow_op_timer():
+        first_dataset = dataset_ops.Dataset.range(10)
       self.assertEqual(45, self.evaluate(_uses_dataset(first_dataset)))
-      second_dataset = dataset_ops.Dataset.range(11)
+      with tensorflow_op_timer():
+        second_dataset = dataset_ops.Dataset.range(11)
       self.assertEqual(55, self.evaluate(_uses_dataset(second_dataset)))
       first_concrete = _uses_dataset.get_concrete_function(first_dataset)
       # The dataset should not be a captured input
@@ -465,9 +494,10 @@ class DatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
       for elem in ds:
         counter += elem
       return counter
-
-    dataset = dataset_ops.Dataset.range(5)
-    dataset2 = dataset_ops.Dataset.range(10)
+    with tensorflow_op_timer():
+      dataset = dataset_ops.Dataset.range(5)
+    with tensorflow_op_timer():
+      dataset2 = dataset_ops.Dataset.range(10)
 
     for _ in range(10):
       self.assertEqual(self.evaluate(f(dataset)), 10)
@@ -480,8 +510,8 @@ class DatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
     components = (np.array([1, 2, 3], dtype=np.int64), (np.array([4., 5.]),
                                                         np.array([6., 7.])),
                   np.array([8, 9, 10], dtype=np.int64))
-
-    dataset = dataset_ops.Dataset.from_tensors(components)
+    with tensorflow_op_timer():
+      dataset = dataset_ops.Dataset.from_tensors(components)
     self.assertEqual(
         (dtypes.int64, (dtypes.float64, dtypes.float64), dtypes.int64),
         dataset_ops.get_legacy_output_types(dataset))
@@ -548,8 +578,8 @@ class DatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
                                       dtype=np.int64), (np.array([4., 5., 6.]),
                                                         np.array([7., 8., 9.])),
                              np.array([10, 11, 12], dtype=np.int64))
-
-    dataset = dataset_ops.Dataset.from_tensor_slices(components_for_slices)
+    with tensorflow_op_timer():
+      dataset = dataset_ops.Dataset.from_tensor_slices(components_for_slices)
     self.assertEqual(
         (dtypes.int64, (dtypes.float64, dtypes.float64), dtypes.int64),
         dataset_ops.get_legacy_output_types(dataset))
@@ -558,7 +588,8 @@ class DatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
 
   @combinations.generate(test_base.default_test_combinations())
   def testNoneComponent(self):
-    dataset = dataset_ops.Dataset.from_tensors((42, None))
+    with tensorflow_op_timer():
+      dataset = dataset_ops.Dataset.from_tensors((42, None))
     if context.executing_eagerly():
       self.assertDatasetProduces(dataset, expected_output=[(42, None)])
     else:
@@ -588,7 +619,8 @@ class DatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
   def testIncorrectPythonStructure(self):
     # Tests that an exception is raised (as opposed to a segfault) when the
     # Python structure assigned to a dataset is incorrect.
-    dataset = dataset_ops.Dataset.range(10)
+    with tensorflow_op_timer():
+      dataset = dataset_ops.Dataset.range(10)
     spec = tensor_spec.TensorSpec([], dtypes.int64)
     new_structure = (spec, spec)
     dataset = dataset_ops._RestructuredDataset(dataset, new_structure)
@@ -601,8 +633,10 @@ class DatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
   def testNamedTupleStructure(self):
     Foo = collections.namedtuple("Foo", ["a", "b"])
     x = Foo(a=3, b="test")
-    dataset = dataset_ops.Dataset.from_tensors(x)
-    dataset = dataset_ops.Dataset.from_tensor_slices([dataset, dataset])
+    with tensorflow_op_timer():
+      dataset = dataset_ops.Dataset.from_tensors(x)
+    with tensorflow_op_timer():
+      dataset = dataset_ops.Dataset.from_tensor_slices([dataset, dataset])
     self.assertEqual(
         str(dataset.element_spec),
         "DatasetSpec(Foo(a=TensorSpec(shape=(), dtype=tf.int32, name=None), "
@@ -615,8 +649,8 @@ class DatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
     def fn(ds):
       for _ in ds:
         pass
-
-    dataset = dataset_ops.Dataset.range(10)
+    with tensorflow_op_timer():
+      dataset = dataset_ops.Dataset.range(10)
     with self.assertRaises(ValueError):
       self.evaluate(fn(dataset))
 
@@ -625,16 +659,17 @@ class DebugDatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
 
   def setUp(self):
     super(DebugDatasetTest, self).setUp()
-    dataset_ops.toggle_debug_mode(True)
+    debug_mode.toggle_debug_mode(True)
 
   def tearDown(self):
-    dataset_ops.toggle_debug_mode(False)
+    debug_mode.toggle_debug_mode(False)
     super(DebugDatasetTest, self).tearDown()
 
   @combinations.generate(test_base.eager_only_combinations())
   def testDebugModeEagerExecution(self):
     counter = []
-    ds = dataset_ops.Dataset.range(10)
+    with tensorflow_op_timer():
+      ds = dataset_ops.Dataset.range(10)
 
     def map_fn(x):
       counter.append(1)
@@ -652,8 +687,8 @@ class DebugDatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
   def testDebugModeGenerator(self):
     def gen():
       yield from range(10)
-
-    ds = dataset_ops.Dataset.from_generator(
+    with tensorflow_op_timer():
+      ds = dataset_ops.Dataset.from_generator(
         gen,
         output_signature=tensor_spec.TensorSpec(shape=(), dtype=dtypes.int64))
     self.assertDatasetProduces(ds, list(range(10)))
@@ -664,8 +699,8 @@ class DebugDatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
 
     def gen():
       yield from data
-
-    ds = dataset_ops.Dataset.from_generator(
+    with tensorflow_op_timer():
+      ds = dataset_ops.Dataset.from_generator(
         gen,
         output_signature=(tensor_spec.TensorSpec(shape=(), dtype=dtypes.int64),
                           tensor_spec.TensorSpec(shape=(), dtype=dtypes.int64)))
@@ -673,7 +708,8 @@ class DebugDatasetTest(test_base.DatasetTestBase, parameterized.TestCase):
 
   @combinations.generate(test_base.eager_only_combinations())
   def testDebugModeSequentialExecution(self):
-    ds = dataset_ops.Dataset.range(10)
+    with tensorflow_op_timer():
+      ds = dataset_ops.Dataset.range(10)
     ds = ds.apply(
         testing.assert_next(["Interleave", "Map", "Batch", "FiniteTake"]))
     ds = ds.interleave(

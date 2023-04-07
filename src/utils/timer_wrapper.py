@@ -1,5 +1,5 @@
 import contextlib
-import torch
+# import torch
 import time
 import functools
 import pytest
@@ -9,6 +9,7 @@ try:
     # Import the TPUProfiler class from the torch_xla package
     from torch_xla import TPUProfiler
     import torch_xla.core.xla_model as xm
+    import torch
 except ImportError:
     # torch_xla is not installed, so TPUProfiler is not available
     TPUProfiler = None

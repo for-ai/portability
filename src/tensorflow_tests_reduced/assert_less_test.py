@@ -21,6 +21,7 @@ from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import random_ops
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import test
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 class AssertLessTest(test.TestCase):
@@ -52,6 +53,8 @@ class AssertLessTest(test.TestCase):
   def test_doesnt_raise_when_less(self):
     small = constant_op.constant([3, 1], name="small")
     big = constant_op.constant([4, 2], name="big")
+    with tensorflow_op_timer():
+      test = [check_ops.assert_less(small, big)]
     with ops.control_dependencies([check_ops.assert_less(small, big)]):
       out = array_ops.identity(small)
     self.evaluate(out)
@@ -60,6 +63,8 @@ class AssertLessTest(test.TestCase):
   def test_doesnt_raise_when_less_and_broadcastable_shapes(self):
     small = constant_op.constant([1], name="small")
     big = constant_op.constant([3, 2], name="big")
+    with tensorflow_op_timer():
+      test = [check_ops.assert_less(small, big)]
     with ops.control_dependencies([check_ops.assert_less(small, big)]):
       out = array_ops.identity(small)
     self.evaluate(out)
@@ -81,6 +86,8 @@ class AssertLessTest(test.TestCase):
   def test_doesnt_raise_when_both_empty(self):
     larry = constant_op.constant([])
     curly = constant_op.constant([])
+    with tensorflow_op_timer():
+      test = [check_ops.assert_less(larry, curly)]
     with ops.control_dependencies([check_ops.assert_less(larry, curly)]):
       out = array_ops.identity(larry)
     self.evaluate(out)
@@ -89,7 +96,8 @@ class AssertLessTest(test.TestCase):
     with context.eager_mode():
       t1 = constant_op.constant([1, 2])
       t2 = constant_op.constant([3, 4])
-      x = check_ops.assert_less(t1, t2)
+      with tensorflow_op_timer():
+        x = check_ops.assert_less(t1, t2)
       assert x is None
 
   def test_static_check_in_graph_mode(self):
@@ -104,6 +112,8 @@ class AssertLessEqualTest(test.TestCase):
   @test_util.run_in_graph_and_eager_modes
   def test_doesnt_raise_when_equal(self):
     small = constant_op.constant([1, 2], name="small")
+    with tensorflow_op_timer():
+      test = [check_ops.assert_less_equal(small, small)]
     with ops.control_dependencies(
         [check_ops.assert_less_equal(small, small)]):
       out = array_ops.identity(small)
@@ -126,6 +136,8 @@ class AssertLessEqualTest(test.TestCase):
   def test_doesnt_raise_when_less_equal(self):
     small = constant_op.constant([1, 2], name="small")
     big = constant_op.constant([3, 2], name="big")
+    with tensorflow_op_timer():
+      test = [check_ops.assert_less_equal(small, big)]
     with ops.control_dependencies([check_ops.assert_less_equal(small, big)]):
       out = array_ops.identity(small)
     self.evaluate(out)
@@ -134,6 +146,8 @@ class AssertLessEqualTest(test.TestCase):
   def test_doesnt_raise_when_less_equal_and_broadcastable_shapes(self):
     small = constant_op.constant([1], name="small")
     big = constant_op.constant([3, 1], name="big")
+    with tensorflow_op_timer():
+      test = [check_ops.assert_less_equal(small, big)]
     with ops.control_dependencies([check_ops.assert_less_equal(small, big)]):
       out = array_ops.identity(small)
     self.evaluate(out)
@@ -158,6 +172,8 @@ class AssertLessEqualTest(test.TestCase):
   def test_doesnt_raise_when_both_empty(self):
     larry = constant_op.constant([])
     curly = constant_op.constant([])
+    with tensorflow_op_timer():
+      test = [check_ops.assert_less_equal(larry, curly)]
     with ops.control_dependencies(
         [check_ops.assert_less_equal(larry, curly)]):
       out = array_ops.identity(larry)

@@ -153,6 +153,26 @@ class TestDistributions(DistributionsTestCase):
     _do_cuda_memory_leak_check = True
     _do_cuda_non_default_stream = True
 
+    @unittest.skipIf(not TEST_NUMPY, "NumPy not found")
+    def _check_sampler_discrete(self, torch_dist, ref_dist, message,
+                                num_samples=10000, failure_rate=1e-3):
+        """Runs a Chi2-test for the support, but ignores tail instead of combining"""
+        torch_samples = torch_dist.sample((num_samples,)).squeeze()
+        torch_samples = torch_samples.cpu().numpy()
+        unique, counts = np.unique(torch_samples, return_counts=True)
+        pmf = ref_dist.pmf(unique)
+        pmf = pmf / pmf.sum()  # renormalize to 1.0 for chisq test
+        msk = (counts > 5) & ((pmf * num_samples) > 5)
+        self.assertGreater(pmf[msk].sum(), 0.9, "Distribution is too sparse for test; try increasing num_samples")
+        # Add a remainder bucket that combines counts for all values
+        # below threshold, if such values exist (i.e. mask has False entries).
+        if not msk.all():
+            counts = np.concatenate([counts[msk], np.sum(counts[~msk], keepdims=True)])
+            pmf = np.concatenate([pmf[msk], np.sum(pmf[~msk], keepdims=True)])
+        chisq, p = scipy.stats.chisquare(counts, pmf * num_samples)
+        self.assertGreater(p, failure_rate, message)
+
+
     def _gradcheck_log_prob(self, dist_ctor, ctor_params):
         # performs gradient checks on log_prob
         distribution = dist_ctor(*ctor_params)

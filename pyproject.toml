@@ -20,26 +20,25 @@ optional = true
 
 [tool.poetry.group.m1.dependencies]
 code-tokenize = "^0.2.0"
-tensorflow-macos = "~2.11.0"
+tensorflow-macos = "~2.12.0"
 
 [tool.poetry.group.intel.dependencies]
 code-tokenize = "^0.2.0"
-tensorflow = "~2.11.0"
+tensorflow = "~2.12.0"
 
 [tool.poetry.group.vm.dependencies]
-tensorflow = "~2.11.0"
+tensorflow = "~2.12.0"
 
 [tool.poetry.group.tpuvm.dependencies]
-tensorflow = "~2.11.0"
+tensorflow = "~2.12.0"
 cloud-tpu-client = "^0.10"
 
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.11"
+python = ">=3.8,<3.11"
 datasets = "^2.4.0"
 tqdm = "^4.64.0"
 beautifulsoup4 = "^4.11.1"
-torch = "~1.12.1"
 matplotlib = "^3.6.0"
 numpy = "^1.23.3"
 seaborn = "^0.12.0"
@@ -50,6 +49,11 @@ protobuf = "^3.19"
 expecttest = "^0.1.4"
 hypothesis = "^6.58.0"
 cmake = "^3.13.3"
+pytest-xdist = "^3.2.1"
+pytest-forked = "^1.6.0"
+portpicker = "^1.5.2"
+detect-test-pollution = {path="/Users/frasermince/Programming/detect-test-pollution", develop = true}
+torch = "~1.12.0"
 
 
 [tool.poetry.dev-dependencies]

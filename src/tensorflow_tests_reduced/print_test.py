@@ -18,6 +18,8 @@ The call may be wrapped inside a py_func, but tf.Print should be used if
 possible. The subsequent computations will be gated by the print function
 execution.
 """
+from ..utils.timer_wrapper import tensorflow_op_timer
+
 
 import numpy as np
 import tensorflow as tf
@@ -40,8 +42,10 @@ def print_multiple_values(x):
 
 
 def multiple_prints(x, y):
-    tf.print('x is', x)
-    tf.print('y is', y)
+    with tensorflow_op_timer():
+        tf.print('x is', x)
+    with tensorflow_op_timer():
+        tf.print('y is', y)
 
 
 def print_with_nontf_values(x):
@@ -54,7 +58,8 @@ def print_in_cond(x):
 
 
 def tf_print(x):
-    tf.print(x)
+    with tensorflow_op_timer():
+        tf.print(x)
 
 
 class ReferenceTest(reference_test_base.TestCase):
@@ -88,7 +93,6 @@ class ReferenceTest(reference_test_base.TestCase):
 
     def test_tf_print(self):
         self.assertFunctionMatchesEager(tf_print, 0)
-
 
 if __name__ == '__main__':
     tf.test.main()

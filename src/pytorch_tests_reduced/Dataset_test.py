@@ -30,7 +30,7 @@ class TestDictDataLoader(TestCase):
         with pytorch_op_timer():
             self.dataset = DictDataset()
 
-    def test_sequential_batch(self):
+    def test_sequential_batch(self, device):
         for persistent_workers in (False, True):
             if persistent_workers:
                 loader = DataLoader(self.dataset, batch_size=2, shuffle=False,
@@ -64,11 +64,11 @@ class TestDictDataLoader(TestCase):
 
     def test_pin_memory_device(self, device):
         loader = DataLoader(self.dataset, batch_size=2,
-                            pin_memory=True, pin_memory_device='cuda')
+                            pin_memory=True, pin_memory_device=device)
         for sample in loader:
-            self.assertTrue(sample['a_tensor'].is_pinned(device='cuda'))
+            self.assertTrue(sample['a_tensor'].is_pinned(device=device))
             self.assertTrue(sample['another_dict']
-                            ['a_number'].is_pinned(device='cuda'))
+                            ['a_number'].is_pinned(device=device))
 
     def test_pin_memory_with_only_device(self, device):
         loader = DataLoader(self.dataset, batch_size=2,
@@ -90,18 +90,6 @@ class StringDataset(Dataset):
         return (self.s[ndx], ndx)
 
 
-class TestStringDataLoader(TestCase):
-    def setUp(self):
-        self.dataset = StringDataset()
-
-    def test_shuffle_pin_memory(self, device):
-        loader = DataLoader(self.dataset, batch_size=2,
-                            shuffle=True, num_workers=4, pin_memory=True)
-        for (s, n) in loader:
-            self.assertIsInstance(s[0], str)
-            self.assertTrue(n.is_pinned())
-
-
 class DictDataset(Dataset):
     def __len__(self):
         return 4
@@ -116,7 +104,6 @@ class DictDataset(Dataset):
 
 
 instantiate_device_type_tests(TestDictDataLoader, globals())
-instantiate_device_type_tests(TestStringDataLoader, globals())
 
 if __name__ == '__main__':
     run_tests()

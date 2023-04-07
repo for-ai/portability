@@ -26,6 +26,7 @@ from tensorflow.python.ops import gradient_checker
 from tensorflow.python.ops import gradients_impl
 from tensorflow.python.platform import test
 from tensorflow.python.platform import tf_logging
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 default_v2_alignment = "LEFT_LEFT"
@@ -589,7 +590,8 @@ class MatrixSetDiagTest(test.TestCase):
             mat = np.array([[0.0, 1.0, 0.0], [1.0, 0.0, 1.0], [1.0, 1.0, 1.0]])
             mat_set_diag = np.array([[1.0, 1.0, 0.0], [1.0, 2.0, 1.0],
                                      [1.0, 1.0, 3.0]])
-            output = array_ops.matrix_set_diag(mat, v)
+            with tensorflow_op_timer():
+                output = array_ops.matrix_set_diag(mat, v)
             self.assertEqual((3, 3), output.get_shape())
             self.assertAllEqual(mat_set_diag, self.evaluate(output))
 
@@ -600,7 +602,8 @@ class MatrixSetDiagTest(test.TestCase):
                     mask = banded_mat[0] == 0
                     input_mat = np.random.randint(10, size=mask.shape)
                     solution = input_mat * mask + banded_mat[0]
-                    output = array_ops.matrix_set_diag(
+                    with tensorflow_op_timer():
+                        output = array_ops.matrix_set_diag(
                         input_mat, vecs[0], k=diags, align=align)
                     self.assertEqual(output.get_shape(), solution.shape)
                     self.assertAllEqual(output, solution)
@@ -611,14 +614,16 @@ class MatrixSetDiagTest(test.TestCase):
             v = np.array([3.0, 4.0])
             mat = np.array([[0.0, 1.0, 0.0], [1.0, 0.0, 1.0]])
             expected = np.array([[3.0, 1.0, 0.0], [1.0, 4.0, 1.0]])
-            output = array_ops.matrix_set_diag(mat, v)
+            with tensorflow_op_timer():
+                output = array_ops.matrix_set_diag(mat, v)
             self.assertEqual((2, 3), output.get_shape())
             self.assertAllEqual(expected, self.evaluate(output))
 
             v = np.array([3.0, 4.0])
             mat = np.array([[0.0, 1.0], [1.0, 0.0], [1.0, 1.0]])
             expected = np.array([[3.0, 1.0], [1.0, 4.0], [1.0, 1.0]])
-            output = array_ops.matrix_set_diag(mat, v)
+            with tensorflow_op_timer():
+                output = array_ops.matrix_set_diag(mat, v)
             self.assertEqual((3, 2), output.get_shape())
             self.assertAllEqual(expected, self.evaluate(output))
 
@@ -629,7 +634,8 @@ class MatrixSetDiagTest(test.TestCase):
                         mask = banded_mat[0] == 0
                         input_mat = np.random.randint(10, size=mask.shape)
                         solution = input_mat * mask + banded_mat[0]
-                        output = array_ops.matrix_set_diag(
+                        with tensorflow_op_timer():
+                            output = array_ops.matrix_set_diag(
                             input_mat, vecs[0], k=diags, align=align)
                         self.assertEqual(output.get_shape(), solution.shape)
                         self.assertAllEqual(output, solution)
@@ -646,8 +652,8 @@ class MatrixSetDiagTest(test.TestCase):
                                             [1.0, 0.0, -3.0]],
                                            [[-4.0, 0.0, 4.0], [0.0, -5.0, 0.0],
                                             [2.0, 0.0, -6.0]]]).astype(dtype)
-
-            output = array_ops.matrix_set_diag(mat_batch, v_batch)
+            with tensorflow_op_timer():
+                output = array_ops.matrix_set_diag(mat_batch, v_batch)
             self.assertEqual((2, 3, 3), output.get_shape())
             self.assertAllEqual(mat_set_diag_batch, self.evaluate(output))
 
@@ -659,7 +665,8 @@ class MatrixSetDiagTest(test.TestCase):
                     input_mat = np.random.randint(
                         10, size=mask.shape).astype(dtype)
                     solution = (input_mat * mask + banded_mat).astype(dtype)
-                    output = array_ops.matrix_set_diag(
+                    with tensorflow_op_timer():
+                        output = array_ops.matrix_set_diag(
                         input_mat, vecs.astype(dtype), k=diags, align=align)
                     self.assertEqual(output.get_shape(), solution.shape)
                     self.assertAllEqual(output, solution)
@@ -681,7 +688,8 @@ class MatrixSetDiagTest(test.TestCase):
 
             mat_set_diag_batch = np.array([[[-1.0, 0.0, 3.0], [0.0, -2.0, 0.0]],
                                            [[-4.0, 0.0, 4.0], [0.0, -5.0, 0.0]]])
-            output = array_ops.matrix_set_diag(mat_batch, v_batch)
+            with tensorflow_op_timer():
+                output = array_ops.matrix_set_diag(mat_batch, v_batch)
             self.assertEqual((2, 2, 3), output.get_shape())
             self.assertAllEqual(mat_set_diag_batch, self.evaluate(output))
 
@@ -693,7 +701,8 @@ class MatrixSetDiagTest(test.TestCase):
                         mask = banded_mat == 0
                         input_mat = np.random.randint(10, size=mask.shape)
                         solution = input_mat * mask + banded_mat
-                        output = array_ops.matrix_set_diag(
+                        with tensorflow_op_timer():
+                            output = array_ops.matrix_set_diag(
                             input_mat, vecs, k=diags, align=align)
                         self.assertEqual(output.get_shape(), solution.shape)
                         self.assertAllEqual(output, solution)
@@ -728,8 +737,8 @@ class MatrixSetDiagTest(test.TestCase):
                 np.random.rand(*input_shape), dtype=dtypes_lib.float32)
             x_diag = constant_op.constant(
                 np.random.rand(*diag_shape), dtype=dtypes_lib.float32)
-
-            y = array_ops.matrix_set_diag(x, x_diag, k=diags, align=align)
+            with tensorflow_op_timer():
+                y = array_ops.matrix_set_diag(x, x_diag, k=diags, align=align)
             error_x = gradient_checker.compute_gradient_error(x,
                                                               x.get_shape().as_list(),
                                                               y,
@@ -762,7 +771,8 @@ class MatrixSetDiagTest(test.TestCase):
             v = array_ops.placeholder(dtype=dtypes_lib.float32)
             mat = array_ops.placeholder(dtype=dtypes_lib.float32)
             grad_input = array_ops.placeholder(dtype=dtypes_lib.float32)
-            output = array_ops.matrix_set_diag(mat, v)
+            with tensorflow_op_timer():
+                output = array_ops.matrix_set_diag(mat, v)
             grads = gradients_impl.gradients(
                 output, [mat, v], grad_ys=grad_input)
             grad_input_val = np.random.rand(3, 3).astype(np.float32)

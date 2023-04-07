@@ -58,6 +58,8 @@ from tensorflow.python.ops import variables
 from tensorflow.python.platform import googletest
 from tensorflow.python.training import server_lib
 from tensorflow.python.util import compat
+from ..tensorflow_test import device_context
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 try:
     import attr  # pylint:disable=g-import-not-at-top
@@ -85,8 +87,10 @@ class SessionTest(test_util.TensorFlowTestCase):
             b = constant_op.constant(7.0, shape=[1, 1])
             c = math_ops.matmul(a, b, name='matmul')
         with session.Session(graph=g):
-            result = c.eval()
-            self.assertAllEqual(result, [[42.0]])
+            with device_context():
+                with tensorflow_op_timer():
+                    result = c.eval()
+                self.assertAllEqual(result, [[42.0]])
 
     def testUseDefaultGraph(self):
         with ops.Graph().as_default(), ops.device('/cpu:0'):
@@ -94,25 +98,30 @@ class SessionTest(test_util.TensorFlowTestCase):
             b = constant_op.constant(7.0, shape=[1, 1])
             c = math_ops.matmul(a, b, name='matmul')
             with session.Session():
-                result = c.eval()
-                self.assertAllEqual(result, [[42.0]])
+                with device_context():
+                    with tensorflow_op_timer():
+                        result = c.eval()
+                    self.assertAllEqual(result, [[42.0]])
 
     def testCreate(self):
         with session.Session():
-            inp = constant_op.constant(10.0, shape=[2, 3], name='W1')
-            copy = array_ops.identity(inp)
-            # Test with feed.
-            # TODO(mrry): Investigate why order='F' didn't work.
-            arr = np.asarray([[0, 1, 2], [3, 4, 5]],
-                             dtype=np.float32, order='C')
-            copy_val = copy.eval({'W1:0': arr})
-            self.assertAllEqual(arr, copy_val)
-            # Test without feed.
-            copy_val = copy.eval()
-            self.assertAllEqual(
-                np.asarray(
-                    [[10.0, 10.0, 10.0], [10.0, 10.0, 10.0]], dtype=np.float32),
-                copy_val)
+            with device_context():
+                inp = constant_op.constant(10.0, shape=[2, 3], name='W1')
+                copy = array_ops.identity(inp)
+                # Test with feed.
+                # TODO(mrry): Investigate why order='F' didn't work.
+                arr = np.asarray([[0, 1, 2], [3, 4, 5]],
+                                dtype=np.float32, order='C')
+                with tensorflow_op_timer():
+                    copy_val = copy.eval({'W1:0': arr})
+                self.assertAllEqual(arr, copy_val)
+                # Test without feed.
+                with tensorflow_op_timer():
+                    copy_val = copy.eval()
+                self.assertAllEqual(
+                    np.asarray(
+                        [[10.0, 10.0, 10.0], [10.0, 10.0, 10.0]], dtype=np.float32),
+                    copy_val)
 
 
 if __name__ == '__main__':

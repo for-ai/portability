@@ -30,6 +30,7 @@ from tensorflow.python.ops import gradient_checker
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import variables
 from tensorflow.python.platform import test
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 # The maximum input rank to test.
 _MAX_RANK = 5
@@ -98,36 +99,28 @@ class ReductionUnknownShape(test.TestCase):
   @test_util.run_deprecated_v1
   def testBasic(self):
     with self.cached_session():
-      for dtype, reductions in [(dtypes.float32,
-                                 (math_ops.reduce_sum, math_ops.reduce_mean,
-                                  math_ops.reduce_prod, math_ops.reduce_max,
-                                  math_ops.reduce_min,
-                                  math_ops.reduce_euclidean_norm)),
-                                (dtypes.bool, (math_ops.reduce_all,
-                                               math_ops.reduce_any))]:
-        for reduction in reductions:
-          x = array_ops.placeholder(
-              dtype=dtype, shape=None)  # Some tensor w/ unknown shape.
+      for dtype, reduction in [(dtypes.float32,
+                                 (math_ops.reduce_mean))]:
+        x = array_ops.placeholder(
+            dtype=dtype, shape=None)  # Some tensor w/ unknown shape.
+        with tensorflow_op_timer():
           y = reduction(x)
-          self.assertEqual(y.shape, ())
+        self.assertEqual(y.shape, ())
 
 
 class ReductionInvalidKeepdims(test.TestCase):
 
   def testBasic(self):
     # Test case for GitHub issue 46700.
-    for dtype, reductions in [
-        (dtypes.float32, (math_ops.reduce_sum, math_ops.reduce_mean,
-                          math_ops.reduce_prod, math_ops.reduce_max,
-                          math_ops.reduce_min, math_ops.reduce_euclidean_norm)),
-        (dtypes.bool, (math_ops.reduce_all, math_ops.reduce_any))
+    for dtype, reduction in [
+        (dtypes.float32, (math_ops.reduce_mean)),
     ]:
-      for reduction in reductions:
-        with self.assertRaisesRegex(ValueError, "The truth value"):
-          x = True if dtype == dtypes.bool else 1
+      with self.assertRaisesRegex(ValueError, "The truth value"):
+        x = True if dtype == dtypes.bool else 1
+        with tensorflow_op_timer():
           y = reduction(
-              input_tensor=x, keepdims=np.array([63600, 1], dtype=np.float16))
-          self.evaluate(y)
+            input_tensor=x, keepdims=np.array([63600, 1], dtype=np.float16))
+        self.evaluate(y)
 
 
 class BaseReductionTest(test.TestCase):
@@ -419,6 +412,8 @@ class BaseReductionTest(test.TestCase):
 class MeanReductionTest(BaseReductionTest):
 
   def _tf_reduce(self, x, reduction_axes, keepdims):
+    with tensorflow_op_timer():
+      test = math_ops.reduce_mean(x, reduction_axes, keepdims)
     return math_ops.reduce_mean(x, reduction_axes, keepdims)
 
   def _np_reduce(self, x, reduction_axes, keepdims):
@@ -443,7 +438,8 @@ class MeanReductionTest(BaseReductionTest):
   def testAxesType(self):
     for dtype in [dtypes.int64, dtypes.int32]:
       with self.cached_session():
-        v = math_ops.reduce_mean([0, 0], constant_op.constant(0, dtype=dtype))
+        with tensorflow_op_timer():
+          v = math_ops.reduce_mean([0, 0], constant_op.constant(0, dtype=dtype))
         tf_v = self.evaluate(v)
       self.assertAllEqual(tf_v, 0)
 
@@ -523,7 +519,8 @@ class MeanReductionTest(BaseReductionTest):
   def testEmptyGradients(self):
     with self.session():
       x = array_ops.zeros([0, 3])
-      y = math_ops.reduce_mean(x, [1])
+      with tensorflow_op_timer():
+        y = math_ops.reduce_mean(x, [1])
       error = gradient_checker.compute_gradient_error(x, [0, 3], y, [0])
       self.assertEqual(error, 0)
 
@@ -533,7 +530,8 @@ class MeanReductionTest(BaseReductionTest):
       for dtype in (dtypes.float16, dtypes.float32, dtypes.float64):
         # A large number is needed to get Eigen to die
         x = array_ops.zeros((0, 9938), dtype=dtype)
-        y = math_ops.reduce_mean(x, [0]).eval()
+        with tensorflow_op_timer():
+          y = math_ops.reduce_mean(x, [0]).eval()
         self.assertEqual(y.shape, (9938,))
         self.assertTrue(np.all(np.isnan(y)))
 
@@ -557,7 +555,8 @@ class EuclideanNormReductionTest(BaseReductionTest):
   def testAxesType(self):
     for dtype in [dtypes.int64, dtypes.int32]:
       with self.cached_session():
-        v = math_ops.reduce_mean([0, 0], constant_op.constant(0, dtype=dtype))
+        with tensorflow_op_timer():
+          v = math_ops.reduce_mean([0, 0], constant_op.constant(0, dtype=dtype))
         tf_v = self.evaluate(v)
       self.assertAllEqual(tf_v, 0)
 

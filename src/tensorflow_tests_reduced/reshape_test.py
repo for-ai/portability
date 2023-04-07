@@ -25,6 +25,7 @@ from tensorflow.python.framework import test_util
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import gradient_checker_v2
 from tensorflow.python.platform import test
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 @test_util.with_eager_op_as_function
@@ -32,28 +33,33 @@ class ReshapeTest(test.TestCase):
 
   def _testReshape(self, x, y, use_gpu=False):
     with self.cached_session(use_gpu=use_gpu):
-      np_ans = x.reshape(y)
-      tf_ans = array_ops.reshape(x, y)
+      with tensorflow_op_timer():
+        np_ans = x.reshape(y)
+      with tensorflow_op_timer():
+        tf_ans = array_ops.reshape(x, y)
       out = self.evaluate(tf_ans)
       self.assertEqual(tf_ans.get_shape(), out.shape)
       self.assertShapeEqual(np_ans, tf_ans)
 
       # Repeat with an int64 shape tensor.
       y64 = constant_op.constant(y, dtype=dtypes.int64)
-      tf_ans = array_ops.reshape(x, y64)
+      with tensorflow_op_timer():
+        tf_ans = array_ops.reshape(x, y64)
       out = self.evaluate(tf_ans)
       self.assertEqual(tf_ans.get_shape(), out.shape)
       self.assertShapeEqual(np_ans, tf_ans)
 
   def _testZeroDimReshape(self, x, shape, expected, use_gpu=False):
     with self.cached_session(use_gpu=use_gpu):
-      y = array_ops.reshape(x, shape)
+      with tensorflow_op_timer():
+        y = array_ops.reshape(x, shape)
       out = self.evaluate(y)
       self.assertEqual(expected, out.shape)
 
       # Repeat with an int64 shape tensor.
       shape64 = constant_op.constant(shape, dtype=dtypes.int64)
-      y = array_ops.reshape(x, shape64)
+      with tensorflow_op_timer():
+        y = array_ops.reshape(x, shape64)
       out = self.evaluate(y)
       self.assertEqual(expected, out.shape)
 
@@ -62,7 +68,8 @@ class ReshapeTest(test.TestCase):
     self._testReshape(x, y, True)
 
   def testBoolBasic(self):
-    x = np.arange(1., 7.).reshape([1, 6]) > 3
+    with tensorflow_op_timer():
+      x = np.arange(1., 7.).reshape([1, 6]) > 3
     self._testBothReshape(x, [2, 3])
 
   def testFloatBasic(self):
@@ -121,6 +128,8 @@ class ReshapeTest(test.TestCase):
     input_tensor = constant_op.constant(x)
 
     def reshape(x):
+      with tensorflow_op_timer():
+        test = array_ops.reshape(x, [1, 8, 3])
       return array_ops.reshape(x, [1, 8, 3])
 
     with self.cached_session():
@@ -162,23 +171,28 @@ class ReshapeTest(test.TestCase):
       x = array_ops.placeholder(dtypes.float32)
 
       # Unknown input shape, partial new shape.
-      y = array_ops.reshape(x, [1, 1, -1, 1])
+      with tensorflow_op_timer():
+        y = array_ops.reshape(x, [1, 1, -1, 1])
       self.assertEqual([1, 1, None, 1], y.get_shape().as_list())
 
       # Unknown input shape, unknown new shape.
-      y = array_ops.reshape(x, array_ops.placeholder(dtypes.int32))
+      with tensorflow_op_timer():
+        y = array_ops.reshape(x, array_ops.placeholder(dtypes.int32))
       self.assertEqual(None, y.get_shape().ndims)
 
       # Unknown input shape, known rank for new shape.
-      y = array_ops.reshape(x, array_ops.placeholder(dtypes.int32, shape=(3,)))
+      with tensorflow_op_timer():
+        y = array_ops.reshape(x, array_ops.placeholder(dtypes.int32, shape=(3,)))
       self.assertEqual([None, None, None], y.get_shape().as_list())
 
       # Unknown input shape, partial new shape using `tf.stack()`.
-      y = array_ops.reshape(x, [array_ops.placeholder(dtypes.int32), 37])
+      with tensorflow_op_timer():
+        y = array_ops.reshape(x, [array_ops.placeholder(dtypes.int32), 37])
       self.assertEqual([None, 37], y.get_shape().as_list())
 
       # Unknown input shape, partial new shape using `tf.concat()`.
-      y = array_ops.reshape(
+      with tensorflow_op_timer():
+        y = array_ops.reshape(
           x,
           array_ops.concat(
               [array_ops.placeholder(
@@ -186,7 +200,8 @@ class ReshapeTest(test.TestCase):
       self.assertEqual([None, None, 37, 42], y.get_shape().as_list())
 
       # Unknown input shape, partial new shape using `tf.shape()`.
-      y = array_ops.reshape(
+      with tensorflow_op_timer():
+        y = array_ops.reshape(
           x,
           array_ops.shape(
               array_ops.placeholder(
@@ -195,28 +210,33 @@ class ReshapeTest(test.TestCase):
 
   def testTensorShape(self):
     x = array_ops.zeros([1, 100])
-    y = array_ops.reshape(
+    with tensorflow_op_timer():
+      y = array_ops.reshape(
         x, [tensor_shape.Dimension(100),
             tensor_shape.Dimension(1)])
     self.assertEqual([100, 1], y.get_shape().as_list())
-    y = array_ops.reshape(x, tensor_shape.TensorShape([100, 1]))
+    with tensorflow_op_timer():
+      y = array_ops.reshape(x, tensor_shape.TensorShape([100, 1]))
     self.assertEqual([100, 1], y.get_shape().as_list())
 
   def testInt64Shape(self):
-    with ops.device("/device:CPU:0"):
-      x = array_ops.zeros([50000, 50000], dtype=dtypes.bool)
-      # Provide dimension larger than int32
+    # with ops.device("/device:CPU:0"):
+    x = array_ops.zeros([50000, 50000], dtype=dtypes.bool)
+    # Provide dimension larger than int32
+    with tensorflow_op_timer():
       y = array_ops.reshape(x, [50000**2])
-      self.assertEqual([50000**2], y.get_shape().as_list())
-      # Even if first dimension is within int32, ensure we correctly go to int64
+    self.assertEqual([50000**2], y.get_shape().as_list())
+    # Even if first dimension is within int32, ensure we correctly go to int64
+    with tensorflow_op_timer():
       y = array_ops.reshape(x, [1, 50000**2])
-      self.assertEqual([1, 50000**2], y.get_shape().as_list())
+    self.assertEqual([1, 50000**2], y.get_shape().as_list())
 
   @test_util.run_v2_only
   def testTooLargeShape(self):
     with self.assertRaisesRegex(errors_impl.InvalidArgumentError,
                                 "too many elements"):
-      x = array_ops.reshape([1], np.array([21943, 45817, 30516, 61760, 38987]))
+      with tensorflow_op_timer():
+        x = array_ops.reshape([1], np.array([21943, 45817, 30516, 61760, 38987]))
       self.evaluate(x)
 
 

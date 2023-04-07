@@ -13,6 +13,7 @@ from tensorflow.python.ops import gradient_checker_v2
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import variables
 from tensorflow.python.platform import test
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 class CastOpTest(test.TestCase):
@@ -39,7 +40,8 @@ class CastOpTest(test.TestCase):
   def _cast(self, x, dtype, use_gpu=False):
     with test_util.device(use_gpu):
       val = constant_op.constant(x, self._toDataType(np.array([x]).dtype))
-      cast = math_ops.cast(val, self._toDataType(dtype), name="cast")
+      with tensorflow_op_timer():
+        cast = math_ops.cast(val, self._toDataType(dtype), name="cast")
       return self.evaluate(cast)
 
   def _test(self, x, dtype, use_gpu=False):
@@ -90,10 +92,13 @@ class CastOpTest(test.TestCase):
   def testBfloat16(self):
     a = np.random.uniform(-100, 100, 100).astype(np.float32)
     with self.cached_session(use_gpu=False):
-      b = math_ops.cast(math_ops.cast(a, dtypes.bfloat16), dtypes.float32)
+      with tensorflow_op_timer():
+        b = math_ops.cast(math_ops.cast(a, dtypes.bfloat16), dtypes.float32)
       self.assertAllClose(a, self.evaluate(b), rtol=1 / 128.)
     with self.cached_session():
-      b = math_ops.cast(math_ops.cast(a, dtypes.bfloat16), dtypes.float32)
+      with tensorflow_op_timer():
+        b = math_ops.cast(math_ops.cast(a, dtypes.bfloat16), dtypes.float32)
+      print("***B", b.device)
       self.assertAllClose(a, self.evaluate(b), rtol=1 / 128.)
 
   def testRandom(self):
@@ -139,6 +144,8 @@ class CastOpTest(test.TestCase):
 
   def _OpError(self, x, dtype, err):
     with self.assertRaisesOpError(err):
+      with tensorflow_op_timer():
+        test = math_ops.cast(x, dtype)
       self.evaluate(math_ops.cast(x, dtype))
 
   def testNotImplemented(self):
@@ -148,7 +155,8 @@ class CastOpTest(test.TestCase):
     with self.cached_session():
       x = variables.Variable(5, dtype=dtypes.float32)
       y = variables.Variable(True, dtype=dtypes.bool)
-      cast = math_ops.cast(y, x.dtype)
+      with tensorflow_op_timer():
+        cast = math_ops.cast(y, x.dtype)
       self.evaluate(variables.global_variables_initializer())
       self.assertEqual(1.0, self.evaluate(cast))
 
@@ -161,7 +169,8 @@ class CastOpTest(test.TestCase):
 
           def cast(x, dst_t=dst_t):
             x = array_ops.identity(x)
-            x = math_ops.cast(x, dst_t)
+            with tensorflow_op_timer():
+              x = math_ops.cast(x, dst_t)
             return x
 
           err = gradient_checker_v2.max_error(
@@ -171,7 +180,8 @@ class CastOpTest(test.TestCase):
   def testRefDtype(self):
     with context.graph_mode(), self.cached_session():
       x = gen_state_ops.variable(shape=[1], dtype=dtypes.float32)
-      result = math_ops.cast(x, dtypes.float32)
+      with tensorflow_op_timer():
+        result = math_ops.cast(x, dtypes.float32)
       self.assertEqual(x.dtype, dtypes.float32_ref)
       self.assertEqual(result.dtype, dtypes.float32)
 
@@ -183,7 +193,8 @@ class SparseTensorCastTest(test.TestCase):
     values = constant_op.constant(np.array([1, 2, 3], np.int64))
     shape = constant_op.constant([3], dtypes.int64)
     st = sparse_tensor.SparseTensor(indices, values, shape)
-    st_cast = math_ops.cast(st, dtypes.float32)
+    with tensorflow_op_timer():
+      st_cast = math_ops.cast(st, dtypes.float32)
 
     self.assertAllEqual(st_cast.indices, [[0], [1], [2]])
     self.assertAllEqual(st_cast.values,

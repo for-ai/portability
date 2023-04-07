@@ -28,6 +28,7 @@ from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import sets
 from tensorflow.python.ops import sparse_ops
 from tensorflow.python.platform import googletest
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 _DTYPES = set([
     dtypes.int8, dtypes.int16, dtypes.int32, dtypes.int64, dtypes.uint8,
@@ -339,7 +340,8 @@ class SetOpsTest(test_util.TensorFlowTestCase, parameterized.TestCase):
     def _set_intersection(self, a, b):
         # Validate that we get the same results with or without `validate_indices`,
         # and with a & b swapped.
-        ops = (
+        with tensorflow_op_timer():
+            ops = (
             sets.set_intersection(
                 a, b, validate_indices=True),
             sets.set_intersection(
@@ -353,6 +355,8 @@ class SetOpsTest(test_util.TensorFlowTestCase, parameterized.TestCase):
         return self._run_equivalent_set_ops(ops)
 
     def _set_intersection_count(self, a, b):
+        with tensorflow_op_timer():
+            test = sets.set_intersection(a, b)
         op = sets.set_size(sets.set_intersection(a, b))
         with self.cached_session() as sess:
             return self.evaluate(op)
