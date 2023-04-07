@@ -39,16 +39,17 @@ class TestOptim(TestCase):
         if not constructor_accepts_maximize:
             def three_arg_constructor(weight, bias, maximize):
                 self.assertFalse(maximize)
-                return constructor(weight, bias)
+                with pytorch_op_timer():
+                    test = constructor(weight, bias)
+                return test
         else:
             three_arg_constructor = constructor
 
         for maximize in maximize_options:
             weight = Variable(weight, requires_grad=True)
             bias = Variable(bias, requires_grad=True)
-            input = Variable(input)
-            with pytorch_op_timer(): 
-                optimizer = three_arg_constructor(weight, bias, maximize)
+            input = Variable(input) 
+            optimizer = three_arg_constructor(weight, bias, maximize)
             schedulers = []
             for scheduler_constructor in scheduler_constructors:
                 schedulers.append(scheduler_constructor(optimizer))
