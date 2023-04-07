@@ -137,7 +137,7 @@ class TestQuantizedOps(TestCase):
 
     
     @skipIfNoFBGEMM
-    def test_group_norm(self):
+    def test_group_norm(self, device):
         # hypothesis is flaky for this test, create test cases manually
         batches_list = (1, 7)
         num_groups_list = (1, 4)
@@ -184,8 +184,8 @@ class TestQuantizedOps(TestCase):
 
                 # Initialize the weights non-randomly for reproducibility
                 if affine:
-                    weight = torch.ones(num_channels).float() * 0.5
-                    bias = torch.ones(num_channels).float()
+                    weight = torch.ones(num_channels, device=device).float() * 0.5
+                    bias = torch.ones(num_channels, device=device).float()
                     for i in range(num_channels):
                         weight[i] *= i
                         bias[i] *= i
