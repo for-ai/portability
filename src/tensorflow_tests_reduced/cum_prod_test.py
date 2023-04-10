@@ -51,8 +51,7 @@ class CumProdTest(PForTestCase, parameterized.TestCase):
                         with tensorflow_op_timer():
                             test = math_ops.cumprod(
                             a, axis=axis, exclusive=exclusive, reverse=reverse)
-                        return math_ops.cumprod(
-                            a, axis=axis, exclusive=exclusive, reverse=reverse)
+                        return test
 
                     # pylint: enable=cell-var-from-loop
 
