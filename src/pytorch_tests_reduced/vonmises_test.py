@@ -10,7 +10,6 @@ import torch
 
 # TODO: remove this global setting
 # Distributions tests use double as the default dtype
-torch.set_default_dtype(torch.double)
 
 from torch._six import inf, nan
 from torch.testing._internal.common_utils import \
@@ -93,6 +92,10 @@ class TestDistributionShapes(DistributionsTestCase):
         self.scalar_sample = 1
         self.tensor_sample_1 = torch.ones(3, 2)
         self.tensor_sample_2 = torch.ones(3, 2, 3)
+        torch.set_default_dtype(torch.double)
+    
+    def tearDown(self):
+        torch.set_default_dtype(torch.float)
 
     def test_vonmises_shape_tensor_params(self, device):
         with pytorch_op_timer():
