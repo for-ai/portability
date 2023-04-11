@@ -2,8 +2,9 @@ import pytest
 import os
 import json
 from ..utils.timer_wrapper import pytorch_test_timer
-from torch.testing._internal.common_device_type import onlyCUDA
 import torch
+
+from torch.testing._internal.common_device_type import onlyCUDA
 
 
 try:

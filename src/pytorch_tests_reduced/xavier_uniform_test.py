@@ -26,7 +26,6 @@ import torch
 
 # TODO: remove this global setting
 # NN tests use double as the default dtype
-torch.set_default_dtype(torch.double)
 
 from torch._six import inf, nan
 import torch.autograd.forward_ad as fwAD
@@ -91,14 +90,17 @@ class TestNNInit(TestCase):
         return tensor
 
     def test_xavier_uniform_errors_on_inputs_smaller_than_2d(self):
+        torch.set_default_dtype(torch.double)
         for dims in [0, 1]:
             tensor = self._create_random_nd_tensor(dims, size_min=1, size_max=1)
             with self.assertRaises(ValueError):
                 with pytorch_op_timer():
                     init.xavier_uniform_(tensor)
+        torch.set_default_dtype(torch.float)
 
     @unittest.skipIf(not TEST_SCIPY, "Scipy not found.")
     def test_xavier_uniform(self, device):
+        torch.set_default_dtype(torch.double)
         for use_gain in [True, False]:
             for dims in [2, 4]:
                 input_tensor = self._create_random_nd_tensor(dims, size_min=20, size_max=25)
@@ -122,6 +124,8 @@ class TestNNInit(TestCase):
                 expected_std = gain * math.sqrt(2.0 / (fan_in + fan_out))
                 bounds = expected_std * math.sqrt(3)
                 assert self._is_uniform(input_tensor, -bounds, bounds)
+
+        torch.set_default_dtype(torch.float)
 
     
 instantiate_device_type_tests(TestNNInit, globals())

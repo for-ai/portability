@@ -61,11 +61,11 @@ from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceler
 from ..utils.timer_wrapper import pytorch_op_timer
 # TODO: remove this global setting
 # NN tests use double as the default dtype
-torch.set_default_dtype(torch.double)
 
 
 class TestNN(NNTestCase):
     def test_Sequential_getitem(self, device):
+        torch.set_default_dtype(torch.double)
         l1 = nn.Linear(10, 20).to(device)
         l2 = nn.Linear(20, 30).to(device)
         l3 = nn.Linear(30, 40).to(device)
@@ -92,8 +92,10 @@ class TestNN(NNTestCase):
         with pytorch_op_timer():
             test_5 = nn.Sequential(l4, l3, l2, l1).to(device)
         self.assertEqual(n[::-1], test_5)
+        torch.set_default_dtype(torch.float)
 
     def test_Sequential_setitem(self, device):
+        torch.set_default_dtype(torch.double)
         l1 = nn.Linear(10, 20).to(device)
         l2 = nn.Linear(20, 30).to(device)
         l3 = nn.Linear(30, 40).to(device)
@@ -106,8 +108,10 @@ class TestNN(NNTestCase):
         self.assertIs(n[0], l4)
         self.assertIs(n[1], l1)
         self.assertIs(n[2], l4)
+        torch.set_default_dtype(torch.float)
 
     def test_Sequential_setitem_named(self, device):
+        torch.set_default_dtype(torch.double)
         l1 = nn.Linear(10, 20).to(device)
         l2 = nn.Linear(20, 30).to(device)
         l3 = nn.Linear(30, 40).to(device)
@@ -123,8 +127,10 @@ class TestNN(NNTestCase):
         n[-1] = l4
         self.assertEqual(n.linear1, l4)
         self.assertEqual(n.linear3, l4)
+        torch.set_default_dtype(torch.float)
 
     def test_Sequential_delitem(self, device):
+        torch.set_default_dtype(torch.double)
         l1 = nn.Linear(10, 20).to(device)
         l2 = nn.Linear(20, 30).to(device)
         l3 = nn.Linear(30, 40).to(device)
@@ -139,8 +145,10 @@ class TestNN(NNTestCase):
         with pytorch_op_timer():
             test_2 = nn.Sequential(l1, l3).to(device)
         self.assertEqual(n, test_2)
+        torch.set_default_dtype(torch.float)
 
     def test_Sequential_append(self, device):
+        torch.set_default_dtype(torch.double)
         l1 = nn.Linear(10, 20).to(device)
         l2 = nn.Linear(20, 30).to(device)
         l3 = nn.Linear(30, 40).to(device)
@@ -160,6 +168,7 @@ class TestNN(NNTestCase):
         with pytorch_op_timer():
             test_4 = nn.Sequential(l1).append(l2).append(l4).to(device)
         self.assertEqual(test_4, test_3)
+        torch.set_default_dtype(torch.float)
 
 
 instantiate_device_type_tests(TestNN, globals())

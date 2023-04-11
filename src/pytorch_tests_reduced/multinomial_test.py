@@ -12,7 +12,6 @@ import torch.testing._internal.hypothesis_utils as hu
 
 # TODO: remove this global setting
 # Distributions tests use double as the default dtype
-torch.set_default_dtype(torch.double)
 
 from torch._six import inf, nan
 from torch.testing._internal.common_utils import \
@@ -90,6 +89,7 @@ class TestDistributions(DistributionsTestCase):
 
     def _gradcheck_log_prob(self, dist_ctor, ctor_params):
         # performs gradient checks on log_prob
+        torch.set_default_dtype(torch.double)
         with pytorch_op_timer():
             distribution = dist_ctor(*ctor_params)
         s = distribution.sample()
@@ -100,8 +100,10 @@ class TestDistributions(DistributionsTestCase):
         def apply_fn(s, *params):
             return dist_ctor(*params).log_prob(s)
         gradcheck(apply_fn, (s,) + tuple(ctor_params), raise_exception=True)
+        torch.set_default_dtype(torch.float)
         
     def test_multinomial_1d(self, device):
+        torch.set_default_dtype(torch.double)
         total_count = 10
         p = torch.tensor([0.1, 0.2, 0.3], requires_grad=True, device=device)
         with pytorch_op_timer():
@@ -116,9 +118,11 @@ class TestDistributions(DistributionsTestCase):
         self._gradcheck_log_prob(lambda p: Multinomial(total_count, p), [p])
         self._gradcheck_log_prob(lambda p: Multinomial(total_count, None, p.log()), [p])
         self.assertRaises(NotImplementedError, Multinomial(10, p).rsample)
+        torch.set_default_dtype(torch.float)
 
     @unittest.skipIf(not TEST_NUMPY, "NumPy not found")
     def test_multinomial_1d_log_prob_and_entropy(self):
+        torch.set_default_dtype(torch.double)
         total_count = 10
         p = torch.tensor([0.1, 0.2, 0.3], requires_grad=True)
         with pytorch_op_timer():
@@ -136,8 +140,10 @@ class TestDistributions(DistributionsTestCase):
 
         expected = scipy.stats.multinomial.entropy(total_count, dist.probs.detach().numpy())
         self.assertEqual(dist.entropy(), expected, atol=1e-3, rtol=0)
+        torch.set_default_dtype(torch.float)
 
     def test_multinomial_2d(self, device):
+        torch.set_default_dtype(torch.double)
         total_count = 10
         probabilities = [[0.1, 0.2, 0.3], [0.5, 0.3, 0.2]]
         probabilities_1 = [[1.0, 0.0], [0.0, 1.0]]
@@ -159,10 +165,12 @@ class TestDistributions(DistributionsTestCase):
         # sample check for extreme value of probs
         self.assertEqual(Multinomial(total_count, s).sample(),
                         torch.tensor([[total_count, 0], [0, total_count]], dtype=torch.float64, device=device))
+        torch.set_default_dtype(torch.float)
 
 
 class TestDistributionShapes(DistributionsTestCase):
     def test_multinomial_shape(self, device):
+        torch.set_default_dtype(torch.double)
         scalar_sample = 1
         tensor_sample_1 = torch.ones(3, 2, device=device)
         tensor_sample_2 = torch.ones(3, 2, 3, device=device)
@@ -176,11 +184,13 @@ class TestDistributionShapes(DistributionsTestCase):
         self.assertEqual(dist.log_prob(tensor_sample_1).size(), torch.Size((3,)))
         self.assertRaises(ValueError, dist.log_prob, tensor_sample_2)
         self.assertEqual(dist.log_prob(torch.ones(3, 1, 2, device=device)).size(), torch.Size((3, 3)))
+        torch.set_default_dtype(torch.float)
 
 
 class TestNumericalStability(DistributionsTestCase):
 
     def test_multinomial_log_prob_with_logits(self, device):
+        torch.set_default_dtype(torch.double)
         for dtype in ([torch.float, torch.double]):
             p = torch.tensor([-inf, 0], dtype=dtype, requires_grad=True, device=device)
             with pytorch_op_timer():
@@ -189,6 +199,7 @@ class TestNumericalStability(DistributionsTestCase):
             self.assertEqual(log_pdf_prob_1.item(), 0)
             log_pdf_prob_0 = multinomial.log_prob(torch.tensor([10, 0], dtype=dtype, device=device))
             self.assertEqual(log_pdf_prob_0.item(), -inf)
+        torch.set_default_dtype(torch.float)
 
 
 instantiate_device_type_tests(TestNumericalStability, globals())

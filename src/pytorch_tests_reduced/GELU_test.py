@@ -13,13 +13,13 @@ from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceler
 
 # TODO: remove this global setting
 # NN tests use double as the default dtype
-torch.set_default_dtype(torch.double)
 from ..utils.timer_wrapper import pytorch_op_timer
 
 class TestNNDeviceType(NNTestCase):
     @dtypes(torch.float)
     @dtypesIfCUDA(torch.half, torch.float)
     def test_transformerencoderlayer_gelu(self, device, dtype):
+        torch.set_default_dtype(torch.double)
         # this is a deterministic test for TransformerEncoderLayer with gelu activation
         d_model = 4
         nhead = 2
@@ -103,6 +103,7 @@ class TestNNDeviceType(NNTestCase):
                 _test(activation=activation,
                       batch_first=batch_first, training=training)
 
+        torch.set_default_dtype(torch.float)
 
 instantiate_device_type_tests(TestNNDeviceType, globals())
 if __name__ == '__main__':

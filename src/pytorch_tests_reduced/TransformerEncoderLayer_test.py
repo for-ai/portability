@@ -65,7 +65,6 @@ from ..utils.timer_wrapper import pytorch_op_timer
 
 # TODO: remove this global setting
 # NN tests use double as the default dtype
-torch.set_default_dtype(torch.double)
 
 
 class TestNN(NNTestCase):
@@ -73,6 +72,7 @@ class TestNN(NNTestCase):
     _do_cuda_non_default_stream = True
    
     def test_transformerencoder(self, device):
+        torch.set_default_dtype(torch.double)
         def get_a_test_layer( activation, batch_first=False):
             d_model = 4
             nhead = 2
@@ -267,6 +267,7 @@ class TestNN(NNTestCase):
                     cm = torch.no_grad()
                 with cm:
                     _test(batch_first, training)
+        torch.set_default_dtype(torch.float)
 
 
 # instantiate_parametrized_tests(TestNN)

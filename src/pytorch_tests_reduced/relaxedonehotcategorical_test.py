@@ -76,7 +76,6 @@ from ..utils.timer_wrapper import pytorch_op_timer
 
 # TODO: remove this global setting
 # Distributions tests use double as the default dtype
-torch.set_default_dtype(torch.double)
 
 
 # load_tests from torch.testing._internal.common_utils is used to automatically filter tests for
@@ -152,6 +151,12 @@ class DistributionsTestCase(TestCase):
 class TestDistributions(DistributionsTestCase):
     _do_cuda_memory_leak_check = True
     _do_cuda_non_default_stream = True
+
+    def setUp(self):
+        torch.set_default_dtype(torch.double)
+
+    def tearDown(self):
+        torch.set_default_dtype(torch.float)
 
     @unittest.skipIf(not TEST_NUMPY, "NumPy not found")
     def _check_sampler_discrete(self, torch_dist, ref_dist, message,
@@ -238,6 +243,7 @@ class TestDistributions(DistributionsTestCase):
     def test_argmax_relaxed_categorical(self, device):
         set_rng_seed(0)  # see Note [Randomized statistical tests]
 
+        torch.set_default_dtype(torch.double)
         class ArgMax(object):
             def __init__(self, dist):
                 self.dist = dist
@@ -270,6 +276,7 @@ class TestDistributions(DistributionsTestCase):
                 dist = RelaxedOneHotCategorical(1e10, probs)
             s = dist.rsample()
             self.assertEqual(equal_probs, s)
+        torch.set_default_dtype(torch.float)
 
     def _test_discrete_distribution_mode(self, dist, sanitized_mode, batch_isfinite):
         # We cannot easily check the mode for discrete distributions, but we can look left and right
@@ -315,6 +322,7 @@ class TestDistributions(DistributionsTestCase):
         self.assertTrue(ordering[batch_isfinite].all())
 
     def test_mode(self, device):
+        torch.set_default_dtype(torch.double)
         discrete_distributions = (
             Bernoulli, Binomial, Categorical, Geometric, NegativeBinomial, OneHotCategorical, Poisson,
         )
@@ -350,6 +358,7 @@ class TestDistributions(DistributionsTestCase):
                         dist, sanitized_mode, batch_isfinite)
 
                 self.assertFalse(dist.log_prob(sanitized_mode).isnan().any())
+        torch.set_default_dtype(torch.float)
 
 
 class TestConstraints(DistributionsTestCase):
@@ -361,6 +370,7 @@ class TestConstraints(DistributionsTestCase):
             OneHotCategoricalStraightThrough,
             RelaxedOneHotCategorical
         )
+        torch.set_default_dtype(torch.double)
 
         for Dist, params in EXAMPLES:
             for i, param in enumerate(params):
@@ -389,6 +399,7 @@ class TestConstraints(DistributionsTestCase):
                     message = '{} example {}/{} parameter {} = {}'.format(
                         Dist.__name__, i + 1, len(params), name, value)
                     self.assertTrue(constraint.check(value).all(), msg=message)
+        torch.set_default_dtype(torch.float)
 
 
 

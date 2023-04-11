@@ -23,7 +23,6 @@ import torch
 
 # TODO: remove this global setting
 # NN tests use double as the default dtype
-torch.set_default_dtype(torch.double)
 
 from torch._six import inf, nan
 import torch.autograd.forward_ad as fwAD
@@ -88,6 +87,7 @@ if TEST_NUMPY:
 class TestNN(NNTestCase):
     @onlyAcceleratedDeviceTypes
     def test_named_children(self, device):
+        torch.set_default_dtype(torch.double)
         l1 = nn.Linear(2, 2,device=device)
         l2 = nn.Linear(2, 2, device=device)
         l3 = nn.Linear(2, 2, device=device)
@@ -104,9 +104,11 @@ class TestNN(NNTestCase):
         s.add_module('layer4', l2)
         s.add_module('subnet', subnet)
         self.assertEqual(list(s.named_children()), [('layer1', l1), ('layer2', l2), ('subnet', subnet)])
+        torch.set_default_dtype(torch.float)
 
     @onlyAcceleratedDeviceTypes
     def test_named_modules(self, device):
+        torch.set_default_dtype(torch.double)
         class Net(nn.Module):
             def __init__(self):
                 super(Net, self).__init__()
@@ -133,9 +135,11 @@ class TestNN(NNTestCase):
             ('1', n), ('1.l1', l), ('1.l2', l),
             ('1.block', block), ('1.block.linear1', l1),
             ('1.block.linear2', l2)])
+        torch.set_default_dtype(torch.float)
 
     @onlyAcceleratedDeviceTypes
     def test_register_buffer_raises_error_if_attr_exists(self, device):
+        torch.set_default_dtype(torch.double)
         m = nn.Module()
         m.attribute_name = 5
         with self.assertRaises(KeyError):
@@ -150,9 +154,11 @@ class TestNN(NNTestCase):
         m.add_module('attribute_name', nn.Module())
         with self.assertRaises(KeyError):
             m.register_buffer('attribute_name', torch.rand(5, device=device))
+        torch.set_default_dtype(torch.float)
 
     @onlyAcceleratedDeviceTypes
     def test_register_parameter_raises_error_if_attr_exists(self, device):
+        torch.set_default_dtype(torch.double)
         m = nn.Module()
         m.attribute_name = 5
         with self.assertRaises(KeyError):
@@ -167,9 +173,11 @@ class TestNN(NNTestCase):
         m.add_module('attribute_name', nn.Module())
         with self.assertRaises(KeyError):
             m.register_parameter('attribute_name', nn.Parameter())
+        torch.set_default_dtype(torch.float)
 
     @onlyAcceleratedDeviceTypes
     def test_add_module_raises_error_if_attr_exists(self, device):
+        torch.set_default_dtype(torch.double)
         methods_to_test = ['add_module', 'register_module']
         for fn in methods_to_test:
             m = nn.Module()
@@ -186,9 +194,11 @@ class TestNN(NNTestCase):
             m.register_parameter('attribute_name', nn.Parameter())
             with self.assertRaises(KeyError):
                 getattr(m, fn)('attribute_name', nn.Module())
+        torch.set_default_dtype(torch.float)
 
     @onlyAcceleratedDeviceTypes
     def test_add_module(self, device):
+        torch.set_default_dtype(torch.double)
         methods_to_test = ['add_module', 'register_module']
         for fn in methods_to_test:
             l = nn.Linear(10, 20, device=device)
@@ -209,6 +219,7 @@ class TestNN(NNTestCase):
                                    lambda: getattr(net, fn)(1, l))
             self.assertRaisesRegex(TypeError, 'module name should be a string. Got NoneType',
                                    lambda: getattr(net, fn)(None, l))
+        torch.set_default_dtype(torch.float)
 
 instantiate_device_type_tests(TestNN, globals())
 

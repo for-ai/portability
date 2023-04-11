@@ -23,7 +23,6 @@ import torch
 
 # TODO: remove this global setting
 # NN tests use double as the default dtype
-torch.set_default_dtype(torch.double)
 
 from torch._six import inf, nan
 import torch.autograd.forward_ad as fwAD
@@ -91,6 +90,7 @@ class TestNN(NNTestCase):
 
 
     def test_RNN_cell_no_broadcasting(self, device):
+        torch.set_default_dtype(torch.double)
         def test(cell_module, input, hx, input_size, hidden_size):
             with pytorch_op_timer():
                 cell = cell_module(input_size, hidden_size)
@@ -116,10 +116,12 @@ class TestNN(NNTestCase):
         # Test input's input_size vs module's input_size broadcasting
         bad_input = torch.randn(3, 1)
         test_all(hidden_size, good_hx, good_hx, input_size, bad_input)
+        torch.set_default_dtype(torch.float)
 
     def test_LSTM_cell(self, device):
         # this is just a smoke test; these modules are implemented through
         # autograd so no Jacobian test is needed
+        torch.set_default_dtype(torch.double)
         for bias in (True, False):
             input = torch.randn(3, 10, device=device)
             hx = torch.randn(3, 20, device=device)
@@ -130,16 +132,20 @@ class TestNN(NNTestCase):
                 hx, cx = lstm(input, (hx, cx))
 
             (hx + cx).sum().backward()
+        torch.set_default_dtype(torch.float)
 
     def test_LSTM_cell_forward_input_size(self, device):
+        torch.set_default_dtype(torch.double)
         input = torch.randn(3, 11, device=device)
         hx = torch.randn(3, 20, device=device)
         cx = torch.randn(3, 20, device=device)
         with pytorch_op_timer():
             lstm = nn.LSTMCell(10, 20, device=device)
         self.assertRaises(Exception, lambda: lstm(input, (hx, cx)))
+        torch.set_default_dtype(torch.float)
 
     def test_LSTM_cell_forward_hidden_size(self, device):
+        torch.set_default_dtype(torch.double)
         input = torch.randn(3, 10, device=device)
         hx = torch.randn(3, 21, device=device)
         cx = torch.randn(3, 20, device=device)
@@ -147,6 +153,7 @@ class TestNN(NNTestCase):
             lstm = nn.LSTMCell(10, 20, device=device)
         self.assertRaises(Exception, lambda: lstm(input, (hx, cx)))
         self.assertRaises(Exception, lambda: lstm(input, (cx, hx)))
+        torch.set_default_dtype(torch.float)
 
 
     
@@ -157,6 +164,7 @@ class TestNNDeviceType(NNTestCase):
     def test_lstmcell_backward_only_one_output_grad(self, device, dtype):
         # checks that undefined gradients doen't hamper the backward
         # see #11872
+        torch.set_default_dtype(torch.double)
         with pytorch_op_timer():
             l = torch.nn.LSTMCell(2, 3).to(device).to(dtype=dtype)
         s = torch.randn(1, 2, device=device, dtype=dtype, requires_grad=True)
@@ -164,6 +172,7 @@ class TestNNDeviceType(NNTestCase):
             out = l(s)[i]
             out.sum().backward()
             self.assertFalse(s.grad is None or s.grad.abs().sum().item() == 0)
+        torch.set_default_dtype(torch.float)
 
     
 instantiate_device_type_tests(TestNNDeviceType, globals())

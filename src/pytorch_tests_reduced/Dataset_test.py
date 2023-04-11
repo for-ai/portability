@@ -8,7 +8,7 @@ from torch.testing._internal.common_utils import (TestCase, run_tests)
 
 
 from torch.testing._internal.common_device_type import onlyCUDA
-from ..utils.pytorch_device_decorators import onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+from ..utils.pytorch_device_decorators import onlyAcceleratedDeviceTypes, instantiate_device_type_tests, onlyNativeDeviceTypes
 from ..utils.timer_wrapper import pytorch_op_timer
 
 
@@ -29,7 +29,7 @@ class TestDictDataLoader(TestCase):
     def setUp(self):
         with pytorch_op_timer():
             self.dataset = DictDataset()
-
+    
     def test_sequential_batch(self, device):
         for persistent_workers in (False, True):
             if persistent_workers:

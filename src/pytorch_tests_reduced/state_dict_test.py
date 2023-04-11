@@ -23,7 +23,6 @@ import torch
 
 # TODO: remove this global setting
 # NN tests use double as the default dtype
-torch.set_default_dtype(torch.double)
 
 from torch._six import inf, nan
 import torch.autograd.forward_ad as fwAD
@@ -88,6 +87,7 @@ if TEST_NUMPY:
 class TestNN(NNTestCase):
 
     def test_state_dict(self, device):
+        torch.set_default_dtype(torch.double)
         l = nn.Linear(5, 5, device=device)
         block = nn.Module()
         block.conv = nn.Conv2d(3, 3, 3, bias=False, device=device)
@@ -153,6 +153,7 @@ class TestNN(NNTestCase):
         # Reference https://github.com/pytorch/pytorch/pull/75507#issuecomment-1110291545
         
         self.assertNotWarn(lambda: l.state_dict(destination=dict()), "Should not warn kwarg destination w/o _metadata")
+        torch.set_default_dtype(torch.float)
 
 def _hook_to_pickle(*args, **kwargs):
     pass
@@ -161,6 +162,7 @@ class TestStateDictHooks(TestCase):
 
     def test_load_state_dict_pre_hook(self, device):
 
+        torch.set_default_dtype(torch.double)
         m = nn.Linear(10, 10, device=device)
         with pytorch_op_timer():
             m_state_dict = m.state_dict()
@@ -189,8 +191,10 @@ class TestStateDictHooks(TestCase):
         m_load._register_load_state_dict_pre_hook(hook_with_module, True)
         m_load.load_state_dict(m_state_dict)
         self.assertEqual(2, hook_called)
+        torch.set_default_dtype(torch.float)
 
     def test_load_state_dict_module_pre_hook(self, device):
+        torch.set_default_dtype(torch.double)
         hook_called = 0
 
         # Test with module instance method as hook
@@ -256,8 +260,10 @@ class TestStateDictHooks(TestCase):
             )
             m.load_state_dict(state_dict)
             self.assertEqual(2, hook_called)
+        torch.set_default_dtype(torch.float)
 
     def test_load_state_dict_post_hook(self, device):
+        torch.set_default_dtype(torch.double)
         hook_called = 0
 
         class MyModule(nn.Module):
@@ -319,9 +325,11 @@ class TestStateDictHooks(TestCase):
         # explicitly ensure that the post hook clearned out incompatible_keys
         self.assertEqual([], ret.missing_keys)
         self.assertEqual([], ret.unexpected_keys)
+        torch.set_default_dtype(torch.float)
 
     @unittest.skipIf(IS_WINDOWS, "Tempfile permission issue on windows")
     def test_load_state_dict_post_hook_backward_compatibility(self, device):
+        torch.set_default_dtype(torch.double)
         def my_post_load_hook(mod, _):
             nonlocal called
             called = True
@@ -350,6 +358,7 @@ class TestStateDictHooks(TestCase):
             m.load_state_dict(sd)
             self.assertTrue(called)
 
+        torch.set_default_dtype(torch.float)
 
 instantiate_device_type_tests(TestNN, globals())
 instantiate_device_type_tests(TestStateDictHooks, globals())
