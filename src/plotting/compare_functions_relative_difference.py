@@ -17,18 +17,21 @@ def combine_function_tests(list):
 
 framework = "tensorflow"
 frameworkTitle = framework.capitalize()
-f = open("../" + framework + '_tpu.json')
+f = open("./tensorflow_timings/" + 'tpu_2.json')
 tpu_function_list = combine_function_tests(json.load(f))
-function_keys = tpu_function_list.keys()
 f.close()
-f = open("../" + framework + '_gpu.json')
+f = open("./tensorflow_timings/" + 'gpu.json')
 gpu_function_list = combine_function_tests(json.load(f))
 f.close()
-f = open("../" + framework + '_cpu.json')
+f = open("./tensorflow_timings/" + 'cpu_vm.json')
 cpu_function_list = combine_function_tests(json.load(f))
+function_keys = cpu_function_list.keys()
 f.close()
 
 
+for key in function_keys:
+     if len(gpu_function_list[key]["operations"]) != len(cpu_function_list[key]["operations"]) or len(tpu_function_list[key]["operations"]) != len(cpu_function_list[key]["operations"]) or len(gpu_function_list[key]["operations"]) != len(tpu_function_list[key]["operations"]):
+        print("NON MATCHING KEYS", key, len(cpu_function_list[key]["operations"]), len(gpu_function_list[key]["operations"]), len(tpu_function_list[key]["operations"]))
 # function_keys = set(function_keys.map(lambda x: x.split(":")[0]))
 for key in function_keys:
     data = {'Function': [], 'Time': []}
@@ -60,7 +63,7 @@ for key in function_keys:
     f, ax = plt.subplots(figsize=(25, 15))
 
 
-    ax.set(yscale="symlog", ylim=(-10000, 100000), xlabel="Function Name",
+    ax.set(yscale="linear", ylim=(-3000, 3000), xlabel="Function Name",
         ylabel="Time taken for " + framework + " on TPU")
 
     # for i in ax.containers:
@@ -77,7 +80,7 @@ for key in function_keys:
     plt.xlabel('Device')
     plt.ylabel('Time (milliseconds)')
 
-    plt.savefig("tensorflow_relative_plots/" + key.removesuffix("_test.py") + '_log_plot.png')
+    plt.savefig("tensorflow_relative_linear_vm_plots/" + key.removesuffix("_test.py") + '_plot.png')
     print(key)
     plt.show()
     # break
