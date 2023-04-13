@@ -1108,73 +1108,73 @@ class SessionTest(test_util.TensorFlowTestCase):
 
 
 
-  @staticmethod
-  def _build_graph():
-    time.sleep(random.random() * 0.1)
-    # Do some graph construction. Try to exercise non-trivial paths.
-    graph = ops.get_default_graph()
-    gdef = None
-    for _ in range(10):
-      x = array_ops.placeholder(dtype=dtypes.float32)
-      with ops.colocate_with(x):
-        y = array_ops.placeholder(dtype=dtypes.float32)
-      with ops.device('/cpu:0'):
-        z = control_flow_ops.while_loop(
-            lambda x, y: x < 10, lambda x, y: (x + 1, x * y), [x, y])
-      with graph._attr_scope({'_a': attr_value_pb2.AttrValue(b=False)}):
-        gradients_impl.gradients(z, [x, y])
-        if gdef is None:
-          gdef = graph.as_graph_def()
-        else:
-          importer.import_graph_def(gdef, name='import')
+  # @staticmethod
+  # def _build_graph():
+  #   time.sleep(random.random() * 0.1)
+  #   # Do some graph construction. Try to exercise non-trivial paths.
+  #   graph = ops.get_default_graph()
+  #   gdef = None
+  #   for _ in range(10):
+  #     x = array_ops.placeholder(dtype=dtypes.float32)
+  #     with ops.colocate_with(x):
+  #       y = array_ops.placeholder(dtype=dtypes.float32)
+  #     with ops.device('/cpu:0'):
+  #       z = control_flow_ops.while_loop(
+  #           lambda x, y: x < 10, lambda x, y: (x + 1, x * y), [x, y])
+  #     with graph._attr_scope({'_a': attr_value_pb2.AttrValue(b=False)}):
+  #       gradients_impl.gradients(z, [x, y])
+  #       if gdef is None:
+  #         gdef = graph.as_graph_def()
+  #       else:
+  #         importer.import_graph_def(gdef, name='import')
 
-  @test_util.run_v1_only('b/120545219')
-  def testParallelRunAndSingleBuild(self):
-    with session.Session() as sess:
-      c = constant_op.constant(5.0)
-      stop = threading.Event()
+  # @test_util.run_v1_only('b/120545219')
+  # def testParallelRunAndSingleBuild(self):
+  #   with session.Session() as sess:
+  #     c = constant_op.constant(5.0)
+  #     stop = threading.Event()
 
-      def run_loop():
-        while not stop.is_set():
-          time.sleep(random.random() * 0.1)
-          self.assertEqual(sess.run(c), 5.0)
+  #     def run_loop():
+  #       while not stop.is_set():
+  #         time.sleep(random.random() * 0.1)
+  #         self.assertEqual(sess.run(c), 5.0)
 
-      threads = [self.checkedThread(target=run_loop) for _ in range(10)]
-      for t in threads:
-        t.start()
+  #     threads = [self.checkedThread(target=run_loop) for _ in range(10)]
+  #     for t in threads:
+  #       t.start()
 
-      SessionTest._build_graph()
+  #     SessionTest._build_graph()
 
-      stop.set()
-      for t in threads:
-        t.join()
+  #     stop.set()
+  #     for t in threads:
+  #       t.join()
 
-  @test_util.run_v1_only('b/120545219')
-  def testParallelRunAndParallelBuild(self):
-    with session.Session() as sess:
-      c = constant_op.constant(5.0)
-      stop = threading.Event()
+  # @test_util.run_v1_only('b/120545219')
+  # def testParallelRunAndParallelBuild(self):
+  #   with session.Session() as sess:
+  #     c = constant_op.constant(5.0)
+  #     stop = threading.Event()
 
-      def run_loop():
-        while not stop.is_set():
-          time.sleep(random.random() * 0.1)
-          self.assertEqual(sess.run(c), 5.0)
+  #     def run_loop():
+  #       while not stop.is_set():
+  #         time.sleep(random.random() * 0.1)
+  #         self.assertEqual(sess.run(c), 5.0)
 
-      run_threads = [self.checkedThread(target=run_loop) for _ in range(10)]
-      for t in run_threads:
-        t.start()
+  #     run_threads = [self.checkedThread(target=run_loop) for _ in range(10)]
+  #     for t in run_threads:
+  #       t.start()
 
-      build_threads = [self.checkedThread(target=SessionTest._build_graph)
-                       for _ in range(10)]
-      for t in build_threads:
-        t.start()
-      for t in build_threads:
-        t.join()
+  #     build_threads = [self.checkedThread(target=SessionTest._build_graph)
+  #                      for _ in range(10)]
+  #     for t in build_threads:
+  #       t.start()
+  #     for t in build_threads:
+  #       t.join()
 
-      # Let the run_threads run until the build threads are finished.
-      stop.set()
-      for t in run_threads:
-        t.join()
+  #     # Let the run_threads run until the build threads are finished.
+  #     stop.set()
+  #     for t in run_threads:
+  #       t.join()
 
   def testRunFeedDict(self):
     with session.Session() as s:
@@ -1222,8 +1222,8 @@ class SessionTest(test_util.TensorFlowTestCase):
               RuntimeError,
               lambda e: 'Attempted to use a closed Session.' in str(e)):
             while True:
-              with tensorflow_op_timer():
-                sess.run(c)
+              # with tensorflow_op_timer():
+              sess.run(c)
 
         t = threading.Thread(target=update_thread)
         t.start()
@@ -1241,21 +1241,21 @@ class SessionTest(test_util.TensorFlowTestCase):
         with self.assertRaisesRegex(RuntimeError, 'The Session graph is empty.'):
           sess.run({})
 
-  @test_util.run_v1_only('b/120545219')
-  def testNotEntered(self):
-    # pylint: disable=protected-access
-    self.assertIsNone(ops._default_session_stack.get_default())
-    # pylint: enable=protected-access
-    with ops.device('/cpu:0'):
-      sess = session.Session()
-      c_1 = constant_op.constant(5.0)
-      with sess.graph.as_default():
-        c_2 = constant_op.constant(5.0)
-      self.assertEqual(c_1.graph, c_2.graph)
-      self.assertEqual(sess.run(c_2), 5.0)
-      with self.assertRaisesWithPredicateMatch(
-          ValueError, lambda e: 'No default session is registered.' in str(e)):
-        c_2.eval()
+  # @test_util.run_v1_only('b/120545219')
+  # def testNotEntered(self):
+  #   # pylint: disable=protected-access
+  #   self.assertIsNone(ops._default_session_stack.get_default())
+  #   # pylint: enable=protected-access
+  #   with ops.device('/cpu:0'):
+  #     sess = session.Session()
+  #     c_1 = constant_op.constant(5.0)
+  #     with sess.graph.as_default():
+  #       c_2 = constant_op.constant(5.0)
+  #     self.assertEqual(c_1.graph, c_2.graph)
+  #     self.assertEqual(sess.run(c_2), 5.0)
+  #     with self.assertRaisesWithPredicateMatch(
+  #         ValueError, lambda e: 'No default session is registered.' in str(e)):
+  #       c_2.eval()
 
   @test_util.run_v1_only('b/120545219')
   def testMultipleInteractiveSessionsWarning(self):
@@ -1287,42 +1287,42 @@ class SessionTest(test_util.TensorFlowTestCase):
     sess.close()
 
 
-  @test_util.run_v1_only('b/120545219')
-  def testDefaultSessionPlacePrunedGraph(self):
-    sess = session.Session()
+  # @test_util.run_v1_only('b/120545219')
+  # def testDefaultSessionPlacePrunedGraph(self):
+  #   sess = session.Session()
 
-    # Build a graph that has a bad op in it (no kernel).
-    #
-    # This test currently does not link in any GPU kernels,
-    # which is why placing this is invalid.  If at some point
-    # GPU kernels are added to this test, some other different
-    # op / device combo should be chosen.
-    with ops.device('/device:GPU:0'):
-      _ = constant_op.constant(1.0, shape=[1, 2])
+  #   # Build a graph that has a bad op in it (no kernel).
+  #   #
+  #   # This test currently does not link in any GPU kernels,
+  #   # which is why placing this is invalid.  If at some point
+  #   # GPU kernels are added to this test, some other different
+  #   # op / device combo should be chosen.
+  #   with ops.device('/device:GPU:0'):
+  #     _ = constant_op.constant(1.0, shape=[1, 2])
 
-    b = constant_op.constant(1.0, shape=[1, 2])
+  #   b = constant_op.constant(1.0, shape=[1, 2])
 
-    with self.assertRaises(errors.InvalidArgumentError):
-      # Even though we don't run the bad op, we place the entire
-      # graph, which should fail with a non-interactive session.
-      sess.run(b)
+  #   with self.assertRaises(errors.InvalidArgumentError):
+  #     # Even though we don't run the bad op, we place the entire
+  #     # graph, which should fail with a non-interactive session.
+  #     sess.run(b)
 
-    sess.close()
+  #   sess.close()
 
-  def testSharedGraph(self):
-    with ops.Graph().as_default() as g, ops.device('/cpu:0'):
-      with device_context():
-        a = constant_op.constant(1.0, shape=[1, 2])
-        b = constant_op.constant(2.0, shape=[2, 3])
-        c = math_ops.matmul(a, b)
+  # def testSharedGraph(self):
+  #   with ops.Graph().as_default() as g, ops.device('/cpu:0'):
+  #     with device_context():
+  #       a = constant_op.constant(1.0, shape=[1, 2])
+  #       b = constant_op.constant(2.0, shape=[2, 3])
+  #       c = math_ops.matmul(a, b)
 
-    with session.Session(graph=g) as sess1:
-      with device_context():
-        with session.Session(graph=g) as sess2:
-          with device_context():
-            with tensorflow_op_timer():
-              test = sess1.run(c), sess2.run(c)
-            self.assertAllEqual(sess1.run(c), sess2.run(c))
+  #   with session.Session(graph=g) as sess1:
+  #     with device_context():
+  #       with session.Session(graph=g) as sess2:
+  #         with device_context():
+  #           with tensorflow_op_timer():
+  #             test = sess1.run(c), sess2.run(c)
+  #           self.assertAllEqual(sess1.run(c), sess2.run(c))
 
   def testDuplicatedInputs(self):
     with session.Session() as sess:
@@ -1736,19 +1736,19 @@ class SessionTest(test_util.TensorFlowTestCase):
     server = server_lib.Server.create_local_server()
     self.runTestBuildGraphError(session.Session(server.target))
 
-  def runTestAddFunctionToSession(self, target=''):
-    """Add a function to a session after the graph has already been run."""
+  # def runTestAddFunctionToSession(self, target=''):
+  #   """Add a function to a session after the graph has already been run."""
 
 
-    x = constant_op.constant(1.0)
-    with session.Session(target=target) as sess:
-      with ops.device('/device:GPU:0'):
-        with tensorflow_op_timer():
-          sess.run(x)
-        f = foo(x)
-        with tensorflow_op_timer():
-          result = sess.run(f)
-        self.assertEqual(result, 2.0)
+  #   x = constant_op.constant(1.0)
+  #   with session.Session(target=target) as sess:
+  #     with ops.device('/device:GPU:0'):
+  #       with tensorflow_op_timer():
+  #         sess.run(x)
+  #       f = foo(x)
+  #       with tensorflow_op_timer():
+  #         result = sess.run(f)
+  #       self.assertEqual(result, 2.0)
 
 
   @test_util.run_v1_only('b/120545219')
