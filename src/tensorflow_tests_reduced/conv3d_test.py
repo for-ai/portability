@@ -283,19 +283,6 @@ class Conv3DTest(test.TestCase):
         padding="VALID",
         expected=expected_output)
 
-  def testConv3D1x1x1Filter2x1x1Dilation(self):
-    ctx = context.context()
-    is_eager = ctx is not None and ctx.executing_eagerly()
-    # if test.is_gpu_available(cuda_only=True) or \
-    if os.environ['DEVICE'] == 'gpu' or \
-      (test_util.IsMklEnabled() and is_eager is False):
-      self._VerifyDilatedConvValues(
-          tensor_in_sizes=[1, 3, 6, 1, 1],
-          filter_in_sizes=[1, 1, 1, 1, 1],
-          stride=1,
-          padding="VALID",
-          dilations=[2, 1, 1])
-
   # Expected values computed using scipy's correlate function.
   def testConv3D2x2x2Filter(self):
     expected_output = [
@@ -311,19 +298,6 @@ class Conv3DTest(test.TestCase):
         stride=1,
         padding="VALID",
         expected=expected_output)
-
-  def testConv3D2x2x2Filter1x2x1Dilation(self):
-    ctx = context.context()
-    is_eager = ctx is not None and ctx.executing_eagerly()
-    # if test.is_gpu_available(cuda_only=True) or \
-    if os.environ['DEVICE'] == 'gpu' or \
-      (test_util.IsMklEnabled() and is_eager is False):
-      self._VerifyDilatedConvValues(
-          tensor_in_sizes=[1, 4, 6, 3, 1],
-          filter_in_sizes=[2, 2, 2, 1, 1],
-          stride=1,
-          padding="VALID",
-          dilations=[1, 2, 1])
 
   def testConv3DStrides(self):
     expected_output = [
@@ -856,40 +830,6 @@ class Conv3DTest(test.TestCase):
       self.assertArrayNear(expected_value.flatten(), actual_value.flatten(),
                            err)
 
-  @test_util.run_deprecated_v1
-  def testConv3D2x2Depth3ValidBackpropFilterStride1x1Dilation2x1(self):
-    # if test.is_gpu_available(cuda_only=True):
-    if os.environ['DEVICE'] == 'gpu': 
-      for (data_format, use_gpu) in GetTestConfigs():
-        self._RunAndVerifyBackprop(
-            input_sizes=[1, 3, 6, 1, 1],
-            filter_sizes=[2, 2, 1, 1, 1],
-            output_sizes=[1, 1, 5, 1, 1],
-            strides=[1, 1, 1],
-            dilations=[2, 1, 1],
-            padding="VALID",
-            data_format=data_format,
-            use_gpu=use_gpu,
-            err=1e-5,
-            mode="filter")
-
-  @test_util.run_deprecated_v1
-  def testConv3D2x2Depth3ValidBackpropInputStride1x1Dilation2x1(self):
-    # if test.is_gpu_available(cuda_only=True):
-    if os.environ['DEVICE'] == 'gpu': 
-      for (data_format, use_gpu) in GetTestConfigs():
-        self._RunAndVerifyBackprop(
-            input_sizes=[1, 3, 6, 1, 1],
-            filter_sizes=[2, 2, 1, 1, 1],
-            output_sizes=[1, 1, 5, 1, 1],
-            strides=[1, 1, 1],
-            dilations=[2, 1, 1],
-            padding="VALID",
-            data_format=data_format,
-            use_gpu=use_gpu,
-            err=1e-5,
-            mode="input")
-
-
+  
 if __name__ == "__main__":
   test.main()

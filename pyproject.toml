@@ -33,6 +33,10 @@ tensorflow = "~2.12.0"
 tensorflow = "~2.12.0"
 cloud-tpu-client = "^0.10"
 
+[tool.poetry.group.torch.dependencies]
+torch = "~1.12.0"
+
+
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.11"
@@ -52,8 +56,7 @@ cmake = "^3.13.3"
 pytest-xdist = "^3.2.1"
 pytest-forked = "^1.6.0"
 portpicker = "^1.5.2"
-detect-test-pollution = {path="/Users/frasermince/Programming/detect-test-pollution", develop = true}
-torch = "~1.12.0"
+scipy = "^1.10.1"
 
 
 [tool.poetry.dev-dependencies]
