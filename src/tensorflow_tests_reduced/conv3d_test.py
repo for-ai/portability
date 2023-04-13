@@ -15,7 +15,7 @@
 """Functional tests for 3d convolutional operations."""
 
 import math
-
+import os
 import numpy as np
 
 from tensorflow.python.framework import constant_op
@@ -40,11 +40,12 @@ def GetTestConfigs():
     all the valid test configs as tuples of data_format and use_gpu.
   """
   test_configs = [("NDHWC", False), ("NDHWC", True)]
-  if test.is_gpu_available(cuda_only=True):
-    # "NCDHW" format is only supported on CUDA.
-    test_configs += [("NCDHW", True)]
+  # if test.is_gpu_available(cuda_only=True):
+  # if os.environ['DEVICE'] == 'gpu': 
+  #   # "NCDHW" format is only supported on CUDA.
+  #   test_configs += [("NCDHW", True)]
+  print("***config", test_configs) 
   return test_configs
-
 
 @test_util.run_all_without_tensor_float_32(
     "Tests Conv3d, which in some cases is implemented with a matmul. With "
@@ -116,8 +117,8 @@ class Conv3DTest(test.TestCase):
       with self.cached_session() as sess:
         values = self.evaluate(results)
         for value in values:
-          print("expected = ", expected)
-          print("actual = ", value)
+          # print("expected = ", expected)
+          # print("actual = ", value)
           self.assertAllCloseAccordingToType(expected, value.flatten())
 
   def _ComputeReferenceDilatedConv(self, tensor_in_sizes, filter_in_sizes,
@@ -185,8 +186,8 @@ class Conv3DTest(test.TestCase):
           expected_values = self.evaluate(expected_results)
           computed_values = self.evaluate(computed_results)
           for e_value, c_value in zip(expected_values, computed_values):
-            print("expected = ", e_value)
-            print("actual = ", c_value)
+            # print("expected = ", e_value)
+            # print("actual = ", c_value)
             self.assertAllClose(
                 e_value.flatten(), c_value.flatten(), atol=tolerance, rtol=1e-6)
 
@@ -285,7 +286,8 @@ class Conv3DTest(test.TestCase):
   def testConv3D1x1x1Filter2x1x1Dilation(self):
     ctx = context.context()
     is_eager = ctx is not None and ctx.executing_eagerly()
-    if test.is_gpu_available(cuda_only=True) or \
+    # if test.is_gpu_available(cuda_only=True) or \
+    if os.environ['DEVICE'] == 'gpu' or \
       (test_util.IsMklEnabled() and is_eager is False):
       self._VerifyDilatedConvValues(
           tensor_in_sizes=[1, 3, 6, 1, 1],
@@ -313,7 +315,8 @@ class Conv3DTest(test.TestCase):
   def testConv3D2x2x2Filter1x2x1Dilation(self):
     ctx = context.context()
     is_eager = ctx is not None and ctx.executing_eagerly()
-    if test.is_gpu_available(cuda_only=True) or \
+    # if test.is_gpu_available(cuda_only=True) or \
+    if os.environ['DEVICE'] == 'gpu' or \
       (test_util.IsMklEnabled() and is_eager is False):
       self._VerifyDilatedConvValues(
           tensor_in_sizes=[1, 4, 6, 3, 1],
@@ -565,7 +568,7 @@ class Conv3DTest(test.TestCase):
           # gradients, since fp16/bf16 numerical gradients are too imprecise.
           err = np.fabs(jacob_t - reference_jacob_t).max()
 
-      print("conv3d gradient error = ", err)
+      # print("conv3d gradient error = ", err)
       self.assertLess(err, tolerance)
 
   def ConstructAndTestGradient(self, **kwargs):
@@ -848,14 +851,15 @@ class Conv3DTest(test.TestCase):
         expected_value = self.evaluate(expected_grad)
         self.assertShapeEqual(actual_value, actual_grad)
         self.assertShapeEqual(expected_value, expected_grad)
-      print("expected = ", expected_value)
-      print("actual = ", actual_value)
+      # print("expected = ", expected_value)
+      # print("actual = ", actual_value)
       self.assertArrayNear(expected_value.flatten(), actual_value.flatten(),
                            err)
 
   @test_util.run_deprecated_v1
   def testConv3D2x2Depth3ValidBackpropFilterStride1x1Dilation2x1(self):
-    if test.is_gpu_available(cuda_only=True):
+    # if test.is_gpu_available(cuda_only=True):
+    if os.environ['DEVICE'] == 'gpu': 
       for (data_format, use_gpu) in GetTestConfigs():
         self._RunAndVerifyBackprop(
             input_sizes=[1, 3, 6, 1, 1],
@@ -871,7 +875,8 @@ class Conv3DTest(test.TestCase):
 
   @test_util.run_deprecated_v1
   def testConv3D2x2Depth3ValidBackpropInputStride1x1Dilation2x1(self):
-    if test.is_gpu_available(cuda_only=True):
+    # if test.is_gpu_available(cuda_only=True):
+    if os.environ['DEVICE'] == 'gpu': 
       for (data_format, use_gpu) in GetTestConfigs():
         self._RunAndVerifyBackprop(
             input_sizes=[1, 3, 6, 1, 1],
