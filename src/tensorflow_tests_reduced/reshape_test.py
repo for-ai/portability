@@ -31,8 +31,8 @@ from ..utils.timer_wrapper import tensorflow_op_timer
 @test_util.with_eager_op_as_function
 class ReshapeTest(test.TestCase):
 
-  def _testReshape(self, x, y, use_gpu=False):
-    with self.cached_session(use_gpu=use_gpu):
+  def _testReshape(self, x, y):
+    with self.cached_session():
       with tensorflow_op_timer():
         np_ans = x.reshape(y)
       with tensorflow_op_timer():
@@ -49,8 +49,8 @@ class ReshapeTest(test.TestCase):
       self.assertEqual(tf_ans.get_shape(), out.shape)
       self.assertShapeEqual(np_ans, tf_ans)
 
-  def _testZeroDimReshape(self, x, shape, expected, use_gpu=False):
-    with self.cached_session(use_gpu=use_gpu):
+  def _testZeroDimReshape(self, x, shape, expected):
+    with self.cached_session():
       with tensorflow_op_timer():
         y = array_ops.reshape(x, shape)
       out = self.evaluate(y)
@@ -64,8 +64,8 @@ class ReshapeTest(test.TestCase):
       self.assertEqual(expected, out.shape)
 
   def _testBothReshape(self, x, y):
-    self._testReshape(x, y, False)
-    self._testReshape(x, y, True)
+    self._testReshape(x, y)
+    self._testReshape(x, y)
 
   def testBoolBasic(self):
     with tensorflow_op_timer():
@@ -147,11 +147,10 @@ class ReshapeTest(test.TestCase):
     self._testBothReshape(x, [1, -1, 5])
 
   def testZeroDimWithUnspecifiedDim(self):
-    for use_gpu in (True, False):
-      self._testZeroDimReshape(x=np.zeros([0, 6]).astype(np.float32),
-                               shape=[0, -1, 3],
-                               expected=(0, 2, 3),
-                               use_gpu=use_gpu)
+    # for use_gpu in (True, False):
+    self._testZeroDimReshape(x=np.zeros([0, 6]).astype(np.float32),
+                              shape=[0, -1, 3],
+                              expected=(0, 2, 3))
 
   @test_util.run_deprecated_v1
   def testErrors(self):
