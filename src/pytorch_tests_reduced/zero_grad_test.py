@@ -61,7 +61,6 @@ from ..utils.timer_wrapper import pytorch_op_timer
 
 # TODO: remove this global setting
 # NN tests use double as the default dtype
-torch.set_default_dtype(torch.double)
 
 from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceleratedDeviceTypes, instantiate_device_type_tests
 
@@ -91,6 +90,7 @@ class TestNN(NNTestCase):
 
     # @onlyAcceleratedDeviceTypes
     def test_zero_grad(self, device):
+        torch.set_default_dtype(torch.double)
         i = torch.randn(2, 5, requires_grad=True, device=device)
         module = nn.Linear(5, 5, device=device)
         for p in module.parameters():
@@ -132,6 +132,7 @@ class TestNN(NNTestCase):
         with pytorch_op_timer():
             module.zero_grad(set_to_none=True)
         self.assertIsNone(module.weight.grad)
+        torch.set_default_dtype(torch.float)
 
 
 instantiate_device_type_tests(TestNN, globals())

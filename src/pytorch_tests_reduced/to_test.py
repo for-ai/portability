@@ -41,7 +41,6 @@ from ..utils.pytorch_device_decorators import onlyNativeDeviceTypes, onlyAcceler
 from ..utils.timer_wrapper import pytorch_op_timer
 # TODO: remove this global setting
 # NN tests use double as the default dtype
-torch.set_default_dtype(torch.double)
 
 
 AMPERE_OR_ROCM = TEST_WITH_ROCM or tf32_is_not_fp32()
@@ -76,6 +75,7 @@ class TestNN(NNTestCase):
 
     @dtypes(torch.float32)
     def test_to(self, device, dtype):
+        torch.set_default_dtype(torch.double)
         m = nn.Linear(3, 5)
         with pytorch_op_timer():
             m_cpu = m.to('cpu')
@@ -109,6 +109,7 @@ class TestNN(NNTestCase):
             with pytorch_op_timer():
                 result = m2.to(dtype=torch.float64)
             self.assertEqual(m2.double(), result)
+        torch.set_default_dtype(torch.float)
 
 
 instantiate_device_type_tests(TestNN, globals())

@@ -62,11 +62,11 @@ from ..utils.timer_wrapper import pytorch_op_timer
 
 # TODO: remove this global setting
 # NN tests use double as the default dtype
-torch.set_default_dtype(torch.double)
 
 
 class TestNN(NNTestCase):
     def test_to(self, device):
+        torch.set_default_dtype(torch.double)
         with pytorch_op_timer():
             m = nn.Linear(3, 5).to(device)
         self.assertIs(m, m.to('cpu'))
@@ -83,6 +83,7 @@ class TestNN(NNTestCase):
         #         self.assertIs(m2, m2.to(dtype=torch.float32))
         #         self.assertEqual(m2.double(), m2.to(dtype=torch.float64))
 
+        torch.set_default_dtype(torch.float)
 
 instantiate_device_type_tests(TestNN, globals())
 

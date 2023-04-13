@@ -23,7 +23,6 @@ import torch
 
 # TODO: remove this global setting
 # NN tests use double as the default dtype
-torch.set_default_dtype(torch.double)
 
 from torch._six import inf, nan
 import torch.autograd.forward_ad as fwAD
@@ -90,6 +89,7 @@ class TestNN(NNTestCase):
     _do_cuda_non_default_stream = True
 
     def test_KLDivLoss_batch_mean(self, device):
+        torch.set_default_dtype(torch.double)
         input_shape = (2, 5)
         log_prob1 = F.log_softmax(torch.randn(input_shape, device=device), 1).to(device)
         prob2 = F.softmax(torch.randn(input_shape, device=device), 1).to(device)
@@ -101,8 +101,10 @@ class TestNN(NNTestCase):
         expected = loss_none_reduce / input_shape[0]
 
         self.assertEqual(l, expected)
+        torch.set_default_dtype(torch.float)
 
     def test_KLDivLoss_batch_mean_log_target(self, device):
+        torch.set_default_dtype(torch.double)
         input_shape = (2, 5)
         log_prob1 = F.log_softmax(torch.randn(input_shape, device=device), 1).to(device)
         log_prob2 = F.log_softmax(torch.randn(input_shape, device=device), 1).to(device)
@@ -114,6 +116,7 @@ class TestNN(NNTestCase):
         expected = loss_none_reduce / input_shape[0]
 
         self.assertEqual(l, expected)
+        torch.set_default_dtype(torch.float)
 
 instantiate_device_type_tests(TestNN, globals())
 

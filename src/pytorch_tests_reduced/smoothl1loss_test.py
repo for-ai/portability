@@ -62,7 +62,6 @@ from ..utils.timer_wrapper import pytorch_op_timer
 
 # TODO: remove this global setting
 # NN tests use double as the default dtype
-torch.set_default_dtype(torch.double)
 
 
 AMPERE_OR_ROCM = TEST_WITH_ROCM or tf32_is_not_fp32()
@@ -87,6 +86,7 @@ if TEST_NUMPY:
 
 class TestNNDeviceType(NNTestCase):
     def test_nn_scalars_reductions(self, device):
+        torch.set_default_dtype(torch.double)
         # One off tests to ensure scalars from nn.yaml are properly applied
         def verify_reduction_scalars(input, reduction, output):
             if reduction != 'none' or input.dim() == 0:
@@ -110,9 +110,11 @@ class TestNNDeviceType(NNTestCase):
                         m = module(reduction=reduction)
                     output = m(sigmoid(input), target)
                     verify_reduction_scalars(input, reduction, output)
+        torch.set_default_dtype(torch.float)
 
     @onlyNativeDeviceTypes
     def test_smooth_l1_loss_vs_huber_loss(self, device):
+        torch.set_default_dtype(torch.double)
         def _make_test_tensor(shape, contiguous=True):
             if contiguous:
                 test_tensor = torch.randn(shape, device=device)
@@ -181,9 +183,11 @@ class TestNNDeviceType(NNTestCase):
         test_equal_when_beta_is_one()
         test_unequal_when_beta_is_less_than_one()
         test_unequal_when_beta_is_greater_than_one()
+        torch.set_default_dtype(torch.float)
 
     # @onlyCPU
     def test_smooth_l1_loss_bfloat16(self, device):
+        torch.set_default_dtype(torch.double)
         def test_dtype(fn, input, target, dtype):
             input = input.detach().clone().to(dtype=dtype).requires_grad_(True)
             input2 = input.detach().clone().float().requires_grad_(True)
@@ -207,6 +211,7 @@ class TestNNDeviceType(NNTestCase):
             x = torch.randn(shape, device=device, requires_grad=True)
             t = torch.randn(shape, device=device)
             test_dtype(func(device), x, t, torch.bfloat16)
+        torch.set_default_dtype(torch.float)
 
 
 instantiate_device_type_tests(TestNNDeviceType, globals())

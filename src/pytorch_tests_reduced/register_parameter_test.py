@@ -23,7 +23,6 @@ import torch
 
 # TODO: remove this global setting
 # NN tests use double as the default dtype
-torch.set_default_dtype(torch.double)
 
 from torch._six import inf, nan
 import torch.autograd.forward_ad as fwAD
@@ -89,6 +88,7 @@ if TEST_NUMPY:
 class TestNN(NNTestCase):
   
     def test_register_buffer_raises_error_if_attr_exists(self):
+        torch.set_default_dtype(torch.double)
         m = nn.Module()
         m.attribute_name = 5
         with self.assertRaises(KeyError):
@@ -104,16 +104,20 @@ class TestNN(NNTestCase):
         m.add_module('attribute_name', nn.Module())
         with self.assertRaises(KeyError):
             m.register_buffer('attribute_name', torch.rand(5))
+        torch.set_default_dtype(torch.float)
 
     def test_register_parameter_raises_error_if_name_is_not_string(self):
+        torch.set_default_dtype(torch.double)
         m = nn.Module()
         expected_error = 'parameter name should be a string. Got '
         with self.assertRaisesRegex(TypeError, expected_error + 'int'):
             m.register_parameter(1, nn.Parameter())
         with self.assertRaisesRegex(TypeError, expected_error + 'NoneType'):
             m.register_parameter(None, nn.Parameter())
+        torch.set_default_dtype(torch.float)
 
     def test_register_parameter_raises_error_if_attr_exists(self):
+        torch.set_default_dtype(torch.double)
         m = nn.Module()
         m.attribute_name = 5
         with self.assertRaises(KeyError):
@@ -128,8 +132,10 @@ class TestNN(NNTestCase):
         m.add_module('attribute_name', nn.Module())
         with self.assertRaises(KeyError):
             m.register_parameter('attribute_name', nn.Parameter())
+        torch.set_default_dtype(torch.float)
 
     def test_register_parameter_allows_overwriting_with_same_name(self, device):
+        torch.set_default_dtype(torch.double)
         m = nn.Module()
         param1 = nn.Parameter(torch.rand(5))
         param2 = nn.Parameter(param1.data + 5)
@@ -143,8 +149,10 @@ class TestNN(NNTestCase):
         with pytorch_op_timer():
             m.register_parameter('param_name', param3)
         self.assertEqual(m.param_name, param3)
+        torch.set_default_dtype(torch.float)
 
     def test_add_module_raises_error_if_attr_exists(self):
+        torch.set_default_dtype(torch.double)
         methods_to_test = ['add_module', 'register_module']
         for fn in methods_to_test:
             m = nn.Module()
@@ -163,6 +171,7 @@ class TestNN(NNTestCase):
                 m.register_parameter('attribute_name', nn.Parameter())
             with self.assertRaises(KeyError):
                 getattr(m, fn)('attribute_name', nn.Module())
+        torch.set_default_dtype(torch.float)
 
 instantiate_device_type_tests(TestNN, globals())
 

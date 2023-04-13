@@ -55,15 +55,15 @@ from functools import reduce, partial
 from operator import mul
 from collections import OrderedDict
 from tempfile import NamedTemporaryFile
+import os
 
 from ..utils.pytorch_device_decorators import onlyAcceleratedDeviceTypes, instantiate_device_type_tests
 from ..utils.timer_wrapper import pytorch_op_timer
 
 import torch
-
+import os
 # TODO: remove this global setting
 # NN tests use double as the default dtype
-torch.set_default_dtype(torch.double)
 
 
 AMPERE_OR_ROCM = TEST_WITH_ROCM or tf32_is_not_fp32()
@@ -91,6 +91,7 @@ class TestNN(NNTestCase):
     _do_cuda_non_default_stream = True
 
     def test_batchnorm_nhwc_cpu(self):
+        torch.set_default_dtype(torch.double)
         def helper(self, size, dtype, mixed_dtype=False):
             channels = size[1]
             input = torch.randn(size, dtype=dtype,
@@ -131,8 +132,10 @@ class TestNN(NNTestCase):
             helper(self, shape, torch.float, False)
             helper(self, shape, torch.bfloat16, False)
             helper(self, shape, torch.bfloat16, True)
+        torch.set_default_dtype(torch.float)
 
     def test_batchnorm_non_contig_cpu(self):
+        torch.set_default_dtype(torch.double)
         input = torch.arange(6, dtype=torch.float).reshape(1, 3, 2, 1).cpu()
         input = input.permute(0, 2, 1, 3)
 
@@ -150,11 +153,13 @@ class TestNN(NNTestCase):
         self.assertTrue(out.is_contiguous(memory_format=torch.channels_last))
         self.assertTrue(ref_out.is_contiguous())
         self.assertEqual(out, ref_out)
+        torch.set_default_dtype(torch.float)
 
     @unittest.skipIf(not TEST_CUDA, "CUDA unavailable")
     @unittest.skipIf(not TEST_CUDNN, "needs cudnn")
     @skipIfRocm
     def test_batchnorm_cudnn_nhwc(self):
+        torch.set_default_dtype(torch.double)
         def run_test(input, grad_output):
             c = input.size(1)
             mod = nn.BatchNorm2d(c).cuda().float()
@@ -195,9 +200,11 @@ class TestNN(NNTestCase):
                              dtype=torch.float32, device="cuda")
         grad = grad.permute(0, 2, 1, 3)
         run_test(input, grad)
+        torch.set_default_dtype(torch.float)
 
     @unittest.skipIf(not TEST_CUDA, "CUDA unavailable")
     def test_batchnorm_cudnn_half(self):
+        torch.set_default_dtype(torch.double)
         # THNN
         input = torch.randint(
             1, 10, (2, 3, 2, 2), dtype=torch.half, device="cuda", requires_grad=True)
@@ -217,9 +224,11 @@ class TestNN(NNTestCase):
             self.assertEqual(cudnn_output, thnn_output)
             self.assertEqual(cudnn_input_grad,
                              thnn_input_grad, atol=1e-3, rtol=0)
+        torch.set_default_dtype(torch.float)
 
     @onlyAcceleratedDeviceTypes
     def test_batchnorm_nonaffine_cuda_half_input(self, device):
+        torch.set_default_dtype(torch.double)
         input = torch.randn(16, 3, 24, 24, dtype=torch.half, device=device)
         # keep running stats in FP32
         m = nn.BatchNorm2d(3, affine=False).to(device).float()
@@ -228,13 +237,17 @@ class TestNN(NNTestCase):
         m.eval()
         output = m(input)
         self.assertEqualTypeString(output, input)
+        torch.set_default_dtype(torch.float)
 
     def test_batchnorm_raises_error_if_less_than_one_value_per_channel(self, device):
+        torch.set_default_dtype(torch.double)
         x = torch.rand(10, device=device)[None, :, None]
         with self.assertRaises(ValueError):
             torch.nn.BatchNorm1d(10)(x)
+        torch.set_default_dtype(torch.float)
 
     def test_batchnorm_raises_error_if_running_mean_is_not_same_size_as_input(self, device):
+        torch.set_default_dtype(torch.double)
         input = torch.rand(2, 10, device=device)
         running_var = torch.rand(10, device=device)
         wrong_sizes = [9, 11]
@@ -242,8 +255,10 @@ class TestNN(NNTestCase):
             with self.assertRaises(RuntimeError):
                 with pytorch_op_timer():
                     F.batch_norm(input, torch.rand(size), running_var)
+        torch.set_default_dtype(torch.float)
 
     def test_batchnorm_raises_error_if_running_var_is_not_same_size_as_input(self, device):
+        torch.set_default_dtype(torch.double)
         input = torch.rand(2, 10, device=device)
         running_mean = torch.rand(10, device=device)
         wrong_sizes = [9, 11]
@@ -251,8 +266,10 @@ class TestNN(NNTestCase):
             with self.assertRaises(RuntimeError):
                 with pytorch_op_timer():
                     F.batch_norm(input, running_mean, torch.rand(size))
+        torch.set_default_dtype(torch.float)
 
     def test_batchnorm_raises_error_if_weight_is_not_same_size_as_input(self, device):
+        torch.set_default_dtype(torch.double)
         input = torch.rand(2, 10, device=device)
         running_mean = torch.rand(10, device=device)
         running_var = torch.rand(10, device=device)
@@ -262,8 +279,10 @@ class TestNN(NNTestCase):
                 with pytorch_op_timer():
                     F.batch_norm(input, running_mean, running_var,
                              weight=Parameter(torch.rand(size)))
+        torch.set_default_dtype(torch.float)
 
     def test_batchnorm_raises_error_if_bias_is_not_same_size_as_input(self, device):
+        torch.set_default_dtype(torch.double)
         input = torch.rand(2, 10, device=device)
         running_mean = torch.rand(10, device=device)
         running_var = torch.rand(10, device=device)
@@ -273,8 +292,10 @@ class TestNN(NNTestCase):
                 with pytorch_op_timer():
                     F.batch_norm(input, running_mean, running_var,
                              bias=Parameter(torch.rand(size)))
+        torch.set_default_dtype(torch.float)
 
     def test_batchnorm_raises_error_if_running_var_or_running_mean_have_forward_grad(self, device):
+        torch.set_default_dtype(torch.double)
         args = (
             torch.randn(3, 2, 5, device=device),  # input
             torch.randn(2, device=device),  # running_mean
@@ -297,8 +318,10 @@ class TestNN(NNTestCase):
                             fn(*duals)
                     else:
                         fn(*duals)
+        torch.set_default_dtype(torch.float)
 
     def test_batchnorm_buffer_update_when_stats_are_not_tracked(self, device):
+        torch.set_default_dtype(torch.double)
         input_size = (32, 4)
         # Instantiate BN with buffers that are not None
         bn = nn.BatchNorm1d(input_size[1], track_running_stats=True).to(device)
@@ -314,9 +337,11 @@ class TestNN(NNTestCase):
         self.assertTrue(torch.equal(num_batches, bn.num_batches_tracked))
         self.assertTrue(torch.equal(running_mean, bn.running_mean))
         self.assertTrue(torch.equal(running_var, bn.running_var))
+        torch.set_default_dtype(torch.float)
 
     @onlyAcceleratedDeviceTypes
     def test_batchnorm_nhwc_cuda(self, device):
+        torch.set_default_dtype(torch.double)
         for dtype in (torch.half, torch.float):
             (N, C, H, W) = 2, 64, 50, 50
             model = torch.nn.BatchNorm2d(
@@ -328,6 +353,7 @@ class TestNN(NNTestCase):
             out1 = model(inp1)
             out2 = model(inp2)
             self.assertTrue(torch.equal(out1, out2))
+        torch.set_default_dtype(torch.float)
 
 
 instantiate_device_type_tests(TestNN, globals())

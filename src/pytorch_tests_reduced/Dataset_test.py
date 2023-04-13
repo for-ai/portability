@@ -8,7 +8,7 @@ from torch.testing._internal.common_utils import (TestCase, run_tests)
 
 
 from torch.testing._internal.common_device_type import onlyCUDA
-from ..utils.pytorch_device_decorators import onlyAcceleratedDeviceTypes, instantiate_device_type_tests
+from ..utils.pytorch_device_decorators import onlyAcceleratedDeviceTypes, instantiate_device_type_tests, onlyNativeDeviceTypes
 from ..utils.timer_wrapper import pytorch_op_timer
 
 
@@ -29,7 +29,7 @@ class TestDictDataLoader(TestCase):
     def setUp(self):
         with pytorch_op_timer():
             self.dataset = DictDataset()
-
+    
     def test_sequential_batch(self, device):
         for persistent_workers in (False, True):
             if persistent_workers:
@@ -64,11 +64,11 @@ class TestDictDataLoader(TestCase):
 
     def test_pin_memory_device(self, device):
         loader = DataLoader(self.dataset, batch_size=2,
-                            pin_memory=True, pin_memory_device='cuda')
+                            pin_memory=True, pin_memory_device=device)
         for sample in loader:
-            self.assertTrue(sample['a_tensor'].is_pinned(device='cuda'))
+            self.assertTrue(sample['a_tensor'].is_pinned(device=device))
             self.assertTrue(sample['another_dict']
-                            ['a_number'].is_pinned(device='cuda'))
+                            ['a_number'].is_pinned(device=device))
 
     def test_pin_memory_with_only_device(self, device):
         loader = DataLoader(self.dataset, batch_size=2,
