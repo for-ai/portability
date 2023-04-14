@@ -23,15 +23,22 @@ f.close()
 f = open("./tensorflow_timings/" + 'gpu.json')
 gpu_function_list = combine_function_tests(json.load(f))
 f.close()
-f = open("./tensorflow_timings/" + 'cpu_vm.json')
-cpu_function_list = combine_function_tests(json.load(f))
-function_keys = cpu_function_list.keys()
+
+f = open("./tensorflow_timings/" + 'cpu_vm_gpu.json')
+cpu_vm_gpu_function_list = combine_function_tests(json.load(f))
+function_keys = cpu_vm_gpu_function_list.keys()
+f.close()
+
+f = open("./tensorflow_timings/" + 'cpu_vm_tpu.json')
+cpu_vm_tpu_function_list = combine_function_tests(json.load(f))
+function_keys = cpu_vm_tpu_function_list.keys()
 f.close()
 
 
+
 for key in function_keys:
-     if len(gpu_function_list[key]["operations"]) != len(cpu_function_list[key]["operations"]) or len(tpu_function_list[key]["operations"]) != len(cpu_function_list[key]["operations"]) or len(gpu_function_list[key]["operations"]) != len(tpu_function_list[key]["operations"]):
-        print("NON MATCHING KEYS", key, len(cpu_function_list[key]["operations"]), len(gpu_function_list[key]["operations"]), len(tpu_function_list[key]["operations"]))
+     if len(gpu_function_list[key]["operations"]) != len(cpu_vm_tpu_function_list[key]["operations"]) or len(tpu_function_list[key]["operations"]) != len(cpu_vm_tpu_function_list[key]["operations"]) or len(gpu_function_list[key]["operations"]) != len(tpu_function_list[key]["operations"]):
+        print("NON MATCHING KEYS", key, len(cpu_vm_tpu_function_list[key]["operations"]), len(gpu_function_list[key]["operations"]), len(tpu_function_list[key]["operations"]))
 # function_keys = set(function_keys.map(lambda x: x.split(":")[0]))
 for key in function_keys:
     data = {'Function': [], 'Time': []}
@@ -39,7 +46,7 @@ for key in function_keys:
     for operation in gpu_function_list[key]["operations"]:
             # print("KEPT KEY", key)
             data['Function'].append("GPU difference from CPU")
-            cpu_baseline = cpu_function_list[key]["operations"][i]
+            cpu_baseline = cpu_vm_gpu_function_list[key]["operations"][i]
             percent_difference = ((operation - cpu_baseline)/cpu_baseline)*100
             print("percent_difference", percent_difference)
             data['Time'].append(percent_difference)
@@ -49,7 +56,7 @@ for key in function_keys:
     for operation in tpu_function_list[key]["operations"]:
             # print("KEPT KEY", key)
             data['Function'].append("TPU difference from CPU")
-            cpu_baseline = cpu_function_list[key]["operations"][i]
+            cpu_baseline = cpu_vm_tpu_function_list[key]["operations"][i]
             percent_difference = ((operation - cpu_baseline)/cpu_baseline)*100
             data['Time'].append(percent_difference)
             i += 1
@@ -76,7 +83,7 @@ for key in function_keys:
     sns.boxplot(x='Function', y='Time', data=df)
 
     # Customize the plot
-    plt.title(frameworkTitle + " " + key.removesuffix("_test.py") + " Device Times")
+    plt.title(frameworkTitle + " " + key.removesuffix("_test.py") + " Device Times", pad=20)
     plt.xlabel('Device')
     plt.ylabel('Time (milliseconds)')
 
