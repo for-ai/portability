@@ -18,7 +18,7 @@ def combine_function_tests(list):
 
 framework = "tensorflow"
 frameworkTitle = framework.capitalize()
-f = open("./tensorflow_timings/" + 'tpu_2.json')
+f = open("./long_times_gpu/" + 'tpu_2.json')
 tpu_function_list = combine_function_tests(json.load(f))
 f.close()
 f = open("./tensorflow_timings/" + 'gpu.json')
@@ -47,10 +47,10 @@ for key in function_keys:
             data['Time'].append(percent_difference)
             i += 1
 
-sns.set(font_scale=10)
+sns.set(font_scale=15)
 # Create a Pandas DataFrame
 df = pd.DataFrame(data)
-f, ax = plt.subplots(figsize=(250, 200))
+f, ax = plt.subplots(figsize=(225, 100))
 
 
 ax.set(yscale="linear", ylim=(-50, 1500), xlabel="Function Name",
@@ -69,12 +69,12 @@ box_plot = sns.boxplot(x='Function', y='Time', data=df)
 # box_plot.set_xticklabels(box_plot.get_xticklabels(), size = 100)
 # box_plot.set_yticklabels(box_plot.get_yticks(), size = 85)
 # Customize the plot
-plt.title("Tensorflow difference from GPU to TPU", pad=50)
+plt.title("Tensorflow TPU difference from GPU", pad=100)
 plt.xlabel('Device')
 plt.ylabel('Difference between GPU and TPU (percent)')
 # plt.xticks(rotation=90, pad=20)
-ax.tick_params(axis='x', pad=50, rotation=90, labelsize=100)
-ax.tick_params(axis='y', pad=50, labelsize=100)
+ax.tick_params(axis='x', pad=100, rotation=90, labelsize=120)
+ax.tick_params(axis='y', pad=100, labelsize=120)
 
 
 
