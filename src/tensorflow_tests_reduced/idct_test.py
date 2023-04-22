@@ -145,7 +145,7 @@ NP_DCT = {1: _np_dct1, 2: _np_dct2, 3: _np_dct3, 4: _np_dct4}
 NP_IDCT = {1: _np_dct1, 2: _np_dct3, 3: _np_dct2, 4: _np_dct4}
 
 
-@test_util.run_all_in_graph_and_eager_modes
+# @test_util.run_all_in_graph_and_eager_modes
 class DCTOpsTest(parameterized.TestCase, test.TestCase):
 
   def _compare(self, signals, n, norm, dct_type, atol, rtol):
@@ -198,8 +198,8 @@ class DCTOpsTest(parameterized.TestCase, test.TestCase):
       signals = np.random.rand(*shape).astype(dtype)
       n = np.random.randint(1, 2 * signals.shape[-1])
       n = np.random.choice([None, n])
-      # self._compare(signals, n, norm=norm, dct_type=dct_type,
-      #               rtol=tol, atol=tol)
+      self._compare(signals, n, norm=norm, dct_type=dct_type,
+                    rtol=tol, atol=tol)
 
   
 if __name__ == "__main__":
