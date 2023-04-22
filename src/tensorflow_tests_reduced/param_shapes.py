@@ -33,6 +33,7 @@ from tensorflow.python.ops.distributions import kullback_leibler
 from tensorflow.python.ops.distributions import normal as normal_lib
 from tensorflow.python.platform import test
 from tensorflow.python.platform import tf_logging
+from ..utils.timer_wrapper import tensorflow_op_timer
 
 
 def try_import(name):  # pylint: disable=invalid-name
@@ -57,7 +58,8 @@ class NormalTest(test.TestCase):
     self.assertAllEqual(all_true, is_finite)
 
   def _testParamShapes(self, sample_shape, expected):
-    param_shapes = normal_lib.Normal.param_shapes(sample_shape)
+    with tensorflow_op_timer():
+      param_shapes = normal_lib.Normal.param_shapes(sample_shape)
     mu_shape, sigma_shape = param_shapes["loc"], param_shapes["scale"]
     self.assertAllEqual(expected, self.evaluate(mu_shape))
     self.assertAllEqual(expected, self.evaluate(sigma_shape))
