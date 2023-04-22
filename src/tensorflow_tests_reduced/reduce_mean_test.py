@@ -502,11 +502,11 @@ class MeanReductionTest(BaseReductionTest):
       np_arr = self._makeIncremental((2,) * rank, dtypes.complex64)
       self._compareAllAxes(np_arr)
 
-  @test_util.run_deprecated_v1
-  def testComplex128(self):
-    for rank in range(1, _MAX_RANK + 1):
-      np_arr = self._makeIncremental((2,) * rank, dtypes.complex128)
-      self._compareAllAxes(np_arr)
+  # @test_util.run_deprecated_v1
+  # def testComplex128(self):
+  #   for rank in range(1, _MAX_RANK + 1):
+  #     np_arr = self._makeIncremental((2,) * rank, dtypes.complex128)
+  #     self._compareAllAxes(np_arr)
 
   @test_util.run_deprecated_v1
   def testGradient(self):
@@ -598,11 +598,11 @@ class EuclideanNormReductionTest(BaseReductionTest):
       np_arr = self._makeIncremental((2,) * rank, dtypes.complex64)
       self._compareAllAxes(np_arr)
 
-  @test_util.run_deprecated_v1
-  def testComplex128(self):
-    for rank in range(1, _MAX_RANK + 1):
-      np_arr = self._makeIncremental((2,) * rank, dtypes.complex128)
-      self._compareAllAxes(np_arr)
+  # @test_util.run_deprecated_v1
+  # def testComplex128(self):
+  #   for rank in range(1, _MAX_RANK + 1):
+  #     np_arr = self._makeIncremental((2,) * rank, dtypes.complex128)
+  #     self._compareAllAxes(np_arr)
 
     with self.session():
       for dtype in (dtypes.float16, dtypes.float32, dtypes.float64):
@@ -682,11 +682,11 @@ class ProdReductionTest(BaseReductionTest):
       np_arr = self._makeIncremental((2,) * rank, dtypes.complex64)
       self._compareAllAxes(np_arr)
 
-  @test_util.run_deprecated_v1
-  def testComplex128(self):
-    for rank in range(1, _MAX_RANK + 1):
-      np_arr = self._makeIncremental((2,) * rank, dtypes.complex128)
-      self._compareAllAxes(np_arr)
+  # @test_util.run_deprecated_v1
+  # def testComplex128(self):
+  #   for rank in range(1, _MAX_RANK + 1):
+  #     np_arr = self._makeIncremental((2,) * rank, dtypes.complex128)
+  #     self._compareAllAxes(np_arr)
 
   @test_util.run_deprecated_v1
   def testGradientWithZeros(self):

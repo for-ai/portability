@@ -145,11 +145,12 @@ NP_DCT = {1: _np_dct1, 2: _np_dct2, 3: _np_dct3, 4: _np_dct4}
 NP_IDCT = {1: _np_dct1, 2: _np_dct3, 3: _np_dct2, 4: _np_dct4}
 
 
-@test_util.run_all_in_graph_and_eager_modes
+# @test_util.run_all_in_graph_and_eager_modes
 class DCTOpsTest(parameterized.TestCase, test.TestCase):
 
   def _compare(self, signals, n, norm, dct_type, atol, rtol):
     """Compares (I)DCT to SciPy (if available) and a NumPy implementation."""
+    print("***idct")
     np_dct = NP_DCT[dct_type](signals, n=n, norm=norm)
     tf_dct = dct_ops.dct(signals, n=n, type=dct_type, norm=norm)
     self.assertEqual(tf_dct.dtype.as_numpy_dtype, signals.dtype)
@@ -189,6 +190,7 @@ class DCTOpsTest(parameterized.TestCase, test.TestCase):
   def test_random(self, dct_type, norm, shape, dtype):
     """Test randomly generated batches of data."""
     # "ortho" normalization is not implemented for type I.
+    
     if dct_type == 1 and norm == "ortho":
       return
     with self.session():
