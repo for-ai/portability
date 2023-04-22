@@ -1,5 +1,5 @@
 [tool.pytest.ini_options]
-addopts = "--timeout=300 --json-report-file=report.json --json-report-indent=4 --json-report-omit=environment --json-report-omit=collectors --json-report"
+addopts = "--timeout=300 --json-report-file=test_failure_report.json --json-report-indent=4 --json-report-omit=environment --json-report-omit=collectors --json-report"
 
 [tool.poetry]
 name = "portability"
