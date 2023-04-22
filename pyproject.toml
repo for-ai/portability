@@ -1,5 +1,5 @@
 [tool.pytest.ini_options]
-addopts = "--timeout=900"
+addopts = "--timeout=300 --json-report-file=report.json --json-report-indent=4 --json-report-omit=environment --json-report-omit=collectors --json-report"
 
 [tool.poetry]
 name = "portability"
@@ -63,6 +63,7 @@ pytest-forked = "^1.6.0"
 portpicker = "^1.5.2"
 scipy = "^1.10.1"
 pytest-timeout = "^2.1.0"
+pytest-json-report = "^1.5.0"
 
 
 [tool.poetry.dev-dependencies]
