@@ -37,8 +37,10 @@ class FromListTest(test_base.DatasetTestBase, parameterized.TestCase):
   @combinations.generate(test_base.default_test_combinations())
   def testTupleInputs(self):
     elements = [(1, 2), (3, 4)]
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       dataset = from_list.from_list(elements)
+      timer.gen.send(dataset)
     self.assertEqual(
         [np.shape(c) for c in elements[0]],
         [shape for shape in dataset_ops.get_legacy_output_shapes(dataset)])
@@ -63,8 +65,10 @@ class FromListTest(test_base.DatasetTestBase, parameterized.TestCase):
   @combinations.generate(test_base.default_test_combinations())
   def testNonRectangularInputs(self):
     elements = [[[1]], [[2, 3]], [[4, 5, 6]]]
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       dataset = from_list.from_list(elements)
+      timer.gen.send(dataset)
     self.assertEqual(
         tensor_shape.Dimension(1),
         dataset_ops.get_legacy_output_shapes(dataset)[0])
@@ -79,8 +83,10 @@ class FromListTest(test_base.DatasetTestBase, parameterized.TestCase):
         "foo": [4, 5, 6],
         "bar": [[7.0], [8.0], [9.0]]
     }]
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       dataset = from_list.from_list(elements)
+      timer.gen.send(dataset)
     self.assertEqual(dtypes.int32,
                      dataset_ops.get_legacy_output_types(dataset)["foo"])
     self.assertEqual(dtypes.float32,
@@ -96,8 +102,10 @@ class FromListTest(test_base.DatasetTestBase, parameterized.TestCase):
                  np.tile(np.array([[2], [256]], dtype=np.uint16), 2),
                  np.tile(np.array([[4], [65536]], dtype=np.uint32), 2),
                  np.tile(np.array([[8], [4294967296]], dtype=np.uint64), 2))]
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       dataset = from_list.from_list(elements)
+      timer.gen.send(dataset)
     self.assertEqual(
         (dtypes.uint8, dtypes.uint16, dtypes.uint32, dtypes.uint64),
         dataset_ops.get_legacy_output_types(dataset))
@@ -109,8 +117,10 @@ class FromListRandomAccessTest(test_base.DatasetTestBase,
 
   @combinations.generate(test_base.default_test_combinations())
   def testInvalidIndex(self):
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       dataset = from_list.from_list([1, 2, 3])
+      timer.gen.send(dataset)
     with self.assertRaises(errors.OutOfRangeError):
       self.evaluate(random_access.at(dataset, -1))
     with self.assertRaises(errors.OutOfRangeError):
@@ -119,8 +129,10 @@ class FromListRandomAccessTest(test_base.DatasetTestBase,
   @combinations.generate(test_base.default_test_combinations())
   def testOneDimensionalArray(self):
     tensor = [1, 2, 3]
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       dataset = from_list.from_list(tensor)
+      timer.gen.send(dataset)
     for i in range(len(tensor)):
       results = self.evaluate(random_access.at(dataset, i))
       self.assertAllEqual(tensor[i], results)
@@ -135,8 +147,10 @@ class FromListRandomAccessTest(test_base.DatasetTestBase,
 
   @combinations.generate(test_base.default_test_combinations())
   def testMultipleElements(self):
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       dataset = from_list.from_list([[1, 2], [3, 4], [5, 6]])
+      timer.gen.send(dataset)
     self.assertEqual(1, self.evaluate(random_access.at(dataset, 0))[0])
     self.assertEqual(2, self.evaluate(random_access.at(dataset, 0))[1])
     self.assertEqual(3, self.evaluate(random_access.at(dataset, 1))[0])
@@ -144,8 +158,10 @@ class FromListRandomAccessTest(test_base.DatasetTestBase,
 
   @combinations.generate(test_base.default_test_combinations())
   def testDictionary(self):
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       dataset = from_list.from_list([{"a": 1, "b": 3}, {"a": 2, "b": 4}])
+      timer.gen.send(dataset)
     self.assertEqual({
         "a": 1,
         "b": 3
@@ -163,16 +179,20 @@ class FromListRandomAccessTest(test_base.DatasetTestBase,
         np.tile(np.array([[4], [65536]], dtype=np.uint64), 2),
         np.tile(np.array([[8], [4294967296]], dtype=np.uint64), 2),
     ]
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       dataset = from_list.from_list(elements)
+      timer.gen.send(dataset)
     for i in range(len(elements)):
       result = self.evaluate(random_access.at(dataset, i))
       self.assertAllEqual(elements[i], result)
 
   @combinations.generate(test_base.default_test_combinations())
   def testName(self):
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       dataset = from_list.from_list([42], name="from_list")
+      timer.gen.send(dataset)
     self.assertDatasetProduces(dataset, [42])
 
 
@@ -180,8 +200,10 @@ class FromListCheckpointTest(checkpoint_test_base.CheckpointTestBase,
                              parameterized.TestCase):
 
   def _build_list_dataset(self, elements):
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       test =from_list.from_list(elements) 
+      timer.gen.send(test)
     return from_list.from_list(elements)
 
   @combinations.generate(

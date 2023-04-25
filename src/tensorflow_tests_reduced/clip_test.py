@@ -102,8 +102,10 @@ class MathTest(test.TestCase, parameterized.TestCase):
       check_dtype = kwargs.pop('check_dtype', True)
       for fn in self.array_transforms:
         arr = fn(arr)
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
           test = np_math_ops.clip(arr, *args, **kwargs)
+          timer.gen.send(test)
         self.match(
             np_math_ops.clip(arr, *args, **kwargs),
             np.clip(arr, *args, **kwargs),

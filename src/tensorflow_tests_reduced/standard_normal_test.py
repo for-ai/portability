@@ -54,8 +54,10 @@ class StandardNormalTest(RandomTestBase):
 
     def setUp(self):
         self.np_func = np.random.standard_normal
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
             self.onp_func = onp.random.standard_normal
+            timer.gen.send(self)
         super(StandardNormalTest, self).setUp()
 
     @parameterized.parameters((None,), ((),), ((1,),), ((1, 2),))

@@ -158,15 +158,19 @@ class ArrayCreationTest(test.TestCase):
         def run_test(arr):
             for fn in array_transforms:
                 arr = fn(arr)
-                with tensorflow_op_timer():
+                timer = tensorflow_op_timer()
+                with timer:
                     test_2 = np_array_ops.diagflat(arr)
+                    timer.gen.send(test_2)
                 self.match(
                     np_array_ops.diagflat(arr),
                     np.diagflat(arr),
                     msg='diagflat({})'.format(arr))
                 for k in range(-3, 3):
-                    with tensorflow_op_timer():
+                    timer = tensorflow_op_timer()
+                    with timer:
                         test_1 = np_array_ops.diagflat(arr, k)
+                        timer.gen.send(test_1)
                     self.match(
                         np_array_ops.diagflat(arr, k),
                         np.diagflat(arr, k),

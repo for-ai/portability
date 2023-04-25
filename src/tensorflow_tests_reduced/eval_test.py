@@ -88,8 +88,10 @@ class SessionTest(test_util.TensorFlowTestCase):
             c = math_ops.matmul(a, b, name='matmul')
         with session.Session(graph=g):
             with device_context():
-                with tensorflow_op_timer():
+                timer = tensorflow_op_timer()
+                with timer:
                     result = c.eval()
+                    timer.gen.send(result)
                 self.assertAllEqual(result, [[42.0]])
 
     def testUseDefaultGraph(self):
@@ -99,8 +101,10 @@ class SessionTest(test_util.TensorFlowTestCase):
             c = math_ops.matmul(a, b, name='matmul')
             with session.Session():
                 with device_context():
-                    with tensorflow_op_timer():
+                    timer = tensorflow_op_timer()
+                    with timer:
                         result = c.eval()
+                        timer.gen.send(result)
                     self.assertAllEqual(result, [[42.0]])
 
     def testCreate(self):
@@ -112,12 +116,16 @@ class SessionTest(test_util.TensorFlowTestCase):
                 # TODO(mrry): Investigate why order='F' didn't work.
                 arr = np.asarray([[0, 1, 2], [3, 4, 5]],
                                 dtype=np.float32, order='C')
-                with tensorflow_op_timer():
+                timer = tensorflow_op_timer()
+                with timer:
                     copy_val = copy.eval({'W1:0': arr})
+                    timer.gen.send(copy_val)
                 self.assertAllEqual(arr, copy_val)
                 # Test without feed.
-                with tensorflow_op_timer():
+                timer = tensorflow_op_timer()
+                with timer:
                     copy_val = copy.eval()
+                    timer.gen.send(copy_val)
                 self.assertAllEqual(
                     np.asarray(
                         [[10.0, 10.0, 10.0], [10.0, 10.0, 10.0]], dtype=np.float32),

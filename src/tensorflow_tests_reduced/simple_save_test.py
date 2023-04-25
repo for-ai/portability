@@ -51,8 +51,10 @@ class SimpleSaveTest(test.TestCase):
         var_y = self._init_and_validate_variable("var_y", 2)
         inputs = {"x": var_x}
         outputs = {"y": var_y}
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
           simple_save.simple_save(sess, export_dir, inputs, outputs)
+          timer.gen.send(simple_save)
 
       # Restore the graph with a valid tag and check the global variables and
       # signature def map.

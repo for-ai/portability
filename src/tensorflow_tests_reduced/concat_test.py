@@ -39,13 +39,19 @@ class ArrayTest(PForTestCase):
 
     def loop_fn(i):
       x1 = array_ops.gather(x, i)
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         test = array_ops.concat([x1, x1, y], axis=0)
-      with tensorflow_op_timer():
+        timer.gen.send(test)
+      timer = tensorflow_op_timer()
+      with timer:
         test = array_ops.concat([x1, x1, y], axis=-1)
-      with tensorflow_op_timer():
+        timer.gen.send(test)
+      timer = tensorflow_op_timer()
+      with timer:
         test = array_ops.concat([x1, x1, y],
                            axis=constant_op.constant(0, dtype=dtypes.int64))
+        timer.gen.send(test)
       return [
           array_ops.concat([x1, x1, y], axis=0),
           array_ops.concat([x1, x1, y], axis=-1),

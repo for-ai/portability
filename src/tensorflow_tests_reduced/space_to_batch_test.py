@@ -75,8 +75,10 @@ class PythonOpImpl(object):
 
   @staticmethod
   def space_to_batch(*args, **kwargs):
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       test = array_ops.space_to_batch(*args, **kwargs)
+      timer.gen.send(test)
     return test
 
   @staticmethod
@@ -89,8 +91,10 @@ class CppOpImpl(object):
 
   @staticmethod
   def space_to_batch(*args, **kwargs):
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       test = gen_array_ops.space_to_batch(*args, **kwargs)
+      timer.gen.send(test)
     return test
 
   @staticmethod

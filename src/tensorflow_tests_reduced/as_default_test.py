@@ -73,8 +73,9 @@ class FunctionGradientsTest(test.TestCase, parameterized.TestCase):
         self.assertAllEqual(step(), 2.0)
 
     def testGraphGradientVariable(self):
-        with tensorflow_op_timer():
-            ops.Graph().as_default()
+        timer = tensorflow_op_timer()
+        with timer:
+            timer.gen.send(ops.Graph().as_default())
         with ops.Graph().as_default(), self.cached_session():
             v = variables.Variable(1.0)
 

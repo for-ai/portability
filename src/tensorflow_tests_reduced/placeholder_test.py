@@ -49,8 +49,10 @@ class BaseFFTOpsTest(test.TestCase):
                        rtol=1e-4, atol=1e-4):
     x_np = self._np_fft(x, rank, fft_length)
     if use_placeholder:
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         x_ph = array_ops.placeholder(dtype=dtypes.as_dtype(x.dtype))
+        timer.gen.send(x_ph)
       x_tf = self._tf_fft(x_ph, rank, fft_length, feed_dict={x_ph: x})
     else:
       x_tf = self._tf_fft(x, rank, fft_length)
@@ -61,8 +63,10 @@ class BaseFFTOpsTest(test.TestCase):
                         rtol=1e-4, atol=1e-4):
     x_np = self._np_ifft(x, rank, fft_length)
     if use_placeholder:
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         x_ph = array_ops.placeholder(dtype=dtypes.as_dtype(x.dtype))
+        timer.gen.send(x_ph)
       x_tf = self._tf_ifft(x_ph, rank, fft_length, feed_dict={x_ph: x})
     else:
       x_tf = self._tf_ifft(x, rank, fft_length)
@@ -206,8 +210,10 @@ class FFTOpsTest(BaseFFTOpsTest, parameterized.TestCase):
   def test_placeholder(self, axes):
     if context.executing_eagerly():
       return
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       x = array_ops.placeholder(shape=[None, None, None], dtype="float32")
+      timer.gen.send(x) 
     y_fftshift = fft_ops.fftshift(x, axes=axes)
     y_ifftshift = fft_ops.ifftshift(x, axes=axes)
     x_np = np.random.rand(16, 256, 256)

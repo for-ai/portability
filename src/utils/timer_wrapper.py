@@ -20,16 +20,12 @@ except ImportError:
 @contextlib.contextmanager
 def tensorflow_timer(record_function):
     start = time.perf_counter()
+    print("***START", start)
 
     yield
-    before_sync = time.perf_counter()
-    wait_for_gpu = tf.py_function(
-        lambda: tf.compat.v1.Session().run(tf.no_op()), inp=[], Tout=[]
-    )
-    wait_for_gpu.numpy()  # Force synchronization
     # Stop the timer
     end = time.perf_counter()
-
+    print("***END", end)
     # Print the elapsed time
     record_function(end - start)
     # print("***TIME", end - start)  # seconds
@@ -40,7 +36,15 @@ def tensorflow_op_timer():
     with tensorflow_timer(
         lambda x: pytest.tensorflow_test_times[pytest.test_name]["operations"].append(x)
     ):
+        result = yield
         yield
+        before_sync = time.perf_counter()
+        print("***BEFORE SYNC", before_sync)
+        has_numpy = getattr(result, "numpy", None)
+        if callable(has_numpy):
+            print("***CALL NUMPY")
+            result.numpy()
+
 
 
 def assign_pytorch_test_time(x):

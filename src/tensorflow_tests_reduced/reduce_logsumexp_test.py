@@ -30,8 +30,10 @@ class LogSumExpTest(test_util.TensorFlowTestCase):
     def testReduceLogSumExp(self):
         for dtype in [np.float32, np.double]:
             x_np = np.random.rand(5, 5).astype(dtype)
-            with tensorflow_op_timer():
+            timer = tensorflow_op_timer()
+            with timer:
                 y_tf_np = math_ops.reduce_logsumexp(x_np)
+                timer.gen.send(y_tf_np)
             y_np = np.log(np.sum(np.exp(x_np)))
             self.assertAllClose(y_tf_np, y_np)
 

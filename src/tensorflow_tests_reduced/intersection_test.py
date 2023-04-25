@@ -340,7 +340,8 @@ class SetOpsTest(test_util.TensorFlowTestCase, parameterized.TestCase):
     def _set_intersection(self, a, b):
         # Validate that we get the same results with or without `validate_indices`,
         # and with a & b swapped.
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
             ops = (
             sets.set_intersection(
                 a, b, validate_indices=True),
@@ -350,13 +351,16 @@ class SetOpsTest(test_util.TensorFlowTestCase, parameterized.TestCase):
                 b, a, validate_indices=True),
             sets.set_intersection(
                 b, a, validate_indices=False),)
+            timer.gen.send(ops)
         for op in ops:
             self._assert_static_shapes(a, op)
         return self._run_equivalent_set_ops(ops)
 
     def _set_intersection_count(self, a, b):
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
             test = sets.set_intersection(a, b)
+            timer.gen.send(test)
         op = sets.set_size(sets.set_intersection(a, b))
         with self.cached_session() as sess:
             return self.evaluate(op)

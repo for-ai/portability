@@ -94,8 +94,10 @@ class DrawBoundingBoxOpTest(test.TestCase):
             image = ops.convert_to_tensor(image)
             image = image_ops_impl.convert_image_dtype(image, dtype)
             image = array_ops.expand_dims(image, 0)
-            with tensorflow_op_timer():
+            timer = tensorflow_op_timer()
+            with timer:
                 image = image_ops.draw_bounding_boxes(image, bboxes, colors=colors)
+                timer.gen.send(image)
             with self.cached_session(use_gpu=False) as sess:
                 op_drawn_image = np.squeeze(sess.run(image), 0)
                 self.assertAllEqual(test_drawn_image, op_drawn_image)

@@ -80,9 +80,11 @@ class MathTest(PForTestCase, parameterized.TestCase):
                     x1 = array_ops.gather(x, i)
                     y1 = array_ops.gather(y, i)
                     if op == math_ops.igammac:
-                        with tensorflow_op_timer():
+                        timer = tensorflow_op_timer()
+                        with timer:
                             outputs = [op(x, y), op(x1, y), op(
-                        x, y1), op(x1, y1), op(x1, x1)]
+                            x, y1), op(x1, y1), op(x1, x1)]
+                            timer.gen.send(outputs)
                     else: 
                         outputs = [op(x, y), op(x1, y), op(
                         x, y1), op(x1, y1), op(x1, x1)]

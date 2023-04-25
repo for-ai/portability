@@ -75,11 +75,13 @@ class SequenceExampleParsingTest(test.TestCase):
         fc.numeric_column('float_ctx'),
         col_fn(col_name, col_arg)
     ]
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       context, seq_features = parsing_ops.parse_single_sequence_example(
         example.SerializeToString(),
         context_features=fc.make_parse_example_spec_v2(columns[:2]),
         sequence_features=fc.make_parse_example_spec_v2(columns[2:]))
+      timer.gen.send(context)
 
     with self.cached_session() as sess:
       ctx_result, seq_result = sess.run([context, seq_features])

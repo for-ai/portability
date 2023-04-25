@@ -91,8 +91,10 @@ class CheckpointsTest(test.TestCase):
     checkpoint_dir = self.get_temp_dir()
     with self.cached_session() as session:
       _create_checkpoints(session, checkpoint_dir)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       test = checkpoint_utils.list_variables(checkpoint_dir)
+      timer.gen.send(test)
     self.assertEqual(
         checkpoint_utils.list_variables(checkpoint_dir),
         [("useful_scope/var4", [9, 9]), ("var1", [1, 10]), ("var2", [10, 10]),
@@ -108,8 +110,10 @@ class CheckpointsTest(test.TestCase):
 
     self.assertAllEqual(
         checkpoint_utils.load_variable(checkpoint_dir, "var1"), v1)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       test = checkpoint_utils.list_variables(checkpoint_dir)
+      timer.gen.send(test)
     self.assertEqual(
         checkpoint_utils.list_variables(checkpoint_dir),
         [("useful_scope/var4", [9, 9]), ("var1", [1, 10]), ("var2", [10, 10]),

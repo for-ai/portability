@@ -58,8 +58,10 @@ class NormalTest(test.TestCase):
     self.assertAllEqual(all_true, is_finite)
 
   def _testParamShapes(self, sample_shape, expected):
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       param_shapes = normal_lib.Normal.param_shapes(sample_shape)
+      timer.gen.send(param_shapes)
     mu_shape, sigma_shape = param_shapes["loc"], param_shapes["scale"]
     self.assertAllEqual(expected, self.evaluate(mu_shape))
     self.assertAllEqual(expected, self.evaluate(sigma_shape))

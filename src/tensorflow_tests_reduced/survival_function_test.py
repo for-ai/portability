@@ -72,8 +72,10 @@ class NormalTest(test.TestCase):
     x = np.linspace(-8.0, 8.0, batch_size).astype(np.float64)
 
     normal = normal_lib.Normal(loc=mu, scale=sigma)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       sf = normal.survival_function(x)
+      timer.gen.send(sf)
     self.assertAllEqual(
         self.evaluate(normal.batch_shape_tensor()), sf.get_shape())
     self.assertAllEqual(
@@ -98,8 +100,10 @@ class NormalTest(test.TestCase):
             dist.survival_function,
             
         ]:
-          with tensorflow_op_timer():
+          timer = tensorflow_op_timer()
+          with timer:
             value = func(x)
+            timer.gen.send(value)
           grads = gradients_impl.gradients(value, [mu, sigma])
           with self.session(graph=g):
             self.evaluate(variables.global_variables_initializer())

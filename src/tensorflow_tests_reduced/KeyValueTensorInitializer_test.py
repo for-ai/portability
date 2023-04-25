@@ -89,27 +89,33 @@ SKIP_ANONYMOUS_IN_TF1_REASON = (
 class KeyValueTensorInitializerTest(BaseLookupTableTest):
 
   def test_string(self, is_anonymous):
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       init = lookup_ops.KeyValueTensorInitializer(
         ("brain", "salad", "surgery"), (0, 1, 2), dtypes.string, dtypes.int64)
+      timer.gen.send(init)
     table = self.getHashTable()(
         init, default_value=-1, experimental_is_anonymous=is_anonymous)
     self.initialize_table(table)
 
   def test_multiple_tables(self, is_anonymous):
     with ops.name_scope("table_scope"):
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         init1 = lookup_ops.KeyValueTensorInitializer(
           ("brain", "salad", "surgery"), (0, 1, 2), dtypes.string, dtypes.int64)
+        timer.gen.send(init1)
       table1 = self.getHashTable()(
           init1, default_value=-1, experimental_is_anonymous=is_anonymous)
       if not context.executing_eagerly():
         self.assertEqual("hash_table", table1.name)
         self.assertEqual("table_scope/hash_table",
                          table1.resource_handle.op.name)
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         init2 = lookup_ops.KeyValueTensorInitializer(
           ("brain", "salad", "surgery"), (0, 1, 2), dtypes.string, dtypes.int64)
+        timer.gen.send(init2)
       table2 = self.getHashTable()(
           init2, default_value=-1, experimental_is_anonymous=is_anonymous)
       if not context.executing_eagerly():
@@ -118,17 +124,21 @@ class KeyValueTensorInitializerTest(BaseLookupTableTest):
                          table2.resource_handle.op.name)
 
   def test_int64(self, is_anonymous):
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       init = lookup_ops.KeyValueTensorInitializer((42, 1, -1000), (0, 1, 2),
                                                 dtypes.int64, dtypes.int64)
+      timer.gen.send(init)
     table = self.getHashTable()(
         init, default_value=-1, experimental_is_anonymous=is_anonymous)
     self.initialize_table(table)
 
   def test_int32(self, is_anonymous):
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       init = lookup_ops.KeyValueTensorInitializer((42, 1, -1000), (0, 1, 2),
                                                 dtypes.int32, dtypes.int64)
+      timer.gen.send(init)
     with self.assertRaises(errors_impl.OpError):
       table = self.getHashTable()(
           init, default_value=-1, experimental_is_anonymous=is_anonymous)

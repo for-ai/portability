@@ -119,9 +119,11 @@ class LoggingTensorHookTest(test.TestCase):
     with ops.Graph().as_default(), session_lib.Session() as sess:
       t = constant_op.constant(42.0, name='foo')
       train_op = constant_op.constant(3)
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         hook = basic_session_run_hooks.LoggingTensorHook(
           tensors=[t.name], at_end=True)
+        timer.gen.send(hook)
       hook.begin()
       mon_sess = monitored_session._HookedSession(sess, [hook])
       self.evaluate(variables_lib.global_variables_initializer())
@@ -138,9 +140,11 @@ class LoggingTensorHookTest(test.TestCase):
     t = constant_op.constant(42.0, name='foo')
 
     train_op = constant_op.constant(3)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       hook = basic_session_run_hooks.LoggingTensorHook(
         tensors=[t.name], every_n_iter=10, at_end=at_end)
+      timer.gen.send(hook)
     hook.begin()
     mon_sess = monitored_session._HookedSession(sess, [hook])
     self.evaluate(variables_lib.global_variables_initializer())
@@ -186,9 +190,11 @@ class LoggingTensorHookTest(test.TestCase):
     with ops.Graph().as_default(), session_lib.Session() as sess:
       t = constant_op.constant(42.0, name='foo')
       train_op = constant_op.constant(3)
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         hook = basic_session_run_hooks.LoggingTensorHook(
           tensors={'foo': t}, every_n_iter=1)
+        timer.gen.send(hook)
       hook.begin()
       mon_sess = monitored_session._HookedSession(sess, [hook])
       self.evaluate(variables_lib.global_variables_initializer())
@@ -200,9 +206,11 @@ class LoggingTensorHookTest(test.TestCase):
   def _validate_print_every_n_secs(self, sess, at_end, mock_time):
     t = constant_op.constant(42.0, name='foo')
     train_op = constant_op.constant(3)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       hook = basic_session_run_hooks.LoggingTensorHook(
         tensors=[t.name], every_n_secs=1.0, at_end=at_end)
+      timer.gen.send(hook)
     hook.begin()
     mon_sess = monitored_session._HookedSession(sess, [hook])
     self.evaluate(variables_lib.global_variables_initializer())
@@ -248,10 +256,12 @@ class LoggingTensorHookTest(test.TestCase):
     with ops.Graph().as_default(), session_lib.Session() as sess:
       t = constant_op.constant(42.0, name='foo')
       train_op = constant_op.constant(3)
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         hook = basic_session_run_hooks.LoggingTensorHook(
           tensors=[t.name], every_n_iter=10,
           formatter=lambda items: 'qqq=%s' % items[t.name])
+        timer.gen.send(hook)
       hook.begin()
       mon_sess = monitored_session._HookedSession(sess, [hook])
       self.evaluate(variables_lib.global_variables_initializer())

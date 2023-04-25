@@ -65,8 +65,10 @@ class ConstantOpTest(test.TestCase, parameterized.TestCase):
                 return_elements=["const"],
                 name="import")[0].outputs[0]
             return x_id
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
             test = constant_op.constant(3.14)
+            timer.gen.send(test)
         self.assertAllClose(3.14, f_using_eagerconst(
             constant_op.constant(3.14)))
 
@@ -74,8 +76,10 @@ class ConstantOpTest(test.TestCase, parameterized.TestCase):
 
         @def_function.function
         def f_using_eagerconst():
-            with tensorflow_op_timer():
+            timer = tensorflow_op_timer()
+            with timer:
                 x = constant_op.constant(1.)
+                timer.gen.send(x)
             graph_def = self._make_graph_def("""
          node { name: 'x' op: 'Placeholder'
                 attr { key: 'dtype' value { type: DT_FLOAT } }}
@@ -110,8 +114,10 @@ class ConstantOpTest(test.TestCase, parameterized.TestCase):
                     input_map={"x:0": x},
                     return_elements=["const"],
                     name="import")[0].outputs[0]
-            with tensorflow_op_timer():
+            timer = tensorflow_op_timer()
+            with timer:
                 test = constant_op.constant([1., 2.])
+                timer.gen.send(test)
             return control_flow_ops.vectorized_map(
                 vec_fn, constant_op.constant([1., 2.]), fallback_to_while_loop=False)
 

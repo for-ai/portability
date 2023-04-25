@@ -48,9 +48,11 @@ class CumProdTest(PForTestCase, parameterized.TestCase):
                     # pylint: disable=cell-var-from-loop
                     def loop_fn(i):
                         a = array_ops.gather(x, i)
-                        with tensorflow_op_timer():
+                        timer = tensorflow_op_timer()
+                        with timer:
                             test = math_ops.cumprod(
                             a, axis=axis, exclusive=exclusive, reverse=reverse)
+                            timer.gen.send(test)
                         return test
 
                     # pylint: enable=cell-var-from-loop

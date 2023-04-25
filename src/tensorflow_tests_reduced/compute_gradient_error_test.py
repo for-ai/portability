@@ -51,13 +51,17 @@ class MomentsTest(test_lib.TestCase):
                   inputs, moments_axes, keepdims=keep_dims)
 
               if check_gradients:
-                with tensorflow_op_timer():
+                timer = tensorflow_op_timer()
+                with timer:
                   err = gradient_checker.compute_gradient_error(
                     inputs, input_shape, mean, mean.shape.as_list())
+                  timer.gen.send(err)
                 self.assertLess(err, 1e-3)
-                with tensorflow_op_timer():
+                timer = tensorflow_op_timer()
+                with timer:
                   err = gradient_checker.compute_gradient_error(
                     inputs, input_shape, variance, variance.shape.as_list())
+                  timer.gen.send(err)
                 self.assertLess(err, 1e-3)
 
               # Evaluate.

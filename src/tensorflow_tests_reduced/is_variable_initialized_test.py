@@ -29,12 +29,16 @@ class VariableOpTest(test.TestCase):
     for use_gpu in [True, False]:
       with self.test_session(use_gpu=use_gpu):
         v0 = state_ops.variable_op([1, 2], dtypes.float32)
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
           test = variables.is_variable_initialized(v0)
+          timer.gen.send(test)
         self.assertEqual(False, variables.is_variable_initialized(v0).eval())
         state_ops.assign(v0, [[2.0, 3.0]]).eval()
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
           test = variables.is_variable_initialized(v0)
+          timer.gen.send(test)
         self.assertEqual(True, variables.is_variable_initialized(v0).eval())
 
 

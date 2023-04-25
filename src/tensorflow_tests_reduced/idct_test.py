@@ -156,8 +156,10 @@ class DCTOpsTest(parameterized.TestCase, test.TestCase):
     self.assertEqual(tf_dct.dtype.as_numpy_dtype, signals.dtype)
     self.assertAllClose(np_dct, tf_dct, atol=atol, rtol=rtol)
     np_idct = NP_IDCT[dct_type](signals, n=None, norm=norm)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
         tf_idct = dct_ops.idct(signals, type=dct_type, norm=norm)
+        timer.gen.send(tf_idct)
     self.assertEqual(tf_idct.dtype.as_numpy_dtype, signals.dtype)
     self.assertAllClose(np_idct, tf_idct, atol=atol, rtol=rtol)
     if fftpack and dct_type != 4:
@@ -169,8 +171,10 @@ class DCTOpsTest(parameterized.TestCase, test.TestCase):
     # Since `n` is not implemented for IDCT operation, re-calculating tf_dct
     # without n.
     tf_dct = dct_ops.dct(signals, type=dct_type, norm=norm)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
         tf_idct_dct = dct_ops.idct(tf_dct, type=dct_type, norm=norm)
+        timer.gen.send(tf_idct_dct)
     tf_dct_idct = dct_ops.dct(tf_idct, type=dct_type, norm=norm)
     if norm is None:
       if dct_type == 1:

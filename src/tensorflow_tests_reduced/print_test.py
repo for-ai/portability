@@ -42,10 +42,14 @@ def print_multiple_values(x):
 
 
 def multiple_prints(x, y):
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
         tf.print('x is', x)
-    with tensorflow_op_timer():
+        timer.gen.send(tf)
+    timer = tensorflow_op_timer()
+    with timer:
         tf.print('y is', y)
+        timer.gen.send(tf)
 
 
 def print_with_nontf_values(x):
@@ -58,8 +62,10 @@ def print_in_cond(x):
 
 
 def tf_print(x):
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
         tf.print(x)
+        timer.gen.send(tf)
 
 
 class ReferenceTest(reference_test_base.TestCase):

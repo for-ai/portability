@@ -33,33 +33,43 @@ class ReshapeTest(test.TestCase):
 
   def _testReshape(self, x, y):
     with self.cached_session():
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         np_ans = x.reshape(y)
-      with tensorflow_op_timer():
+        timer.gen.send(np_ans)
+        timer = tensorflow_op_timer()
+      with timer:
         tf_ans = array_ops.reshape(x, y)
+        timer.gen.send(tf_ans)
       out = self.evaluate(tf_ans)
       self.assertEqual(tf_ans.get_shape(), out.shape)
       self.assertShapeEqual(np_ans, tf_ans)
 
       # Repeat with an int64 shape tensor.
       y64 = constant_op.constant(y, dtype=dtypes.int64)
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         tf_ans = array_ops.reshape(x, y64)
+        timer.gen.send(tf_ans)
       out = self.evaluate(tf_ans)
       self.assertEqual(tf_ans.get_shape(), out.shape)
       self.assertShapeEqual(np_ans, tf_ans)
 
   def _testZeroDimReshape(self, x, shape, expected):
     with self.cached_session():
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         y = array_ops.reshape(x, shape)
+        timer.gen.send(y)
       out = self.evaluate(y)
       self.assertEqual(expected, out.shape)
 
       # Repeat with an int64 shape tensor.
       shape64 = constant_op.constant(shape, dtype=dtypes.int64)
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         y = array_ops.reshape(x, shape64)
+        timer.gen.send(y)
       out = self.evaluate(y)
       self.assertEqual(expected, out.shape)
 
@@ -68,8 +78,10 @@ class ReshapeTest(test.TestCase):
     self._testReshape(x, y)
 
   def testBoolBasic(self):
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       x = np.arange(1., 7.).reshape([1, 6]) > 3
+      timer.gen.send(x)
     self._testBothReshape(x, [2, 3])
 
   def testFloatBasic(self):
@@ -128,8 +140,10 @@ class ReshapeTest(test.TestCase):
     input_tensor = constant_op.constant(x)
 
     def reshape(x):
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         test = array_ops.reshape(x, [1, 8, 3])
+        timer.gen.send(test)
       return array_ops.reshape(x, [1, 8, 3])
 
     with self.cached_session():
@@ -170,64 +184,84 @@ class ReshapeTest(test.TestCase):
       x = array_ops.placeholder(dtypes.float32)
 
       # Unknown input shape, partial new shape.
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         y = array_ops.reshape(x, [1, 1, -1, 1])
+        timer.gen.send(y)
       self.assertEqual([1, 1, None, 1], y.get_shape().as_list())
 
       # Unknown input shape, unknown new shape.
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         y = array_ops.reshape(x, array_ops.placeholder(dtypes.int32))
+        timer.gen.send(y)
       self.assertEqual(None, y.get_shape().ndims)
 
       # Unknown input shape, known rank for new shape.
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         y = array_ops.reshape(x, array_ops.placeholder(dtypes.int32, shape=(3,)))
+        timer.gen.send(y)
       self.assertEqual([None, None, None], y.get_shape().as_list())
 
       # Unknown input shape, partial new shape using `tf.stack()`.
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         y = array_ops.reshape(x, [array_ops.placeholder(dtypes.int32), 37])
+        timer.gen.send(y)
       self.assertEqual([None, 37], y.get_shape().as_list())
 
       # Unknown input shape, partial new shape using `tf.concat()`.
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         y = array_ops.reshape(
           x,
           array_ops.concat(
               [array_ops.placeholder(
                   dtypes.int32, shape=(2,)), [37, 42]], 0))
+        timer.gen.send(y)
       self.assertEqual([None, None, 37, 42], y.get_shape().as_list())
 
       # Unknown input shape, partial new shape using `tf.shape()`.
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         y = array_ops.reshape(
           x,
           array_ops.shape(
               array_ops.placeholder(
                   dtypes.float32, shape=[None, 37, None])))
+        timer.gen.send(y)
       self.assertEqual([None, 37, None], y.get_shape().as_list())
 
   def testTensorShape(self):
     x = array_ops.zeros([1, 100])
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       y = array_ops.reshape(
         x, [tensor_shape.Dimension(100),
             tensor_shape.Dimension(1)])
+      timer.gen.send(y)
     self.assertEqual([100, 1], y.get_shape().as_list())
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       y = array_ops.reshape(x, tensor_shape.TensorShape([100, 1]))
+      timer.gen.send(y)
     self.assertEqual([100, 1], y.get_shape().as_list())
 
   def testInt64Shape(self):
     # with ops.device("/device:CPU:0"):
     x = array_ops.zeros([50000, 50000], dtype=dtypes.bool)
     # Provide dimension larger than int32
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       y = array_ops.reshape(x, [50000**2])
+      timer.gen.send(y)
     self.assertEqual([50000**2], y.get_shape().as_list())
     # Even if first dimension is within int32, ensure we correctly go to int64
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       y = array_ops.reshape(x, [1, 50000**2])
+      timer.gen.send(y)
     self.assertEqual([1, 50000**2], y.get_shape().as_list())
 
   # @test_util.run_v2_only

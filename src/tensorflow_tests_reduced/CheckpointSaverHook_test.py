@@ -100,9 +100,11 @@ class CheckpointSaverHookTest(test.TestCase):
     def test_saves_when_saver_and_scaffold_both_missing(self):
         with self.graph.as_default():
             with device_context():
-                with tensorflow_op_timer():
+                timer = tensorflow_op_timer()
+                with timer:
                     hook = basic_session_run_hooks.CheckpointSaverHook(
                     self.model_dir, save_steps=1)
+                    timer.gen.send(hook)
                 hook.begin()
                 self.scaffold.finalize()
                 with session_lib.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess: 
@@ -132,9 +134,11 @@ class CheckpointSaverHookTest(test.TestCase):
     def test_save_secs_saves_in_first_step(self):
         with self.graph.as_default():
             with device_context():
-                with tensorflow_op_timer():
+                timer = tensorflow_op_timer()
+                with timer:
                     hook = basic_session_run_hooks.CheckpointSaverHook(
                     self.model_dir, save_secs=2, scaffold=self.scaffold)
+                    timer.gen.send(hook)
                 hook.begin()
                 self.scaffold.finalize()
                 with session_lib.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
@@ -149,12 +153,14 @@ class CheckpointSaverHookTest(test.TestCase):
         with self.graph.as_default():
             with device_context():
                 listener = MockCheckpointSaverListener()
-                with tensorflow_op_timer():
+                timer = tensorflow_op_timer()
+                with timer:
                     hook = basic_session_run_hooks.CheckpointSaverHook(
                     self.model_dir,
                     save_secs=2,
                     scaffold=self.scaffold,
                     listeners=[listener])
+                    timer.gen.send(hook)
                 hook.begin()
                 self.scaffold.finalize()
                 with session_lib.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
@@ -178,12 +184,14 @@ class CheckpointSaverHookTest(test.TestCase):
                 global_step = training_util.get_or_create_global_step()
                 train_op = training_util._increment_global_step(1)
                 listener = MockCheckpointSaverListener()
-                with tensorflow_op_timer():
+                timer = tensorflow_op_timer()
+                with timer:
                     hook = basic_session_run_hooks.CheckpointSaverHook(
                     self.model_dir,
                     save_steps=1,
                     scaffold=scaffold,
                     listeners=[listener])
+                    timer.gen.send(hook)
                 with monitored_session.SingularMonitoredSession(
                         config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True),
                         hooks=[hook],
@@ -208,9 +216,11 @@ class CheckpointSaverHookTest(test.TestCase):
                 training_util.get_or_create_global_step()
                 train_op = training_util._increment_global_step(1)
                 listener = MockCheckpointSaverListener()
-                with tensorflow_op_timer():
+                timer = tensorflow_op_timer()
+                with timer:
                     hook = basic_session_run_hooks.CheckpointSaverHook(
                     self.model_dir, save_steps=1, scaffold=scaffold, listeners=[listener])
+                    timer.gen.send(hook)
                 with monitored_session.SingularMonitoredSession(
                         config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True),
                         hooks=[hook], scaffold=scaffold,
@@ -229,11 +239,13 @@ class CheckpointSaverHookTest(test.TestCase):
                 global_step = training_util.get_or_create_global_step()
                 train_op = training_util._increment_global_step(1)
                 listener = MockCheckpointSaverListener()
-                with tensorflow_op_timer():
+                timer = tensorflow_op_timer()
+                with timer:
                     hook = basic_session_run_hooks.CheckpointSaverHook(
                     self.model_dir,
                     save_steps=1,
                     listeners=[listener])
+                    timer.gen.send(hook)
                 with monitored_session.SingularMonitoredSession(
                         config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True),
                         hooks=[hook],
@@ -265,11 +277,13 @@ class CheckpointSaverHookTest(test.TestCase):
                 train_op = training_util._increment_global_step(1)
                 listener1 = MockCheckpointSaverListener()
                 listener2 = MockCheckpointSaverListener()
-                with tensorflow_op_timer():
+                timer = tensorflow_op_timer()
+                with timer:
                     hook = basic_session_run_hooks.CheckpointSaverHook(
                     self.model_dir,
                     save_steps=1,
                     listeners=[listener1, listener2])
+                    timer.gen.send(hook)
                 with monitored_session.SingularMonitoredSession(
                         config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True),
                         hooks=[hook],
@@ -301,9 +315,11 @@ class CheckpointSaverHookTest(test.TestCase):
         with self.graph.as_default():
             with device_context():
                 mock_time.return_value = MOCK_START_TIME
-                with tensorflow_op_timer():
+                timer = tensorflow_op_timer()
+                with timer:
                     hook = basic_session_run_hooks.CheckpointSaverHook(
                     self.model_dir, save_secs=2, scaffold=self.scaffold)
+                    timer.gen.send(hook)
                 hook.begin()
                 self.scaffold.finalize()
 
@@ -348,12 +364,14 @@ class CheckpointSaverHookTest(test.TestCase):
             with device_context():
                 mock_time.return_value = MOCK_START_TIME
                 listener = MockCheckpointSaverListener()
-                with tensorflow_op_timer():
+                timer = tensorflow_op_timer()
+                with timer:
                     hook = basic_session_run_hooks.CheckpointSaverHook(
                     self.model_dir,
                     save_secs=2,
                     scaffold=self.scaffold,
                     listeners=[listener])
+                    timer.gen.send(hook)
                 hook.begin()
                 self.scaffold.finalize()
                 with session_lib.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
@@ -394,9 +412,11 @@ class CheckpointSaverHookTest(test.TestCase):
     def test_save_steps_saves_in_first_step(self):
         with self.graph.as_default():
             with device_context():
-                with tensorflow_op_timer():
+                timer = tensorflow_op_timer()
+                with timer:
                     hook = basic_session_run_hooks.CheckpointSaverHook(
                     self.model_dir, save_steps=2, scaffold=self.scaffold)
+                    timer.gen.send(hook)
                 hook.begin()
                 self.scaffold.finalize()
                 with session_lib.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
@@ -410,9 +430,11 @@ class CheckpointSaverHookTest(test.TestCase):
     def test_save_steps_saves_periodically(self):
         with self.graph.as_default():
             with device_context():
-                with tensorflow_op_timer():
+                timer = tensorflow_op_timer()
+                with timer:
                     hook = basic_session_run_hooks.CheckpointSaverHook(
                     self.model_dir, save_steps=2, scaffold=self.scaffold)
+                    timer.gen.send(hook)
                 hook.begin()
                 self.scaffold.finalize()
                 with session_lib.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
@@ -443,9 +465,11 @@ class CheckpointSaverHookTest(test.TestCase):
     def test_save_saves_at_end(self):
         with self.graph.as_default():
             with device_context():
-                with tensorflow_op_timer():
+                timer = tensorflow_op_timer()
+                with timer:
                     hook = basic_session_run_hooks.CheckpointSaverHook(
                     self.model_dir, save_secs=2, scaffold=self.scaffold)
+                    timer.gen.send(hook)
                 hook.begin()
                 self.scaffold.finalize()
                 with session_lib.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
@@ -461,9 +485,11 @@ class CheckpointSaverHookTest(test.TestCase):
     def test_save_checkpoint_before_first_train_step(self):
         with self.graph.as_default():
             with device_context():
-                with tensorflow_op_timer():
+                timer = tensorflow_op_timer()
+                with timer:
                     hook = basic_session_run_hooks.CheckpointSaverHook(
                     self.model_dir, save_steps=2, scaffold=self.scaffold)
+                    timer.gen.send(hook)
                 hook.begin()
                 self.scaffold.finalize()
                 with session_lib.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
@@ -488,10 +514,12 @@ class CheckpointSaverHookTest(test.TestCase):
     def test_save_graph_def(self):
         with self.graph.as_default():
             with device_context():
-                with tensorflow_op_timer():
+                timer = tensorflow_op_timer()
+                with timer:
                     hook = basic_session_run_hooks.CheckpointSaverHook(
                     self.model_dir, save_steps=1, scaffold=self.scaffold,
                     save_graph_def=True)
+                    timer.gen.send(hook)
                 hook.begin()
                 self.scaffold.finalize()
                 with session_lib.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
@@ -512,10 +540,12 @@ class CheckpointSaverHookTest(test.TestCase):
     def test_save_graph_def_false(self):
         with self.graph.as_default():
             with device_context():
-                with tensorflow_op_timer():
+                timer = tensorflow_op_timer()
+                with timer:
                     hook = basic_session_run_hooks.CheckpointSaverHook(
                     self.model_dir, save_steps=1, scaffold=self.scaffold,
                     save_graph_def=False)
+                    timer.gen.send(hook)
                 hook.begin()
                 self.scaffold.finalize()
                 with session_lib.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:

@@ -56,15 +56,19 @@ class AdadeltaOptimizerTest(test.TestCase):
           rho = 0.95
           epsilon = 1e-8
           if use_callable_params:
-            with tensorflow_op_timer():
+            timer = tensorflow_op_timer()
+            with timer:
               adadelta_opt = adadelta.AdadeltaOptimizer(
                   learning_rate=lambda: lr,  # pylint: disable=cell-var-from-loop
                   rho=lambda: rho,  # pylint: disable=cell-var-from-loop
                   epsilon=lambda: epsilon)  # pylint: disable=cell-var-from-loop
+              timer.gen.send(adadelta_opt)
           else:
-            with tensorflow_op_timer():
+            timer = tensorflow_op_timer()
+            with timer:
               adadelta_opt = adadelta.AdadeltaOptimizer(
                   learning_rate=lr, rho=rho, epsilon=epsilon)
+              timer.gen.send(adadelta_opt)
           if not context.executing_eagerly():
             adadelta_update = adadelta_opt.apply_gradients(
                 zip([grads, grads], [var0, var1]))
@@ -173,9 +177,11 @@ class AdadeltaOptimizerTest(test.TestCase):
         x = constant_op.constant([[4.0], [5.0]], dtype=dtype)
         pred = math_ops.matmul(embedding_ops.embedding_lookup([var0], [0]), x)
         loss = pred * pred
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
           sgd_op = adadelta.AdadeltaOptimizer(
               1.0, 1.0, 1.0).minimize(loss)
+          timer.gen.send(sgd_op)
         self.evaluate(variables.global_variables_initializer())
         # Fetch params to validate initial values
         self.assertAllCloseAccordingToType([[1.0, 2.0]], self.evaluate(var0))

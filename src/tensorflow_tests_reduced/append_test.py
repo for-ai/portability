@@ -30,10 +30,11 @@ class ListTest(converter_testing.TestCase):
 
         def f():
             l = special_functions.tensor_list([1])
-            with tensorflow_op_timer():
-                l.append(2)
-            with tensorflow_op_timer():
-                l.append(3)
+            timer = tensorflow_op_timer()
+            with timer:
+                 l.append(2)
+            with timer:
+                 l.append(3)
             return l
         
         tr = self.transform(f, lists)

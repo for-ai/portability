@@ -83,16 +83,26 @@ class CollectionTest(test_util.TensorFlowTestCase):
     g.add_to_collection("blah", blank1)
     blank2 = ObjectWithName("junk/foo")
     g.add_to_collection("blah", blank2)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       test = g.get_collection("key")
-    with tensorflow_op_timer():
+      timer.gen.send(test)
+    timer = tensorflow_op_timer()
+    with timer:
       test =g.get_collection("nothing")
-    with tensorflow_op_timer():
+      timer.gen.send(test)
+    timer = tensorflow_op_timer()
+    with timer:
       test = g.get_collection("blah")
-    with tensorflow_op_timer():
+      timer.gen.send(test)
+    timer = tensorflow_op_timer()
+    with timer:
       test = g.get_collection("blah", "prefix")
-    with tensorflow_op_timer():
+      timer.gen.send(test)
+    timer = tensorflow_op_timer()
+    with timer:
       test = g.get_collection("blah", ".*x")
+      timer.gen.send(test)
     
     self.assertEqual([12, 34], g.get_collection("key"))
     self.assertEqual([], g.get_collection("nothing"))
@@ -103,68 +113,94 @@ class CollectionTest(test_util.TensorFlowTestCase):
     # Make sure that get_collection() returns a first-level
     # copy of the collection, while get_collection_ref() returns
     # the original list.
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       other_collection_snapshot = g.get_collection("other")
-    with tensorflow_op_timer():  
+      timer.gen.send(other_collection_snapshot)
+    timer = tensorflow_op_timer()
+    with timer:  
       other_collection_ref = g.get_collection_ref("other")
+      timer.gen.send(other_collection_ref)
     self.assertEqual(["foo"], other_collection_snapshot)
     self.assertEqual(["foo"], other_collection_ref)
     g.add_to_collection("other", "bar")
     self.assertEqual(["foo"], other_collection_snapshot)
     self.assertEqual(["foo", "bar"], other_collection_ref)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       test = g.get_collection("other")
+      timer.gen.send(test)
     self.assertEqual(["foo", "bar"], g.get_collection("other"))
     self.assertTrue(other_collection_ref is g.get_collection_ref("other"))
 
     # Verify that getting an empty collection ref returns a modifiable list.
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       empty_coll_ref = g.get_collection_ref("empty")
+      timer.gen.send(empty_coll_ref)
     self.assertEqual([], empty_coll_ref)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       empty_coll = g.get_collection("empty")
+      timer.gen.send(empty_coll)
     self.assertEqual([], empty_coll)
     self.assertFalse(empty_coll is empty_coll_ref)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       empty_coll_ref2 = g.get_collection_ref("empty")
+      timer.gen.send(empty_coll_ref2)
     self.assertTrue(empty_coll_ref2 is empty_coll_ref)
     # Add to the collection.
     empty_coll_ref.append("something")
     self.assertEqual(["something"], empty_coll_ref)
     self.assertEqual(["something"], empty_coll_ref2)
     self.assertEqual([], empty_coll)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       test = g.get_collection("empty")
+      timer.gen.send(test)
     self.assertEqual(["something"], g.get_collection("empty"))
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       empty_coll_ref3 = g.get_collection_ref("empty")
+      timer.gen.send(empty_coll_ref3)
     self.assertTrue(empty_coll_ref3 is empty_coll_ref)
 
   def test_add_to_collections_uniquify(self):
     g = ops.Graph()
     g.add_to_collections([1, 2, 1], "key")
     # Make sure "key" is not added twice
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       test = g.get_collection(1)
+      timer.gen.send(test)
     self.assertEqual(["key"], g.get_collection(1))
 
   def test_add_to_collections_from_list(self):
     g = ops.Graph()
     g.add_to_collections(["abc", "123"], "key")
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       test = g.get_collection("abc")
-    with tensorflow_op_timer():
+      timer.gen.send(test)
+    timer = tensorflow_op_timer()
+    with timer:
       test =  g.get_collection("123")
+      timer.gen.send(test)
     self.assertEqual(["key"], g.get_collection("abc"))
     self.assertEqual(["key"], g.get_collection("123"))
 
   def test_add_to_collections_from_tuple(self):
     g = ops.Graph()
     g.add_to_collections(("abc", "123"), "key")
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       test = g.get_collection("abc")
-    with tensorflow_op_timer():
+      timer.gen.send(test)
+      timer = tensorflow_op_timer()
+    with timer:
       test = g.get_collection("123")
+      timer.gen.send(test)
     self.assertEqual(["key"], g.get_collection("abc"))
     self.assertEqual(["key"], g.get_collection("123"))
 
@@ -176,10 +212,14 @@ class CollectionTest(test_util.TensorFlowTestCase):
       yield "123"
 
     g.add_to_collections(generator(), "key")
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       test = g.get_collection("abc")
-    with tensorflow_op_timer():
+      timer.gen.send(test)
+    timer = tensorflow_op_timer()
+    with timer:
       test = g.get_collection("123")
+      timer.gen.send(test)
     self.assertEqual(["key"], g.get_collection("abc"))
     self.assertEqual(["key"], g.get_collection("123"))
 
@@ -187,18 +227,24 @@ class CollectionTest(test_util.TensorFlowTestCase):
     g = ops.Graph()
     g.add_to_collections(set(["abc", "123"]), "key")
     
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       test = g.get_collection("abc")
-    with tensorflow_op_timer():
+      timer.gen.send(test)
+    timer = tensorflow_op_timer()
+    with timer:
       test = g.get_collection("123")
+      timer.gen.send(test)
     self.assertEqual(["key"], g.get_collection("abc"))
     self.assertEqual(["key"], g.get_collection("123"))
 
   def test_add_to_collections_from_string(self):
     g = ops.Graph()
     g.add_to_collections("abc", "key")
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       test = g.get_collection("abc")
+      timer.gen.send(test)
     self.assertEqual(["key"], g.get_collection("abc"))
 
   def test_default_graph(self):
@@ -206,8 +252,10 @@ class CollectionTest(test_util.TensorFlowTestCase):
       ops.add_to_collection("key", 90)
       ops.add_to_collection("key", 100)
       # Collections are ordered.
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         test = ops.get_collection("key")
+        timer.gen.send(test)
       self.assertEqual([90, 100], ops.get_collection("key"))
 
 

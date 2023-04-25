@@ -91,9 +91,11 @@ class Conv3DTest(test.TestCase):
       if data_format == "NCDHW":
         t1 = test_util.NHWCToNCHW(t1)
         strides = test_util.NHWCToNCHW(strides)
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         conv = nn_ops.conv3d(t1, t2, strides, padding=padding,
                            data_format=data_format)
+        timer.gen.send(conv)
       if data_format == "NCDHW":
         conv = test_util.NCHWToNHWC(conv)
 
@@ -152,7 +154,8 @@ class Conv3DTest(test.TestCase):
           strides=strides,
           dilation_rate=dilation,
           data_format=data_format)
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         computed = nn_ops.conv3d(
           t1,
           t2,
@@ -160,6 +163,7 @@ class Conv3DTest(test.TestCase):
           dilations=full_dilation,
           padding=padding,
           data_format=data_format)
+        timer.gen.send(computed)
       if data_format == "NCDHW":
         expected = test_util.NCHWToNHWC(expected)
         computed = test_util.NCHWToNHWC(computed)
@@ -204,12 +208,16 @@ class Conv3DTest(test.TestCase):
     filter_in = self._CreateNumpyTensor(filter_in_sizes)
     x1 = self._CreateNumpyTensor(tensor_in_sizes_batch)
     x2 = x1.reshape(tensor_in_sizes_expanded_batch)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       conv1 = nn_ops.conv3d_v2(
         x1, filter_in, strides=[1, 1, 1, 1, 1], padding="VALID")
-    with tensorflow_op_timer():
+      timer.gen.send(conv1)
+    timer = tensorflow_op_timer()
+    with timer:
       conv2 = nn_ops.conv3d_v2(
         x2, filter_in, strides=[1, 1, 1, 1, 1], padding="VALID")
+      timer.gen.send(conv2)
     self.assertEqual(conv1.shape, tensor_in_sizes_batch)
     self.assertEqual(conv2.shape, tensor_in_sizes_expanded_batch)
     self.assertAllClose(conv1, self.evaluate(conv2).reshape(conv1.shape))
@@ -375,7 +383,8 @@ class Conv3DTest(test.TestCase):
           input_data, shape=input_shape, dtype=data_type, name="input")
       filter_tensor = constant_op.constant(
           filter_data, shape=filter_shape, dtype=data_type, name="filter")
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         conv = nn_ops.conv3d(
           input_tensor,
           filter_tensor,
@@ -384,6 +393,7 @@ class Conv3DTest(test.TestCase):
           padding="SAME",
           data_format="NDHWC",
           name="conv")
+        timer.gen.send(conv)
       values = self.evaluate(conv)
       self.assertEqual(values.shape, tensor_shape.TensorShape(output_shape))
 
@@ -445,8 +455,10 @@ class Conv3DTest(test.TestCase):
     with self.assertRaisesRegex(
         errors_impl.InvalidArgumentError, "filter must not have zero elements"
         "|has a non-positive dimension"):
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         test = nn_ops.conv3d(x1, filter_in, strides=[1, 1, 1, 1, 1], padding="SAME")
+        timer.gen.send(test)
       self.evaluate(
           nn_ops.conv3d(x1, filter_in, strides=[1, 1, 1, 1, 1], padding="SAME"))
 
@@ -513,7 +525,8 @@ class Conv3DTest(test.TestCase):
         else:
           input_tensor = orig_input_tensor
           new_strides = strides
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
           conv = nn_ops.conv3d(
             input_tensor,
             filter_tensor,
@@ -521,6 +534,7 @@ class Conv3DTest(test.TestCase):
             padding,
             data_format=data_format,
             name="conv")
+          timer.gen.send(conv)
 
         if data_format == "NCDHW":
           conv = test_util.NCHWToNHWC(conv)
@@ -798,7 +812,8 @@ class Conv3DTest(test.TestCase):
         if data_format == "NCDHW":
           full_strides = test_util.NHWCToNCHW(full_strides)
           full_dilations = test_util.NHWCToNCHW(full_dilations)
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
           actual = nn_ops.conv3d(
             t1,
             t2,
@@ -806,6 +821,7 @@ class Conv3DTest(test.TestCase):
             dilations=full_dilations,
             padding=padding,
             data_format=data_format)
+          timer.gen.send(actual)
         expected = nn_ops.convolution(
             t1,
             t2,

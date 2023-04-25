@@ -120,9 +120,11 @@ class RaggedBatchTest(test_base.DatasetTestBase, parameterized.TestCase):
                 for _ in range(nrows)]
 
         # Batch the dataset, and check that batches match slices from `rows`.
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
             batched_dataset = dataset.apply(
             batching.dense_to_ragged_batch(batch_size, drop_remainder))
+            timer.gen.send(batched_dataset)
         get_next = self.getNext(batched_dataset)
         for start_row in range(0, nrows, batch_size):
             end_row = start_row + batch_size
@@ -158,8 +160,10 @@ class RaggedBatchTest(test_base.DatasetTestBase, parameterized.TestCase):
 
         dataset = dataset_ops.Dataset.from_tensor_slices(np.arange(nrows))
         dataset = dataset.map(make_structure)
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
             dataset = dataset.apply(batching.dense_to_ragged_batch(batch_size))
+            timer.gen.send(dataset)
         get_next = self.getNext(dataset)
 
         for i in range(0, nrows, batch_size):

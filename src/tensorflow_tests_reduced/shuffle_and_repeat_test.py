@@ -30,8 +30,10 @@ from ..utils.timer_wrapper import tensorflow_op_timer
 class ShuffleAndRepeatTest(test_base.DatasetTestBase, parameterized.TestCase):
 
     def _build_ds(self, seed, count=5, num_elements=20):
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
             test = shuffle_ops.shuffle_and_repeat(buffer_size=5, count=count, seed=seed)
+            timer.gen.send(test)
         return dataset_ops.Dataset.range(num_elements).apply(
             shuffle_ops.shuffle_and_repeat(buffer_size=5, count=count, seed=seed))
 
@@ -114,8 +116,10 @@ class ShuffleAndRepeatTest(test_base.DatasetTestBase, parameterized.TestCase):
 
     @combinations.generate(test_base.default_test_combinations())
     def testLargeBufferSize(self):
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
             test = shuffle_ops.shuffle_and_repeat(buffer_size=21)
+            timer.gen.send(test)
         ds = dataset_ops.Dataset.range(20).apply(
             shuffle_ops.shuffle_and_repeat(buffer_size=21))
         get_next = self.getNext(ds)
@@ -126,9 +130,11 @@ class ShuffleAndRepeatTest(test_base.DatasetTestBase, parameterized.TestCase):
         num_epochs = 1000 * 1000
         # Each element being shuffled and repeated has shape (100,). This will OOM
         # or timeout if we actually load everything into the buffer.
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
             test = shuffle_ops.shuffle_and_repeat(
                 buffer_size=5 * num_epochs, count=num_epochs)
+            timer.gen.send(test)
         ds = dataset_ops.Dataset.range(500).batch(100).apply(
             shuffle_ops.shuffle_and_repeat(
                 buffer_size=5 * num_epochs, count=num_epochs))
@@ -146,9 +152,11 @@ class ShuffleAndRepeatTest(test_base.DatasetTestBase, parameterized.TestCase):
         # produce elements in a different order.
         num_epochs = 2
         num_elements = 100
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
             test = shuffle_ops.shuffle_and_repeat(
                 buffer_size=num_elements, count=num_epochs)
+            timer.gen.send(test)
         ds = dataset_ops.Dataset.range(num_elements).apply(
             shuffle_ops.shuffle_and_repeat(
                 buffer_size=num_elements, count=num_epochs))
@@ -165,8 +173,10 @@ class ShuffleAndRepeatCheckpointTest(checkpoint_test_base.CheckpointTestBase,
                                      parameterized.TestCase):
 
     def _build_ds(self, seed):
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
             test = shuffle_ops.shuffle_and_repeat(buffer_size=5, count=5, seed=seed)
+            timer.gen.send(test)
         return dataset_ops.Dataset.range(20).apply(
             shuffle_ops.shuffle_and_repeat(buffer_size=5, count=5, seed=seed))
 

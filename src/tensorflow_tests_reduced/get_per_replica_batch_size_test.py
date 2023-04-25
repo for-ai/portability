@@ -33,8 +33,10 @@ class InputContextTest(test.TestCase):
     def testPerReplicaBatchSize(self):
         input_context = distribute_lib.InputContext(
             num_input_pipelines=2, input_pipeline_id=1, num_replicas_in_sync=6)
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
             test = input_context.get_per_replica_batch_size(12)
+            timer.gen.send(test)
         self.assertEqual(2, input_context.get_per_replica_batch_size(12))
         with self.assertRaises(ValueError):
             input_context.get_per_replica_batch_size(13)

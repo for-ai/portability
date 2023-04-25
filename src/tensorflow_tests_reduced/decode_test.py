@@ -42,8 +42,10 @@ class AsStringOpTest(test.TestCase):
 
           output = string_ops.as_string(input_, shortest=True)
           result = output.eval(feed_dict={input_: float_inputs_})
-          with tensorflow_op_timer():
+          timer = tensorflow_op_timer()
+          with timer:
             s = lambda strs: [x.decode("ascii") for x in strs]
+            timer.gen.send(s)
           self.assertAllEqual(s(result), ["%g" % x for x in float_inputs_])
 
           output = string_ops.as_string(input_, scientific=True)
@@ -92,8 +94,10 @@ class AsStringOpTest(test.TestCase):
     int_dtypes = [dtypes.int8, dtypes.int32, dtypes.int64]
     uint_inputs = [0, 1, 127, 255, 101]
     uint_dtypes = [dtypes.uint8, dtypes.uint32, dtypes.uint64]
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       s = lambda strs: [x.decode("ascii") for x in strs]
+      timer.gen.send(s)
 
     with self.cached_session():
       for dtypes_, inputs in [(int_dtypes, int_inputs),
@@ -129,8 +133,10 @@ class AsStringOpTest(test.TestCase):
   def testLargeInt(self):
     # Cannot use values outside -128..127 for test, because we're also
     # testing int8
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       s = lambda strs: [x.decode("ascii") for x in strs]
+      timer.gen.send(s)
 
     with self.cached_session():
       input_ = array_ops.placeholder(dtypes.int32)
@@ -147,8 +153,10 @@ class AsStringOpTest(test.TestCase):
 
   @test_util.run_deprecated_v1
   def testHalfInt(self):
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       s = lambda strs: [x.decode("ascii") for x in strs]
+      timer.gen.send(s)
 
     with self.cached_session():
       for dtype, np_dtype in [(dtypes.int16, np.int16),
@@ -162,8 +170,10 @@ class AsStringOpTest(test.TestCase):
   @test_util.run_deprecated_v1
   def testBool(self):
     bool_inputs_ = [False, True]
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       s = lambda strs: [x.decode("ascii") for x in strs]
+      timer.gen.send(s)
 
     with self.cached_session():
       for dtype in (dtypes.bool,):
@@ -186,8 +196,10 @@ class AsStringOpTest(test.TestCase):
         input_ = array_ops.placeholder(dtype)
 
         def clean_nans(s_l):
-          with tensorflow_op_timer():
+          timer = tensorflow_op_timer()
+          with timer:
             test = [s.decode("ascii").replace("-nan", "nan") for s in s_l]
+            timer.gen.send(test)
           return [s.decode("ascii").replace("-nan", "nan") for s in s_l]
 
         output = string_ops.as_string(input_, shortest=True)

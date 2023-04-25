@@ -46,8 +46,10 @@ class AdjustBrightnessTest(test_util.TensorFlowTestCase):
     def _testBrightness(self, x_np, y_np, delta, tol=1e-6):
         with self.cached_session():
             x = constant_op.constant(x_np, shape=x_np.shape)
-            with tensorflow_op_timer():
+            timer = tensorflow_op_timer()
+            with timer:
                 y = image_ops.adjust_brightness(x, delta)
+                timer.gen.send(y)
             y_tf = self.evaluate(y)
             self.assertAllClose(y_tf, y_np, tol)
 

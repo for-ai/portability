@@ -60,8 +60,10 @@ class NormalTest(test.TestCase):
 
   @test_util.run_in_graph_and_eager_modes
   def testSampleLikeArgsGetDistDType(self):
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       dist = normal_lib.Normal(0., 1.)
+      timer.gen.send(dist)
     self.assertEqual(dtypes.float32, dist.dtype)
     for method in ("log_prob", "prob", "log_cdf", "cdf",
                    "log_survival_function", "survival_function", "quantile"):
@@ -95,8 +97,10 @@ class NormalTest(test.TestCase):
     mu = constant_op.constant([3.0] * batch_size)
     sigma = constant_op.constant([math.sqrt(10.0)] * batch_size)
     x = np.array([-2.5, 2.5, 4.0, 0.0, -1.0, 2.0], dtype=np.float32)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       normal = normal_lib.Normal(loc=mu, scale=sigma)
+      timer.gen.send(normal)
 
     log_pdf = normal.log_prob(x)
     self.assertAllEqual(
@@ -130,8 +134,10 @@ class NormalTest(test.TestCase):
     sigma = constant_op.constant(
         [[math.sqrt(10.0), math.sqrt(15.0)]] * batch_size)
     x = np.array([[-2.5, 2.5, 4.0, 0.0, -1.0, 2.0]], dtype=np.float32).T
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       normal = normal_lib.Normal(loc=mu, scale=sigma)
+      timer.gen.send(normal)
 
     log_pdf = normal.log_prob(x)
     log_pdf_values = self.evaluate(log_pdf)
@@ -167,8 +173,10 @@ class NormalTest(test.TestCase):
     mu = self._rng.randn(batch_size)
     sigma = self._rng.rand(batch_size) + 1.0
     x = np.linspace(-8.0, 8.0, batch_size).astype(np.float64)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       normal = normal_lib.Normal(loc=mu, scale=sigma)
+      timer.gen.send(normal)
     cdf = normal.cdf(x)
     self.assertAllEqual(
         self.evaluate(normal.batch_shape_tensor()), cdf.get_shape())
@@ -188,8 +196,10 @@ class NormalTest(test.TestCase):
     mu = self._rng.randn(batch_size)
     sigma = self._rng.rand(batch_size) + 1.0
     x = np.linspace(-8.0, 8.0, batch_size).astype(np.float64)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       normal = normal_lib.Normal(loc=mu, scale=sigma)
+      timer.gen.send(normal)
 
     sf = normal.survival_function(x)
     self.assertAllEqual(
@@ -210,8 +220,10 @@ class NormalTest(test.TestCase):
     mu = self._rng.randn(batch_size)
     sigma = self._rng.rand(batch_size) + 1.0
     x = np.linspace(-100.0, 10.0, batch_size).astype(np.float64)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       normal = normal_lib.Normal(loc=mu, scale=sigma)
+      timer.gen.send(normal)
 
     cdf = normal.log_cdf(x)
     self.assertAllEqual(
@@ -233,8 +245,10 @@ class NormalTest(test.TestCase):
       with g.as_default():
         mu = variables.Variable(dtype(0.0))
         sigma = variables.Variable(dtype(1.0))
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
           dist = normal_lib.Normal(loc=mu, scale=sigma)
+          timer.gen.send(dist)
         x = np.array([-100., -20., -5., 0., 5., 20., 100.]).astype(dtype)
         for func in [
             dist.cdf, dist.log_cdf, dist.survival_function,
@@ -254,8 +268,10 @@ class NormalTest(test.TestCase):
     mu = self._rng.randn(batch_size)
     sigma = self._rng.rand(batch_size) + 1.0
     x = np.linspace(-10.0, 100.0, batch_size).astype(np.float64)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       normal = normal_lib.Normal(loc=mu, scale=sigma)
+      timer.gen.send(normal)
 
     sf = normal.log_survival_function(x)
     self.assertAllEqual(
@@ -276,8 +292,10 @@ class NormalTest(test.TestCase):
     # Scipy.stats.norm cannot deal with the shapes in the other test.
     mu_v = 2.34
     sigma_v = 4.56
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       normal = normal_lib.Normal(loc=mu_v, scale=sigma_v)
+      timer.gen.send(normal)
 
     entropy = normal.entropy()
     self.assertAllEqual(
@@ -297,8 +315,10 @@ class NormalTest(test.TestCase):
   def testNormalEntropy(self):
     mu_v = np.array([1.0, 1.0, 1.0])
     sigma_v = np.array([[1.0, 2.0, 3.0]]).T
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       normal = normal_lib.Normal(loc=mu_v, scale=sigma_v)
+      timer.gen.send(normal)
 
     # scipy.stats.norm cannot deal with these shapes.
     sigma_broadcast = mu_v * sigma_v
@@ -318,8 +338,10 @@ class NormalTest(test.TestCase):
     # Mu will be broadcast to [7, 7, 7].
     mu = [7.]
     sigma = [11., 12., 13.]
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       normal = normal_lib.Normal(loc=mu, scale=sigma)
+      timer.gen.send(normal)
 
     self.assertAllEqual((3,), normal.mean().get_shape())
     self.assertAllEqual([7., 7, 7], self.evaluate(normal.mean()))
@@ -336,8 +358,10 @@ class NormalTest(test.TestCase):
     # Quantile performs piecewise rational approximation so adding some
     # special input values to make sure we hit all the pieces.
     p = np.hstack((p, np.exp(-33), 1. - np.exp(-33)))
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       normal = normal_lib.Normal(loc=mu, scale=sigma)
+      timer.gen.send(normal)
     x = normal.quantile(p)
 
     self.assertAllEqual(
@@ -358,8 +382,10 @@ class NormalTest(test.TestCase):
     with g.as_default():
       mu = variables.Variable(dtype(0.0))
       sigma = variables.Variable(dtype(1.0))
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         dist = normal_lib.Normal(loc=mu, scale=sigma)
+        timer.gen.send(dist)
       p = variables.Variable(
           np.array([0.,
                     np.exp(-32.), np.exp(-2.),
@@ -384,8 +410,10 @@ class NormalTest(test.TestCase):
     # sigma will be broadcast to [7, 7, 7]
     mu = [1., 2., 3.]
     sigma = [7.]
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       normal = normal_lib.Normal(loc=mu, scale=sigma)
+      timer.gen.send(normal)
 
     self.assertAllEqual((3,), normal.variance().get_shape())
     self.assertAllEqual([49., 49, 49], self.evaluate(normal.variance()))
@@ -395,8 +423,10 @@ class NormalTest(test.TestCase):
     # sigma will be broadcast to [7, 7, 7]
     mu = [1., 2., 3.]
     sigma = [7.]
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       normal = normal_lib.Normal(loc=mu, scale=sigma)
+      timer.gen.send(normal)
 
     self.assertAllEqual((3,), normal.stddev().get_shape())
     self.assertAllEqual([7., 7, 7], self.evaluate(normal.stddev()))
@@ -408,8 +438,10 @@ class NormalTest(test.TestCase):
     mu_v = 3.0
     sigma_v = np.sqrt(3.0)
     n = constant_op.constant(100000)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       normal = normal_lib.Normal(loc=mu, scale=sigma)
+      timer.gen.send(normal)
     samples = normal.sample(n)
     sample_values = self.evaluate(samples)
     # Note that the standard error for the sample mean is ~ sigma / sqrt(n).
@@ -441,8 +473,10 @@ class NormalTest(test.TestCase):
     with backprop.GradientTape() as tape:
       tape.watch(mu)
       tape.watch(sigma)
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         normal = normal_lib.Normal(loc=mu, scale=sigma)
+        timer.gen.send(normal)
       samples = normal.sample(100)
     grad_mu, grad_sigma = tape.gradient(samples, [mu, sigma])
     self.assertIsNotNone(grad_mu)
@@ -457,8 +491,10 @@ class NormalTest(test.TestCase):
     mu_v = [3.0, -3.0]
     sigma_v = [np.sqrt(2.0), np.sqrt(3.0)]
     n = constant_op.constant(100000)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       normal = normal_lib.Normal(loc=mu, scale=sigma)
+      timer.gen.send(normal)
     samples = normal.sample(n)
     sample_values = self.evaluate(samples)
     # Note that the standard error for the sample mean is ~ sigma / sqrt(n).
@@ -495,8 +531,10 @@ class NormalTest(test.TestCase):
   def testNormalShape(self):
     mu = constant_op.constant([-3.0] * 5)
     sigma = constant_op.constant(11.0)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       normal = normal_lib.Normal(loc=mu, scale=sigma)
+      timer.gen.send(normal)
 
     self.assertEqual(self.evaluate(normal.batch_shape_tensor()), [5])
     self.assertEqual(normal.batch_shape, tensor_shape.TensorShape([5]))
@@ -507,8 +545,10 @@ class NormalTest(test.TestCase):
   def testNormalShapeWithPlaceholders(self):
     mu = array_ops.placeholder(dtype=dtypes.float32)
     sigma = array_ops.placeholder(dtype=dtypes.float32)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       normal = normal_lib.Normal(loc=mu, scale=sigma)
+      timer.gen.send(normal)
 
     with self.cached_session() as sess:
       # get_batch_shape should return an "<unknown>" tensor.
@@ -527,10 +567,14 @@ class NormalTest(test.TestCase):
     sigma_a = np.array([1.0, 2.0, 3.0, 1.5, 2.5, 3.5])
     mu_b = np.array([-3.0] * batch_size)
     sigma_b = np.array([0.5, 1.0, 1.5, 2.0, 2.5, 3.0])
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       n_a = normal_lib.Normal(loc=mu_a, scale=sigma_a)
-    with tensorflow_op_timer():
+      timer.gen.send(n_a)
+      timer = tensorflow_op_timer()
+    with timer:
       n_b = normal_lib.Normal(loc=mu_b, scale=sigma_b)
+      timer.gen.send(n_b)
 
     kl = kullback_leibler.kl_divergence(n_a, n_b)
     kl_val = self.evaluate(kl)

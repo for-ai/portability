@@ -161,8 +161,10 @@ class IdentityReaderTest(test.TestCase):
 
     self.evaluate(queue.enqueue_many([["Y", "Z"]]))
     self.evaluate(queue.close())
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       test = reader.restore_state(state)
+      timer.gen.send(test)
     self.evaluate(reader.restore_state(state))
     self.assertAllEqual(1, self.evaluate(produced))
     self._ExpectRead(key, value, b"Y")

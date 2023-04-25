@@ -53,8 +53,10 @@ class LaplaceTest(test.TestCase):
     x = np.array([-2.5, 2.5, -4.0, 0.1, 1.0, 2.0], dtype=np.float32)
 
     laplace = laplace_lib.Laplace(loc=loc, scale=scale)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
         sf = laplace.log_survival_function(x)
+        timer.gen.send(sf)
     self.assertEqual(sf.get_shape(), (6,))
     if not stats:
       return

@@ -34,9 +34,11 @@ class Conv2DTransposeTest(test.TestCase):
 
         x = constant_op.constant(1, shape=x_shape, name="x", dtype=dtype)
         f = constant_op.constant(1, shape=f_shape, name="filter", dtype=dtype)
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
           output = nn_ops.conv2d_transpose(
             x, f, y_shape, strides=strides, padding="SAME")
+          timer.gen.send(output)
         value = self.evaluate(output)
 
         # We count the number of cells being added at the locations in the
@@ -76,9 +78,11 @@ class Conv2DTransposeTest(test.TestCase):
 
         x = constant_op.constant(1, shape=x_shape, name="x", dtype=dtype)
         f = constant_op.constant(1, shape=f_shape, name="filter", dtype=dtype)
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
           output = nn_ops.conv2d_transpose(
             x, f, y_shape, strides=strides, padding="SAME")
+          timer.gen.send(output)
         value = self.evaluate(output)
 
         for n in range(x_shape[0]):
@@ -113,9 +117,11 @@ class Conv2DTransposeTest(test.TestCase):
 
         x = constant_op.constant(1, shape=x_shape, name="x", dtype=dtype)
         f = constant_op.constant(1, shape=f_shape, name="filter", dtype=dtype)
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
           output = nn_ops.conv2d_transpose(
             x, f, y_shape, strides=strides, padding="VALID")
+          timer.gen.send(output)
         value = self.evaluate(output)
 
         cache_values = np.zeros(y_shape, dtype=np.float32)
@@ -162,9 +168,11 @@ class Conv2DTransposeTest(test.TestCase):
     with self.cached_session():
       x = constant_op.constant(x_val, name="x", dtype=dtypes.float32)
       f = constant_op.constant(f_val, name="f", dtype=dtypes.float32)
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         output = nn_ops.conv2d_transpose(
           x, f, y_shape, strides=strides, padding="SAME")
+        timer.gen.send(output)
       err = gradient_checker.compute_gradient_error([x, f], [x_shape, f_shape],
                                                     output, y_shape)
     print("conv2d_transpose gradient err = %g " % err)
@@ -188,7 +196,8 @@ class Conv2DTransposeTest(test.TestCase):
   #           1.0, shape=x_shape, name="x", dtype=dtypes.float32)
   #       f = constant_op.constant(
   #           1.0, shape=f_shape, name="filter", dtype=dtypes.float32)
-  #       with tensorflow_op_timer():
+  # timer = tensorflow_op_timer()
+  #       with timer:
   #         output = nn_ops.conv2d_transpose(
   #           x, f, y_shape, strides=strides, padding="SAME", data_format="NCHW")
 
@@ -223,7 +232,8 @@ class Conv2DTransposeTest(test.TestCase):
   #           1.0, shape=x_shape, name="x", dtype=dtypes.float32)
   #       f = constant_op.constant(
   #           1.0, shape=f_shape, name="filter", dtype=dtypes.float32)
-  #       with tensorflow_op_timer():
+  timer = tensorflow_op_timer()
+  #       with timer:
   #         output = nn_ops.conv2d_transpose(
   #           x, f, y_shape, strides=strides, padding="SAME", data_format="NCHW")
 
@@ -298,9 +308,11 @@ class Conv2DTransposeTest(test.TestCase):
     x = variables.Variable(random_ops.random_normal([3, 10, 5, 1]))
     f = variable_scope.get_variable("f", initializer=initializer)
     f_shape = array_ops.stack([array_ops.shape(x)[0], 10, 5, 5])
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       output = nn_ops.conv2d_transpose(
         x, f, f_shape, strides=[1, 1, 1, 1], padding="SAME")
+      timer.gen.send(output)
     self.assertEqual(output.get_shape().as_list(), [3, 10, 5, 5])
 
   def testConv2DTransposeInvalidOutputShape(self):

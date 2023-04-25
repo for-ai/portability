@@ -40,8 +40,10 @@ class CastOpTest(test.TestCase):
   def _cast(self, x, dtype, use_gpu=False):
     with test_util.device(use_gpu):
       val = constant_op.constant(x, self._toDataType(np.array([x]).dtype))
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         cast = math_ops.cast(val, self._toDataType(dtype), name="cast")
+        timer.gen.send(cast)
       return self.evaluate(cast)
 
   def _test(self, x, dtype, use_gpu=False):
@@ -92,12 +94,16 @@ class CastOpTest(test.TestCase):
   def testBfloat16(self):
     a = np.random.uniform(-100, 100, 100).astype(np.float32)
     with self.cached_session(use_gpu=False):
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         b = math_ops.cast(math_ops.cast(a, dtypes.bfloat16), dtypes.float32)
+        timer.gen.send(b)
       self.assertAllClose(a, self.evaluate(b), rtol=1 / 128.)
     with self.cached_session():
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         b = math_ops.cast(math_ops.cast(a, dtypes.bfloat16), dtypes.float32)
+        timer.gen.send(b)
       print("***B", b.device)
       self.assertAllClose(a, self.evaluate(b), rtol=1 / 128.)
 
@@ -144,8 +150,10 @@ class CastOpTest(test.TestCase):
 
   def _OpError(self, x, dtype, err):
     with self.assertRaisesOpError(err):
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         test = math_ops.cast(x, dtype)
+        timer.gen.send(test)
       self.evaluate(math_ops.cast(x, dtype))
 
   def testNotImplemented(self):
@@ -155,8 +163,10 @@ class CastOpTest(test.TestCase):
     with self.cached_session():
       x = variables.Variable(5, dtype=dtypes.float32)
       y = variables.Variable(True, dtype=dtypes.bool)
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         cast = math_ops.cast(y, x.dtype)
+        timer.gen.send(cast)
       self.evaluate(variables.global_variables_initializer())
       self.assertEqual(1.0, self.evaluate(cast))
 
@@ -169,8 +179,10 @@ class CastOpTest(test.TestCase):
 
           def cast(x, dst_t=dst_t):
             x = array_ops.identity(x)
-            with tensorflow_op_timer():
+            timer = tensorflow_op_timer()
+            with timer:
               x = math_ops.cast(x, dst_t)
+              timer.gen.send(x)
             return x
 
           err = gradient_checker_v2.max_error(
@@ -180,8 +192,10 @@ class CastOpTest(test.TestCase):
   def testRefDtype(self):
     with context.graph_mode(), self.cached_session():
       x = gen_state_ops.variable(shape=[1], dtype=dtypes.float32)
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         result = math_ops.cast(x, dtypes.float32)
+        timer.gen.send(result)
       self.assertEqual(x.dtype, dtypes.float32_ref)
       self.assertEqual(result.dtype, dtypes.float32)
 
@@ -193,30 +207,15 @@ class SparseTensorCastTest(test.TestCase):
     values = constant_op.constant(np.array([1, 2, 3], np.int64))
     shape = constant_op.constant([3], dtypes.int64)
     st = sparse_tensor.SparseTensor(indices, values, shape)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       st_cast = math_ops.cast(st, dtypes.float32)
+      timer.gen.send(st_cast)
 
     self.assertAllEqual(st_cast.indices, [[0], [1], [2]])
     self.assertAllEqual(st_cast.values,
                         np.array([1, 2, 3], np.float32))
     self.assertAllEqual(st_cast.dense_shape, [3])
-
-
-class SaturateCastTest(test.TestCase):
-
-  def testSaturate(self):
-    in_types = dtypes.float32,
-    out_types = dtypes.int8, dtypes.uint8, dtypes.int16, dtypes.float32
-    for in_type in in_types:
-      for out_type in out_types:
-        lo, hi = in_type.min, in_type.max
-        x = constant_op.constant(
-            [lo, lo + 1, lo // 2, hi // 2, hi - 1, hi], dtype=in_type)
-        y = math_ops.saturate_cast(x, dtype=out_type)
-        self.assertEqual(y.dtype, out_type)
-        x, y = self.evaluate([x, y])
-        correct = np.maximum(out_type.min, np.minimum(out_type.max, x))
-        self.assertAllEqual(correct, y)
 
 
 if __name__ == "__main__":

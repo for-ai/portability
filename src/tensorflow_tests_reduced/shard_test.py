@@ -16,31 +16,39 @@ class ShardTest(test_base.DatasetTestBase, parameterized.TestCase):
   @combinations.generate(test_base.default_test_combinations())
   def testSimpleCase(self):
     dataset = dataset_ops.Dataset.range(10)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       dataset = dataset.shard(5, 2)
+      timer.gen.send(dataset)
     self.assertDatasetProduces(dataset, expected_output=[2, 7])
 
   @combinations.generate(test_base.default_test_combinations())
   def testNestedData(self):
     dataset_a = dataset_ops.Dataset.range(10)
     dataset_b = dataset_ops.Dataset.range(10, 0, -1)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       dataset = dataset_ops.Dataset.zip((dataset_a, dataset_b)).shard(5, 2)
+      timer.gen.send(dataset)
     self.assertDatasetProduces(dataset, expected_output=[(2, 8), (7, 3)])
 
   @combinations.generate(test_base.default_test_combinations())
   def testOffsetZero(self):
     dataset = dataset_ops.Dataset.range(10)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       dataset = dataset.shard(5, 0)
+      timer.gen.send(dataset)
     self.assertDatasetProduces(dataset, expected_output=[0, 5])
 
   @combinations.generate(test_base.default_test_combinations())
   def testOffsetGreaterNumShards(self):
     with self.assertRaises(errors.InvalidArgumentError):
       dataset = dataset_ops.Dataset.range(10)
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         dataset = dataset.shard(5, 7)
+        timer.gen.send(dataset)
         
       self.evaluate(self.getNext(dataset)())
 
@@ -48,16 +56,20 @@ class ShardTest(test_base.DatasetTestBase, parameterized.TestCase):
   def testNegativeOffset(self):
     with self.assertRaises(errors.InvalidArgumentError):
       dataset = dataset_ops.Dataset.range(10)
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         dataset = dataset.shard(5, -3)
+        timer.gen.send(dataset)
       self.evaluate(self.getNext(dataset)())
 
   @combinations.generate(test_base.default_test_combinations())
   def testNegativeNumShards(self):
     with self.assertRaises(errors.InvalidArgumentError):
       dataset = dataset_ops.Dataset.range(10)
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         dataset = dataset.shard(-3, 1)
+        timer.gen.send(dataset)
       self.evaluate(self.getNext(dataset)())
 
   @combinations.generate(test_base.default_test_combinations())
@@ -69,48 +81,60 @@ class ShardTest(test_base.DatasetTestBase, parameterized.TestCase):
   @combinations.generate(test_base.default_test_combinations())
   def testIteratorEndsBeforeFirstElem(self):
     dataset = dataset_ops.Dataset.range(1)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
         dataset = dataset.shard(5, 2)
+        timer.gen.send(dataset)
     dataset = dataset_ops.Dataset.range(1).shard(5, 2)
     self.assertDatasetProduces(dataset, expected_output=[])
 
   @combinations.generate(test_base.default_test_combinations())
   def testLargerWorkerPool(self):
     dataset = dataset_ops.Dataset.range(10)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
         dataset = dataset.shard(7, 5)
+        timer.gen.send(dataset)
     dataset = dataset_ops.Dataset.range(10).shard(7, 5)
     self.assertDatasetProduces(dataset, expected_output=[5])
 
   @combinations.generate(test_base.default_test_combinations())
   def testIndexEqualsNumShards(self):
     dataset = dataset_ops.Dataset.range(10)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
         dataset = dataset.shard(5, 4)
+        timer.gen.send(dataset)
     dataset = dataset_ops.Dataset.range(10).shard(5, 4)
     self.assertDatasetProduces(dataset, expected_output=[4, 9])
 
   @combinations.generate(test_base.default_test_combinations())
   def testIndexEqualsNumShards2(self):
     dataset = dataset_ops.Dataset.range(10)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
         dataset = dataset.shard(4, 3)
+        timer.gen.send(dataset)
     dataset = dataset_ops.Dataset.range(10).shard(4, 3)
     self.assertDatasetProduces(dataset, expected_output=[3, 7])
 
   @combinations.generate(test_base.default_test_combinations())
   def testNumShardsLargerThanDataset(self):
     dataset = dataset_ops.Dataset.range(10)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
         dataset = dataset.shard(20, 5)
+        timer.gen.send(dataset)
     dataset = dataset_ops.Dataset.range(10).shard(20, 5)
     self.assertDatasetProduces(dataset, expected_output=[5])
 
   @combinations.generate(test_base.default_test_combinations())
   def testName(self):
     dataset = dataset_ops.Dataset.range(10)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
         dataset = dataset.shard(1, 0, name="shard")
+        timer.gen.send(dataset)
     dataset = dataset_ops.Dataset.from_tensors(42).shard(1, 0, name="shard")
     self.assertDatasetProduces(dataset, [42])
 
@@ -141,8 +165,10 @@ class ShardRandomAccessTest(test_base.DatasetTestBase, parameterized.TestCase):
                          combinations.combine(index=[-1, 2, 3, 4])))
   def testInvalidIndex(self, index):
     dataset = dataset_ops.Dataset.range(4)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
         dataset = dataset.shard(num_shards=2, index=0)
+        timer.gen.send(dataset)
     dataset = dataset_ops.Dataset.range(4).shard(num_shards=2, index=0)
     with self.assertRaises(errors.OutOfRangeError):
       self.evaluate(random_access.at(dataset, index=index))
@@ -150,9 +176,11 @@ class ShardRandomAccessTest(test_base.DatasetTestBase, parameterized.TestCase):
   @combinations.generate(test_base.default_test_combinations())
   def testEmptyDataset(self):
     dataset = dataset_ops.Dataset.from_tensor_slices([])
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
         dataset = dataset.shard(
         num_shards=2, index=1)
+        timer.gen.send(dataset)
     dataset = dataset_ops.Dataset.from_tensor_slices([]).shard(
         num_shards=2, index=1)
     with self.assertRaises(errors.OutOfRangeError):
@@ -161,8 +189,10 @@ class ShardRandomAccessTest(test_base.DatasetTestBase, parameterized.TestCase):
   @combinations.generate(test_base.default_test_combinations())
   def testNumShardsAndIndexLessThanNumElements(self):
     dataset = dataset_ops.Dataset.range(10)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
         dataset = dataset.shard(5, 0)
+        timer.gen.send(dataset)
     dataset = dataset_ops.Dataset.range(10).shard(5, 0)
     self.assertEqual(0, self.evaluate(random_access.at(dataset, 0)))
     self.assertEqual(5, self.evaluate(random_access.at(dataset, 1)))
@@ -172,8 +202,10 @@ class ShardRandomAccessTest(test_base.DatasetTestBase, parameterized.TestCase):
   @combinations.generate(test_base.default_test_combinations())
   def testNumShardsGreaterThanNumElementsIndexLess(self):
     dataset = dataset_ops.Dataset.range(7)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
         dataset = dataset.shard(8, 3)
+        timer.gen.send(dataset)
     dataset = dataset_ops.Dataset.range(7).shard(8, 3)
     self.assertEqual(3, self.evaluate(random_access.at(dataset, 0)))
     with self.assertRaises(errors.OutOfRangeError):
@@ -182,8 +214,10 @@ class ShardRandomAccessTest(test_base.DatasetTestBase, parameterized.TestCase):
   @combinations.generate(test_base.default_test_combinations())
   def testNumShardsAndIndexGreaterThanNumElements(self):
     dataset = dataset_ops.Dataset.range(13)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
         dataset = dataset.shard(23, 21)
+        timer.gen.send(dataset)
     dataset = dataset_ops.Dataset.range(13).shard(23, 21)
     with self.assertRaises(errors.OutOfRangeError):
       self.evaluate(random_access.at(dataset, 0))
@@ -199,9 +233,11 @@ class ShardRandomAccessTest(test_base.DatasetTestBase, parameterized.TestCase):
   def testMultipleCombinations(self, elements, num_shards, index):
     components = range(elements)
     dataset = dataset_ops.Dataset.range(elements)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
         dataset = dataset.shard(
         num_shards=num_shards, index=index)
+        timer.gen.send(dataset)
     dataset = dataset_ops.Dataset.range(elements).shard(
         num_shards=num_shards, index=index)
     len_dataset = self.evaluate(dataset.cardinality())

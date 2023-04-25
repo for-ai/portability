@@ -43,9 +43,11 @@ class RunEagerOpAsFunctionTest(test.TestCase):
         self._m_2_by_2 = random_ops.random_uniform((2, 2))
 
     def testArrayFill(self):
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
             array_ops.fill(
             constant_op.constant([2], dtype=dtypes.int64), constant_op.constant(1))
+            timer.gen.send(array_ops)
 
 
 if __name__ == "__main__":

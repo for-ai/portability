@@ -48,8 +48,10 @@ class AssertEqualTest(test.TestCase):
     if context.executing_eagerly():
       self.assertIs(check_op, None)
     else:
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         self.assertEqual(check_op.type, "NoOp")
+        timer.gen.send(self)
 
 
 class EnsureShapeTest(test.TestCase):
@@ -59,15 +61,19 @@ class EnsureShapeTest(test.TestCase):
   def testStaticShape(self):
     placeholder = array_ops.placeholder(dtypes.int32)
     ensure_shape_op = check_ops.ensure_shape(placeholder, (3, 3, 3))
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       self.assertEqual(ensure_shape_op.get_shape(), (3, 3, 3))
+      timer.gen.send(self)
 
   @test_util.run_deprecated_v1
   def testStaticShape_MergesShapes(self):
     placeholder = array_ops.placeholder(dtypes.int32, shape=(None, None, 3))
     ensure_shape_op = check_ops.ensure_shape(placeholder, (5, 4, None))
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       self.assertEqual(ensure_shape_op.get_shape(), (5, 4, 3))
+      timer.gen.send(self)
 
   @test_util.run_deprecated_v1
   def testStaticShape_RaisesErrorWhenRankIncompatible(self):
@@ -86,8 +92,10 @@ class EnsureShapeTest(test.TestCase):
     placeholder = array_ops.placeholder(dtypes.int32)
     derived = placeholder / 3
     ensure_shape_op = check_ops.ensure_shape(derived, None)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       self.assertEqual(ensure_shape_op.get_shape(), None)
+      timer.gen.send(self)
 
 if __name__ == "__main__":
   test.main()

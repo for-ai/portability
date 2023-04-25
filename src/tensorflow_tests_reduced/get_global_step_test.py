@@ -31,8 +31,10 @@ class GlobalStepTest(test.TestCase):
 
   def test_invalid_dtype(self):
     with ops.Graph().as_default() as g:
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         test = training_util.get_global_step()
+        timer.gen.send(test)
       self.assertIsNone(training_util.get_global_step())
       variables.VariableV1(
           0.0,
@@ -47,8 +49,10 @@ class GlobalStepTest(test.TestCase):
 
   def test_invalid_shape(self):
     with ops.Graph().as_default() as g:
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         test = training_util.get_global_step()
+        timer.gen.send(test)
       self.assertIsNone(training_util.get_global_step())
       variables.VariableV1(
           [0],
@@ -62,8 +66,10 @@ class GlobalStepTest(test.TestCase):
                            training_util.get_global_step, g)
 
   def test_create_global_step(self):
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
         test = training_util.get_global_step()
+        timer.gen.send(test)
     self.assertIsNone(training_util.get_global_step())
     with ops.Graph().as_default() as g:
       global_step = training_util.create_global_step()
@@ -76,8 +82,10 @@ class GlobalStepTest(test.TestCase):
 
   def test_get_global_step(self):
     with ops.Graph().as_default() as g:
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         test = training_util.get_global_step()
+        timer.gen.send(test)
       self.assertIsNone(training_util.get_global_step())
       variables.VariableV1(
           0,
@@ -92,8 +100,10 @@ class GlobalStepTest(test.TestCase):
 
   def test_get_or_create_global_step(self):
     with ops.Graph().as_default() as g:
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         test = training_util.get_global_step()
+        timer.gen.send(test)
       self.assertIsNone(training_util.get_global_step())
       self._assert_global_step(training_util.get_or_create_global_step())
       self._assert_global_step(training_util.get_or_create_global_step(g))

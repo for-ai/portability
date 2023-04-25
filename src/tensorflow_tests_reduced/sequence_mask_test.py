@@ -45,8 +45,10 @@ class SequenceMaskTest(test_util.TensorFlowTestCase):
         array_ops.sequence_mask([10, 20], [10, 20])
 
   def testOneDimensionalWithMaxlen(self):
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       res = array_ops.sequence_mask(constant_op.constant([1, 3, 2]), 5)
+      timer.gen.send(res)
     self.assertAllEqual(res.get_shape(), [3, 5])
     self.assertAllEqual(
         res,
@@ -55,24 +57,30 @@ class SequenceMaskTest(test_util.TensorFlowTestCase):
 
   def testOneDimensionalDtypeWithoutMaxlen(self):
     # test dtype and default maxlen:
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       res = array_ops.sequence_mask(
         constant_op.constant([0, 1, 4]), dtype=dtypes.float32)
+      timer.gen.send(res)
     self.assertAllEqual(res.get_shape().as_list(), [3, 4])
     self.assertAllEqual(
         res, [[0.0, 0.0, 0.0, 0.0], [1.0, 0.0, 0.0, 0.0], [1.0, 1.0, 1.0, 1.0]])
 
   def testOneDimensionalWithoutMaxlen(self):
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       res = array_ops.sequence_mask(constant_op.constant([0, 1, 4]))
+      timer.gen.send(res)
     self.assertAllEqual(res.get_shape().as_list(), [3, 4])
     self.assertAllEqual(res,
                         [[False, False, False, False],
                          [True, False, False, False], [True, True, True, True]])
 
   def testTwoDimensional(self):
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       res = array_ops.sequence_mask(constant_op.constant([[1, 3, 2]]), 5)
+      timer.gen.send(res)
     self.assertAllEqual(res.get_shape(), [1, 3, 5])
     self.assertAllEqual(
         res,
@@ -80,9 +88,11 @@ class SequenceMaskTest(test_util.TensorFlowTestCase):
           [True, True, False, False, False]]])
 
     # test dtype and default maxlen:
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       res = array_ops.sequence_mask(
         constant_op.constant([[0, 1, 4], [1, 2, 3]]), dtype=dtypes.float32)
+      timer.gen.send(res)
     self.assertAllEqual(res.get_shape().as_list(), [2, 3, 4])
     self.assertAllEqual(
         res,
@@ -92,10 +102,12 @@ class SequenceMaskTest(test_util.TensorFlowTestCase):
   def testDtypes(self):
 
     def check_dtypes(lengths_dtype, maxlen_dtype):
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         res = array_ops.sequence_mask(
           constant_op.constant([1, 3, 2], dtype=lengths_dtype),
           constant_op.constant(5, dtype=maxlen_dtype))
+        timer.gen.send(res)
       self.assertAllEqual(res.get_shape(), [3, 5])
       self.assertAllEqual(
           res,
@@ -110,12 +122,14 @@ class SequenceMaskTest(test_util.TensorFlowTestCase):
   def testOutputDtype(self):
 
     def check_output_dtype(output_dtype):
-      with tensorflow_op_timer():
+      timer = tensorflow_op_timer()
+      with timer:
         res = self.evaluate(
           array_ops.sequence_mask(
               constant_op.constant([1, 3, 2], dtype=dtypes.int32),
               constant_op.constant(5, dtype=dtypes.int32),
               dtype=output_dtype))
+        timer.gen.send(res)
       self.assertAllEqual(
           res,
           self.evaluate(

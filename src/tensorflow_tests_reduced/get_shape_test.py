@@ -71,8 +71,10 @@ class RaggedTensorTest(test_util.TensorFlowTestCase, parameterized.TestCase):
   def testGetShape(self):
     rt = RaggedTensor.from_row_splits(b'a b c d e f g'.split(),
                                       [0, 2, 5, 6, 6, 7])
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       test = rt.get_shape().as_list()
+      timer.gen.send(test)
     self.assertEqual(rt.shape.as_list(), rt.get_shape().as_list())
 
  

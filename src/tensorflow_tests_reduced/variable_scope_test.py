@@ -171,9 +171,11 @@ class VariablesToConstantsTest(test.TestCase):
         """Tests that a single variable is properly converted to a constant."""
 
         with ops.Graph().as_default():
-            with tensorflow_op_timer():
+            timer = tensorflow_op_timer()
+            with timer:
                 with variable_scope.variable_scope("", use_resource=False):
                     _ = variable_scope.get_variable("x", initializer=1.0)
+                timer.gen.send(None)
             with session_lib.Session() as sess:
                 sess.run(variables.global_variables_initializer())
                 variable_graph_def = sess.graph.as_graph_def()

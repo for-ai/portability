@@ -50,8 +50,10 @@ class ScatterNdTensorTest(test.TestCase):
             indices = constant_op.constant([[4], [3], [1], [7]])
             updates = constant_op.constant([9, 10, 11, 12], dtype=dtype)
             t = array_ops.ones([8], dtype=dtype)
-            with tensorflow_op_timer():
+            timer = tensorflow_op_timer()
+            with timer:
                 assigned = array_ops.tensor_scatter_update(t, indices, updates)
+                timer.gen.send(assigned)
             added = array_ops.tensor_scatter_add(t, indices, updates)
             subbed = array_ops.tensor_scatter_sub(t, indices, updates)
 
@@ -100,8 +102,10 @@ class ScatterNdTensorTest(test.TestCase):
             indices = constant_op.constant([[4], [3], [1], [7]])
             updates = constant_op.constant([0, 2, -1, 2], dtype=dtype)
             t = array_ops.ones([8], dtype=dtype)
-            with tensorflow_op_timer():
+            timer = tensorflow_op_timer()
+            with timer:
                 assigned = array_ops.tensor_scatter_update(t, indices, updates)
+                timer.gen.send(assigned)
             min_result = array_ops.tensor_scatter_min(t, indices, updates)
             max_result = array_ops.tensor_scatter_max(t, indices, updates)
 
@@ -123,8 +127,10 @@ class ScatterNdTensorTest(test.TestCase):
                     [9, 10, 11, 12], dtype=dtype)  # pylint: disable=cell-var-from-loop
                 t = array_ops.ones(
                     [8], dtype=dtype)  # pylint: disable=cell-var-from-loop
-                with tensorflow_op_timer():
+                timer = tensorflow_op_timer()
+                with timer:
                     test = array_ops.tensor_scatter_update(t, indices, updates)
+                    timer.gen.send(test)
 
                 return array_ops.tensor_scatter_update(t, indices, updates)
 
@@ -139,8 +145,10 @@ class ScatterNdTensorTest(test.TestCase):
             "hello", "hello", "hello", "hello", "hello", "hello", "hello", "hello"
         ],
             dtype=dtypes.string)
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
             updated = array_ops.tensor_scatter_update(tensor, indices, updates)
+            timer.gen.send(updated)
 
         self.assertAllEqual(
             updated,
@@ -154,8 +162,10 @@ class ScatterNdTensorTest(test.TestCase):
             self.skipTest(
                 "Duplicate indices scatter is non-deterministic on GPU")
         a = array_ops.zeros([10, 1])
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
             b = array_ops.tensor_scatter_update(a, [[5], [5]], [[4], [8]])
+            timer.gen.send(b)
         self.assertAllEqual(
             b,
             constant_op.constant([[0.], [0.], [0.], [0.], [0.], [8.], [0.], [0.],
@@ -167,12 +177,14 @@ class ScatterNdTensorTest(test.TestCase):
             self.skipTest(
                 "Duplicate indices scatter is non-deterministic on GPU")
         a = array_ops.zeros([10, 10])
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
             b = array_ops.tensor_scatter_update(
             a, [[5], [6], [6]],
             [math_ops.range(10),
              math_ops.range(11, 21),
              math_ops.range(10, 20)])
+        timer.gen.send(b)
         self.assertAllEqual(
             b[6],
             constant_op.constant([10., 11., 12., 13., 14., 15., 16., 17., 18.,
@@ -193,13 +205,17 @@ class ScatterNdTensorDeterminismTest(ScatterNdTensorTest):
         a = array_ops.zeros([1])
         indices = array_ops.zeros([100000, 1], dtypes.int32)
         values = np.random.randn(100000)
-        with tensorflow_op_timer():
+        timer = tensorflow_op_timer()
+        with timer:
             test = array_ops.tensor_scatter_update(a, indices, values)
+            timer.gen.send(test)
         val = self.evaluate(
             array_ops.tensor_scatter_update(a, indices, values))
         for _ in range(5):
-            with tensorflow_op_timer():
+            timer = tensorflow_op_timer()
+            with timer:
                 test = array_ops.tensor_scatter_update(a, indices, values)
+                timer.gen.send(test)
             val2 = self.evaluate(
                 array_ops.tensor_scatter_update(a, indices, values))
             self.assertAllEqual(val, val2)

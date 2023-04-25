@@ -73,8 +73,10 @@ class LinearOperatorZerosTest(
 
     operator = linalg_lib.LinearOperatorZeros(
         num_rows, batch_shape=batch_shape, dtype=dtype)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       matrix = array_ops.zeros(shape=shape, dtype=dtype)
+      timer.gen.send(matrix)
 
     return operator, matrix
 
@@ -220,8 +222,10 @@ class LinearOperatorZerosNotSquareTest(
     operator = linalg_lib.LinearOperatorZeros(
         num_rows, num_columns, is_square=False, is_self_adjoint=False,
         batch_shape=batch_shape, dtype=dtype)
-    with tensorflow_op_timer():
+    timer = tensorflow_op_timer()
+    with timer:
       matrix = array_ops.zeros(shape=shape, dtype=dtype)
+      timer.gen.send(matrix)
 
     return operator, matrix
 
