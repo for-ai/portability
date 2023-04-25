@@ -1,9 +1,11 @@
 import contextlib
+
 # import torch
 import time
 import functools
 import pytest
 import os
+import tensorflow as tf
 
 try:
     # Import the TPUProfiler class from the torch_xla package
@@ -20,7 +22,11 @@ def tensorflow_timer(record_function):
     start = time.perf_counter()
 
     yield
-
+    before_sync = time.perf_counter()
+    wait_for_gpu = tf.py_function(
+        lambda: tf.compat.v1.Session().run(tf.no_op()), inp=[], Tout=[]
+    )
+    wait_for_gpu.numpy()  # Force synchronization
     # Stop the timer
     end = time.perf_counter()
 
@@ -32,18 +38,19 @@ def tensorflow_timer(record_function):
 @contextlib.contextmanager
 def tensorflow_op_timer():
     with tensorflow_timer(
-            lambda x: pytest.tensorflow_test_times[pytest.test_name]['operations'].append(x)):
+        lambda x: pytest.tensorflow_test_times[pytest.test_name]["operations"].append(x)
+    ):
         yield
 
 
 def assign_pytorch_test_time(x):
     # print(pytest.pytorch_test_times)
-    pytest.pytorch_test_times[pytest.test_name]['test_time'] = x
+    pytest.pytorch_test_times[pytest.test_name]["test_time"] = x
 
 
 def assign_tensorflow_test_time(x):
     # print(pytest.tensorflow_test_times)
-    pytest.tensorflow_test_times[pytest.test_name]['test_time'] = x
+    pytest.tensorflow_test_times[pytest.test_name]["test_time"] = x
 
 
 @contextlib.contextmanager
@@ -55,7 +62,8 @@ def tensorflow_test_timer():
 @contextlib.contextmanager
 def pytorch_op_timer():
     with pytorch_timer(
-            lambda x: pytest.pytorch_test_times[pytest.test_name]['operations'].append(x)):
+        lambda x: pytest.pytorch_test_times[pytest.test_name]["operations"].append(x)
+    ):
         yield
 
 
@@ -69,14 +77,12 @@ def pytorch_test_timer():
 def pytorch_timer(record_function):
     if torch.cuda.is_available():
         # Use CUDA events to measure time on a GPU
-        start = torch.cuda.Event(enable_timing=True)
-        end = torch.cuda.Event(enable_timing=True)
-        start.record()
+        start = time.perf_counter()
         yield
-        end.record()
 
         # Waits for all CUDA operations to finish running
         torch.cuda.synchronize()
+        end = time.perf_counter()
 
         record_function(start.elapsed_time(end))
         # pytest.test_times[pytest.test_name]['operations'].append(
@@ -84,12 +90,14 @@ def pytorch_timer(record_function):
         # print(start.elapsed_time(end))  # milliseconds
     elif TPUProfiler != None and xm.xla_device():
         # Use TPUProfiler to measure time on a TPU
-        with TPUProfiler('pytorch_timer') as prof:
-            yield
+        start = time.perf_counter()
+        yield
+        xm.mark_step()
+        end = time.perf_counter()
         # Print the time elapsed for TPU operations
         # pytest.test_times[pytest.test_name]['operations'].append(
         #     prof.total_time_ms())
-        record_function(prof.total_time_ms())
+        record_function(start.elapsed_time(end))
         # print(prof.total_time_ms())
     else:
         # Use Python's time module to measure time on a CPU
