@@ -20,12 +20,12 @@ except ImportError:
 @contextlib.contextmanager
 def tensorflow_timer(record_function):
     start = time.perf_counter()
-    print("***START", start)
+    # print("***START", start)
 
     yield
     # Stop the timer
     end = time.perf_counter()
-    print("***END", end)
+    # print("***END", end)
     # Print the elapsed time
     record_function(end - start)
     # print("***TIME", end - start)  # seconds
@@ -39,10 +39,11 @@ def tensorflow_op_timer():
         result = yield
         yield
         before_sync = time.perf_counter()
-        print("***BEFORE SYNC", before_sync)
+        # print("***BEFORE SYNC", before_sync)
         has_numpy = getattr(result, "numpy", None)
+        # print("***EAGER EXECUTE", tf.executing_eagerly())
         if callable(has_numpy):
-            print("***CALL NUMPY")
+            # print("***CALL NUMPY")
             result.numpy()
 
 

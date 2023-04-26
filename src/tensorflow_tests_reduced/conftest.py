@@ -61,7 +61,7 @@ def track_timing(request):
     pytest.test_name = test_file + ":" + pytest.test_name
 
     pytest.tensorflow_test_times[pytest.test_name] = {"operations": []}
-    tf.debugging.set_log_device_placement(True)
+    # tf.debugging.set_log_device_placement(True)
     if os.environ['DEVICE'] == "tpu":
         device_name = "/device:TPU:0"
     elif os.environ['DEVICE'] == "gpu":
