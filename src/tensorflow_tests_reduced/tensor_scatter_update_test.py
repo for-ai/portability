@@ -184,7 +184,7 @@ class ScatterNdTensorTest(test.TestCase):
             [math_ops.range(10),
              math_ops.range(11, 21),
              math_ops.range(10, 20)])
-        timer.gen.send(b)
+            timer.gen.send(b)
         self.assertAllEqual(
             b[6],
             constant_op.constant([10., 11., 12., 13., 14., 15., 16., 17., 18.,

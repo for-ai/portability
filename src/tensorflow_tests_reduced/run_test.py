@@ -1211,7 +1211,7 @@ class SessionTest(test_util.TensorFlowTestCase):
         timer = tensorflow_op_timer()
         with timer:
           v.initializer.run()
-          timer.gen.send(v)
+          timer.gen.send(None)
         v_val = v.eval()
         self.assertAllEqual([[4.0, 4.0, 4.0]], v_val)
         d = constant_op.constant(3.0, shape=[2, 3])
