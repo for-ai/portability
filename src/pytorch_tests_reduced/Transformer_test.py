@@ -87,6 +87,7 @@ class TestNN(NNTestCase):
     def test_Transformer_cell(self, device):
         # this is just a smoke test; these modules are implemented through
         # autograd so no Jacobian test is needed
+        torch.set_default_dtype(torch.double)
         d_model = 512
         nhead = 16
         num_encoder_layers = 4
@@ -124,6 +125,7 @@ class TestNN(NNTestCase):
                                  memory_key_padding_mask=memory_key_padding_mask)
             output.sum().backward()
 
+        torch.set_default_dtype(torch.float)
 
 instantiate_device_type_tests(TestNN, globals())
 
