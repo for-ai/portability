@@ -106,8 +106,9 @@ class TestNNInit(TestCase):
                 with pytorch_op_timer():
                     init.xavier_uniform_(tensor)
         torch.set_default_dtype(torch.float)
-
-    @unittest.skipIf(not TEST_SCIPY, "Scipy not found.")
+    def _random_float(self, a, b):
+        return (b - a) * random.random() + a
+    # @unittest.skipIf(not TEST_SCIPY, "Scipy not found.")
     def test_xavier_uniform(self, device):
         torch.set_default_dtype(torch.double)
         for use_gain in [True, False]:
