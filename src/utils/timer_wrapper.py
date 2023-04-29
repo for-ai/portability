@@ -47,7 +47,6 @@ def tensorflow_op_timer():
             result.numpy()
 
 
-
 def assign_pytorch_test_time(x):
     # print(pytest.pytorch_test_times)
     pytest.pytorch_test_times[pytest.test_name]["test_time"] = x
@@ -69,7 +68,15 @@ def pytorch_op_timer():
     with pytorch_timer(
         lambda x: pytest.pytorch_test_times[pytest.test_name]["operations"].append(x)
     ):
+        # Use CUDA events to measure time on a GPU
         yield
+
+        # Waits for all CUDA operations to finish running
+
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+        elif TPUProfiler is not None and xm.xla_device():
+            xm.mark_step()
 
 
 @contextlib.contextmanager
@@ -80,38 +87,38 @@ def pytorch_test_timer():
 
 @contextlib.contextmanager
 def pytorch_timer(record_function):
-    if torch.cuda.is_available():
-        # Use CUDA events to measure time on a GPU
-        start = time.perf_counter()
-        yield
+    # if torch.cuda.is_available():
+    #     # Use CUDA events to measure time on a GPU
+    #     start = time.perf_counter()
+    #     yield
 
-        # Waits for all CUDA operations to finish running
-        torch.cuda.synchronize()
-        end = time.perf_counter()
+    #     # Waits for all CUDA operations to finish running
+    #     torch.cuda.synchronize()
+    #     end = time.perf_counter()
 
-        record_function(start.elapsed_time(end))
-        # pytest.test_times[pytest.test_name]['operations'].append(
-        # start.elapsed_time(end))
-        # print(start.elapsed_time(end))  # milliseconds
-    elif TPUProfiler != None and xm.xla_device():
-        # Use TPUProfiler to measure time on a TPU
-        start = time.perf_counter()
-        yield
-        xm.mark_step()
-        end = time.perf_counter()
-        # Print the time elapsed for TPU operations
-        # pytest.test_times[pytest.test_name]['operations'].append(
-        #     prof.total_time_ms())
-        record_function(start.elapsed_time(end))
-        # print(prof.total_time_ms())
-    else:
-        # Use Python's time module to measure time on a CPU
-        start = time.perf_counter()
-        yield
-        end = time.perf_counter()
-        # pytest.test_times[pytest.test_name]['operations'] = end - start
-        record_function(end - start)
-        # print(end - start)  # seconds
+    #     record_function(start.elapsed_time(end))
+    #     # pytest.test_times[pytest.test_name]['operations'].append(
+    #     # start.elapsed_time(end))
+    #     # print(start.elapsed_time(end))  # milliseconds
+    # elif TPUProfiler != None and xm.xla_device():
+    #     # Use TPUProfiler to measure time on a TPU
+    #     start = time.perf_counter()
+    #     yield
+    #     xm.mark_step()
+    #     end = time.perf_counter()
+    #     # Print the time elapsed for TPU operations
+    #     # pytest.test_times[pytest.test_name]['operations'].append(
+    #     #     prof.total_time_ms())
+    #     record_function(start.elapsed_time(end))
+    #     # print(prof.total_time_ms())
+    # else:
+    #     # Use Python's time module to measure time on a CPU
+    start = time.perf_counter()
+    yield
+    end = time.perf_counter()
+    # pytest.test_times[pytest.test_name]['operations'] = end - start
+    # print(end - start)  # seconds
+    record_function(end - start)
     pytest.test_i += 1
 
 

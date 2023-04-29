@@ -89,6 +89,15 @@ class TestNNInit(TestCase):
         tensor = torch.zeros(size)
         return tensor
 
+    def _is_uniform(self, tensor, a, b):
+        samples = tensor.view(-1).tolist()
+        p_value = stats.kstest(samples, 'uniform', args=(a, (b - a)))[1]
+        return p_value > 0.0001
+
+
+    def _random_float(self, a, b):
+        return (b - a) * random.random() + a
+
     def test_xavier_uniform_errors_on_inputs_smaller_than_2d(self):
         torch.set_default_dtype(torch.double)
         for dims in [0, 1]:
