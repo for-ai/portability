@@ -1,59 +1,17 @@
 
-
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-import json
+import utils
 
-
-def combine_function_tests(list, functions={}):
-    for key, value in list.items():
-        function = key.split(":")[0]
-        if not function in functions:
-            functions[function] = {"operations": [], "test_time": []}
-        # print("COUNT", len(functions[function]["operations"]))
-        functions[function]["operations"] += value["operations"]
-        functions[function]["test_time"].append(value["test_time"])
-    return functions
-
-framework = "tensorflow"
-frameworkTitle = framework.capitalize()
-print("TPU")
-f = open("./tensorflow_timings/tpu_vm/tpu/tpu_1.json")
-tpu_function_list = combine_function_tests(json.load(f))
-f.close()
-print("FUNCTION LIST", len(tpu_function_list["CheckpointSaverHook_test.py"]["operations"]))
-f = open("./tensorflow_timings/tpu_vm/tpu/tpu_2.json")
-tpu_function_list = combine_function_tests(json.load(f), tpu_function_list)
-f.close()
-print("FUNCTION LIST", len(tpu_function_list["CheckpointSaverHook_test.py"]["operations"]))
-f = open("./tensorflow_timings/tpu_vm/tpu/tpu_3.json")
-tpu_function_list = combine_function_tests(json.load(f), tpu_function_list)
-f.close()
-print("FUNCTION LIST", len(tpu_function_list["CheckpointSaverHook_test.py"]["operations"]))
-
-print("GPU")
-f = open("./tensorflow_timings/gpu_vm/gpu/gpu_1.json")
-gpu_function_list = combine_function_tests(json.load(f), {})
-f.close()
-print("FUNCTION LIST", len(gpu_function_list["CheckpointSaverHook_test.py"]["operations"]))
-f = open("./tensorflow_timings/gpu_vm/gpu/gpu_2.json")
-gpu_function_list = combine_function_tests(json.load(f), gpu_function_list)
-f.close()
-print("FUNCTION LIST", len(gpu_function_list["CheckpointSaverHook_test.py"]["operations"]))
-f = open("./tensorflow_timings/gpu_vm/gpu/gpu_3.json")
-gpu_function_list = combine_function_tests(json.load(f), gpu_function_list)
-f.close()
-print("FUNCTION LIST", len(gpu_function_list["CheckpointSaverHook_test.py"]["operations"]))
-
-
-
-function_keys = gpu_function_list.keys()
 
 # for key in function_keys:
 #      if len(gpu_function_list[key]["operations"]) != len(cpu_vm_tpu_function_list[key]["operations"]) or len(tpu_function_list[key]["operations"]) != len(cpu_vm_tpu_function_list[key]["operations"]) or len(gpu_function_list[key]["operations"]) != len(tpu_function_list[key]["operations"]):
 #         print("NON MATCHING KEYS", key, len(cpu_vm_tpu_function_list[key]["operations"]), len(gpu_function_list[key]["operations"]), len(tpu_function_list[key]["operations"]))
 # function_keys = set(function_keys.map(lambda x: x.split(":")[0]))
+
+framework = "tensorflow"
+gpu_function_list, tpu_function_list, function_keys = utils.fetch_data(framework)
 data = {'Function': [], 'Time': []}
 for key in function_keys:
     if key == "Dataset_test.py":
@@ -74,10 +32,11 @@ for key in function_keys:
 sns.set(font_scale=5)
 # Create a Pandas DataFrame
 df = pd.DataFrame(data)
+df = df.sort_values(by='Time', ascending=False)
 f, ax = plt.subplots(figsize=(56, 25))
 
 
-ax.set(yscale="linear", ylim=(-200, 1500), xlabel="Function Name",
+ax.set(yscale="linear", ylim=(-200, 600), xlabel="Function Name",
     ylabel="Time taken for " + framework + " on TPU")
 
 # for i in ax.containers:
