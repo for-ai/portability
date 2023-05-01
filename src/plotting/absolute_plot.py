@@ -2,37 +2,18 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import json
-
-
-def combine_function_tests(list):
-    functions = {}
-    for key, value in list.items():
-        if "cpu" in key:
-            continue
-        function = key.split(":")[0]
-        if not function in functions:
-            functions[function] = {"operations": [], "test_time": []}
-        functions[function]["operations"] += value["operations"]
-        functions[function]["test_time"].append(value["test_time"])
-    return functions
+import utils
 
 device = "tpu"
-framework = "torch"
+framework = "tensorflow"
 frameworkTitle = framework.capitalize()
-# f = open("./" + framework + "_timings/" + device + "_vm/" + device + "/" + device +  '_1.json')
-f = open("pytorch_timings/" + device + "_cpu_vm.json")
-function_list = combine_function_tests(json.load(f))
-f.close()
-# f = open("./tensorflow_timings/" + 'gpu.json')
-# gpu_function_list = combine_function_tests(json.load(f))
-# f.close()
+gpu_function_list, tpu_function_list, function_keys = utils.fetch_data(framework)
 
-function_keys = function_list.keys()
+if device == "tpu":
+    function_list = tpu_function_list
+elif device == "gpu":
+    function_list = gpu_function_list
 
-# for key in function_keys:
-#      if len(gpu_function_list[key]["operations"]) != len(cpu_vm_tpu_function_list[key]["operations"]) or len(tpu_function_list[key]["operations"]) != len(cpu_vm_tpu_function_list[key]["operations"]) or len(gpu_function_list[key]["operations"]) != len(tpu_function_list[key]["operations"]):
-#         print("NON MATCHING KEYS", key, len(cpu_vm_tpu_function_list[key]["operations"]), len(gpu_function_list[key]["operations"]), len(tpu_function_list[key]["operations"]))
-# function_keys = set(function_keys.map(lambda x: x.split(":")[0]))
 data = {'Function': [], 'Time': []}
 for key in function_keys:
     # if key == "Dataset_test.py":

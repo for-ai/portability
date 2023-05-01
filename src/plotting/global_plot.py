@@ -2,37 +2,11 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import json
+import utils
 
-
-def combine_function_tests(list):
-    functions = {}
-    for key, value in list.items():
-        if "cpu" in key:
-            continue
-        function = key.split(":")[0]
-        if not function in functions:
-            functions[function] = {"operations": [], "test_time": []}
-        functions[function]["operations"] += value["operations"]
-        functions[function]["test_time"].append(value["test_time"])
-    return functions
-
-framework = "torch"
+framework = "tensorflow"
 frameworkTitle = framework.capitalize()
-if framework == "tensorflow":
-	f = open("./tensorflow_timings/tpu_vm/tpu/" + 'tpu_3.json')
-	tpu_function_list = combine_function_tests(json.load(f))
-	f.close()
-	f = open("./tensorflow_timings/gpu_vm/gpu/" + 'gpu_1.json')
-	gpu_function_list = combine_function_tests(json.load(f))
-	f.close()
-elif framework == "torch":
-	f = open("./pytorch_timings/" + "tpu_cpu_vm.json")
-	tpu_function_list = combine_function_tests(json.load(f))
-	f.close()
-	f = open("./pytorch_timings/" + "gpu_cpu_vm.json")
-	gpu_function_list = combine_function_tests(json.load(f))
-	f.close()
-
+gpu_function_list, tpu_function_list, function_keys = utils.fetch_data(framework)
 
 # f = open("./tensorflow_timings/" + 'gpu.json')
 # gpu_function_list = combine_function_tests(json.load(f))
