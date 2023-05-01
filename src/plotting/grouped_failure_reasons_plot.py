@@ -68,5 +68,5 @@ plt.xlabel('Failure Category')
 plt.ylabel('Count')
 
 # Show the chart
-plt.savefig('plot_images/failure_category/tensorflow_gpu_categories.png', bbox_inches='tight')
+plt.savefig('plot_images/failure_category/tensorflow_tpu_categories.png', bbox_inches='tight')
 plt.show()

@@ -10,7 +10,8 @@ import utils
 #         print("NON MATCHING KEYS", key, len(cpu_vm_tpu_function_list[key]["operations"]), len(gpu_function_list[key]["operations"]), len(tpu_function_list[key]["operations"]))
 # function_keys = set(function_keys.map(lambda x: x.split(":")[0]))
 
-framework = "tensorflow"
+framework = "torch"
+frameworkTitle = framework.capitalize()
 gpu_function_list, tpu_function_list, function_keys = utils.fetch_data(framework)
 data = {'Function': [], 'Time': []}
 for key in function_keys:

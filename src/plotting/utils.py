@@ -10,36 +10,33 @@ def combine_function_tests(list, functions={}):
         functions[function]["test_time"].append(value["test_time"])
     return functions
 
-def fetch_data(framework):
-    framework = "tensorflow"
-    frameworkTitle = framework.capitalize()
-    print("TPU")
-    f = open("./tensorflow_timings/tpu_vm/tpu/tpu_1.json")
-    tpu_function_list = combine_function_tests(json.load(f))
+def open_file(framework, device, n, function_list={}):
+    if framework == "tensorflow":
+        f = open(f'./tensorflow_timings/{device}_vm/{device}/{device}_{n}.json')
+    elif framework == "torch":
+        f = open(f'./pytorch_timings/{device}_vm/{device}_{n}.json')
+    function_list = combine_function_tests(json.load(f), function_list)
     f.close()
-    print("FUNCTION LIST", len(tpu_function_list["CheckpointSaverHook_test.py"]["operations"]))
-    f = open("./tensorflow_timings/tpu_vm/tpu/tpu_2.json")
-    tpu_function_list = combine_function_tests(json.load(f), tpu_function_list)
-    f.close()
-    print("FUNCTION LIST", len(tpu_function_list["CheckpointSaverHook_test.py"]["operations"]))
-    f = open("./tensorflow_timings/tpu_vm/tpu/tpu_3.json")
-    tpu_function_list = combine_function_tests(json.load(f), tpu_function_list)
-    f.close()
-    print("FUNCTION LIST", len(tpu_function_list["CheckpointSaverHook_test.py"]["operations"]))
+    return function_list
 
-    print("GPU")
-    f = open("./tensorflow_timings/gpu_vm/gpu/gpu_1.json")
-    gpu_function_list = combine_function_tests(json.load(f), {})
-    f.close()
-    print("FUNCTION LIST", len(gpu_function_list["CheckpointSaverHook_test.py"]["operations"]))
-    f = open("./tensorflow_timings/gpu_vm/gpu/gpu_2.json")
-    gpu_function_list = combine_function_tests(json.load(f), gpu_function_list)
-    f.close()
-    print("FUNCTION LIST", len(gpu_function_list["CheckpointSaverHook_test.py"]["operations"]))
-    f = open("./tensorflow_timings/gpu_vm/gpu/gpu_3.json")
-    gpu_function_list = combine_function_tests(json.load(f), gpu_function_list)
-    f.close()
-    print("FUNCTION LIST", len(gpu_function_list["CheckpointSaverHook_test.py"]["operations"]))
+    # print("FUNCTION LIST", len(tpu_function_list["CheckpointSaverHook_test.py"]["operations"]))
+    # f = open("./tensorflow_timings/tpu_vm/tpu/tpu_2.json")
+    # function_list = combine_function_tests(json.load(f), tpu_function_list)
+    # f.close()
+    # print("FUNCTION LIST", len(tpu_function_list["CheckpointSaverHook_test.py"]["operations"]))
+    # f = open("./tensorflow_timings/tpu_vm/tpu/tpu_3.json")
+    # function_list = combine_function_tests(json.load(f), tpu_function_list)
+    # f.close()
+    # print("FUNCTION LIST", len(tpu_function_list["CheckpointSaverHook_test.py"]["operations"]))
+
+
+def fetch_data(framework):
+    tpu_function_list = open_file(framework, "tpu", 1, {})
+    tpu_function_list = open_file(framework, "tpu", 2, tpu_function_list)
+    tpu_function_list = open_file(framework, "tpu", 3, tpu_function_list)
+    gpu_function_list = open_file(framework, "gpu", 1, {})
+    gpu_function_list = open_file(framework, "gpu", 2, gpu_function_list)
+    gpu_function_list = open_file(framework, "gpu", 3, gpu_function_list)
     function_keys = gpu_function_list.keys()
     return gpu_function_list, tpu_function_list, function_keys
 
