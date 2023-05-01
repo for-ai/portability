@@ -50,8 +50,11 @@ class TestLinalg(TestCase):
         def _test_mm(n, m, p, dtype, genf):
             # helper function
             def matrixmultiply(mat1, mat2):
+                
+                print("*** test size 1")
                 with pytorch_op_timer():
                     n = mat1.size(0)
+                print("*** test size 2")
                 with pytorch_op_timer():
                     m = mat1.size(1)
                 with pytorch_op_timer():
@@ -120,7 +123,24 @@ class TestLinalg(TestCase):
 
             res2 = matrixmultiply(mat1, mat2)
             self.assertEqual(res, res2)
+        def genf_int(x, y):
+            return torch.randint(0, 100, (x, y), dtype=dtype, device=device)
 
+        def genf_bfloat(x, y):
+            return torch.randn(x, y, dtype=torch.float32, device=device).to(dtype) * 0.1
+
+        def genf_float(x, y):
+            return torch.randn(x, y, dtype=dtype, device=device)
+
+        for (n, m, p) in [(20, 10, 15), (15, 20, 10), (25, 18, 10)]:
+            if (dtype == torch.int32) or (dtype == torch.int64):
+                genf = genf_int
+            elif (dtype == torch.bfloat16):
+                genf = genf_bfloat
+            else:
+                genf = genf_float
+
+            _test_mm(n, m, p, dtype, genf)
 
 instantiate_device_type_tests(TestLinalg, globals())
 if __name__ == '__main__':
