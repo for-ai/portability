@@ -54,7 +54,7 @@ def include_module(name, framework, is_top_level):
             or "compat" in name
         )
     elif framework == "jax":
-        return True
+        return not name.startswith("jax._src")
 
 
 def iterate_module(
