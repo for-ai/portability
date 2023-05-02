@@ -73,6 +73,7 @@ from jax._src.ad_checkpoint import saved_residuals
 from jax.ad_checkpoint import checkpoint as new_checkpoint, checkpoint_name
 
 from jax.config import config
+from ..utils.timer_wrapper import jax_op_timer
 
 config.parse_flags_with_absl()
 FLAGS = config.FLAGS
@@ -91,7 +92,10 @@ class APITest(jtu.JaxTestCase):
         axis_name = "i"
 
         def fn(x):
-            y = lax.all_gather(x, axis_name=axis_name)
+            timer = jax_op_timer()
+            with timer:
+                y = lax.all_gather(x, axis_name=axis_name)
+                timer.gen.send(y)
             return y * lax.axis_index(axis_name).astype(jnp.float32)
 
         input_x = jnp.ones((5, 6, 4), dtype=jnp.float32)
