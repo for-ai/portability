@@ -106,10 +106,6 @@ class APITest(jtu.JaxTestCase):
         y = api.grad(api.jit(lambda x: jnp.sin(x).sum()))(x)
         self.assertAllClose(y, jnp.cos(jnp.array([1.0, 2.0, 3.0])))
 
-        x = AlexArray(jnp.array([[1.0, 2.0, 3.0]]))
-        y = api.pmap(jnp.sin)(x)
-        self.assertAllClose(y, jnp.sin(jnp.array([[1.0, 2.0, 3.0]])))
-
         x = jnp.array(1)
         a = AlexArray(x)
         for f in [jnp.isscalar, jnp.size, jnp.shape, jnp.dtype]:

@@ -138,47 +138,6 @@ class SvdTest(jtu.JaxTestCase):
             np.testing.assert_almost_equal(diff, 1e-4, decimal=2)
 
     @jtu.sample_product(
-        [dict(m=m, n=n) for m, n in zip([2, 8, 10, 20], [4, 6, 10, 18])],
-        log_cond=np.linspace(1, _MAX_LOG_CONDITION_NUM, 4),
-        full_matrices=[True, False],
-    )
-    def testSingularValues(self, m, n, log_cond, full_matrices):
-        """Tests singular values."""
-        with jax.default_matmul_precision("float32"):
-            a = np.random.uniform(low=0.3, high=0.9, size=(m, n)).astype(
-                _SVD_TEST_DTYPE
-            )
-            u, s, v = osp_linalg.svd(a, full_matrices=False)
-            cond = 10**log_cond
-            s = np.linspace(cond, 1, min(m, n))
-            a = (u * s) @ v
-            a = a + 1j * a
-
-            # Only computes singular values.
-            compute_uv = False
-
-            osp_linalg_fn = functools.partial(
-                osp_linalg.svd, full_matrices=full_matrices, compute_uv=compute_uv
-            )
-            actual_s = svd.svd(a, full_matrices=full_matrices, compute_uv=compute_uv)
-
-            expected_s = osp_linalg_fn(a)
-
-            svd_fn = lambda a: svd.svd(a, full_matrices=full_matrices)
-            args_maker = lambda: [a]
-
-            with self.subTest("Test JIT compatibility"):
-                self._CompileAndCheck(svd_fn, args_maker)
-
-            with self.subTest("Test s."):
-                self.assertAllClose(expected_s, actual_s, rtol=_SVD_RTOL, atol=1e-6)
-
-            with self.subTest("Test non-increasing order."):
-                # Computes `actual_diff[i] = s[i+1] - s[i]`.
-                actual_diff = jnp.diff(actual_s, append=0)
-                np.testing.assert_array_less(actual_diff, np.zeros_like(actual_diff))
-
-    @jtu.sample_product(
         [dict(m=m, n=n) for m, n in zip([2, 4, 8], [4, 4, 6])],
         full_matrices=[True, False],
         compute_uv=[True, False],

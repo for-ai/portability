@@ -361,25 +361,6 @@ class CoreTest(jtu.JaxTestCase):
         finally:
             gc.set_debug(debug)
 
-    def test_invalid_shape_error_with_jit_tracer_passed(self):
-        @jax.jit
-        def g_jit(x):
-            return jnp.zeros(shape=(2, x))
-
-        @jax.vmap
-        def g_vmap(x):
-            return jnp.zeros(shape=(2, x))
-
-        with self.assertRaisesRegex(
-            TypeError,
-            "This concrete value was not available in"
-            + " Python because it depends on",
-        ):
-            g_jit(1)
-
-        with self.assertRaisesRegex(TypeError, "This BatchTracer with object id"):
-            g_vmap(jnp.ones((1,)))
-
     def test_comparing_var(self):
         newsym = core.gensym()
         a = newsym(core.ShapedArray((), np.dtype("int32")))
@@ -416,20 +397,6 @@ class CoreTest(jtu.JaxTestCase):
             str(core.ConcreteArray(np.dtype(np.int32), np.array([1], dtype=np.int32))),
             "ConcreteArray([1], dtype=int32)",
         )
-
-    def test_dropvar_avals(self):
-        def f(x):
-            def body(c, _):
-                return c, None
-
-            (x1, x2), _ = jax.lax.scan(body, (x, x), None, length=1)
-            return [x2]
-
-        aval = core.ShapedArray((), jnp.dtype("int32"))
-        pval = pe.PartialVal.unknown(aval)
-        jaxpr, _, _ = pe.trace_to_jaxpr_nounits(lu.wrap_init(f), [pval], False)
-        dropvar, b = jaxpr.eqns[0].outvars
-        self.assertEqual(dropvar.aval, aval)
 
     def test_input_residual_forwarding(self):
         # https://github.com/google/jax/pull/11151

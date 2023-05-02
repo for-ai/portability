@@ -46,6 +46,8 @@ from jax._src.interpreters import partial_eval as pe
 from jax._src.lax import lax as lax_internal
 from jax._src.lax import control_flow as lax_control_flow
 
+from ..utils.timer_wrapper import jax_op_timer
+
 config.parse_flags_with_absl()
 
 _ = pe.PartialVal.unknown(UnshapedArray(np.float32))
@@ -200,6 +202,8 @@ def fwd_deriv(f):
 
 class CoreTest(jtu.JaxTestCase):
     def test_dropvar_avals(self):
+        config.update("jax_disable_jit", False)
+
         def f(x):
             def body(c, _):
                 return c, None
@@ -208,7 +212,12 @@ class CoreTest(jtu.JaxTestCase):
             return [x2]
 
         aval = core.ShapedArray((), jnp.dtype("int32"))
-        pval = pe.PartialVal.unknown(aval)
+        timer = jax_op_timer()
+        with timer:
+            pval = pe.PartialVal.unknown(aval)
+            timer.gen.send(pval)
+
         jaxpr, _, _ = pe.trace_to_jaxpr_nounits(lu.wrap_init(f), [pval], False)
         dropvar, b = jaxpr.eqns[0].outvars
         self.assertEqual(dropvar.aval, aval)
+        config.update("jax_disable_jit", True)

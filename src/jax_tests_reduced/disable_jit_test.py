@@ -102,18 +102,19 @@ class CPPJitTest(jtu.BufferDonationTestCase):
         return jax.jit
 
     def test_disable_jit(self):
-        effects = []
+        with api.disable_jit(False):
+            effects = []
 
-        @self.jit
-        def f(x):
-            effects.append(1)
-            return x
+            @self.jit
+            def f(x):
+                effects.append(1)
+                return x
 
-        with api.disable_jit():
+            with api.disable_jit():
+                f(2)
+                f(2)
+            assert len(effects) == 2
+
             f(2)
             f(2)
-        assert len(effects) == 2
-
-        f(2)
-        f(2)
-        assert len(effects) == 3
+            assert len(effects) == 3

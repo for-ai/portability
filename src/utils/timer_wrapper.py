@@ -6,6 +6,7 @@ import functools
 import pytest
 import os
 import tensorflow as tf
+from functools import partial
 
 try:
     # Import the TPUProfiler class from the torch_xla package
@@ -15,6 +16,55 @@ try:
 except ImportError:
     # torch_xla is not installed, so TPUProfiler is not available
     TPUProfiler = None
+
+
+def assign_jax_test_time(x):
+    # print(pytest.tensorflow_test_times)
+    pytest.jax_test_times[pytest.test_name]["test_time"] = x
+
+
+@contextlib.contextmanager
+def jax_timer(record_function):
+    start = time.perf_counter()
+    # print("***START", start)
+
+    yield
+    # Stop the timer
+    end = time.perf_counter()
+    # print("***END", end)
+    # Print the elapsed time
+    record_function(end - start)
+    # print("***TIME", end - start)  # seconds
+
+
+@contextlib.contextmanager
+def jax_op_timer():
+    with jax_timer(
+        lambda x: pytest.jax_test_times[pytest.test_name]["operations"].append(x)
+    ):
+        result = yield
+        yield
+        has_block = getattr(result, "block_until_ready", None)
+        # print("***EAGER EXECUTE", tf.executing_eagerly())
+        if callable(has_block):
+            result.block_until_ready()
+
+
+@contextlib.contextmanager
+def jax_test_timer():
+    with jax_timer(assign_jax_test_time):
+        yield
+
+
+def partial_timed(fn, **outer_kwargs):
+    def wrapper(*args):
+        timer = jax_op_timer()
+        with timer:
+            result = fn(*args, **outer_kwargs)
+            timer.gen.send(result)
+        return result
+
+    return wrapper
 
 
 @contextlib.contextmanager
