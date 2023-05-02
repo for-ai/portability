@@ -1,0 +1,71 @@
+function,frequency,bucket
+tril_indices_from,1,10
+UndefinedPrimal,1,10
+bitwise_and,1,10
+ndtr,1,10
+ge,1,10
+erf,1,20
+lu,1,20
+i0,1,20
+abstract_eval_fun,1,20
+rfft,1,20
+lower_fun,2,30
+cdf,2,30
+bool_,2,30
+kaiming_normal,3,30
+uint32,3,30
+einsum_path,4,40
+average,4,40
+slice_in_dim,4,40
+_initial_style_jaxpr,4,40
+integer_pow,4,40
+tril,6,50
+PartialVal,6,50
+svd,6,50
+ifft,7,50
+convolve2d,7,50
+ScatterDimensionNumbers,8,60
+device_put_sharded,9,60
+get_aval,9,60
+named_call,10,60
+make_jaxpr,13,60
+flip,17,70
+all_gather,19,70
+top_k,23,70
+gammaln,23,70
+compress,28,70
+amax,32,80
+power,34,80
+var,36,80
+size,38,80
+tree_unflatten,47,80
+one_hot,71,90
+pmean,88,90
+prod,115,90
+cos,119,90
+stack,174,90
+exp,296,100
+sqrt,393,100
+arange,525,100
+partial,871,100
+add,2212,100
+tree_map,491,top 20
+arange,525,top 20
+mean,529,top 20
+zip,573,top 20
+max,578,top 20
+log,620,top 20
+PRNGKey,747,top 20
+partial,871,top 20
+ones,919,top 20
+reshape,940,top 20
+delete,999,top 20
+zeros,1060,top 20
+print,1062,top 20
+sub,1081,top 20
+sum,1110,top 20
+all,2197,top 20
+add,2212,top 20
+array,2437,top 20
+split,2605,top 20
+save,3813,top 20
