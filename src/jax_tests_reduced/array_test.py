@@ -17,27 +17,25 @@ import contextlib
 import math
 import os
 import unittest
-from absl.testing import absltest
-from absl.testing import parameterized
-import numpy as np
 
 import jax
 import jax.numpy as jnp
-from jax._src import core
-from jax._src import dispatch
+import numpy as np
+from absl.testing import absltest, parameterized
+from jax._src import array, core, dispatch, prng
 from jax._src import test_util as jtu
 from jax._src import xla_bridge as xb
 from jax._src.lib import xla_client as xc
 from jax._src.util import safe_zip
-from jax.interpreters import pxla
-from jax.experimental.pjit import pjit
-from jax.experimental.serialize_executable import serialize, deserialize_and_load
-from jax.experimental import multihost_utils
-from jax.sharding import PartitionSpec as P
-from jax._src import array
-from jax._src import prng
-
 from jax.config import config
+from jax.experimental import multihost_utils
+from jax.experimental.pjit import pjit
+from jax.experimental.serialize_executable import (deserialize_and_load,
+                                                   serialize)
+from jax.interpreters import pxla
+from jax.sharding import PartitionSpec as P
+
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 config.parse_flags_with_absl()
 
@@ -85,7 +83,11 @@ def create_array(shape, sharding, global_data=None):
 
 class JaxArrayTest(jtu.JaxTestCase):
     def test_jnp_array(self):
-        arr = jnp.array([1, 2, 3])
+        timer = jax_op_timer()
+        with timer:
+            arr = jnp.array([1, 2, 3])
+            timer.gen.send(arr)
+
         self.assertIsInstance(arr, array.ArrayImpl)
         self.assertTrue(dispatch.is_single_device_sharding(arr.sharding))
         self.assertEqual(arr._committed, False)

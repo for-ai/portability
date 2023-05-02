@@ -14,22 +14,19 @@
 
 
 import collections
-from functools import partial
 import itertools
 import unittest
-
-from absl.testing import absltest
-from absl.testing import parameterized
-
-import numpy as np
+from functools import partial
 
 import jax
+import numpy as np
+from absl.testing import absltest, parameterized
 from jax import numpy as jnp
-
 from jax._src import dtypes
 from jax._src import test_util as jtu
-
 from jax.config import config
+
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 config.parse_flags_with_absl()
 FLAGS = config.FLAGS
@@ -321,11 +318,17 @@ class JaxNumpyReducerTests(jtu.JaxTestCase):
             kwds["keepdims"] = keepdims
         if weights_shape is None:
             np_fun = lambda x: np.average(x, axis, **kwds)
-            jnp_fun = lambda x: jnp.average(x, axis, **kwds)
+            timer = jax_op_timer()
+            with timer:
+                jnp_fun = lambda x: jnp.average(x, axis, **kwds)
+                timer.gen.send(jnp_fun)
             args_maker = lambda: [rng(shape, dtype)]
         else:
             np_fun = lambda x, weights: np.average(x, axis, weights, **kwds)
-            jnp_fun = lambda x, weights: jnp.average(x, axis, weights, **kwds)
+            timer = jax_op_timer()
+            with timer:
+                jnp_fun = lambda x, weights: jnp.average(x, axis, weights, **kwds)
+                timer.gen.send(jnp_fun)
             args_maker = lambda: [rng(shape, dtype), rng(weights_shape, dtype)]
         np_fun = jtu.promote_like_jnp(np_fun, inexact=True)
         tol = {
