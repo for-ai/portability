@@ -16,21 +16,17 @@ import collections
 import functools
 import itertools
 
-from absl.testing import absltest
-from absl.testing import parameterized
-
+import jax
 import numpy as np
 import scipy.special as osp_special
-
-import jax
+from absl.testing import absltest, parameterized
 from jax._src import test_util as jtu
-from jax.scipy import special as lsp_special
-
 from jax.config import config
+from jax.scipy import special as lsp_special
 
 config.parse_flags_with_absl()
 FLAGS = config.FLAGS
-
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 all_shapes = [(), (4,), (3, 4), (3, 1), (1, 4), (2, 1, 4)]
 
@@ -106,7 +102,7 @@ class LaxScipySpcialFunctionsTest(jtu.JaxTestCase):
         self, op, rng_factory, shapes, dtypes, test_autodiff, nondiff_argnums
     ):
         scipy_op = getattr(osp_special, op)
-        lax_op = getattr(lsp_special, op)
+        lax_op = partial_timed(getattr(lsp_special, op))
         rng = rng_factory(self.rng())
         args_maker = self._GetArgsMaker(rng, shapes, dtypes)
         args = args_maker()

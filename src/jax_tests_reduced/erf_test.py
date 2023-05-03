@@ -14,23 +14,20 @@
 
 
 import collections
-from functools import partial
 import itertools
 import math
+from functools import partial
 from unittest import SkipTest
 
-from absl.testing import absltest
-from absl.testing import parameterized
-
-import numpy as np
-
 import jax
-from jax import dtypes
-from jax import lax
+import numpy as np
+from absl.testing import absltest, parameterized
+from jax import dtypes, lax
 from jax._src import test_util as jtu
+from jax.config import config
 from jax.test_util import check_grads
 
-from jax.config import config
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 config.parse_flags_with_absl()
 FLAGS = config.FLAGS
@@ -125,4 +122,5 @@ class LaxAutodiffTest(jtu.JaxTestCase):
             jtu.join_tolerance(1.5e-1, tol) if jtu.num_float_bits(dtype) == 32 else tol
         )
         args = tuple(rng(shape, dtype) for shape in shapes)
-        check_grads(op, args, order, ["fwd", "rev"], tol, tol)
+        test_op = partial_timed(op)
+        check_grads(test_op, args, order, ["fwd", "rev"], tol, tol)

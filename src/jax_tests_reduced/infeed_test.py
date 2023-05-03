@@ -16,16 +16,17 @@
 import threading
 from unittest import SkipTest
 
-from absl.testing import absltest
 import jax
-from jax import lax, numpy as jnp
-from jax import config
-from jax.experimental import host_callback as hcb
-from jax._src import core
-from jax._src import xla_bridge
-from jax._src.lib import xla_client
 import jax._src.test_util as jtu
 import numpy as np
+from absl.testing import absltest
+from jax import config, lax
+from jax import numpy as jnp
+from jax._src import core, xla_bridge
+from jax._src.lib import xla_client
+from jax.experimental import host_callback as hcb
+
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 config.parse_flags_with_absl()
 
@@ -43,12 +44,19 @@ class InfeedTest(jtu.JaxTestCase):
         @jax.jit
         def f(x):
             token = lax.create_token(x)
-            (y,), token = lax.infeed(
+            timer = jax_op_timer()
+            with timer:
+                (y,), token = lax.infeed(
                 token, shape=(core.ShapedArray((3, 4), jnp.float32),)
             )
-            (z,), _ = lax.infeed(
+                timer.gen.send((y, token))
+                
+            timer = jax_op_timer()
+            with timer:
+                (z,), test = lax.infeed(
                 token, shape=(core.ShapedArray((3, 1, 1), jnp.float32),)
             )
+                timer.gen.send((z, test))
             return x + y + z
 
         x = np.float32(1.5)
@@ -111,7 +119,10 @@ class InfeedTest(jtu.JaxTestCase):
         hcb.stop_outfeed_receiver()
 
         def doubler(_, token):
-            y, token = lax.infeed(token, shape=core.ShapedArray((3, 4), jnp.float32))
+            timer = jax_op_timer()
+            with timer:
+                y, token = lax.infeed(token, shape=core.ShapedArray((3, 4), jnp.float32))
+                timer.gen.send((y, token))
             return lax.outfeed(token, y * np.float32(2))
 
         @jax.jit
