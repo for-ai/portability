@@ -16,15 +16,13 @@
 import functools
 
 import jax
-from jax.config import config
 import jax.numpy as jnp
 import numpy as np
 import scipy.linalg as osp_linalg
-from jax._src.lax import svd
-from jax._src import test_util as jtu
-
 from absl.testing import absltest
-
+from jax._src import test_util as jtu
+from jax._src.lax import svd
+from jax.config import config
 
 config.parse_flags_with_absl()
 _JAX_ENABLE_X64 = config.x64_enabled
@@ -39,6 +37,7 @@ _SVD_TEST_EPS = jnp.finfo(_SVD_TEST_DTYPE).eps
 _SVD_RTOL = 1e-6 if _JAX_ENABLE_X64 else 1e-2
 
 _MAX_LOG_CONDITION_NUM = 9 if _JAX_ENABLE_X64 else 4
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 
 @jtu.with_config(jax_numpy_rank_promotion="allow")
@@ -63,7 +62,10 @@ class SvdTest(jtu.JaxTestCase):
             osp_linalg_fn = functools.partial(
                 osp_linalg.svd, full_matrices=full_matrices
             )
-            actual_u, actual_s, actual_v = svd.svd(a, full_matrices=full_matrices)
+            timer = jax_op_timer()
+            with timer:
+                actual_u, actual_s, actual_v = svd.svd(a, full_matrices=full_matrices)
+                timer.gen.send((actual_u, actual_s, actual_v))
 
             k = min(m, n)
             if m > n:
@@ -78,7 +80,7 @@ class SvdTest(jtu.JaxTestCase):
                 unitary_v_size = n if full_matrices else k
 
             _, expected_s, _ = osp_linalg_fn(a)
-
+        
             svd_fn = lambda a: svd.svd(a, full_matrices=full_matrices)
             args_maker = lambda: [a]
 
@@ -109,7 +111,10 @@ class SvdTest(jtu.JaxTestCase):
         with jax.default_matmul_precision("float32"):
             np.random.seed(1235)
             a = np.random.randn(m, n).astype(_SVD_TEST_DTYPE)
-            u, s, v = svd.svd(a, full_matrices=False, hermitian=False)
+            timer = jax_op_timer()
+            with timer:
+                u, s, v = svd.svd(a, full_matrices=False, hermitian=False)
+                timer.gen.send(u, s, v)
 
             relative_diff = np.linalg.norm(a - (u * s) @ v) / np.linalg.norm(a)
 
@@ -125,14 +130,20 @@ class SvdTest(jtu.JaxTestCase):
             a = jnp.triu(jnp.ones((m, m))).astype(_SVD_TEST_DTYPE)
 
             # Generates a rank-deficient input.
-            u, s, v = jnp.linalg.svd(a, full_matrices=False)
+            timer = jax_op_timer()
+            with timer:
+                u, s, v = jnp.linalg.svd(a, full_matrices=False)
+                timer.gen.send((u, s, v))
             cond = 10**log_cond
             s = jnp.linspace(cond, 1, m)
             s = s.at[r:m].set(0)
             a = (u * s) @ v
 
             with jax.default_matmul_precision("float32"):
-                u, s, v = svd.svd(a, full_matrices=False, hermitian=False)
+                timer = jax_op_timer()
+                with timer:
+                    u, s, v = svd.svd(a, full_matrices=False, hermitian=False)
+                    timer.gen.send((u, s, v))
             diff = np.linalg.norm(a - (u * s) @ v)
 
             np.testing.assert_almost_equal(diff, 1e-4, decimal=2)
@@ -148,7 +159,7 @@ class SvdTest(jtu.JaxTestCase):
         osp_fun = functools.partial(
             osp_linalg.svd, full_matrices=full_matrices, compute_uv=compute_uv
         )
-        lax_fun = functools.partial(
+        lax_fun = partial_timed(
             svd.svd, full_matrices=full_matrices, compute_uv=compute_uv
         )
         args_maker_svd = lambda: [jnp.zeros((m, n), dtype=dtype)]

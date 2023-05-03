@@ -15,20 +15,20 @@
 
 import collections
 import copy
-from functools import partial
 import inspect
 import io
 import itertools
 import math
-from typing import cast, Iterator, Optional, List, Tuple
 import unittest
-from unittest import SkipTest
 import warnings
-
-from absl.testing import absltest
-from absl.testing import parameterized
+from functools import partial
+from typing import Iterator, List, Optional, Tuple, cast
+from unittest import SkipTest
 
 import numpy as np
+from absl.testing import absltest, parameterized
+
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 try:
     import numpy_dispatch
@@ -40,17 +40,13 @@ import jax.ops
 from jax import lax
 from jax import numpy as jnp
 from jax import tree_util
-from jax.test_util import check_grads
-
-from jax._src import core
-from jax._src import dtypes
+from jax._src import array, core, dtypes
 from jax._src import test_util as jtu
 from jax._src.lax import lax as lax_internal
-from jax._src.numpy.util import _parse_numpydoc, ParsedDoc, _wraps
+from jax._src.numpy.util import ParsedDoc, _parse_numpydoc, _wraps
 from jax._src.util import safe_zip
-from jax._src import array
-
 from jax.config import config
+from jax.test_util import check_grads
 
 config.parse_flags_with_absl()
 FLAGS = config.FLAGS
@@ -213,6 +209,32 @@ class LaxBackedNumpyTests(jtu.JaxTestCase):
         )
 
         # Assert remaining values are correctly partitioned:
+        
+        timer = jax_op_timer()
+        with timer:
+            result = lax.slice_in_dim(jnp_output, start_index=0, limit_index=kth, axis=axis)
+            timer.gen.send(result)
+            
+        timer = jax_op_timer()
+        with timer:
+            result = lax.slice_in_dim(np_output, start_index=0, limit_index=kth, axis=axis)
+            timer.gen.send(result)
+            
+        timer = jax_op_timer()
+        with timer:
+            result = lax.slice_in_dim(
+                    jnp_output, start_index=kth + 1, limit_index=shape[axis], axis=axis
+                )
+            timer.gen.send(result)
+            
+        timer = jax_op_timer()
+        with timer:
+            result = lax.slice_in_dim(
+                    np_output, start_index=kth + 1, limit_index=shape[axis], axis=axis
+                )
+            timer.gen.send(result)
+            
+            
         self.assertArraysEqual(
             lax.sort(
                 lax.slice_in_dim(jnp_output, start_index=0, limit_index=kth, axis=axis),

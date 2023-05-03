@@ -15,24 +15,19 @@
 
 import collections
 import functools
-from functools import partial
 import itertools
 import operator
+from functools import partial
 from unittest import SkipTest
-
-from absl.testing import absltest
-from absl.testing import parameterized
-
-import numpy as np
 
 import jax
 import jax.ops
+import numpy as np
+from absl.testing import absltest, parameterized
 from jax import lax
 from jax import numpy as jnp
-
 from jax._src import dtypes
 from jax._src import test_util as jtu
-
 from jax.config import config
 
 config.parse_flags_with_absl()
@@ -68,6 +63,7 @@ python_scalar_dtypes = [jnp.bool_, jnp.int_, jnp.float_, jnp.complex_]
 
 # uint64 is problematic because with any uint type it promotes to float:
 int_dtypes_no_uint64 = [d for d in int_dtypes + unsigned_dtypes if d != np.uint64]
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 
 def _valid_dtypes_for_shape(shape, dtypes):
@@ -256,7 +252,10 @@ class JaxNumpyOperatorTests(jtu.JaxTestCase):
         kwargs,
     ):
         np_op = partial(getattr(np, op_name), **kwargs)
-        jnp_op = partial(getattr(jnp, op_name), **kwargs)
+        timer = jax_op_timer()
+        with timer:
+            jnp_op = partial(getattr(jnp, op_name), **kwargs)            
+            timer.gen.send(jnp_op)
         np_op = jtu.ignore_warning(category=RuntimeWarning, message="invalid value.*")(
             np_op
         )

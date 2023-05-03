@@ -14,28 +14,25 @@
 
 
 import enum
-from functools import partial
 import itertools
 import typing
-from typing import Any, Optional, Tuple
 import warnings
-
-from absl.testing import absltest
-from absl.testing import parameterized
-
-import numpy as np
+from functools import partial
+from typing import Any, Optional, Tuple
 
 import jax
+import numpy as np
+from absl.testing import absltest, parameterized
 from jax import lax
 from jax import numpy as jnp
 from jax import ops
-
 from jax._src import dtypes
 from jax._src import test_util as jtu
 from jax._src import util
 from jax._src.lax import lax as lax_internal
-
 from jax.config import config
+
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 config.parse_flags_with_absl()
 
@@ -57,13 +54,16 @@ class IndexingTest(jtu.JaxTestCase):
     """Tests for Numpy indexing translation rules."""
 
     @jtu.sample_product(
-        funcname=["negative", "sin", "cos", "square", "sqrt", "log", "exp"],
+        funcname=["log"],
     )
     def testIndexApply(self, funcname, size=10, dtype="float32"):
         rng = jtu.rand_default(self.rng())
         idx_rng = jtu.rand_int(self.rng(), -size, size)
         np_func = getattr(np, funcname)
-        jnp_func = getattr(jnp, funcname)
+        timer = jax_op_timer()
+        with timer:
+            jnp_func = getattr(jnp, funcname)
+            timer.gen.send(jnp_func)
 
         @jtu.ignore_warning(category=RuntimeWarning)
         def np_op(x, idx):

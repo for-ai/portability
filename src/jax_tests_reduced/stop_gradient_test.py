@@ -12,24 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from functools import partial
 import re
 import unittest
-
-from absl.testing import absltest
-from absl.testing import parameterized
-
-import numpy as np
+from functools import partial
 
 import jax
-from jax import lax
-from jax.ad_checkpoint import checkpoint
-from jax._src import test_util as jtu
-from jax import tree_util
 import jax.numpy as jnp  # scan tests use numpy
 import jax.scipy as jsp
-
+import numpy as np
+from absl.testing import absltest, parameterized
+from jax import lax, tree_util
+from jax._src import test_util as jtu
+from jax.ad_checkpoint import checkpoint
 from jax.config import config
+
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 config.parse_flags_with_absl()
 
@@ -96,6 +93,11 @@ class CustomLinearSolveTest(jtu.JaxTestCase):
     )
     def test_custom_linear_solve(self, symmetric):
         def explicit_jacobian_solve(matvec, b):
+            test_1 = jnp.linalg.solve(jax.jacobian(matvec)(b), b)
+            timer = jax_op_timer()
+            with timer:
+                result = lax.stop_gradient(test_1)
+                timer.gen.send(result)
             return lax.stop_gradient(jnp.linalg.solve(jax.jacobian(matvec)(b), b))
 
         def matrix_free_solve(matvec, b):

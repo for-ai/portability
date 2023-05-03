@@ -14,22 +14,19 @@
 
 
 import collections
-from functools import partial
 import itertools
 import unittest
-
-from absl.testing import absltest
-from absl.testing import parameterized
-
-import numpy as np
+from functools import partial
 
 import jax
+import numpy as np
+from absl.testing import absltest, parameterized
 from jax import numpy as jnp
-
 from jax._src import dtypes
 from jax._src import test_util as jtu
-
 from jax.config import config
+
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 config.parse_flags_with_absl()
 FLAGS = config.FLAGS
@@ -161,18 +158,7 @@ def op_record(
 
 
 JAX_REDUCER_INITIAL_RECORDS = [
-    op_record("prod", 1, all_dtypes, all_shapes, jtu.rand_small_positive, []),
-    op_record(
-        "sum",
-        1,
-        all_dtypes,
-        all_shapes,
-        jtu.rand_default,
-        [],
-        tolerance={jnp.bfloat16: 2e-2},
-    ),
     op_record("max", 1, all_dtypes, all_shapes, jtu.rand_default, []),
-    op_record("min", 1, all_dtypes, all_shapes, jtu.rand_default, []),
 ]
 
 
@@ -209,7 +195,10 @@ class JaxNumpyReducerTests(jtu.JaxTestCase):
         self, name, rng_factory, shape, dtype, axis, keepdims, initial, inexact
     ):
         np_op = getattr(np, name)
-        jnp_op = getattr(jnp, name)
+        timer = jax_op_timer()
+        with timer:
+            jnp_op = getattr(jnp, name)
+            timer.gen.send(jnp_op)
         rng = rng_factory(self.rng())
         is_bf16_nan_test = (
             dtype == jnp.bfloat16 and rng_factory.__name__ == "rand_some_nan"
@@ -227,8 +216,11 @@ class JaxNumpyReducerTests(jtu.JaxTestCase):
             res = np_op(x_cast, axis, keepdims=keepdims, initial=initial)
             res = res if not is_bf16_nan_test else res.astype(jnp.bfloat16)
             return res.astype(_reducer_output_dtype(name, x.dtype))
+        timer = jax_op_timer()
+        with timer:
+            jnp_fun = lambda x: jnp_op(x, axis, keepdims=keepdims, initial=initial)
+            timer.gen.send(jnp_fun)
 
-        jnp_fun = lambda x: jnp_op(x, axis, keepdims=keepdims, initial=initial)
         jnp_fun = jtu.ignore_warning(category=jnp.ComplexWarning)(jnp_fun)
         args_maker = lambda: [rng(shape, dtype)]
         tol = {jnp.bfloat16: 3e-2}

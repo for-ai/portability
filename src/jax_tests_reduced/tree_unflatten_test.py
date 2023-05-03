@@ -12,39 +12,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-from collections import namedtuple
-from functools import partial
 import gc
 import itertools as it
 import operator
-
-import numpy as np
-from absl.testing import absltest
-from absl.testing import parameterized
+import unittest
+from collections import namedtuple
+from functools import partial
 
 import jax
-from jax import lax
+import numpy as np
+from absl.testing import absltest, parameterized
+from jax import jit, jvp, lax, linearize, make_jaxpr
 from jax import numpy as jnp
-from jax import jvp, linearize, vjp, jit, make_jaxpr
-from jax.api_util import flatten_fun_nokwargs
-from jax.config import config
-from jax.tree_util import (
-    tree_flatten,
-    tree_unflatten,
-    tree_map,
-    tree_reduce,
-    tree_leaves,
-)
-
+from jax import vjp
 from jax._src import core
 from jax._src import linear_util as lu
-from jax._src import util
 from jax._src import test_util as jtu
-from jax._src.core import UnshapedArray, ShapedArray, DBIdx
+from jax._src import util
+from jax._src.core import DBIdx, ShapedArray, UnshapedArray
 from jax._src.interpreters import partial_eval as pe
-from jax._src.lax import lax as lax_internal
 from jax._src.lax import control_flow as lax_control_flow
+from jax._src.lax import lax as lax_internal
+from jax.api_util import flatten_fun_nokwargs
+from jax.config import config
+from jax.tree_util import (tree_flatten, tree_leaves, tree_map, tree_reduce,
+                           tree_unflatten)
+
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 config.parse_flags_with_absl()
 
@@ -61,6 +55,10 @@ def core_call(f, *args):
     args, in_tree = tree_flatten(args)
     f, out_tree = flatten_fun_nokwargs(lu.wrap_init(f), in_tree)
     out = core.call_p.bind(f, *args)
+    timer = jax_op_timer()
+    with timer:
+        result = tree_unflatten(out_tree(), out)
+        timer.gen.send(result)
     return tree_unflatten(out_tree(), out)
 
 
@@ -69,6 +67,10 @@ def core_closed_call(f, *args):
     args, in_tree = tree_flatten(args)
     f, out_tree = flatten_fun_nokwargs(lu.wrap_init(f), in_tree)
     out = core.closed_call_p.bind(f, *args)
+    timer = jax_op_timer()
+    with timer:
+        result = tree_unflatten(out_tree(), out)
+        timer.gen.send(result)
     return tree_unflatten(out_tree(), out)
 
 
@@ -181,6 +183,9 @@ class CoreTest(jtu.JaxTestCase):
         tree = [(1, 2), {"roy": (3, [4, 5, ()])}]
         flat, treedef = tree_flatten(tree)
         assert flat == [1, 2, 3, 4, 5]
-        tree2 = tree_unflatten(treedef, flat)
+        timer = jax_op_timer()
+        with timer:
+            tree2 = tree_unflatten(treedef, flat)
+            timer.gen.send(tree2)
         nodes_equal = tree_map(operator.eq, tree, tree2)
         assert tree_reduce(operator.and_, nodes_equal)

@@ -13,21 +13,20 @@
 # limitations under the License.
 
 
-from functools import partial
 import unittest
+from functools import partial
 
-from absl.testing import absltest
-
+import jax.numpy as jnp
+import jax.scipy.signal as jsp_signal
 import numpy as np
 import scipy.signal as osp_signal
-
+from absl.testing import absltest
 from jax import lax
-import jax.numpy as jnp
 from jax._src import dtypes
 from jax._src import test_util as jtu
-import jax.scipy.signal as jsp_signal
-
 from jax.config import config
+
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 config.parse_flags_with_absl()
 
@@ -81,12 +80,13 @@ class LaxBackedScipySignalTests(jtu.JaxTestCase):
         yshape=twodim_shapes,
     )
     def testConvolutions2D(self, xshape, yshape, dtype, mode, op):
+        
         jsp_op = getattr(jsp_signal, op)
         osp_op = getattr(osp_signal, op)
         rng = jtu.rand_default(self.rng())
         args_maker = lambda: [rng(xshape, dtype), rng(yshape, dtype)]
         osp_fun = partial(osp_op, mode=mode)
-        jsp_fun = partial(jsp_op, mode=mode, precision=lax.Precision.HIGHEST)
+        jsp_fun = partial_timed(jsp_op, mode=mode, precision=lax.Precision.HIGHEST)
         tol = {
             np.float16: 1e-2,
             np.float32: 1e-2,

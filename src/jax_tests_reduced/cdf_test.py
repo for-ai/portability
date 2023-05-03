@@ -13,21 +13,22 @@
 # limitations under the License.
 
 
-from functools import partial
 import itertools
+from functools import partial
 
-from absl.testing import absltest
-
+import jax
 import numpy as np
 import scipy.stats as osp_stats
 import scipy.version
-
-import jax
-from jax._src import dtypes, test_util as jtu, tree_util
+from absl.testing import absltest
+from jax._src import dtypes
+from jax._src import test_util as jtu
+from jax._src import tree_util
+from jax.config import config
 from jax.scipy import stats as lsp_stats
 from jax.scipy.special import expit
 
-from jax.config import config
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 config.parse_flags_with_absl()
 
@@ -54,7 +55,10 @@ class LaxBackedScipyStatsTests(jtu.JaxTestCase):
     def testPoissonCdf(self, shapes, dtypes):
         rng = jtu.rand_default(self.rng())
         scipy_fun = osp_stats.poisson.cdf
-        lax_fun = lsp_stats.poisson.cdf
+        timer = jax_op_timer()
+        with timer:
+            lax_fun = lsp_stats.poisson.cdf
+            timer.gen.send(lax_fun)
 
         def args_maker():
             k, mu, loc = map(rng, shapes, dtypes)
@@ -73,7 +77,10 @@ class LaxBackedScipyStatsTests(jtu.JaxTestCase):
         rng_int = jtu.rand_int(self.rng(), -100, 100)
         rng_uniform = jtu.rand_uniform(self.rng())
         scipy_fun = osp_stats.bernoulli.cdf
-        lax_fun = lsp_stats.bernoulli.cdf
+        timer = jax_op_timer()
+        with timer:
+            lax_fun = lsp_stats.bernoulli.cdf
+            timer.gen.send(lax_fun)
 
         def args_maker():
             x = rng_int(shapes[0], dtypes[0])
@@ -143,7 +150,10 @@ class LaxBackedScipyStatsTests(jtu.JaxTestCase):
     def testGenNormCdf(self, shapes, dtypes):
         rng = jtu.rand_default(self.rng())
         scipy_fun = osp_stats.gennorm.cdf
-        lax_fun = lsp_stats.gennorm.cdf
+        timer = jax_op_timer()
+        with timer:
+            lax_fun = lsp_stats.gennorm.cdf
+            timer.gen.send(lax_fun)
 
         def args_maker():
             x, p = map(rng, shapes, dtypes)
@@ -159,7 +169,10 @@ class LaxBackedScipyStatsTests(jtu.JaxTestCase):
     def testLaplaceCdf(self, shapes, dtypes):
         rng = jtu.rand_default(self.rng())
         scipy_fun = osp_stats.laplace.cdf
-        lax_fun = lsp_stats.laplace.cdf
+        timer = jax_op_timer()
+        with timer:
+            lax_fun = lsp_stats.laplace.cdf
+            timer.gen.send(lax_fun)
 
         def args_maker():
             x, loc, scale = map(rng, shapes, dtypes)
@@ -181,7 +194,10 @@ class LaxBackedScipyStatsTests(jtu.JaxTestCase):
     def testLogisticCdf(self, shapes, dtypes):
         rng = jtu.rand_default(self.rng())
         scipy_fun = osp_stats.logistic.cdf
-        lax_fun = lsp_stats.logistic.cdf
+        timer = jax_op_timer()
+        with timer:
+            lax_fun = lsp_stats.logistic.cdf
+            timer.gen.send(lax_fun)
 
         def args_maker():
             x, loc, scale = map(rng, shapes, dtypes)
@@ -217,7 +233,10 @@ class LaxBackedScipyStatsTests(jtu.JaxTestCase):
     def testNormCdf(self, shapes, dtypes):
         rng = jtu.rand_default(self.rng())
         scipy_fun = osp_stats.norm.cdf
-        lax_fun = lsp_stats.norm.cdf
+        timer = jax_op_timer()
+        with timer:
+            lax_fun = lsp_stats.norm.cdf
+            timer.gen.send(lax_fun)
 
         def args_maker():
             x, loc, scale = map(rng, shapes, dtypes)
@@ -254,7 +273,10 @@ class LaxBackedScipyStatsTests(jtu.JaxTestCase):
     def testTruncnormCdf(self, shapes, dtypes):
         rng = jtu.rand_default(self.rng())
         scipy_fun = osp_stats.truncnorm.cdf
-        lax_fun = lsp_stats.truncnorm.cdf
+        timer = jax_op_timer()
+        with timer:
+            lax_fun = lsp_stats.truncnorm.cdf
+            timer.gen.send(lax_fun)
 
         def args_maker():
             x, a, b, loc, scale = map(rng, shapes, dtypes)

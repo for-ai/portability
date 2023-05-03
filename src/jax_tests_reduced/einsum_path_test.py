@@ -13,22 +13,20 @@
 # limitations under the License.
 
 
+import itertools
 from collections import defaultdict
 from functools import partial
-import itertools
-
-import numpy as np
-from absl.testing import absltest
-from absl.testing import parameterized
 
 import jax
-from jax import lax
-import jax.numpy as jnp
 import jax._src.test_util as jtu
-
+import jax.numpy as jnp
+import numpy as np
+from absl.testing import absltest, parameterized
+from jax import lax
 from jax.config import config
 
 config.parse_flags_with_absl()
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 
 class EinsumTest(jtu.JaxTestCase):
@@ -66,7 +64,10 @@ class EinsumTest(jtu.JaxTestCase):
                             s += S[n, t, k] * W[k, d] * V[d, c]
                 L[n, c] = s
 
-        path = jnp.einsum_path("ntk,kd,dc->nc", S, W, V, optimize="optimal")[0]
+        timer = jax_op_timer()
+        with timer:
+            path = jnp.einsum_path("ntk,kd,dc->nc", S, W, V, optimize="optimal")[0]
+            timer.gen.send(path)
         rtol = 1e-2 if jtu.device_under_test() == "tpu" else None
         self.assertAllClose(
             L,

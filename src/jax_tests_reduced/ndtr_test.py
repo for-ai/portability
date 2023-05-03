@@ -16,21 +16,17 @@ import collections
 import functools
 import itertools
 
-from absl.testing import absltest
-from absl.testing import parameterized
-
+import jax
 import numpy as np
 import scipy.special as osp_special
-
-import jax
+from absl.testing import absltest, parameterized
 from jax._src import test_util as jtu
-from jax.scipy import special as lsp_special
-
 from jax.config import config
+from jax.scipy import special as lsp_special
 
 config.parse_flags_with_absl()
 FLAGS = config.FLAGS
-
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 all_shapes = [(), (4,), (3, 4), (3, 1), (1, 4), (2, 1, 4)]
 
@@ -106,7 +102,11 @@ class LaxScipySpcialFunctionsTest(jtu.JaxTestCase):
         self, op, rng_factory, shapes, dtypes, test_autodiff, nondiff_argnums
     ):
         scipy_op = getattr(osp_special, op)
-        lax_op = getattr(lsp_special, op)
+        timer = jax_op_timer()
+        with timer:
+            lax_op = getattr(lsp_special, op)
+            print("lax_op", lax_op)
+            timer.gen.send(lax_op)
         rng = rng_factory(self.rng())
         args_maker = self._GetArgsMaker(rng, shapes, dtypes)
         args = args_maker()
@@ -121,6 +121,10 @@ class LaxScipySpcialFunctionsTest(jtu.JaxTestCase):
                 list_args = list(vals)
                 for i in nondiff_argnums:
                     list_args.insert(i, args[i])
+                    timer = jax_op_timer()
+                    with timer:
+                        result = lax_op(*list_args)
+                        timer.gen.send(result)
                 return lax_op(*list_args)
 
             assert list(nondiff_argnums) == sorted(set(nondiff_argnums))

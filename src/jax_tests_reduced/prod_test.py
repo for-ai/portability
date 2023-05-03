@@ -14,22 +14,19 @@
 
 
 import collections
-from functools import partial
 import itertools
 import unittest
-
-from absl.testing import absltest
-from absl.testing import parameterized
-
-import numpy as np
+from functools import partial
 
 import jax
+import numpy as np
+from absl.testing import absltest, parameterized
 from jax import numpy as jnp
-
 from jax._src import dtypes
 from jax._src import test_util as jtu
-
 from jax.config import config
+
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 config.parse_flags_with_absl()
 FLAGS = config.FLAGS
@@ -163,7 +160,7 @@ JAX_REDUCER_PROMOTE_INT_RECORDS = []
 def _reducer_output_dtype(
     name: str, input_dtype: np.dtype, promote_integers: bool = True
 ) -> np.dtype:
-    if name in ["sum", "prod", "nansum", "nanprod"]:
+    if name in ["prod"]:
         if input_dtype == bool:
             input_dtype = dtypes.to_numeric_dtype(input_dtype)
         if promote_integers:
@@ -235,8 +232,10 @@ class JaxNumpyReducerTests(jtu.JaxTestCase):
             if t is None:
                 t = _reducer_output_dtype(name, x_cast.dtype)
             return np_op(x_cast, axis, dtype=t, keepdims=keepdims)
-
-        jnp_fun = lambda x: jnp_op(x, axis, dtype=out_dtype, keepdims=keepdims)
+        timer = jax_op_timer()
+        with timer:
+            jnp_fun = lambda x: jnp_op(x, axis, dtype=out_dtype, keepdims=keepdims)
+            timer.gen.send(jnp_fun)
         jnp_fun = jtu.ignore_warning(category=jnp.ComplexWarning)(jnp_fun)
         args_maker = lambda: [rng(shape, dtype)]
         tol_spec = {

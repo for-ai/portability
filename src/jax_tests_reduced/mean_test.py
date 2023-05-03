@@ -14,22 +14,19 @@
 
 
 import collections
-from functools import partial
 import itertools
 import unittest
-
-from absl.testing import absltest
-from absl.testing import parameterized
-
-import numpy as np
+from functools import partial
 
 import jax
+import numpy as np
+from absl.testing import absltest, parameterized
 from jax import numpy as jnp
-
 from jax._src import dtypes
 from jax._src import test_util as jtu
-
 from jax.config import config
+
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 config.parse_flags_with_absl()
 FLAGS = config.FLAGS
@@ -209,7 +206,10 @@ class JaxNumpyReducerTests(jtu.JaxTestCase):
         self, name, rng_factory, shape, dtype, out_dtype, axis, keepdims, inexact
     ):
         np_op = getattr(np, name)
-        jnp_op = getattr(jnp, name)
+        timer = jax_op_timer()
+        with timer:
+            jnp_op = getattr(jnp, name)
+            timer.gen.send(jnp_op)
         rng = rng_factory(self.rng())
 
         @jtu.ignore_warning(category=np.ComplexWarning)
@@ -224,8 +224,10 @@ class JaxNumpyReducerTests(jtu.JaxTestCase):
             if t is None:
                 t = _reducer_output_dtype(name, x_cast.dtype)
             return np_op(x_cast, axis, dtype=t, keepdims=keepdims)
-
-        jnp_fun = lambda x: jnp_op(x, axis, dtype=out_dtype, keepdims=keepdims)
+        timer = jax_op_timer()
+        with timer:
+            jnp_fun = lambda x: jnp_op(x, axis, dtype=out_dtype, keepdims=keepdims)
+            timer.gen.send(jnp_fun)
         jnp_fun = jtu.ignore_warning(category=jnp.ComplexWarning)(jnp_fun)
         args_maker = lambda: [rng(shape, dtype)]
         tol_spec = {

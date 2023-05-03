@@ -13,41 +13,32 @@
 # limitations under the License.
 from __future__ import annotations
 
-from functools import partial
 import itertools
 import math
 import operator
 import types
 import unittest
-from unittest import SkipTest
+from functools import partial
 from typing import Tuple
-
-from absl.testing import absltest
-from absl.testing import parameterized
-
-import numpy as np
+from unittest import SkipTest
 
 import jax
-from jax._src import core
-from jax import lax
 import jax.numpy as jnp
-from jax.test_util import check_grads
-from jax import tree_util
 import jax.util
-
-from jax.interpreters import xla
-from jax._src.interpreters import mlir
-from jax.interpreters import batching
-from jax._src import array
-from jax._src.lib.mlir.dialects import hlo
-from jax._src import dtypes
-from jax._src.interpreters import pxla
+import numpy as np
+from absl.testing import absltest, parameterized
+from jax import lax, tree_util
+from jax._src import array, core, dtypes, lax_reference
 from jax._src import test_util as jtu
-from jax._src import lax_reference
-from jax._src.lax import lax as lax_internal
 from jax._src.internal_test_util import lax_test_util
-
+from jax._src.interpreters import mlir, pxla
+from jax._src.lax import lax as lax_internal
+from jax._src.lib.mlir.dialects import hlo
 from jax.config import config
+from jax.interpreters import batching, xla
+from jax.test_util import check_grads
+
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 config.parse_flags_with_absl()
 
@@ -112,7 +103,9 @@ class LaxTest(jtu.JaxTestCase):
             bcast_idxs = np.broadcast_to(np.arange(shape[-1], dtype=np.int32), shape)
             sorted_vals, sorted_idxs = lax_reference.sort_key_val(x, bcast_idxs)
             return sorted_vals[..., : -k - 1 : -1], sorted_idxs[..., : -k - 1 : -1]
-
-        op = lambda vs: lax.top_k(vs, k=k)
+        timer = jax_op_timer()
+        with timer:
+            op = lambda vs: lax.top_k(vs, k=k)
+            timer.gen.send(op)
         self._CheckAgainstNumpy(op, reference_top_k, args_maker)
         self._CompileAndCheck(op, args_maker)

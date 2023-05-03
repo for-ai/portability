@@ -12,39 +12,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-from collections import namedtuple
-from functools import partial
 import gc
 import itertools as it
 import operator
-
-import numpy as np
-from absl.testing import absltest
-from absl.testing import parameterized
+import unittest
+from collections import namedtuple
+from functools import partial
 
 import jax
-from jax import lax
+import numpy as np
+from absl.testing import absltest, parameterized
+from jax import jit, jvp, lax, linearize, make_jaxpr
 from jax import numpy as jnp
-from jax import jvp, linearize, vjp, jit, make_jaxpr
-from jax.api_util import flatten_fun_nokwargs
-from jax.config import config
-from jax.tree_util import (
-    tree_flatten,
-    tree_unflatten,
-    tree_map,
-    tree_reduce,
-    tree_leaves,
-)
-
+from jax import vjp
 from jax._src import core
 from jax._src import linear_util as lu
-from jax._src import util
 from jax._src import test_util as jtu
-from jax._src.core import UnshapedArray, ShapedArray, DBIdx
+from jax._src import util
+from jax._src.core import DBIdx, ShapedArray, UnshapedArray
 from jax._src.interpreters import partial_eval as pe
-from jax._src.lax import lax as lax_internal
 from jax._src.lax import control_flow as lax_control_flow
+from jax._src.lax import lax as lax_internal
+from jax.api_util import flatten_fun_nokwargs
+from jax.config import config
+from jax.tree_util import (tree_flatten, tree_leaves, tree_map, tree_reduce,
+                           tree_unflatten)
+
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 config.parse_flags_with_absl()
 
@@ -206,8 +200,16 @@ class CoreTest(jtu.JaxTestCase):
         zs = ({"a": 11}, [22, 33])
 
         f = lambda x, y: x + y
+        timer = jax_op_timer()
+        with timer:
+            result = tree_map(f, xs, ys)
+            timer.gen.send(result)
         assert tree_map(f, xs, ys) == zs
         try:
+            timer = jax_op_timer()
+            with timer:
+                result = tree_map(f, xs, ys_bad)
+                timer.gen.send(result)
             tree_map(f, xs, ys_bad)
             assert False
         except (TypeError, ValueError):

@@ -15,25 +15,22 @@
 
 import collections
 import functools
-from functools import partial
 import itertools
 import operator
+from functools import partial
 from unittest import SkipTest
-
-from absl.testing import absltest
-from absl.testing import parameterized
-
-import numpy as np
 
 import jax
 import jax.ops
+import numpy as np
+from absl.testing import absltest, parameterized
 from jax import lax
 from jax import numpy as jnp
-
 from jax._src import dtypes
 from jax._src import test_util as jtu
-
 from jax.config import config
+
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 config.parse_flags_with_absl()
 FLAGS = config.FLAGS
@@ -212,7 +209,7 @@ class JaxNumpyOperatorTests(jtu.JaxTestCase):
         kwargs,
     ):
         np_op = partial(getattr(np, op_name), **kwargs)
-        jnp_op = partial(getattr(jnp, op_name), **kwargs)
+        jnp_op = partial_timed(getattr(jnp, op_name), **kwargs)
         np_op = jtu.ignore_warning(category=RuntimeWarning, message="invalid value.*")(
             np_op
         )

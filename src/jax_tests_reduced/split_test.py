@@ -15,20 +15,20 @@
 
 import collections
 import copy
-from functools import partial
 import inspect
 import io
 import itertools
 import math
-from typing import cast, Iterator, Optional, List, Tuple
 import unittest
-from unittest import SkipTest
 import warnings
-
-from absl.testing import absltest
-from absl.testing import parameterized
+from functools import partial
+from typing import Iterator, List, Optional, Tuple, cast
+from unittest import SkipTest
 
 import numpy as np
+from absl.testing import absltest, parameterized
+
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 try:
     import numpy_dispatch
@@ -40,17 +40,13 @@ import jax.ops
 from jax import lax
 from jax import numpy as jnp
 from jax import tree_util
-from jax.test_util import check_grads
-
-from jax._src import core
-from jax._src import dtypes
+from jax._src import array, core, dtypes
 from jax._src import test_util as jtu
 from jax._src.lax import lax as lax_internal
-from jax._src.numpy.util import _parse_numpydoc, ParsedDoc, _wraps
+from jax._src.numpy.util import ParsedDoc, _parse_numpydoc, _wraps
 from jax._src.util import safe_zip
-from jax._src import array
-
 from jax.config import config
+from jax.test_util import check_grads
 
 config.parse_flags_with_absl()
 FLAGS = config.FLAGS
@@ -208,7 +204,10 @@ class LaxBackedNumpyTests(jtu.JaxTestCase):
     def testSplitStaticInt(self, shape, num_sections, axis, dtype):
         rng = jtu.rand_default(self.rng())
         np_fun = lambda x: np.split(x, num_sections, axis=axis)
-        jnp_fun = lambda x: jnp.split(x, num_sections, axis=axis)
+        timer = jax_op_timer()
+        with timer:
+            jnp_fun = lambda x: jnp.split(x, num_sections, axis=axis)
+            timer.gen.send(jnp_fun)
         args_maker = lambda: [rng(shape, dtype)]
         self._CheckAgainstNumpy(np_fun, jnp_fun, args_maker)
         self._CompileAndCheck(jnp_fun, args_maker)

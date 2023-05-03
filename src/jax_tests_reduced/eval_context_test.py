@@ -15,64 +15,58 @@
 
 import collections
 import collections.abc
-from contextlib import contextmanager
+import concurrent.futures
 import copy
 import enum
-from functools import partial
-import inspect
+import functools
+import gc
 import importlib
+import inspect
+import itertools as it
 import operator
+import operator as op
 import os
 import platform
 import re
 import subprocess
 import sys
 import types
-from typing import Callable, List, Optional, NamedTuple
 import unittest
 import warnings
 import weakref
-import functools
-import itertools as it
-import operator as op
-import gc
-
-from absl import logging
-from absl.testing import absltest, parameterized
-import numpy as np
-
-import concurrent.futures
+from contextlib import contextmanager
+from functools import partial
+from typing import Callable, List, NamedTuple, Optional
 
 import jax
-import jax.numpy as jnp
-from jax import float0, jit, grad, device_put, jacfwd, jacrev, hessian
-from jax._src import core
-from jax import lax
-from jax import custom_batching
-from jax._src import api, dtypes, lib, api_util
-from jax.errors import UnexpectedTracerError
-from jax.interpreters import ad
-from jax._src.interpreters import mlir
-from jax.interpreters import xla
-from jax.interpreters import batching
-from jax._src.interpreters import partial_eval as pe
-from jax.sharding import PartitionSpec as P
-from jax._src import array
-from jax.experimental import pjit
-from jax._src import custom_derivatives
-from jax import custom_derivatives as custom_derivatives_public
-from jax._src import device_array
-from jax._src import prng
-from jax._src import xla_bridge
-from jax._src.lib import xla_client
-from jax._src import test_util as jtu
-from jax import tree_util
-from jax._src import linear_util as lu
 import jax._src.util as jax_util
+import jax.numpy as jnp
+import numpy as np
+from absl import logging
+from absl.testing import absltest, parameterized
+from jax import custom_batching
+from jax import custom_derivatives as custom_derivatives_public
+from jax import (device_put, float0, grad, hessian, jacfwd, jacrev, jit, lax,
+                 tree_util)
+from jax._src import (api, api_util, array, core, custom_derivatives,
+                      device_array, dtypes, lib)
+from jax._src import linear_util as lu
+from jax._src import prng
+from jax._src import test_util as jtu
+from jax._src import xla_bridge
 from jax._src.ad_checkpoint import saved_residuals
-from jax.ad_checkpoint import checkpoint as new_checkpoint, checkpoint_name
-
+from jax._src.interpreters import mlir
+from jax._src.interpreters import partial_eval as pe
+from jax._src.lib import xla_client
+from jax.ad_checkpoint import checkpoint as new_checkpoint
+from jax.ad_checkpoint import checkpoint_name
 from jax.config import config
+from jax.errors import UnexpectedTracerError
+from jax.experimental import pjit
+from jax.interpreters import ad, batching, xla
+from jax.sharding import PartitionSpec as P
+
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 config.parse_flags_with_absl()
 FLAGS = config.FLAGS
@@ -90,6 +84,10 @@ class APITest(jtu.JaxTestCase):
     def test_eval_context(self):
         @jit
         def f():
+            timer = jax_op_timer()
+            with timer:
+                test = core.eval_context()
+                timer.gen.send(test)
             with core.eval_context():
                 assert jnp.add(1, 1) == 2
 

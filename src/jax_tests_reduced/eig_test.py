@@ -14,25 +14,24 @@
 
 """Tests for the LAPAX linear algebra module."""
 
-from functools import partial
 import itertools
-
-import numpy as np
-import scipy
-import scipy.linalg
-import scipy as osp
-
-from absl.testing import absltest
+from functools import partial
 
 import jax
-from jax import jit, grad, jvp, vmap
-from jax import lax
+import numpy as np
+import scipy
+import scipy as osp
+import scipy.linalg
+from absl.testing import absltest
+from jax import grad, jit, jvp, lax
 from jax import numpy as jnp
 from jax import scipy as jsp
-from jax._src.numpy.util import promote_dtypes_inexact
+from jax import vmap
 from jax._src import test_util as jtu
-
+from jax._src.numpy.util import promote_dtypes_inexact
 from jax.config import config
+
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 config.parse_flags_with_absl()
 FLAGS = config.FLAGS
@@ -78,11 +77,14 @@ class NumpyLinalgTest(jtu.JaxTestCase):
             check_right_eigenvectors(aH, wC, vl)
 
         (a,) = args_maker()
-        results = lax.linalg.eig(
-            a,
-            compute_left_eigenvectors=compute_left_eigenvectors,
-            compute_right_eigenvectors=compute_right_eigenvectors,
-        )
+        timer = jax_op_timer()
+        with timer:
+            results = lax.linalg.eig(
+                a,
+                compute_left_eigenvectors=compute_left_eigenvectors,
+                compute_right_eigenvectors=compute_right_eigenvectors,
+            )
+            timer.gen.send(results)
         w = results[0]
 
         if compute_left_eigenvectors:

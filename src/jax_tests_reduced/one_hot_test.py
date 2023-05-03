@@ -15,33 +15,35 @@
 """Tests for nn module."""
 
 import collections
-from functools import partial
 import itertools
+from functools import partial
 
-from absl.testing import absltest
-from absl.testing import parameterized
-
-import scipy.stats
-
-from jax._src import core
-from jax._src import test_util as jtu
-from jax.test_util import check_grads
-from jax import nn
-from jax import random
 import jax
 import jax.numpy as jnp
-
+import scipy.stats
+from absl.testing import absltest, parameterized
+from jax import nn, random
+from jax._src import core
+from jax._src import test_util as jtu
 from jax.config import config
+from jax.test_util import check_grads
+
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 config.parse_flags_with_absl()
 
 
 class NNFunctionsTest(jtu.JaxTestCase):
     def testOneHot(self):
-        actual = nn.one_hot(jnp.array([0, 1, 2]), 3)
+        timer = jax_op_timer()
+        with timer:
+            actual = nn.one_hot(jnp.array([0, 1, 2]), 3)
+            timer.gen.send(actual)
         expected = jnp.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
         self.assertAllClose(actual, expected, check_dtypes=False)
-
-        actual = nn.one_hot(jnp.array([1, 2, 0]), 3)
+        timer = jax_op_timer()
+        with timer:
+            actual = nn.one_hot(jnp.array([1, 2, 0]), 3)
+            timer.gen.send(actual)
         expected = jnp.array([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0], [1.0, 0.0, 0.0]])
         self.assertAllClose(actual, expected, check_dtypes=False)

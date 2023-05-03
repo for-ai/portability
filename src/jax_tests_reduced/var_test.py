@@ -14,22 +14,19 @@
 
 
 import collections
-from functools import partial
 import itertools
 import unittest
-
-from absl.testing import absltest
-from absl.testing import parameterized
-
-import numpy as np
+from functools import partial
 
 import jax
+import numpy as np
+from absl.testing import absltest, parameterized
 from jax import numpy as jnp
-
 from jax._src import dtypes
 from jax._src import test_util as jtu
-
 from jax.config import config
+
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 config.parse_flags_with_absl()
 FLAGS = config.FLAGS
@@ -235,7 +232,7 @@ class JaxNumpyReducerTests(jtu.JaxTestCase):
             res = res if not is_bf16_nan_test else res.astype(jnp.bfloat16)
             return res
 
-        jnp_fun = lambda x: jnp_op(x, axis, keepdims=keepdims, where=where)
+        jnp_fun = partial_timed(lambda x: jnp_op(x, axis, keepdims=keepdims, where=where))
         jnp_fun = jtu.ignore_warning(category=jnp.ComplexWarning)(jnp_fun)
         args_maker = lambda: [rng(shape, dtype)]
         self._CheckAgainstNumpy(np_fun, jnp_fun, args_maker, atol=tol, rtol=tol)
