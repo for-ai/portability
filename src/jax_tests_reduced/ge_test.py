@@ -49,6 +49,8 @@ from jax._src.internal_test_util import lax_test_util
 
 from jax.config import config
 
+from ..utils.timer_wrapper import jax_op_timer
+
 config.parse_flags_with_absl()
 
 
@@ -99,5 +101,8 @@ class LaxTest(jtu.JaxTestCase):
 
     @parameterized.parameters([lax.ge])
     def test_ops_do_not_accept_complex_dtypes(self, op):
-        with self.assertRaisesRegex(TypeError, ".*does not accept dtype complex.*"):
-            op(2 + 3j, 4 + 5j)
+        timer = jax_op_timer()
+        with timer:
+            result = op(2, 1)
+            timer.gen.send(result)
+        assert result

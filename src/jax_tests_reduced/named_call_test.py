@@ -39,6 +39,7 @@ from jax._src import test_util as jtu
 from jax import tree_util
 from jax._src import xla_bridge
 from jax._src.lib import xla_client
+from ..utils.timer_wrapper import jax_op_timer
 
 xops = xla_client.ops
 
@@ -231,6 +232,33 @@ def assertMultiDeviceOutputEqual(tst: jtu.JaxTestCase, expected_2CPUs: str):
 
 
 class HostCallbackTapTest(jtu.JaxTestCase):
+    def setUp(self):
+        if jtu.device_under_test() == "gpu" and jax.device_count() > 1:
+            raise SkipTest("host_callback broken on multi-GPU platforms (#6447)")
+        if xla_bridge.using_pjrt_c_api():
+            raise SkipTest("host_callback not implemented in PJRT C API")
+        super().setUp()
+
+    def assertRewrite(
+        self,
+        expected: str,
+        func: Callable,
+        args: Sequence,
+        has_input_token=True,
+        has_output_token=True,
+    ):
+        """Check that the rewrite of func(*args) matches expected."""
+        jaxpr = jax.make_jaxpr(func)(*args)
+        rewritten = hcb._rewrite_closed_jaxpr(
+            jaxpr, has_input_token, has_output_token  # noqa: F841
+        )
+        # Since it is somewhat annoying to update the Jaxpr assertions when we change
+        # the Jaxpr printing, we do not check these by default. It is recommended that
+        # before making changes to the code generation and Jaxpr rewriting, turn on
+        # the checking, update the expected Jaxpr, and then make the changes.
+        # assertMultiLineStrippedEqual(self, expected, str(rewritten))
+        del rewritten
+
     def test_tap_named_call(self):
         def tap_scalar(init, do_print=False):
             @partial(jax.named_call, name="step")
@@ -239,4 +267,28 @@ class HostCallbackTapTest(jtu.JaxTestCase):
                 maybe_print(do_print, step_nr, what="step_nr")
                 return acc, None
 
-            return lax.scan(step, init, np.arange(2))
+            timer = jax_op_timer()
+            with timer:
+                function = jax.named_call(step, name="step")
+                timer.gen.send(function)
+            return lax.scan(function, init, np.arange(2))
+
+        self.assertRewrite(
+            """
+        { lambda a ; b d e.
+            let c = scan[ jaxpr={ lambda  ; a b.
+                                let c = named_call[ call_jaxpr={ lambda  ; a b.
+                                                                    let c = add a b
+                                                                    in (c,) }
+                                                    name=step ] a b
+                                in (c,) }
+                        length=2
+                        linear=(False, False)
+                        num_carry=1
+                        num_consts=0
+                        reverse=False
+                        unroll=1 ] b a
+            in (c, d, e) }""",
+            tap_scalar,
+            [np.int32(3)],
+        )

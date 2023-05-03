@@ -73,6 +73,7 @@ from jax._src.ad_checkpoint import saved_residuals
 from jax.ad_checkpoint import checkpoint as new_checkpoint, checkpoint_name
 
 from jax.config import config
+from ..utils.timer_wrapper import jax_op_timer
 
 config.parse_flags_with_absl()
 FLAGS = config.FLAGS
@@ -110,6 +111,11 @@ class CPPJitTest(jtu.BufferDonationTestCase):
                 effects.append(1)
                 return x
 
+            timer = jax_op_timer()
+            with timer:
+                with api.disable_jit():
+                    1 + 1
+                timer.gen.send(None)
             with api.disable_jit():
                 f(2)
                 f(2)
