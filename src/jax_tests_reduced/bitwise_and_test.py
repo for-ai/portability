@@ -210,10 +210,8 @@ class JaxNumpyOperatorTests(jtu.JaxTestCase):
     )  # This test explicitly exercises implicit rank promotion.
     def testBitwiseOp(self, name, rng_factory, shapes, dtypes):
         np_op = getattr(np, name)
-        timer = jax_op_timer()
-        with timer:
-            jnp_op = getattr(jnp, name)
-            timer.gen.send(jnp_op)
+        # timer = jax_op_timer()
+        jnp_op = partial_timed(getattr(jnp, name))
         rng = rng_factory(self.rng())
         args_maker = self._GetArgsMaker(rng, shapes, dtypes)
         with jtu.strict_promotion_if_dtypes_match(dtypes):

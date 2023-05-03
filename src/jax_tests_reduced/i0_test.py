@@ -252,10 +252,9 @@ class JaxNumpyOperatorTests(jtu.JaxTestCase):
         kwargs,
     ):
         np_op = partial(getattr(np, op_name), **kwargs)
-        timer = jax_op_timer()
-        with timer:
-            jnp_op = partial(getattr(jnp, op_name), **kwargs)            
-            timer.gen.send(jnp_op)
+
+        jnp_op = partial_timed(getattr(jnp, op_name), **kwargs)            
+
         np_op = jtu.ignore_warning(category=RuntimeWarning, message="invalid value.*")(
             np_op
         )

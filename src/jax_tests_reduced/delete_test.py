@@ -272,9 +272,7 @@ class LaxBackedNumpyTests(jtu.JaxTestCase):
             self.skipTest("test fails for numpy v1.23.0")
         args_maker = lambda: [rng(shape, dtype)]
         np_fun = lambda arg: np.delete(arg, mask, axis=axis)
-        timer = jax_op_timer()
-        with timer:
-            jnp_fun = lambda arg: jnp.delete(arg, mask, axis=axis)
-            timer.gen.send(jnp_fun)
+        
+        jnp_fun = partial_timed(lambda arg: jnp.delete(arg, mask, axis=axis))
         self._CheckAgainstNumpy(np_fun, jnp_fun, args_maker)
         self._CompileAndCheck(jnp_fun, args_maker)

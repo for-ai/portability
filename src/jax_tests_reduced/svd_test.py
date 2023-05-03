@@ -81,7 +81,7 @@ class SvdTest(jtu.JaxTestCase):
 
             _, expected_s, _ = osp_linalg_fn(a)
         
-            svd_fn = lambda a: svd.svd(a, full_matrices=full_matrices)
+            svd_fn = partial_timed(lambda a: svd.svd(a, full_matrices=full_matrices))
             args_maker = lambda: [a]
 
             with self.subTest("Test JIT compatibility"):

@@ -102,11 +102,9 @@ class LaxScipySpcialFunctionsTest(jtu.JaxTestCase):
         self, op, rng_factory, shapes, dtypes, test_autodiff, nondiff_argnums
     ):
         scipy_op = getattr(osp_special, op)
-        timer = jax_op_timer()
-        with timer:
-            lax_op = getattr(lsp_special, op)
-            print("lax_op", lax_op)
-            timer.gen.send(lax_op)
+        
+        lax_op = partial_timed(getattr(lsp_special, op))
+        
         rng = rng_factory(self.rng())
         args_maker = self._GetArgsMaker(rng, shapes, dtypes)
         args = args_maker()

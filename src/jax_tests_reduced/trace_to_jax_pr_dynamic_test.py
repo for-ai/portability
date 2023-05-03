@@ -204,10 +204,10 @@ class DynamicShapesTest(jtu.JaxTestCase):
             return x, y
         timer = jax_op_timer()
         with timer:
-            jaxpr, _, _ = pe.trace_to_jaxpr_dynamic(
+            jaxpr, test_1, test_2 = pe.trace_to_jaxpr_dynamic(
             f, [n, a, b], keep_inputs=[False, True, True]
         )
-            timer.gen.send(jaxpr)
+            timer.gen.send((jaxpr, test_1, test_2))
 
         self.assertLen(jaxpr.invars, 3)
         self.assertEqual((jaxpr.invars[0],), jaxpr.invars[1].aval.shape)

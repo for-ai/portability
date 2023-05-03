@@ -75,7 +75,10 @@ class ScipyLinalgTest(jtu.JaxTestCase):
 
     def testLuOfSingularMatrix(self):
         x = jnp.array([[-1.0, 3.0 / 2], [2.0 / 3, -1.0]], dtype=np.float32)
-        p, l, u = jsp.linalg.lu(x)
+        timer = jax_op_timer()
+        with timer:
+            p, l, u = jsp.linalg.lu(x)
+            timer.gen.send((p, l, u))
         self.assertAllClose(x, np.matmul(p, np.matmul(l, u)))
 
     @jtu.sample_product(
@@ -95,6 +98,11 @@ class ScipyLinalgTest(jtu.JaxTestCase):
     def testLuBatching(self, shape, dtype):
         rng = jtu.rand_default(self.rng())
         args = [rng(shape, jnp.float32) for _ in range(10)]
+        for x in args: 
+            timer = jax_op_timer()
+            with timer:
+                result = osp.linalg.lu(x)
+                timer.gen.send(result)
         expected = list(osp.linalg.lu(x) for x in args)
         ps = np.stack([out[0] for out in expected])
         ls = np.stack([out[1] for out in expected])

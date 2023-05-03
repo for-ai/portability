@@ -107,6 +107,11 @@ class APITest(jtu.JaxTestCase):
             with timer:
                 test = f(x)
                 timer.gen.send(test)
+            
+            timer = jax_op_timer()
+            with timer:
+                test = f(a)
+                timer.gen.send(test)
 
             self.assertEqual(f(x), f(a))
 

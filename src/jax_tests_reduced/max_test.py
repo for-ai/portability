@@ -195,10 +195,8 @@ class JaxNumpyReducerTests(jtu.JaxTestCase):
         self, name, rng_factory, shape, dtype, axis, keepdims, initial, inexact
     ):
         np_op = getattr(np, name)
-        timer = jax_op_timer()
-        with timer:
-            jnp_op = getattr(jnp, name)
-            timer.gen.send(jnp_op)
+        
+        jnp_op = getattr(jnp, name)
         rng = rng_factory(self.rng())
         is_bf16_nan_test = (
             dtype == jnp.bfloat16 and rng_factory.__name__ == "rand_some_nan"
@@ -216,10 +214,7 @@ class JaxNumpyReducerTests(jtu.JaxTestCase):
             res = np_op(x_cast, axis, keepdims=keepdims, initial=initial)
             res = res if not is_bf16_nan_test else res.astype(jnp.bfloat16)
             return res.astype(_reducer_output_dtype(name, x.dtype))
-        timer = jax_op_timer()
-        with timer:
-            jnp_fun = lambda x: jnp_op(x, axis, keepdims=keepdims, initial=initial)
-            timer.gen.send(jnp_fun)
+        jnp_fun = partial_timed(lambda x: jnp_op(x, axis, keepdims=keepdims, initial=initial))
 
         jnp_fun = jtu.ignore_warning(category=jnp.ComplexWarning)(jnp_fun)
         args_maker = lambda: [rng(shape, dtype)]

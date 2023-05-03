@@ -214,10 +214,8 @@ class LaxBackedNumpyTests(jtu.JaxTestCase):
     def testFlip(self, shape, dtype, axis):
         rng = jtu.rand_default(self.rng())
         args_maker = self._GetArgsMaker(rng, [shape], [dtype])
-        timer = jax_op_timer()
-        with timer:
-            jnp_op = lambda x: jnp.flip(x, axis)
-            timer.gen.send(jnp_op)
+        
+        jnp_op = partial_timed(lambda x: jnp.flip(x, axis))
         np_op = lambda x: np.flip(x, axis)
         self._CheckAgainstNumpy(np_op, jnp_op, args_maker)
         self._CompileAndCheck(jnp_op, args_maker)

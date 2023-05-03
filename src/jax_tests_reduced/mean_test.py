@@ -206,10 +206,8 @@ class JaxNumpyReducerTests(jtu.JaxTestCase):
         self, name, rng_factory, shape, dtype, out_dtype, axis, keepdims, inexact
     ):
         np_op = getattr(np, name)
-        timer = jax_op_timer()
-        with timer:
-            jnp_op = getattr(jnp, name)
-            timer.gen.send(jnp_op)
+        
+        jnp_op = getattr(jnp, name)
         rng = rng_factory(self.rng())
 
         @jtu.ignore_warning(category=np.ComplexWarning)
@@ -224,10 +222,9 @@ class JaxNumpyReducerTests(jtu.JaxTestCase):
             if t is None:
                 t = _reducer_output_dtype(name, x_cast.dtype)
             return np_op(x_cast, axis, dtype=t, keepdims=keepdims)
-        timer = jax_op_timer()
-        with timer:
-            jnp_fun = lambda x: jnp_op(x, axis, dtype=out_dtype, keepdims=keepdims)
-            timer.gen.send(jnp_fun)
+    
+        jnp_fun = partial_timed(lambda x: jnp_op(x, axis, dtype=out_dtype, keepdims=keepdims))
+    
         jnp_fun = jtu.ignore_warning(category=jnp.ComplexWarning)(jnp_fun)
         args_maker = lambda: [rng(shape, dtype)]
         tol_spec = {

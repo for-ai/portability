@@ -60,10 +60,8 @@ class IndexingTest(jtu.JaxTestCase):
         rng = jtu.rand_default(self.rng())
         idx_rng = jtu.rand_int(self.rng(), -size, size)
         np_func = getattr(np, funcname)
-        timer = jax_op_timer()
-        with timer:
-            jnp_func = getattr(jnp, funcname)
-            timer.gen.send(jnp_func)
+        
+        jnp_func = partial_timed(getattr(jnp, funcname))
 
         @jtu.ignore_warning(category=RuntimeWarning)
         def np_op(x, idx):

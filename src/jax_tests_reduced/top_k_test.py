@@ -103,9 +103,8 @@ class LaxTest(jtu.JaxTestCase):
             bcast_idxs = np.broadcast_to(np.arange(shape[-1], dtype=np.int32), shape)
             sorted_vals, sorted_idxs = lax_reference.sort_key_val(x, bcast_idxs)
             return sorted_vals[..., : -k - 1 : -1], sorted_idxs[..., : -k - 1 : -1]
-        timer = jax_op_timer()
-        with timer:
-            op = lambda vs: lax.top_k(vs, k=k)
-            timer.gen.send(op)
+        
+        op = partial_timed(lambda vs: lax.top_k(vs, k=k))
+        
         self._CheckAgainstNumpy(op, reference_top_k, args_maker)
         self._CompileAndCheck(op, args_maker)

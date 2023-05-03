@@ -204,10 +204,8 @@ class LaxBackedNumpyTests(jtu.JaxTestCase):
     def testSplitStaticInt(self, shape, num_sections, axis, dtype):
         rng = jtu.rand_default(self.rng())
         np_fun = lambda x: np.split(x, num_sections, axis=axis)
-        timer = jax_op_timer()
-        with timer:
-            jnp_fun = lambda x: jnp.split(x, num_sections, axis=axis)
-            timer.gen.send(jnp_fun)
+        
+        jnp_fun = partial_timed(lambda x: jnp.split(x, num_sections, axis=axis))
         args_maker = lambda: [rng(shape, dtype)]
         self._CheckAgainstNumpy(np_fun, jnp_fun, args_maker)
         self._CompileAndCheck(jnp_fun, args_maker)

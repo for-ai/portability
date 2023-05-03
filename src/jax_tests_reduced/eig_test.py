@@ -92,4 +92,4 @@ class NumpyLinalgTest(jtu.JaxTestCase):
         if compute_right_eigenvectors:
             check_right_eigenvectors(a, w, results[1 + compute_left_eigenvectors])
 
-        self._CompileAndCheck(partial(jnp.linalg.eig), args_maker, rtol=1e-3)
+        self._CompileAndCheck(partial_timed(jnp.linalg.eig), args_maker, rtol=1e-3)

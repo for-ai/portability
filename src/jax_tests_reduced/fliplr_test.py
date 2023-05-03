@@ -208,10 +208,7 @@ class LaxBackedNumpyTests(jtu.JaxTestCase):
     def testFliplr(self, shape, dtype):
         rng = jtu.rand_default(self.rng())
         args_maker = self._GetArgsMaker(rng, [shape], [dtype])
-        timer = jax_op_timer()
-        with timer:
-            jnp_op = lambda x: jnp.fliplr(x)
-            timer.gen.send(jnp_op)
+        jnp_op = partial_timed(lambda x: jnp.fliplr(x))
         np_op = lambda x: np.fliplr(x)
         self._CheckAgainstNumpy(np_op, jnp_op, args_maker)
         self._CompileAndCheck(jnp_op, args_maker)
