@@ -114,7 +114,7 @@ class SvdTest(jtu.JaxTestCase):
             timer = jax_op_timer()
             with timer:
                 u, s, v = svd.svd(a, full_matrices=False, hermitian=False)
-                timer.gen.send(u, s, v)
+                timer.gen.send((u, s, v))
 
             relative_diff = np.linalg.norm(a - (u * s) @ v) / np.linalg.norm(a)
 
