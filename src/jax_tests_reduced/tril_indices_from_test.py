@@ -15,20 +15,18 @@
 
 import collections
 import copy
-from functools import partial
 import inspect
 import io
 import itertools
 import math
-from typing import cast, Iterator, Optional, List, Tuple
 import unittest
-from unittest import SkipTest
 import warnings
-
-from absl.testing import absltest
-from absl.testing import parameterized
+from functools import partial
+from typing import Iterator, List, Optional, Tuple, cast
+from unittest import SkipTest
 
 import numpy as np
+from absl.testing import absltest, parameterized
 
 try:
     import numpy_dispatch
@@ -40,17 +38,15 @@ import jax.ops
 from jax import lax
 from jax import numpy as jnp
 from jax import tree_util
-from jax.test_util import check_grads
-
-from jax._src import core
-from jax._src import dtypes
+from jax._src import array, core, dtypes
 from jax._src import test_util as jtu
 from jax._src.lax import lax as lax_internal
-from jax._src.numpy.util import _parse_numpydoc, ParsedDoc, _wraps
+from jax._src.numpy.util import ParsedDoc, _parse_numpydoc, _wraps
 from jax._src.util import safe_zip
-from jax._src import array
-
 from jax.config import config
+from jax.test_util import check_grads
+
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 config.parse_flags_with_absl()
 FLAGS = config.FLAGS
@@ -199,6 +195,6 @@ class LaxBackedNumpyTests(jtu.JaxTestCase):
     def testTrilIndicesFrom(self, shape, dtype, k):
         rng = jtu.rand_default(self.rng())
         np_fun = lambda arr, k: np.tril_indices_from(arr, k=k)
-        jnp_fun = lambda arr, k: jnp.tril_indices_from(arr, k=k)
+        jnp_fun = partial_timed(lambda arr, k: jnp.tril_indices_from(arr, k=k))
         args_maker = lambda: [rng(shape, dtype), k]
         self._CheckAgainstNumpy(np_fun, jnp_fun, args_maker)
