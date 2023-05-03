@@ -36,6 +36,7 @@ from jax.interpreters import batching
 from jax.tree_util import register_pytree_node
 
 from jax.config import config
+from ..utils.timer_wrapper import jax_op_timer, partial_timed
 
 config.parse_flags_with_absl()
 
@@ -66,6 +67,7 @@ class BatchingTest(jtu.JaxTestCase):
     def testCommAssocCollective(
         self, collective, bulk_op, vmap_names, collective_names
     ):
+        collective = partial_timed(collective)
         shape = (2, 2, 2)
         x = jnp.arange(np.prod(shape), dtype=jnp.float32).reshape(shape)
 
