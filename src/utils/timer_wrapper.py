@@ -56,11 +56,13 @@ def jax_test_timer():
         yield
 
 
-def partial_timed(fn, **outer_kwargs):
-    def wrapper(*args):
+def partial_timed(fn, *outer_args, **outer_kwargs):
+    def wrapper(*inner_args, **inner_kwargs):
+        args = outer_args + inner_args
+        kwargs = {**outer_kwargs, **inner_kwargs}
         timer = jax_op_timer()
         with timer:
-            result = fn(*args, **outer_kwargs)
+            result = fn(*args, **kwargs)
             timer.gen.send(result)
         return result
 
