@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import numpy as np
 from functools import partial
 import itertools
 import logging
@@ -43,7 +44,6 @@ from ..utils.timer_wrapper import jax_op_timer
 
 xops = xla_client.ops
 
-import numpy as np
 
 config.parse_flags_with_absl()
 FLAGS = config.FLAGS
@@ -92,7 +92,8 @@ testing_stream = _TestingOutputStream()
 def fun1(a):
     """Function used for several `id_tap` tests."""
     y = hcb.id_print(a * 2.0, what="a * 2", output_stream=testing_stream)
-    y = hcb.id_print(y * 3.0, what="y * 3", output_stream=testing_stream, result=y)
+    y = hcb.id_print(y * 3.0, what="y * 3",
+                     output_stream=testing_stream, result=y)
     return y**2  # Some computation to make the gradient interesting
 
 
@@ -125,7 +126,8 @@ def local_devices():
     return jax.local_devices()[:2]
 
 
-ignore_jit_of_pmap_warning = partial(jtu.ignore_warning, message=".*jit-of-pmap.*")
+ignore_jit_of_pmap_warning = partial(
+    jtu.ignore_warning, message=".*jit-of-pmap.*")
 
 
 def assertMultiLineStrippedEqual(tst: jtu.JaxTestCase, expected: str, what: str):
@@ -185,7 +187,8 @@ def helper_print_optimized_hlo(fun, *args):
 def helper_log_ir(name, f_jax, *args, num_partitions=None, strip_metadata=False):
     logging.info(f"Jaxpr[{name}]: {jax.make_jaxpr(f_jax)(*args)}")
     jax_comp = f_jax.lower(*args)
-    logging.info(f"HLO[{name}]: {jax_comp.compiler_ir(dialect='hlo').as_hlo_text()}")
+    logging.info(
+        f"HLO[{name}]: {jax_comp.compiler_ir(dialect='hlo').as_hlo_text()}")
     jax_optimized_hlo = jax_comp.compile().as_text()
     if strip_metadata:
         jax_optimized_hlo = re.sub(r", metadata.*", "", jax_optimized_hlo)
@@ -234,9 +237,10 @@ def assertMultiDeviceOutputEqual(tst: jtu.JaxTestCase, expected_2CPUs: str):
 class HostCallbackTapTest(jtu.JaxTestCase):
     def setUp(self):
         if jtu.device_under_test() == "gpu" and jax.device_count() > 1:
-            raise SkipTest("host_callback broken on multi-GPU platforms (#6447)")
-        if xla_bridge.using_pjrt_c_api():
-            raise SkipTest("host_callback not implemented in PJRT C API")
+            raise SkipTest(
+                "host_callback broken on multi-GPU platforms (#6447)")
+        # if xla_bridge.using_pjrt_c_api():
+        #     raise SkipTest("host_callback not implemented in PJRT C API")
         super().setUp()
 
     def assertRewrite(

@@ -33,8 +33,8 @@ config.parse_flags_with_absl()
 
 class InfeedTest(jtu.JaxTestCase):
     def setUp(self):
-        if xla_bridge.using_pjrt_c_api():
-            raise SkipTest("infeed not implemented in PJRT C API")
+        # if xla_bridge.using_pjrt_c_api():
+        #     raise SkipTest("infeed not implemented in PJRT C API")
         super().setUp()
 
     @jax.numpy_rank_promotion(
@@ -47,15 +47,15 @@ class InfeedTest(jtu.JaxTestCase):
             timer = jax_op_timer()
             with timer:
                 (y,), token = lax.infeed(
-                token, shape=(core.ShapedArray((3, 4), jnp.float32),)
-            )
+                    token, shape=(core.ShapedArray((3, 4), jnp.float32),)
+                )
                 timer.gen.send((y, token))
-                
+
             timer = jax_op_timer()
             with timer:
                 (z,), test = lax.infeed(
-                token, shape=(core.ShapedArray((3, 1, 1), jnp.float32),)
-            )
+                    token, shape=(core.ShapedArray((3, 1, 1), jnp.float32),)
+                )
                 timer.gen.send((z, test))
             return x + y + z
 
@@ -99,7 +99,8 @@ class InfeedTest(jtu.JaxTestCase):
         @jax.jit
         def f(x):
             token = lax.create_token(x)
-            y, token = lax.infeed(token, shape=core.ShapedArray((3, 4), jnp.float32))
+            y, token = lax.infeed(
+                token, shape=core.ShapedArray((3, 4), jnp.float32))
             token = lax.outfeed(token, y + np.float32(1))
             return x - 1
 
@@ -110,7 +111,8 @@ class InfeedTest(jtu.JaxTestCase):
         device = jax.local_devices()[0]
         device.transfer_to_infeed((y,))
         (out,) = device.transfer_from_outfeed(
-            xla_client.shape_from_pyval((y,)).with_major_to_minor_layout_if_absent()
+            xla_client.shape_from_pyval(
+                (y,)).with_major_to_minor_layout_if_absent()
         )
         execution.join()
         self.assertAllClose(out, y + np.float32(1))
@@ -121,7 +123,8 @@ class InfeedTest(jtu.JaxTestCase):
         def doubler(_, token):
             timer = jax_op_timer()
             with timer:
-                y, token = lax.infeed(token, shape=core.ShapedArray((3, 4), jnp.float32))
+                y, token = lax.infeed(
+                    token, shape=core.ShapedArray((3, 4), jnp.float32))
                 timer.gen.send((y, token))
             return lax.outfeed(token, y * np.float32(2))
 
@@ -139,7 +142,8 @@ class InfeedTest(jtu.JaxTestCase):
             x = self.rng().randn(3, 4).astype(np.float32)
             device.transfer_to_infeed((x,))
             (y,) = device.transfer_from_outfeed(
-                xla_client.shape_from_pyval((x,)).with_major_to_minor_layout_if_absent()
+                xla_client.shape_from_pyval(
+                    (x,)).with_major_to_minor_layout_if_absent()
             )
             self.assertAllClose(y, x * np.float32(2))
         execution.join()
