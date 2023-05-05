@@ -3851,12 +3851,16 @@
         "test_time": 0.023964878000015233
     },
     "integer_pow_test.py:testUnaryOperationsNonUniqueIndices_integer_pow_BCOO": {
-        "operations": [],
-        "test_time": 0.7212490800000069
+        "operations": [
+            0.0002164590000006683
+        ],
+        "test_time": 3.453414586000008
     },
     "integer_pow_test.py:testUnaryOperationsNonUniqueIndices_integer_pow_BCSR": {
-        "operations": [],
-        "test_time": 0.209974025000065
+        "operations": [
+            0.00015774799999235256
+        ],
+        "test_time": 0.224633305999987
     },
     "isscalar_test.py:test_dunder_jax_array": {
         "operations": [

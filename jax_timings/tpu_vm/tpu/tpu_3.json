@@ -3817,12 +3817,16 @@
         "test_time": 0.000887000000034277
     },
     "integer_pow_test.py:testUnaryOperationsNonUniqueIndices_integer_pow_BCOO": {
-        "operations": [],
-        "test_time": 0.9831451549999883
+        "operations": [
+            0.0001844559999994999
+        ],
+        "test_time": 4.117804285000034
     },
     "integer_pow_test.py:testUnaryOperationsNonUniqueIndices_integer_pow_BCSR": {
-        "operations": [],
-        "test_time": 0.2856840079999756
+        "operations": [
+            0.000191728000004332
+        ],
+        "test_time": 0.3017931250000174
     },
     "isscalar_test.py:test_dunder_jax_array": {
         "operations": [
@@ -4097,8 +4101,10 @@
         "test_time": 0.0325484200000119
     },
     "named_call_test.py:test_tap_named_call": {
-        "operations": [],
-        "test_time": 0.0011470809999991616
+        "operations": [
+            1.1942000014641962e-05
+        ],
+        "test_time": 2.9717280389999132
     },
     "ndtr_test.py:testScipySpecialFun0": {
         "operations": [
