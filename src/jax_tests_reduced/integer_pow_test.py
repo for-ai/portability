@@ -34,7 +34,8 @@ from jax.experimental.sparse.transform import (
 )
 from jax.experimental.sparse.util import CuSparseEfficiencyWarning
 from jax.experimental.sparse import test_util as sptu
-
+from ..utils.timer_wrapper import partial_timed
+from ..utils.timer_wrapper import jax_op_timer
 config.parse_flags_with_absl()
 
 
@@ -83,7 +84,7 @@ class SparsifyTest(jtu.JaxTestCase):
             raise ValueError(f"Unrecognized {fmt=}")
         mat = rng(shape, dtype)
 
-        sparse_result = self.sparsify(partial(op, **kwds))(mat)
+        sparse_result = self.sparsify(partial_timed(op, **kwds))(mat)
         dense_result = op(mat.todense(), **kwds)
 
         self.assertArraysAllClose(sparse_result.todense(), dense_result)
