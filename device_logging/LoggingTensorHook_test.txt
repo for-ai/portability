@@ -1,0 +1,68 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.10, pytest-7.2.2, pluggy-1.0.0
+rootdir: /home/frasermince/portability, configfile: pyproject.toml
+plugins: hypothesis-6.70.2, xdist-3.2.1, forked-1.6.0, metadata-2.0.4, json-report-1.5.0, timeout-2.1.0
+timeout: 300.0s
+timeout method: signal
+timeout func_only: False
+collected 9 items
+
+src/tensorflow_tests_reduced/LoggingTensorHook_test.py ITEM <TestCaseFunction test_illegal_args>
+.ITEM <TestCaseFunction test_print_at_end_only>
+.ITEM <TestCaseFunction test_print_every_n_secs>
+.ITEM <TestCaseFunction test_print_every_n_secs_and_end>
+.ITEM <TestCaseFunction test_print_every_n_steps>
+.ITEM <TestCaseFunction test_print_every_n_steps_and_end>
+.ITEM <TestCaseFunction test_print_first_step>
+.ITEM <TestCaseFunction test_print_formatter>
+.ITEM <TestCaseFunction test_session>
+.
+
+--------------------------------- JSON report ----------------------------------
+report saved to: test_failure_report.json
+============================== 9 passed in 3.00s ===============================
+init: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+foo: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+init: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+foo: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+init: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+init_1: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+foo: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+foo_1: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const_1: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+init: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+foo: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+init: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+init_1: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+foo: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+foo_1: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const_1: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+init: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+foo: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+init: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+init_1: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+foo: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+foo_1: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const_1: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+init: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+foo: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+init: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+init_1: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+foo: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+foo_1: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const_1: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+init: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+foo: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+init: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+foo: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0

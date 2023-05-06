@@ -1,0 +1,25 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.10, pytest-7.2.2, pluggy-1.0.0
+rootdir: /home/frasermince/portability, configfile: pyproject.toml
+plugins: hypothesis-6.70.2, xdist-3.2.1, forked-1.6.0, metadata-2.0.4, json-report-1.5.0, timeout-2.1.0
+timeout: 300.0s
+timeout method: signal
+timeout func_only: False
+collected 8 items
+
+src/tensorflow_tests_reduced/assertEqual_test.py ITEM <TestCaseFunction test_noop_when_both_identical>
+.ITEM <TestCaseFunction test_session>
+sITEM <TestCaseFunction testStaticShape>
+.ITEM <TestCaseFunction testStaticShape_CanSetUnknownShape>
+.ITEM <TestCaseFunction testStaticShape_MergesShapes>
+.ITEM <TestCaseFunction testStaticShape_RaisesErrorWhenDimIncompatible>
+.ITEM <TestCaseFunction testStaticShape_RaisesErrorWhenRankIncompatible>
+.ITEM <TestCaseFunction test_session>
+s
+
+--------------------------------- JSON report ----------------------------------
+report saved to: test_failure_report.json
+========================= 6 passed, 2 skipped in 3.10s =========================
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
