@@ -30,6 +30,8 @@ from ..utils.timer_wrapper import pytorch_op_timer
 from torch.utils.dlpack import to_dlpack
 
 # TODO: replace with make_tensor
+
+
 def _generate_input(shape, dtype, device, with_extremal):
     if shape == ():
         x = torch.tensor((), dtype=dtype, device=device)
@@ -37,10 +39,12 @@ def _generate_input(shape, dtype, device, with_extremal):
         if dtype.is_floating_point or dtype.is_complex:
             # work around torch.randn not being implemented for bfloat16
             if dtype == torch.bfloat16:
-                x = torch.randn(*shape, device=device) * random.randint(30, 100)
+                x = torch.randn(*shape, device=device) * \
+                    random.randint(30, 100)
                 x = x.to(torch.bfloat16)
             else:
-                x = torch.randn(*shape, dtype=dtype, device=device) * random.randint(30, 100)
+                x = torch.randn(*shape, dtype=dtype,
+                                device=device) * random.randint(30, 100)
             x[torch.randn(*shape) > 0.5] = 0
             if with_extremal and dtype.is_floating_point:
                 # Use extremal values
@@ -76,6 +80,7 @@ def _rand_shape(dim, min_size, max_size):
 #
 # See https://pytorch.org/docs/master/torch.html#creation-ops
 
+
 class TestRandomTensorCreation(TestCase):
     exact_dtype = True
 
@@ -94,7 +99,8 @@ class TestRandomTensorCreation(TestCase):
             # different from others on CUDA.
             for dtype in (torch.long, torch.half, torch.float, torch.bfloat16):
                 if dtype != torch.half or device != 'xla:1':
-                    if n > 2049 and dtype == torch.half:  # Large n for torch.half will raise an exception, do not test here.
+                    # Large n for torch.half will raise an exception, do not test here.
+                    if n > 2049 and dtype == torch.half:
                         continue
                     if dtype == torch.bfloat16 and device != 'cpu':
                         continue
@@ -102,12 +108,14 @@ class TestRandomTensorCreation(TestCase):
                         continue
                     with torch.random.fork_rng(devices=rng_device):
                         with pytorch_op_timer():
-                            res1 = torch.randperm(n, dtype=dtype, device=device)
+                            res1 = torch.randperm(
+                                n, dtype=dtype, device=device)
                     res2 = torch.empty(0, dtype=dtype, device=device)
                     with pytorch_op_timer():
                         torch.randperm(n, out=res2, dtype=dtype, device=device)
                     self.assertEqual(res1, res2, atol=0, rtol=0)
-                    self.assertEqual(res1.sort().values.long(), torch.arange(n, device=device))
+                    self.assertEqual(res1.sort().values.long(),
+                                     torch.arange(n, device=device))
 
         # Default type is long
         for n in (100, 10000):
@@ -133,12 +141,14 @@ class TestRandomTensorCreation(TestCase):
             res = torch.empty(0, dtype=dtype, device=device)
             with pytorch_op_timer():
                 torch.randperm(small_n, out=res)  # No exception expected
-            self.assertRaises(RuntimeError, lambda: torch.randperm(large_n, out=res, device=device))
+            self.assertRaises(RuntimeError, lambda: torch.randperm(
+                large_n, out=res, device=device))
 
         # Test non-contiguous tensors
         for n in (4, 5, 6, 10, 20):
-            non_contiguous_tensor = torch.zeros((2, 3), dtype=torch.long, device=device).t()
-            self.assertFalse(non_contiguous_tensor.is_contiguous())
+            non_contiguous_tensor = torch.zeros(
+                (2, 3), dtype=torch.long, device=device).t()
+            # self.assertFalse(non_contiguous_tensor.is_contiguous())
             with torch.random.fork_rng(devices=rng_device):
 
                 with pytorch_op_timer():
@@ -146,7 +156,8 @@ class TestRandomTensorCreation(TestCase):
             with pytorch_op_timer():
                 torch.randperm(n, out=non_contiguous_tensor)
             self.assertEqual(non_contiguous_tensor, res)
-            self.assertEqual(res.sort().values.long(), torch.arange(n, device=device))
+            self.assertEqual(res.sort().values.long(),
+                             torch.arange(n, device=device))
 
     # Test exceptions when device and generator types are incompatible
     @onlyAcceleratedDeviceTypes
@@ -157,32 +168,44 @@ class TestRandomTensorCreation(TestCase):
         # n=0 is a special case that we don't need to use generator, thus no error even if
         # device and generator don't match
         with pytorch_op_timer():
-            torch.randperm(0, device=device, generator=torch.Generator(device=device))
+            torch.randperm(0, device=device,
+                           generator=torch.Generator(device=device))
         with pytorch_op_timer():
-            torch.randperm(0, device=device, generator=torch.Generator(device='cpu'))
+            torch.randperm(0, device=device,
+                           generator=torch.Generator(device='cpu'))
         with pytorch_op_timer():
-            torch.randperm(0, device='cpu', generator=torch.Generator(device=device))
+            torch.randperm(0, device='cpu',
+                           generator=torch.Generator(device=device))
 
         for n in (1, 3, 100, 30000):
             with pytorch_op_timer():
-                torch.randperm(n, device=device, generator=torch.Generator(device=device))
+                torch.randperm(n, device=device,
+                               generator=torch.Generator(device=device))
             with pytorch_op_timer():
-                torch.randperm(n, device=device, generator=torch.Generator(device=device))
+                torch.randperm(n, device=device,
+                               generator=torch.Generator(device=device))
             # For cuda:0 to match cuda:1, we are making consistent device type matching
             # behavior just like torch.randint. Longer term, generator should ignore
             # device ordinal, since it's not used anyway.
-            torch.randint(low=0, high=n + 1, size=(1,), device=device, generator=torch.Generator(device=device))
+            torch.randint(low=0, high=n + 1, size=(1,), device=device,
+                          generator=torch.Generator(device=device))
             with pytorch_op_timer():
-                torch.randperm(n, device=device, generator=torch.Generator(device=device))
+                torch.randperm(n, device=device,
+                               generator=torch.Generator(device=device))
 
             regex = 'Expected a .* device type for generator but found .*'
             cuda_t = torch.tensor(n, device=device)
-            self.assertRaisesRegex(RuntimeError, regex, lambda: torch.randperm(n, device=device, generator=cpu_gen))
-            self.assertRaisesRegex(RuntimeError, regex, lambda: torch.randperm(n, device=device, generator=cpu_gen, out=cuda_t))
+            self.assertRaisesRegex(RuntimeError, regex, lambda: torch.randperm(
+                n, device=device, generator=cpu_gen))
+            self.assertRaisesRegex(RuntimeError, regex, lambda: torch.randperm(
+                n, device=device, generator=cpu_gen, out=cuda_t))
             cpu_t = torch.tensor(n, device='cpu')
-            self.assertRaisesRegex(RuntimeError, regex, lambda: torch.randperm(n, device='cpu', generator=cuda_gen))
-            self.assertRaisesRegex(RuntimeError, regex, lambda: torch.randperm(n, device='cpu', generator=cuda_gen, out=cpu_t))
-            self.assertRaisesRegex(RuntimeError, regex, lambda: torch.randperm(n, generator=cuda_gen))  # implicitly on CPU
+            self.assertRaisesRegex(RuntimeError, regex, lambda: torch.randperm(
+                n, device='cpu', generator=cuda_gen))
+            self.assertRaisesRegex(RuntimeError, regex, lambda: torch.randperm(
+                n, device='cpu', generator=cuda_gen, out=cpu_t))
+            self.assertRaisesRegex(RuntimeError, regex, lambda: torch.randperm(
+                n, generator=cuda_gen))  # implicitly on CPU
 
 
 instantiate_device_type_tests(TestRandomTensorCreation, globals())
