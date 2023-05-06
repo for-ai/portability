@@ -1,0 +1,24 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.10, pytest-7.2.2, pluggy-1.0.0
+rootdir: /home/frasermince/portability, configfile: pyproject.toml
+plugins: hypothesis-6.70.2, xdist-3.2.1, forked-1.6.0, metadata-2.0.4, json-report-1.5.0, timeout-2.1.0
+timeout: 300.0s
+timeout method: signal
+timeout func_only: False
+collected 10 items
+
+src/tensorflow_tests_reduced/get_collection_test.py ITEM <TestCaseFunction test_add_to_collection>
+.ITEM <TestCaseFunction test_add_to_collections_from_generator>
+.ITEM <TestCaseFunction test_add_to_collections_from_list>
+.ITEM <TestCaseFunction test_add_to_collections_from_set>
+.ITEM <TestCaseFunction test_add_to_collections_from_string>
+.ITEM <TestCaseFunction test_add_to_collections_from_tuple>
+.ITEM <TestCaseFunction test_add_to_collections_uniquify>
+.ITEM <TestCaseFunction test_default_graph>
+.ITEM <TestCaseFunction test_get_collections>
+.ITEM <TestCaseFunction test_session>
+s
+
+--------------------------------- JSON report ----------------------------------
+report saved to: test_failure_report.json
+========================= 9 passed, 1 skipped in 2.64s =========================

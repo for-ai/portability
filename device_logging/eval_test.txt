@@ -1,0 +1,26 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.10, pytest-7.2.2, pluggy-1.0.0
+rootdir: /home/frasermince/portability, configfile: pyproject.toml
+plugins: hypothesis-6.70.2, xdist-3.2.1, forked-1.6.0, metadata-2.0.4, json-report-1.5.0, timeout-2.1.0
+timeout: 300.0s
+timeout method: signal
+timeout func_only: False
+collected 4 items
+
+src/tensorflow_tests_reduced/eval_test.py ITEM <TestCaseFunction testCreate>
+.ITEM <TestCaseFunction testUseDefaultGraph>
+.ITEM <TestCaseFunction testUseExistingGraph>
+.ITEM <TestCaseFunction test_session>
+s
+
+--------------------------------- JSON report ----------------------------------
+report saved to: test_failure_report.json
+========================= 3 passed, 1 skipped in 2.79s =========================
+Identity: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+W1: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+matmul: (MatMul): /job:localhost/replica:0/task:0/device:CPU:0
+Const: (Const): /job:localhost/replica:0/task:0/device:CPU:0
+Const_1: (Const): /job:localhost/replica:0/task:0/device:CPU:0
+matmul: (MatMul): /job:localhost/replica:0/task:0/device:CPU:0
+Const: (Const): /job:localhost/replica:0/task:0/device:CPU:0
+Const_1: (Const): /job:localhost/replica:0/task:0/device:CPU:0

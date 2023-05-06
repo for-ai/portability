@@ -1,0 +1,75 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.10, pytest-7.2.2, pluggy-1.0.0
+rootdir: /home/frasermince/portability, configfile: pyproject.toml
+plugins: hypothesis-6.70.2, xdist-3.2.1, forked-1.6.0, metadata-2.0.4, json-report-1.5.0, timeout-2.1.0
+timeout: 300.0s
+timeout method: signal
+timeout func_only: False
+collected 4 items
+
+src/tensorflow_tests_reduced/numpy_function_test.py ITEM <TestCaseFunction test_numpy_arguments>
+.ITEM <TestCaseFunction test_session>
+sITEM <TestCaseFunction test_stateful>
+.PyFunc: (PyFunc): /job:localhost/replica:0/task:0/device:CPU:0
+PyFunc/input_0: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+PyFunc/input_1: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+a: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+b: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+add: (AddV2): /job:localhost/replica:0/task:0/device:GPU:0
+NoOp: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+Identity: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+identity_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+Func/StatefulPartitionedCall/input/_0: (Identity): /job:localhost/replica:0/task:0/device:CPU:0
+Func/StatefulPartitionedCall/input/_1: (Identity): /job:localhost/replica:0/task:0/device:CPU:0
+StatefulPartitionedCall/PyFunc: (PyFunc): /job:localhost/replica:0/task:0/device:CPU:0
+StatefulPartitionedCall/NoOp: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+StatefulPartitionedCall/Identity: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+Func/StatefulPartitionedCall/output/_2: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+Func/StatefulPartitionedCall/output_control_node/_3: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+StatefulPartitionedCall: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+Func/StatefulPartitionedCall_1/input_control_node/_4: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+Func/StatefulPartitionedCall_1/input/_5: (Identity): /job:localhost/replica:0/task:0/device:CPU:0
+Func/StatefulPartitionedCall_1/input/_6: (Identity): /job:localhost/replica:0/task:0/device:CPU:0
+StatefulPartitionedCall_1/PyFunc: (PyFunc): /job:localhost/replica:0/task:0/device:CPU:0
+StatefulPartitionedCall_1/NoOp: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+StatefulPartitionedCall_1/Identity: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+Func/StatefulPartitionedCall_1/output/_7: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+Func/StatefulPartitionedCall_1/output_control_node/_8: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+StatefulPartitionedCall_1: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+a: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+b: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+add: (AddV2): /job:localhost/replica:0/task:0/device:GPU:0
+Identity: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+identity_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+Func/PartitionedCall/input/_0: (Identity): /job:localhost/replica:0/task:0/device:CPU:0
+Func/PartitionedCall/input/_1: (Identity): /job:localhost/replica:0/task:0/device:CPU:0
+PartitionedCall/PyFuncStateless: (PyFuncStateless): /job:localhost/replica:0/task:0/device:CPU:0
+PartitionedCall/PyFuncStateless_1: (PyFuncStateless): /job:localhost/replica:0/task:0/device:CPU:0
+PartitionedCall/Identity: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+Func/PartitionedCall/output/_2: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+Func/PartitionedCall/output_control_node/_3: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+PartitionedCall: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+Func/PartitionedCall_1/input/_4: (Identity): /job:localhost/replica:0/task:0/device:CPU:0
+Func/PartitionedCall_1/input/_5: (Identity): /job:localhost/replica:0/task:0/device:CPU:0
+PartitionedCall_1/PyFuncStateless: (PyFuncStateless): /jITEM <TestCaseFunction test_stateless>
+.
+
+--------------------------------- JSON report ----------------------------------
+report saved to: test_failure_report.json
+========================= 3 passed, 1 skipped in 2.96s =========================
+ob:localhost/replica:0/task:0/device:CPU:0
+PartitionedCall_1/PyFuncStateless_1: (PyFuncStateless): /job:localhost/replica:0/task:0/device:CPU:0
+PartitionedCall_1/Identity: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+Func/PartitionedCall_1/output/_6: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+Func/PartitionedCall_1/output_control_node/_7: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+PartitionedCall_1: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0

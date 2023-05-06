@@ -1,0 +1,171 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.10, pytest-7.2.2, pluggy-1.0.0
+rootdir: /home/frasermince/portability, configfile: pyproject.toml
+plugins: hypothesis-6.70.2, xdist-3.2.1, forked-1.6.0, metadata-2.0.4, json-report-1.5.0, timeout-2.1.0
+timeout: 300.0s
+timeout method: signal
+timeout func_only: False
+collected 7 items
+
+src/tensorflow_tests_reduced/conv2d_transpose_test.py ITEM <TestCaseFunction testConv2DTransposeInvalidOutputShape>
+.ITEM <TestCaseFunction testConv2DTransposeSame>
+.input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input__sizes: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+filter: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+out__backprop: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Conv2DBackpropInput: (Conv2DBackpropInput): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+dims: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+value: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Fill: (Fill): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input__sizes: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+filter: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+out__backprop: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Conv2DBackpropInput: (Conv2DBackpropInput): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+dims: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+value: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+Fill: (Fill): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input__sizes: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+filter: (_DeviceArg): /job:localhost/replica:0/task:0/device:GPU:0
+out__backprop: (_DeviceArg): /job:localhost/replica:0/task:0/device:GPU:0
+Conv2DBackpropInput: (Conv2DBackpropInput): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_DeviceRetval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+shape: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+TruncatedNormal: (TruncatedNormal): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+x: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+y: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Mul: (Mul): /job:localhost/replica:0/task:0/device:GPU:0
+z_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+x: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+y: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+AddV2: (AddV2): /job:localhost/replica:0/task:0/device:GPU:0
+z_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+shape: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+RandomStandardNormal: (RandomStandardNormal): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+resource_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+VarHandleOp: (VarHandleOp): /job:localhost/replica:0/task:0/device:GPU:0
+resource: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+value: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+AssignVariableOp: (AssignVariableOp): /job:localhost/replica:0/task:0/devicITEM <TestCaseFunction testConv2DTransposeShapeInference>
+.ITEM <TestCaseFunction testConv2DTransposeSingleStride>
+.e:GPU:0
+resource_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+VarHandleOp: (VarHandleOp): /job:localhost/replica:0/task:0/device:GPU:0
+resource: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+value: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+AssignVariableOp: (AssignVariableOp): /job:localhost/replica:0/task:0/device:GPU:0
+resource: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+ReadVariableOp: (ReadVariableOp): /job:localhost/replica:0/task:0/device:GPU:0
+value_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Shape: (Shape): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+begin: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+end: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+strides: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+StridedSlice: (StridedSlice): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+values_0: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+values_1: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+values_2: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+values_3: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+Pack: (Pack): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+resource: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+ReadVariableOp: (ReadVariableOp): /job:localhost/replica:0/task:0/device:GPU:0
+value_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input__sizes: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+filter: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+out__backprop: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Conv2DBackpropInput: (Conv2DBackpropInput): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+dims: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+value: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Fill: (Fill): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input__sizes: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+filter: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+out__backprop: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Conv2DBackpropInput: (Conv2DBackpropInput): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+dims: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+value: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+Fill: (Fill): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input__sizes: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+filter: (_DeviceArg): /job:localhost/replica:0/task:0/device:GPU:0
+out__backprop: (_DeviceArg): /job:localhost/replica:0/task:0/device:GPU:0
+Conv2DBackpropInput: (Conv2DBackpropInput): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_DeviceRetval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+dims: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+value: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Fill: (Fill): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input__sizes: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+filter: ITEM <TestCaseFunction testConv2DTransposeValid>
+.ITEM <TestCaseFunction testGradient>
+conv2d_transpose gradient err = 0.000259936 
+.ITEM <TestCaseFunction test_session>
+s
+
+--------------------------------- JSON report ----------------------------------
+report saved to: test_failure_report.json
+========================= 6 passed, 1 skipped in 7.66s =========================
+(_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+out__backprop: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Conv2DBackpropInput: (Conv2DBackpropInput): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+dims: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+value: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+Fill: (Fill): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input__sizes: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+filter: (_DeviceArg): /job:localhost/replica:0/task:0/device:GPU:0
+out__backprop: (_DeviceArg): /job:localhost/replica:0/task:0/device:GPU:0
+Conv2DBackpropInput: (Conv2DBackpropInput): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_DeviceRetval): /job:localhost/replica:0/task:0/device:GPU:0
+conv2d_transpose: (Conv2DBackpropInput): /job:localhost/replica:0/task:0/device:GPU:0
+Identity: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+gradients/grad_ys_0: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+gradients/conv2d_transpose_grad/Conv2DBackpropFilter: (Conv2DBackpropFilter): /job:localhost/replica:0/task:0/device:GPU:0
+gradients/conv2d_transpose_grad/Conv2D: (Conv2D): /job:localhost/replica:0/task:0/device:GPU:0
+Identity_1: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+gradients_1/grad_ys_0: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+gradients_1/conv2d_transpose_grad/Conv2DBackpropFilter: (Conv2DBackpropFilter): /job:localhost/replica:0/task:0/device:GPU:0
+gradients_1/conv2d_transpose_grad/Conv2D: (Conv2D): /job:localhost/replica:0/task:0/device:GPU:0
+x: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+f: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+conv2d_transpose/input_sizes: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+gradients/conv2d_transpose_grad/Shape: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const_1: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+gradients_1/conv2d_transpose_grad/Shape: (Const): /job:localhost/replica:0/task:0/device:GPU:0

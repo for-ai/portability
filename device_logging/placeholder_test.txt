@@ -1,0 +1,81 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.10, pytest-7.2.2, pluggy-1.0.0
+rootdir: /home/frasermince/portability, configfile: pyproject.toml
+plugins: hypothesis-6.70.2, xdist-3.2.1, forked-1.6.0, metadata-2.0.4, json-report-1.5.0, timeout-2.1.0
+timeout: 300.0s
+timeout method: signal
+timeout func_only: False
+collected 5 items
+
+src/tensorflow_tests_reduced/placeholder_test.py ITEM <TestCaseFunction test_session>
+sITEM <TestCaseFunction test_placeholder0>
+.ITEM <TestCaseFunction test_placeholder1>
+.fftshift/Shape: (Shape): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift/floordiv: (FloorDiv): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift: (Roll): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/Shape: (Shape): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/floordiv: (FloorDiv): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/Neg: (Neg): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift: (Roll): /job:localhost/replica:0/task:0/device:GPU:0
+Placeholder: (Placeholder): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift/floordiv/y: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift/axis: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/floordiv/y: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/axis: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift/Shape: (Shape): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift/strided_slice: (StridedSlice): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift/floordiv: (FloorDiv): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift: (Roll): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/Shape: (Shape): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/strided_slice: (StridedSlice): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/floordiv: (FloorDiv): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/Neg: (Neg): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift: (Roll): /job:localhost/replica:0/task:0/device:GPU:0
+Placeholder: (Placeholder): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift/strided_slice/stack: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift/strided_slice/stack_1: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift/strided_slice/stack_2: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift/floordiv/y: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift/axis: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/strided_slice/stack: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/strided_slice/stack_1: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/strided_slice/stack_2: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/floordiv/y: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/axis: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift/Less: (Less): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift/add: (AddV2): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift/Select: (Select): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift/Shape: (Shape): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift/GatherV2: (GatherV2): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift/floordiv: (FloorDiv): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift: (Roll): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/Less: (Less): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/add: (AddV2): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/Select: (Select): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/Shape: (Shape): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/GatherV2: (GatherV2): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/floordiv: (FloorDiv): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/Neg: (Neg): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift: (Roll): /job:localhost/replica:0/task:0/device:GPU:0
+Placeholder: (Placeholder): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift/Rank: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift/Less/x: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift/Less/y: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift/add/x: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift/Select/e: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift/GatherV2/axis: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+fftshift/floordiv/y: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/Rank: (Const): /job:localhost/replica:0/task:0/device:GPU:ITEM <TestCaseFunction test_placeholder2>
+.ITEM <TestCaseFunction test_session>
+s
+
+--------------------------------- JSON report ----------------------------------
+report saved to: test_failure_report.json
+========================= 3 passed, 2 skipped in 2.98s =========================
+0
+ifftshift/Less/x: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/Less/y: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/add/x: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/Select/e: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/GatherV2/axis: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+ifftshift/floordiv/y: (Const): /job:localhost/replica:0/task:0/device:GPU:0

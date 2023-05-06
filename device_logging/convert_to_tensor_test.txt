@@ -1,0 +1,134 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.10, pytest-7.2.2, pluggy-1.0.0
+rootdir: /home/frasermince/portability, configfile: pyproject.toml
+plugins: hypothesis-6.70.2, xdist-3.2.1, forked-1.6.0, metadata-2.0.4, json-report-1.5.0, timeout-2.1.0
+timeout: 300.0s
+timeout method: signal
+timeout func_only: False
+collected 14 items
+
+src/tensorflow_tests_reduced/convert_to_tensor_test.py ITEM <TestCaseFunction testToTensor>
+.ITEM <TestCaseFunction test_session>
+sITEM <TestCaseFunction testConvertToInvalidTensorType>
+.ITEM <TestCaseFunction testConvertToLongLongTensorType>
+.ITEM <TestCaseFunction testConvertToTensorEager>
+.ITEM <TestCaseFunction testConvertToTensorFromInvalidTensor>
+.ITEM <TestCaseFunction testConvertToTensorNestedArray>
+.ITEM <TestCaseFunction testConvertToTensorNestedMix>
+.strided_slice: (StridedSlice): /job:localhost/replica:0/task:0/device:GPU:0
+tensor: (UnsortedSegmentSum): /job:localhost/replica:0/task:0/device:GPU:0
+Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const_1: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const_2: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+strided_slice/stack: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+strided_slice/stack_1: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+strided_slice/stack_2: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+tensor: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+shape: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+Reshape: (Reshape): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+begin: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+end: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+strides: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+StridedSlice: (StridedSlice): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+data: (_DeviceArg): /job:localhost/replica:0/task:0/device:GPU:0
+segment__ids: (_DeviceArg): /job:localhost/replica:0/task:0/device:GPU:0
+num__segments: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+UnsortedSegmentSum: (UnsortedSegmentSum): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_DeviceRetval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+packed/2: (Pack): /job:localhost/replica:0/task:0/device:GPU:0
+packed: (Pack): /job:localhost/replica:0/task:0/device:GPU:0
+Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const_1: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+packed/0_1: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+packed/1_1: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+values_0: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+Pack: (Pack): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+values_0: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+values_1: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+values_2: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+values_3: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+Pack: (Pack): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+packed: (Pack): /job:localhost/replica:0/task:0/device:GPU:0
+ConstITEM <TestCaseFunction testConvertToTensorNestedTensors>
+.ITEM <TestCaseFunction testConvertToTensorNestedTuple>
+.ITEM <TestCaseFunction testConvertToTensorPreferred>
+.ITEM <TestCaseFunction testConvertToTensorProtocol>
+.ITEM <TestCaseFunction testNoConvert>
+.ITEM <TestCaseFunction test_session>
+s
+
+--------------------------------- JSON report ----------------------------------
+report saved to: test_failure_report.json
+======================== 12 passed, 2 skipped in 3.03s =========================
+: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const_1: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const_2: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const_3: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+packed: (Pack): /job:localhost/replica:0/task:0/device:GPU:0
+packed_1/0: (Pack): /job:localhost/replica:0/task:0/device:GPU:0
+packed_1/1: (Pack): /job:localhost/replica:0/task:0/device:GPU:0
+packed_1/2: (Pack): /job:localhost/replica:0/task:0/device:GPU:0
+packed_1/3: (Pack): /job:localhost/replica:0/task:0/device:GPU:0
+packed_1: (Pack): /job:localhost/replica:0/task:0/device:GPU:0
+Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const_1: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const_2: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const_3: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const_4: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const_5: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const_6: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const_7: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+values_0: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+values_1: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+values_2: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+values_3: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+Pack: (Pack): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+values_0: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+Pack: (Pack): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const_1: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0

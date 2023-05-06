@@ -1,0 +1,104 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.10, pytest-7.2.2, pluggy-1.0.0
+rootdir: /home/frasermince/portability, configfile: pyproject.toml
+plugins: hypothesis-6.70.2, xdist-3.2.1, forked-1.6.0, metadata-2.0.4, json-report-1.5.0, timeout-2.1.0
+timeout: 300.0s
+timeout method: signal
+timeout func_only: False
+collected 10 items
+
+src/tensorflow_tests_reduced/KeyValueTensorInitializer_test.py ITEM <TestCaseFunction test_session>
+sITEM <TestCaseFunction test_int32_False>
+.ITEM <TestCaseFunction test_int32_True>
+.ITEM <TestCaseFunction test_int64_False>
+.ITEM <TestCaseFunction test_int64_True>
+.ITEM <TestCaseFunction test_multiple_tables_False>
+.ITEM <TestCaseFunction test_multiple_tables_True>
+.ITEM <TestCaseFunction test_session>
+sinput: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+table__handle_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+HashTableV2: (HashTableV2): /job:localhost/replica:0/task:0/device:CPU:0
+table__handle: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+values: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+LookupTableImportV2: (LookupTableImportV2): /job:localhost/replica:0/task:0/device:CPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+table__handle_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+AnonymousHashTable: (AnonymousHashTable): /job:localhost/replica:0/task:0/device:CPU:0
+table__handle: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+values: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+LookupTableImportV2: (LookupTableImportV2): /job:localhost/replica:0/task:0/device:CPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+table__handle_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+HashTableV2: (HashTableV2): /job:localhost/replica:0/task:0/device:CPU:0
+table__handle: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+values: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+LookupTableImportV2: (LookupTableImportV2): /job:localhost/replica:0/task:0/device:CPU:0
+table__handle_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+HashTableV2: (HashTableV2): /job:localhost/replica:0/task:0/device:CPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+table__handle_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+AnonymousHashTable: (AnonymousHashTable): /job:localhost/replica:0/task:0/device:CPU:0
+table__handle: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+values: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+LookupTableImportV2: (LookupTableImportV2): /job:localhost/replica:0/task:0/device:CPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:lITEM <TestCaseFunction test_string_False>
+.ITEM <TestCaseFunction test_string_True>
+.
+
+--------------------------------- JSON report ----------------------------------
+report saved to: test_failure_report.json
+========================= 8 passed, 2 skipped in 2.81s =========================
+ocalhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+table__handle_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+HashTableV2: (HashTableV2): /job:localhost/replica:0/task:0/device:CPU:0
+table__handle: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+values: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+LookupTableImportV2: (LookupTableImportV2): /job:localhost/replica:0/task:0/device:CPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+table__handle_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+AnonymousHashTable: (AnonymousHashTable): /job:localhost/replica:0/task:0/device:CPU:0
+table__handle: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+values: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+LookupTableImportV2: (LookupTableImportV2): /job:localhost/replica:0/task:0/device:CPU:0

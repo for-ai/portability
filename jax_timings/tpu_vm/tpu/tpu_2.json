@@ -4618,52 +4618,6 @@
         ],
         "test_time": 0.005501019000007545
     },
-    "save_test.py:testLoad0": {
-        "operations": [
-            8.083000000169704e-05
-        ],
-        "test_time": 0.003487538999991102
-    },
-    "save_test.py:testLoad1": {
-        "operations": [
-            7.71929999814347e-05
-        ],
-        "test_time": 0.0024571929999979147
-    },
-    "save_test.py:testLoad2": {
-        "operations": [
-            5.012999997688894e-05
-        ],
-        "test_time": 0.0030240040000535373
-    },
-    "save_test.py:testLoad3": {
-        "operations": [],
-        "test_time": 0.0015144289999966531
-    },
-    "save_test.py:testLoad4": {
-        "operations": [
-            4.7911999956795626e-05
-        ],
-        "test_time": 0.0023738049999906252
-    },
-    "save_test.py:testLoad5": {
-        "operations": [
-            5.331800002750242e-05
-        ],
-        "test_time": 0.0027568890000111423
-    },
-    "save_test.py:testLoad6": {
-        "operations": [
-            0.00025238500001023567
-        ],
-        "test_time": 0.002234936000036214
-    },
-    "save_test.py:testLoad7": {
-        "operations": [
-            4.876200000580866e-05
-        ],
-        "test_time": 0.002364976000023944
-    },
     "size_test.py:test_dunder_jax_array": {
         "operations": [
             1.4608000014959543e-05,
@@ -6366,5 +6320,65 @@
             0.0009034849999807193
         ],
         "test_time": 0.0028321409999989555
+    }, 
+    "select_test.py:testSelect0": {
+        "operations": [
+            0.17854272700003548
+        ],
+        "test_time": 0.18389944199998354
+    },
+    "select_test.py:testSelect1": {
+        "operations": [
+            0.016184460999966177
+        ],
+        "test_time": 0.018286614999965423
+    },
+    "select_test.py:testSelect2": {
+        "operations": [
+            0.015970369999990908
+        ],
+        "test_time": 0.017956483999910233
+    },
+    "select_test.py:testSelect3": {
+        "operations": [
+            0.01485920499999338
+        ],
+        "test_time": 0.016731638000010207
+    },
+    "select_test.py:testSelect4": {
+        "operations": [
+            0.016709669999954713
+        ],
+        "test_time": 0.018665488000010555
+    },
+    "select_test.py:testSelect5": {
+        "operations": [
+            0.015172502000041277
+        ],
+        "test_time": 0.01717236199999661
+    },
+    "select_test.py:testSelect6": {
+        "operations": [
+            0.014860657000099309
+        ],
+        "test_time": 0.016876679000006334
+    },
+    "select_test.py:testSelect7": {
+        "operations": [
+            0.015174134000062622
+        ],
+        "test_time": 0.017330958000002283
+    },
+    "select_test.py:testSelect8": {
+        "operations": [
+            0.014467625999941447
+        ],
+        "test_time": 0.016255257000011625
+    },
+    "select_test.py:testSelect9": {
+        "operations": [
+            0.015366582999945422
+        ],
+        "test_time": 0.01750201400000151
     }
 }
