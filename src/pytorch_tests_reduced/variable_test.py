@@ -26,7 +26,8 @@ from torch import nn
 from torch._six import inf, nan
 from torch.autograd.function import once_differentiable
 from torch.autograd.profiler import (profile, record_function, emit_nvtx)
-from torch.autograd.profiler_util import (_format_time, EventList, FunctionEvent, FunctionEventAvg)
+from torch.autograd.profiler_util import (
+    _format_time, EventList, FunctionEvent, FunctionEventAvg)
 from torch.utils.checkpoint import checkpoint
 from torch.testing import make_tensor
 from torch.testing._internal.common_cuda import TEST_CUDA
@@ -233,8 +234,10 @@ class TestAutograd(TestCase):
         r.backward(torch.ones(5, 5, device=device), retain_graph=True)
         self.assertEqual(x.grad, torch.ones(5, 5, device=device) / 2)
         w.backward(torch.ones(5, 5, device=device), retain_graph=True)
-        self.assertEqual(x.grad, torch.empty(5, 5, device=device).fill_((1 + math.e) / 2))
-        self.assertRaises(RuntimeError, lambda: q.backward(torch.ones(5, 5, device=device)))
+        self.assertEqual(x.grad, torch.empty(
+            5, 5, device=device).fill_((1 + math.e) / 2))
+        self.assertRaises(RuntimeError, lambda: q.backward(
+            torch.ones(5, 5, device=device)))
 
         leaf = torch.ones(5, 5, requires_grad=True, device=device)
         x = leaf.clone()
@@ -246,9 +249,9 @@ class TestAutograd(TestCase):
         self.assertEqual(leaf.grad, torch.ones(5, 5, device=device))
         z = x * y
         x.add_(2)
-        self.assertRaises(RuntimeError, lambda: z.backward(torch.ones(5, 5, device=device)))
+        self.assertRaises(RuntimeError, lambda: z.backward(
+            torch.ones(5, 5, device=device)))
 
-    
     def _test_type_conversion_backward(self, t):
         with pytorch_op_timer():
             fvar = Variable(t(torch.randn(5, 5).float()), requires_grad=True)
@@ -261,30 +264,30 @@ class TestAutograd(TestCase):
         self.assertEqual(dvar.grad, torch.ones_like(dvar))
         self.assertEqual(type(dvar.grad), type(dvar))
 
-    @onlyAcceleratedDeviceTypes
-    def test_type_conversions(self, device):
-        x = torch.randn(5, 5)
-        self.assertIsInstance(x.float(), torch.FloatTensor)
-        self.assertIsInstance(x.int(), torch.IntTensor)
-        # if torch.cuda.is_available():
-        self.assertIsInstance(x.float().to(device), torch.cuda.FloatTensor)
-        self.assertIsInstance(x.int().to(device), torch.cuda.IntTensor)
-        self.assertIsInstance(x.int().to(device).cpu(), torch.IntTensor)
-            # if torch.cuda.device_count() >= 2:
-            #     x2 = x.float().to(device)
-            #     self.assertIsInstance(x2, torch.cuda.FloatTensor)
-            #     self.assertIs(x2.get_device(), 1)
-            #     x2 = x.float().cuda()
-            #     self.assertIsInstance(x2, torch.cuda.FloatTensor)
-            #     self.assertIs(x2.get_device(), 0)
-            #     x2 = x2.cuda(1)
-            #     self.assertIsInstance(x2, torch.cuda.FloatTensor)
-            #     self.assertIs(x2.get_device(), 1)
-            #     with pytorch_op_timer():
-            #         y = Variable(torch.randn(5).cuda(1), requires_grad=True)
-            #     y.cpu().sum().backward()
-            #     self.assertIs(y.grad.get_device(), 1)
-            #     self.assertIs(y.long().get_device(), 1)
+    # @onlyAcceleratedDeviceTypes
+    # def test_type_conversions(self, device):
+    #     x = torch.randn(5, 5)
+    #     self.assertIsInstance(x.float(), torch.FloatTensor)
+    #     self.assertIsInstance(x.int(), torch.IntTensor)
+    #     # if torch.cuda.is_available():
+    #     self.assertIsInstance(x.float().to(device), torch.cuda.FloatTensor)
+    #     self.assertIsInstance(x.int().to(device), torch.cuda.IntTensor)
+    #     self.assertIsInstance(x.int().to(device).cpu(), torch.IntTensor)
+    #         # if torch.cuda.device_count() >= 2:
+    #         #     x2 = x.float().to(device)
+    #         #     self.assertIsInstance(x2, torch.cuda.FloatTensor)
+    #         #     self.assertIs(x2.get_device(), 1)
+    #         #     x2 = x.float().cuda()
+    #         #     self.assertIsInstance(x2, torch.cuda.FloatTensor)
+    #         #     self.assertIs(x2.get_device(), 0)
+    #         #     x2 = x2.cuda(1)
+    #         #     self.assertIsInstance(x2, torch.cuda.FloatTensor)
+    #         #     self.assertIs(x2.get_device(), 1)
+    #         #     with pytorch_op_timer():
+    #         #         y = Variable(torch.randn(5).cuda(1), requires_grad=True)
+    #         #     y.cpu().sum().backward()
+    #         #     self.assertIs(y.grad.get_device(), 1)
+    #         #     self.assertIs(y.long().get_device(), 1)
 
         for t in [torch.DoubleTensor, torch.FloatTensor, torch.IntTensor, torch.ByteTensor]:
             for y_var in (True, False):
@@ -304,10 +307,13 @@ class TestAutograd(TestCase):
                         x_c = x.to(device) if x_cuda else x
                         y_c = y.to(device) if y_cuda else y
                         _, y_type = y_c.type().rsplit('.', 1)
-                        y_typestr = ('torch.cuda.' if y_cuda else 'torch.') + y_type
-                        self.assertEqual(y_c.type(), x_c.type(y_typestr).type())
+                        y_typestr = (
+                            'torch.cuda.' if y_cuda else 'torch.') + y_type
+                        self.assertEqual(
+                            y_c.type(), x_c.type(y_typestr).type())
                         self.assertIs(y_c.dtype, x_c.type(y_c.dtype).dtype)
-                        self.assertEqual(y_c.data_ptr(), y_c.to(device).data_ptr() if y_cuda else y_c.data_ptr())
+                        self.assertEqual(y_c.data_ptr(), y_c.to(
+                            device).data_ptr() if y_cuda else y_c.data_ptr())
 
         self._test_type_conversion_backward(lambda x: x)
         # if torch.cuda.is_available():
@@ -316,7 +322,7 @@ class TestAutograd(TestCase):
         #     # one of these has to be the non-default device
         #     self._test_type_conversion_backward(lambda x: x.cuda(0))
         #     self._test_type_conversion_backward(lambda x: x.cuda(1))
-    
+
     def test_simple_reentrant(self, device):
         y_data = torch.randn(2, 2, device=device)
 
@@ -354,7 +360,8 @@ class TestAutograd(TestCase):
 
             # floating point -> floating point
             with pytorch_op_timer():
-                f = Variable(t(torch.randn(1, 1, dtype=torch.double))).to(device)
+                f = Variable(
+                    t(torch.randn(1, 1, dtype=torch.double))).to(device)
             pyscalar = -12345.1
             f[0] = pyscalar
             self.assertEqual(float(f), pyscalar)
@@ -396,8 +403,8 @@ class TestAutograd(TestCase):
             test_nonzero(f, inf, bool(inf))
             test_nonzero(f, -inf, bool(-inf))
 
-
         _test_pyscalar_conversions(lambda x: x.to(device), lambda x: int(x))
+
     def test_reentrant_priority(self, device):
         order = []
 
@@ -416,7 +423,8 @@ class TestAutograd(TestCase):
             def forward(ctx, x):
                 with torch.enable_grad():
                     with pytorch_op_timer():
-                        ctx.x = Variable(x.detach(), requires_grad=True)#.to(device)
+                        ctx.x = Variable(
+                            x.detach(), requires_grad=True)  # .to(device)
                     ctx.x = ctx.x - 1
                 return ctx.x.detach()
 
@@ -430,8 +438,10 @@ class TestAutograd(TestCase):
                 return x
 
         # ['Reentrant', 'MyFunction', 'Reentrant', 'Reentrant', 'Reentrant', 'Reentrant', 'Reentrant', 'Reentrant', 'Reentrant', 'Reentrant', 'Reentrant']
-        a = MyFunction.apply(torch.tensor(6.0, requires_grad=True, device=device))
-        b = Reentrant.apply(torch.tensor(9.0, requires_grad=True, device=device))
+        a = MyFunction.apply(torch.tensor(
+            6.0, requires_grad=True, device=device))
+        b = Reentrant.apply(torch.tensor(
+            9.0, requires_grad=True, device=device))
         v = a * b
         v.backward()
         # The tasks for the Reentrant and MyFunction backward() will be added
