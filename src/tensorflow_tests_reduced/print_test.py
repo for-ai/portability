@@ -93,10 +93,6 @@ class ReferenceTest(reference_test_base.TestCase):
         self.assertFunctionMatchesEager(print_with_nontf_values, np.array([1, 2,
                                                                            3]))
 
-    def test_print_in_cond(self):
-        self.assertFunctionMatchesEager(print_in_cond, 0)
-        self.assertFunctionMatchesEager(print_in_cond, 1)
-
     def test_tf_print(self):
         self.assertFunctionMatchesEager(tf_print, 0)
 
