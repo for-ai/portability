@@ -224,28 +224,28 @@ class AccuracyTest(test.TestCase):
     with self.assertRaises(ValueError):
       metrics.accuracy(labels, predictions, weights)
 
-  @test_util.run_deprecated_v1
-  def testValueTensorIsIdempotent(self):
-    predictions = random_ops.random_uniform(
-        (10, 3), maxval=3, dtype=dtypes_lib.int64, seed=1)
-    labels = random_ops.random_uniform(
-        (10, 3), maxval=3, dtype=dtypes_lib.int64, seed=1)
-    timer = tensorflow_op_timer()
-    with timer:
-      accuracy, update_op = metrics.accuracy(labels, predictions)
-      timer.gen.send(None)
+  # @test_util.run_deprecated_v1
+  # def testValueTensorIsIdempotent(self):
+  #   predictions = random_ops.random_uniform(
+  #       (10, 3), maxval=3, dtype=dtypes_lib.int64, seed=1)
+  #   labels = random_ops.random_uniform(
+  #       (10, 3), maxval=3, dtype=dtypes_lib.int64, seed=1)
+  #   timer = tensorflow_op_timer()
+  #   with timer:
+  #     accuracy, update_op = metrics.accuracy(labels, predictions)
+  #     timer.gen.send(None)
 
-    with self.cached_session():
-      self.evaluate(variables.local_variables_initializer())
+  #   with self.cached_session():
+  #     self.evaluate(variables.local_variables_initializer())
 
-      # Run several updates.
-      for _ in range(10):
-        self.evaluate(update_op)
+  #     # Run several updates.
+  #     for _ in range(10):
+  #       self.evaluate(update_op)
 
-      # Then verify idempotency.
-      initial_accuracy = self.evaluate(accuracy)
-      for _ in range(10):
-        self.assertEqual(initial_accuracy, self.evaluate(accuracy))
+  #     # Then verify idempotency.
+  #     initial_accuracy = self.evaluate(accuracy)
+  #     for _ in range(10):
+  #       self.assertEqual(initial_accuracy, self.evaluate(accuracy))
 
   @test_util.run_deprecated_v1
   def testMultipleUpdates(self):

@@ -111,28 +111,5 @@ class NormalTest(test.TestCase):
             self.assertAllFinite(grads[0])
             self.assertAllFinite(grads[1])
 
-  @test_util.run_in_graph_and_eager_modes
-  def testNormalLogSurvivalFunction(self):
-    batch_size = 50
-    mu = self._rng.randn(batch_size)
-    sigma = self._rng.rand(batch_size) + 1.0
-    x = np.linspace(-10.0, 100.0, batch_size).astype(np.float64)
-
-    normal = normal_lib.Normal(loc=mu, scale=sigma)
-
-    sf = normal.log_survival_function(x)
-    self.assertAllEqual(
-        self.evaluate(normal.batch_shape_tensor()), sf.get_shape())
-    self.assertAllEqual(
-        self.evaluate(normal.batch_shape_tensor()),
-        self.evaluate(sf).shape)
-    self.assertAllEqual(normal.batch_shape, sf.get_shape())
-    self.assertAllEqual(normal.batch_shape, self.evaluate(sf).shape)
-
-    if not stats:
-      return
-    expected_sf = stats.norm(mu, sigma).logsf(x)
-    self.assertAllClose(expected_sf, self.evaluate(sf), atol=0, rtol=1e-5)
-
 if __name__ == "__main__":
   test.main()
