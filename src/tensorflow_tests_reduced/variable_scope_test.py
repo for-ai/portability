@@ -175,7 +175,7 @@ class VariablesToConstantsTest(test.TestCase):
             with timer:
                 with variable_scope.variable_scope("", use_resource=False):
                     _ = variable_scope.get_variable("x", initializer=1.0)
-                timer.gen.send(None)
+                    timer.gen.send(_)
             with session_lib.Session() as sess:
                 sess.run(variables.global_variables_initializer())
                 variable_graph_def = sess.graph.as_graph_def()
