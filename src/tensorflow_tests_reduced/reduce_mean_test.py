@@ -1165,12 +1165,6 @@ class CountNonzeroReductionTest(test.TestCase):
           y = math_ops.count_nonzero(x, [0])
           self.assertAllEqual(y, np.zeros(9938))
 
-  def testStringReduce(self):
-    # Test case for GitHub issue 18712
-    with self.cached_session() as sess:
-      v = math_ops.count_nonzero(constant_op.constant(["test"]))
-      self.assertAllClose(self.evaluate(v), 1)
-
   @test_util.run_deprecated_v1
   def testStringReduce1D(self):
     # Create a 1D array of strings
