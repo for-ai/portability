@@ -384,7 +384,7 @@ class AccuracyTest(test.TestCase):
       timer = tensorflow_op_timer()
       with timer:
         accuracy, update_op = metrics.accuracy(labels, predictions, weights)
-        timer.gen.send(None)
+        timer.gen.send()
 
       self.evaluate(variables.local_variables_initializer())
       for _ in range(3):
