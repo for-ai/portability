@@ -1,0 +1,127 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.10, pytest-7.2.2, pluggy-1.0.0
+rootdir: /home/frasermince/portability, configfile: pyproject.toml
+plugins: hypothesis-6.70.2, xdist-3.2.1, forked-1.6.0, metadata-2.0.4, json-report-1.5.0, timeout-2.1.0
+timeout: 300.0s
+timeout method: signal
+timeout func_only: False
+collected 5 items
+
+src/tensorflow_tests_reduced/parse_single_sequence_example_test.py ITEM <TestCaseFunction test_seq_ex_in_sequence_categorical_column_with_hash_bucket>
+.input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+serialized: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+debug__name: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+context__sparse__keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+context__dense__keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+context__ragged__keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__sparse__keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__dense__keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__ragged__keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__dense__missing__assumed__empty: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+context__dense__defaults_0: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+ParseSequenceExampleV2: (ParseSequenceExampleV2): /job:localhost/replica:0/task:0/device:CPU:0
+context__sparse__indices_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+context__sparse__values_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+context__sparse__shapes_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+context__dense__values_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__sparse__indices_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__sparse__values_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__sparse__shapes_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+serialized: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+debug__name: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+context__sparse__keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+context__dense__keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+context__ragged__keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__sparse__keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__dense__keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__ragged__keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__dense__missing__assumed__empty: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+context__dense__defaults_0: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+ParseSequenceExampleV2: (ParseSequenceExampleV2): /job:localhost/replica:0/task:0/device:CPU:0
+context__sparse__indices_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+context__sparse__values_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+context__sparse__shapes_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+context__dense__values_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__sparse__indices_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+feature_ITEM <TestCaseFunction test_seq_ex_in_sequence_categorical_column_with_identity>
+.ITEM <TestCaseFunction test_seq_ex_in_sequence_categorical_column_with_vocabulary_file>
+._list__sparse__values_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__sparse__shapes_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+serialized: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+debug__name: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+context__sparse__keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+context__dense__keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+context__ragged__keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__sparse__keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__dense__keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__ragged__keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__dense__missing__assumed__empty: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+context__dense__defaults_0: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+ParseSequenceExampleV2: (ParseSequenceExampleV2): /job:localhost/replica:0/task:0/device:CPU:0
+context__sparse__indices_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+context__sparse__values_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+context__sparse__shapes_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+context__dense__values_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__sparse__indices_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__sparse__values_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__sparse__shapes_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+serialized: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+debug__name: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+context__sparse__keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+context__dense__keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+context__ragged__keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__sparse__keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__dense__keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__ragged__keys: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__dense__missing__assumed__empty: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+context__dense__defaults_0: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+ParseSequenceExampleV2: (ParseSequenceExampleV2): /job:localhost/replica:0/task:0/device:CPU:0
+context__sparse__indices_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+context__sparse__values_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+context__sparse__shapes_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+context__dITEM <TestCaseFunction test_seq_ex_in_sequence_categorical_column_with_vocabulary_list>
+.ITEM <TestCaseFunction test_session>
+s
+
+--------------------------------- JSON report ----------------------------------
+report saved to: test_failure_report.json
+========================= 4 passed, 1 skipped in 3.04s =========================
+ense__values_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__sparse__indices_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__sparse__values_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+feature__list__sparse__shapes_0_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0

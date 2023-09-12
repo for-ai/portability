@@ -1,0 +1,6418 @@
+{
+    "PRNGKey_test.py:testPRNGValues": {
+        "operations": [
+            0.07238465400041605
+        ],
+        "test_time": 1.1563297899992904
+    },
+    "PRNG_test.py:testPRNGValues": {
+        "operations": [],
+        "test_time": 0.030889654000930022
+    },
+    "add_test.py:testOp0": {
+        "operations": [
+            0.02845623000030173
+        ],
+        "test_time": 0.0339326670000446
+    },
+    "add_test.py:testOp1": {
+        "operations": [
+            0.015984996000042884
+        ],
+        "test_time": 0.019655584001156967
+    },
+    "add_test.py:testOp2": {
+        "operations": [
+            0.026590875999318087
+        ],
+        "test_time": 0.031717713000034564
+    },
+    "add_test.py:testOp3": {
+        "operations": [
+            0.021397005000835634
+        ],
+        "test_time": 0.02581148599892913
+    },
+    "add_test.py:testOp4": {
+        "operations": [
+            0.02132714099934674
+        ],
+        "test_time": 0.026167542000621324
+    },
+    "add_test.py:testOp5": {
+        "operations": [
+            0.04486374699990847
+        ],
+        "test_time": 0.050288200998693355
+    },
+    "add_test.py:testOp6": {
+        "operations": [
+            0.02162657900043996
+        ],
+        "test_time": 0.026062948998514912
+    },
+    "add_test.py:testOp7": {
+        "operations": [
+            0.033753587000319385
+        ],
+        "test_time": 0.038811623000583495
+    },
+    "add_test.py:testOp8": {
+        "operations": [
+            0.02411160199881124
+        ],
+        "test_time": 0.028354627998851356
+    },
+    "add_test.py:testOp9": {
+        "operations": [
+            0.022900234000189812
+        ],
+        "test_time": 0.0277249530008703
+    },
+    "all_gather_test.py:test_xla_computation_lower_fun_axis_env": {
+        "operations": [
+            0.000297239001156413
+        ],
+        "test_time": 0.034827638999558985
+    },
+    "all_test.py:testReducerWhereNoInitial0": {
+        "operations": [
+            0.04861866900137102
+        ],
+        "test_time": 0.052094699000008404
+    },
+    "all_test.py:testReducerWhereNoInitial1": {
+        "operations": [
+            0.03411358000084874
+        ],
+        "test_time": 0.03711304399985238
+    },
+    "all_test.py:testReducerWhereNoInitial2": {
+        "operations": [
+            0.05172948300059943
+        ],
+        "test_time": 0.055035969000527984
+    },
+    "all_test.py:testReducerWhereNoInitial3": {
+        "operations": [
+            0.062047478000749834
+        ],
+        "test_time": 0.06520925200129568
+    },
+    "all_test.py:testReducerWhereNoInitial4": {
+        "operations": [
+            0.022412074999010656
+        ],
+        "test_time": 0.025494456000160426
+    },
+    "all_test.py:testReducerWhereNoInitial5": {
+        "operations": [
+            0.03407673000037903
+        ],
+        "test_time": 0.03709645100025227
+    },
+    "all_test.py:testReducerWhereNoInitial6": {
+        "operations": [
+            0.0550022560000798
+        ],
+        "test_time": 0.057856162000462064
+    },
+    "all_test.py:testReducerWhereNoInitial7": {
+        "operations": [
+            0.013484570001310203
+        ],
+        "test_time": 0.01668384499862441
+    },
+    "all_test.py:testReducerWhereNoInitial8": {
+        "operations": [
+            0.04356357299911906
+        ],
+        "test_time": 0.046721396000066306
+    },
+    "all_test.py:testReducerWhereNoInitial9": {
+        "operations": [
+            0.0314888000011706
+        ],
+        "test_time": 0.03469075199973304
+    },
+    "arange_test.py:test_arange_jit": {
+        "operations": [
+            0.08251692200065008
+        ],
+        "test_time": 0.08617400900038774
+    },
+    "array_test.py:test_jnp_array": {
+        "operations": [
+            0.00030467199940176215
+        ],
+        "test_time": 0.0016332670002157101
+    },
+    "average_test.py:testAverage0": {
+        "operations": [
+            6.591000783373602e-06
+        ],
+        "test_time": 0.0783708620001562
+    },
+    "average_test.py:testAverage1": {
+        "operations": [
+            3.1979998311726376e-06
+        ],
+        "test_time": 0.06057498699919961
+    },
+    "average_test.py:testAverage2": {
+        "operations": [
+            2.7509995561558753e-06
+        ],
+        "test_time": 0.049129716000607004
+    },
+    "average_test.py:testAverage3": {
+        "operations": [
+            3.1140007195062935e-06
+        ],
+        "test_time": 0.017955403000087244
+    },
+    "average_test.py:testAverage4": {
+        "operations": [
+            1.749299917719327e-05
+        ],
+        "test_time": 0.017707445000269217
+    },
+    "average_test.py:testAverage5": {
+        "operations": [
+            2.5259996618842706e-06
+        ],
+        "test_time": 0.045048307001707144
+    },
+    "average_test.py:testAverage6": {
+        "operations": [
+            2.531000063754618e-06
+        ],
+        "test_time": 0.08309816499968292
+    },
+    "average_test.py:testAverage7": {
+        "operations": [
+            2.446000507916324e-06
+        ],
+        "test_time": 0.1389015750010003
+    },
+    "average_test.py:testAverage8": {
+        "operations": [
+            2.8239992388989776e-06
+        ],
+        "test_time": 0.021848345000762492
+    },
+    "average_test.py:testAverage9": {
+        "operations": [
+            2.8730009944410995e-06
+        ],
+        "test_time": 0.026789904999532155
+    },
+    "bitwise_and_test.py:testBitwiseOp0": {
+        "operations": [
+            0.023264482000740827
+        ],
+        "test_time": 0.02664622000156669
+    },
+    "bitwise_and_test.py:testBitwiseOp1": {
+        "operations": [
+            0.02271009200012486
+        ],
+        "test_time": 0.026245809998727054
+    },
+    "bitwise_and_test.py:testBitwiseOp2": {
+        "operations": [
+            0.029475761999492534
+        ],
+        "test_time": 0.033415545000025304
+    },
+    "bitwise_and_test.py:testBitwiseOp3": {
+        "operations": [
+            0.02000666200001433
+        ],
+        "test_time": 0.024878866999642923
+    },
+    "bitwise_and_test.py:testBitwiseOp4": {
+        "operations": [
+            0.0363022670007922
+        ],
+        "test_time": 0.0409451049999916
+    },
+    "bitwise_and_test.py:testBitwiseOp5": {
+        "operations": [
+            0.02687774199876003
+        ],
+        "test_time": 0.030659463000120013
+    },
+    "bitwise_and_test.py:testBitwiseOp6": {
+        "operations": [
+            0.022731236000254285
+        ],
+        "test_time": 0.02626741699896229
+    },
+    "bitwise_and_test.py:testBitwiseOp7": {
+        "operations": [
+            0.01399079299881123
+        ],
+        "test_time": 0.017588324999451288
+    },
+    "bitwise_and_test.py:testBitwiseOp8": {
+        "operations": [
+            0.015422129999933532
+        ],
+        "test_time": 0.019382731999940006
+    },
+    "bitwise_and_test.py:testBitwiseOp9": {
+        "operations": [
+            0.026968079000653233
+        ],
+        "test_time": 0.030507962001138367
+    },
+    "cdf_test.py:testBernoulliCdf0": {
+        "operations": [
+            4.845000148634426e-06
+        ],
+        "test_time": 0.11491253599888296
+    },
+    "cdf_test.py:testBernoulliCdf1": {
+        "operations": [
+            4.947998604620807e-06
+        ],
+        "test_time": 0.316068362999431
+    },
+    "cdf_test.py:testBernoulliCdf2": {
+        "operations": [
+            5.253999916021712e-06
+        ],
+        "test_time": 0.1562529259990697
+    },
+    "cdf_test.py:testBernoulliCdf3": {
+        "operations": [
+            5.3869989642407745e-06
+        ],
+        "test_time": 0.12991904099908425
+    },
+    "cdf_test.py:testBernoulliCdf4": {
+        "operations": [
+            5.133000740897842e-06
+        ],
+        "test_time": 0.24699354299991683
+    },
+    "cdf_test.py:testBernoulliCdf5": {
+        "operations": [
+            4.9390000640414655e-06
+        ],
+        "test_time": 0.07982008900034998
+    },
+    "cdf_test.py:testBernoulliCdf6": {
+        "operations": [
+            5.702000635210425e-06
+        ],
+        "test_time": 0.11577115299951402
+    },
+    "cdf_test.py:testBernoulliCdf7": {
+        "operations": [
+            5.45699913345743e-06
+        ],
+        "test_time": 0.03793839199897775
+    },
+    "cdf_test.py:testBernoulliCdf8": {
+        "operations": [
+            5.1200004236306995e-06
+        ],
+        "test_time": 0.05091861599976255
+    },
+    "cdf_test.py:testBernoulliCdf9": {
+        "operations": [
+            6.059000952518545e-06
+        ],
+        "test_time": 0.06565168199995242
+    },
+    "cdf_test.py:testBetaLogCdf0": {
+        "operations": [],
+        "test_time": 0.30496645200037165
+    },
+    "cdf_test.py:testBetaLogCdf1": {
+        "operations": [],
+        "test_time": 0.2682773230008024
+    },
+    "cdf_test.py:testBetaLogCdf2": {
+        "operations": [],
+        "test_time": 0.26023435199931555
+    },
+    "cdf_test.py:testBetaLogCdf3": {
+        "operations": [],
+        "test_time": 0.2566324039999017
+    },
+    "cdf_test.py:testBetaLogCdf4": {
+        "operations": [],
+        "test_time": 0.34983940799975244
+    },
+    "cdf_test.py:testBetaLogCdf5": {
+        "operations": [],
+        "test_time": 0.3910191350005334
+    },
+    "cdf_test.py:testBetaLogCdf6": {
+        "operations": [],
+        "test_time": 0.28476577999936126
+    },
+    "cdf_test.py:testBetaLogCdf7": {
+        "operations": [],
+        "test_time": 0.021860812999875634
+    },
+    "cdf_test.py:testBetaLogCdf8": {
+        "operations": [],
+        "test_time": 0.28735726900049485
+    },
+    "cdf_test.py:testBetaLogCdf9": {
+        "operations": [],
+        "test_time": 0.2548876319997362
+    },
+    "cdf_test.py:testCauchyLogCdf0": {
+        "operations": [],
+        "test_time": 0.07610285800001293
+    },
+    "cdf_test.py:testCauchyLogCdf1": {
+        "operations": [],
+        "test_time": 0.0880760560012277
+    },
+    "cdf_test.py:testCauchyLogCdf2": {
+        "operations": [],
+        "test_time": 0.060321629000100074
+    },
+    "cdf_test.py:testCauchyLogCdf3": {
+        "operations": [],
+        "test_time": 0.04864013499900466
+    },
+    "cdf_test.py:testCauchyLogCdf4": {
+        "operations": [],
+        "test_time": 0.00412390199926449
+    },
+    "cdf_test.py:testCauchyLogCdf5": {
+        "operations": [],
+        "test_time": 0.05431594100082293
+    },
+    "cdf_test.py:testCauchyLogCdf6": {
+        "operations": [],
+        "test_time": 0.034124722000342445
+    },
+    "cdf_test.py:testCauchyLogCdf7": {
+        "operations": [],
+        "test_time": 0.019541519999620505
+    },
+    "cdf_test.py:testCauchyLogCdf8": {
+        "operations": [],
+        "test_time": 0.02015674199901696
+    },
+    "cdf_test.py:testCauchyLogCdf9": {
+        "operations": [],
+        "test_time": 0.0034308939993934473
+    },
+    "cdf_test.py:testChi2LogCdf0": {
+        "operations": [],
+        "test_time": 0.3439525939993473
+    },
+    "cdf_test.py:testChi2LogCdf1": {
+        "operations": [],
+        "test_time": 0.3623551590007992
+    },
+    "cdf_test.py:testChi2LogCdf2": {
+        "operations": [],
+        "test_time": 0.45442808699954185
+    },
+    "cdf_test.py:testChi2LogCdf3": {
+        "operations": [],
+        "test_time": 0.4146726849994593
+    },
+    "cdf_test.py:testChi2LogCdf4": {
+        "operations": [],
+        "test_time": 0.41113513500022236
+    },
+    "cdf_test.py:testChi2LogCdf5": {
+        "operations": [],
+        "test_time": 0.0046660649986733915
+    },
+    "cdf_test.py:testChi2LogCdf6": {
+        "operations": [],
+        "test_time": 0.35023612400073034
+    },
+    "cdf_test.py:testChi2LogCdf7": {
+        "operations": [],
+        "test_time": 0.31843945200125745
+    },
+    "cdf_test.py:testChi2LogCdf8": {
+        "operations": [],
+        "test_time": 0.022410393999962253
+    },
+    "cdf_test.py:testChi2LogCdf9": {
+        "operations": [],
+        "test_time": 0.3927276879985584
+    },
+    "cdf_test.py:testGammaLogCdf0": {
+        "operations": [],
+        "test_time": 0.004101909000382875
+    },
+    "cdf_test.py:testGammaLogCdf1": {
+        "operations": [],
+        "test_time": 0.0040682659982849145
+    },
+    "cdf_test.py:testGammaLogCdf2": {
+        "operations": [],
+        "test_time": 0.003818704000877915
+    },
+    "cdf_test.py:testGammaLogCdf3": {
+        "operations": [],
+        "test_time": 0.004094588999578264
+    },
+    "cdf_test.py:testGammaLogCdf4": {
+        "operations": [],
+        "test_time": 0.004427934998602723
+    },
+    "cdf_test.py:testGammaLogCdf5": {
+        "operations": [],
+        "test_time": 0.0041048109997063875
+    },
+    "cdf_test.py:testGammaLogCdf6": {
+        "operations": [],
+        "test_time": 0.00381962699975702
+    },
+    "cdf_test.py:testGammaLogCdf7": {
+        "operations": [],
+        "test_time": 0.004054263999933028
+    },
+    "cdf_test.py:testGammaLogCdf8": {
+        "operations": [],
+        "test_time": 0.003537460001098225
+    },
+    "cdf_test.py:testGammaLogCdf9": {
+        "operations": [],
+        "test_time": 0.00402596200001426
+    },
+    "cdf_test.py:testGenNormCdf0": {
+        "operations": [
+            4.891999196843244e-06
+        ],
+        "test_time": 0.22169415099961043
+    },
+    "cdf_test.py:testGenNormCdf1": {
+        "operations": [
+            4.491999789024703e-06
+        ],
+        "test_time": 0.4513420610001049
+    },
+    "cdf_test.py:testGenNormCdf2": {
+        "operations": [
+            4.866000381298363e-06
+        ],
+        "test_time": 0.3985951459999342
+    },
+    "cdf_test.py:testGenNormCdf3": {
+        "operations": [
+            5.10400059283711e-06
+        ],
+        "test_time": 0.3326884269990842
+    },
+    "cdf_test.py:testGenNormCdf4": {
+        "operations": [
+            4.673998773796484e-06
+        ],
+        "test_time": 0.3939860980008234
+    },
+    "cdf_test.py:testGenNormCdf5": {
+        "operations": [
+            5.290001354296692e-06
+        ],
+        "test_time": 0.3267790369991417
+    },
+    "cdf_test.py:testGenNormCdf6": {
+        "operations": [
+            4.777999492944218e-06
+        ],
+        "test_time": 0.09506219200011401
+    },
+    "cdf_test.py:testGenNormCdf7": {
+        "operations": [
+            4.515999535215087e-06
+        ],
+        "test_time": 0.03284098899894161
+    },
+    "cdf_test.py:testGenNormCdf8": {
+        "operations": [
+            5.351999789127149e-06
+        ],
+        "test_time": 0.3221771839998837
+    },
+    "cdf_test.py:testGenNormCdf9": {
+        "operations": [
+            5.426001735031605e-06
+        ],
+        "test_time": 0.04024715599916817
+    },
+    "cdf_test.py:testLaplaceCdf0": {
+        "operations": [
+            5.955000233370811e-06
+        ],
+        "test_time": 0.0432748619987251
+    },
+    "cdf_test.py:testLaplaceCdf1": {
+        "operations": [
+            4.832001650356688e-06
+        ],
+        "test_time": 0.05126210100024764
+    },
+    "cdf_test.py:testLaplaceCdf2": {
+        "operations": [
+            4.559000444714911e-06
+        ],
+        "test_time": 0.04750061300001107
+    },
+    "cdf_test.py:testLaplaceCdf3": {
+        "operations": [
+            4.976000127498992e-06
+        ],
+        "test_time": 0.05067904499992437
+    },
+    "cdf_test.py:testLaplaceCdf4": {
+        "operations": [
+            5.190000592847355e-06
+        ],
+        "test_time": 0.004653754000173649
+    },
+    "cdf_test.py:testLaplaceCdf5": {
+        "operations": [
+            4.402998456498608e-06
+        ],
+        "test_time": 0.07405169400044542
+    },
+    "cdf_test.py:testLaplaceCdf6": {
+        "operations": [
+            5.17999978910666e-06
+        ],
+        "test_time": 0.003993444001025637
+    },
+    "cdf_test.py:testLaplaceCdf7": {
+        "operations": [
+            4.121000529266894e-06
+        ],
+        "test_time": 0.00394568000047002
+    },
+    "cdf_test.py:testLaplaceCdf8": {
+        "operations": [
+            3.246999767725356e-06
+        ],
+        "test_time": 0.004001142000561231
+    },
+    "cdf_test.py:testLaplaceCdf9": {
+        "operations": [
+            3.7669997254852206e-06
+        ],
+        "test_time": 0.003679485998873133
+    },
+    "cdf_test.py:testLogisticCdf0": {
+        "operations": [
+            3.787001332966611e-06
+        ],
+        "test_time": 0.02128952899875003
+    },
+    "cdf_test.py:testLogisticCdf1": {
+        "operations": [
+            4.106999767827801e-06
+        ],
+        "test_time": 0.023556746000394924
+    },
+    "cdf_test.py:testLogisticCdf2": {
+        "operations": [
+            5.797999619971961e-06
+        ],
+        "test_time": 0.023195845998998266
+    },
+    "cdf_test.py:testLogisticCdf3": {
+        "operations": [
+            4.420000550453551e-06
+        ],
+        "test_time": 0.02374134099954972
+    },
+    "cdf_test.py:testLogisticCdf4": {
+        "operations": [
+            4.574998456519097e-06
+        ],
+        "test_time": 0.003397738999410649
+    },
+    "cdf_test.py:testLogisticCdf5": {
+        "operations": [
+            3.7219997466308996e-06
+        ],
+        "test_time": 0.025486725999144255
+    },
+    "cdf_test.py:testLogisticCdf6": {
+        "operations": [
+            4.043000444653444e-06
+        ],
+        "test_time": 0.0029841859995940467
+    },
+    "cdf_test.py:testLogisticCdf7": {
+        "operations": [
+            3.5949997254647315e-06
+        ],
+        "test_time": 0.0032635719999234425
+    },
+    "cdf_test.py:testLogisticCdf8": {
+        "operations": [
+            3.2059997465694323e-06
+        ],
+        "test_time": 0.003125623999949312
+    },
+    "cdf_test.py:testLogisticCdf9": {
+        "operations": [
+            3.356000888743438e-06
+        ],
+        "test_time": 0.0028432700000848854
+    },
+    "cdf_test.py:testNormCdf0": {
+        "operations": [
+            4.723000529338606e-06
+        ],
+        "test_time": 0.04775333900033729
+    },
+    "cdf_test.py:testNormCdf1": {
+        "operations": [
+            4.269000783096999e-06
+        ],
+        "test_time": 0.07466012899931229
+    },
+    "cdf_test.py:testNormCdf2": {
+        "operations": [
+            5.321999196894467e-06
+        ],
+        "test_time": 0.05487384899970493
+    },
+    "cdf_test.py:testNormCdf3": {
+        "operations": [
+            4.732999514089897e-06
+        ],
+        "test_time": 0.08198493600139045
+    },
+    "cdf_test.py:testNormCdf4": {
+        "operations": [
+            5.097001121612266e-06
+        ],
+        "test_time": 0.0059682969986170065
+    },
+    "cdf_test.py:testNormCdf5": {
+        "operations": [
+            4.876999810221605e-06
+        ],
+        "test_time": 0.14156306700169807
+    },
+    "cdf_test.py:testNormCdf6": {
+        "operations": [
+            4.856001396547072e-06
+        ],
+        "test_time": 0.00552418700135604
+    },
+    "cdf_test.py:testNormCdf7": {
+        "operations": [
+            4.633000571629964e-06
+        ],
+        "test_time": 0.006049827001334052
+    },
+    "cdf_test.py:testNormCdf8": {
+        "operations": [
+            3.901999662048183e-06
+        ],
+        "test_time": 0.005712309000955429
+    },
+    "cdf_test.py:testNormCdf9": {
+        "operations": [
+            3.746999936993234e-06
+        ],
+        "test_time": 0.005101837999973213
+    },
+    "cdf_test.py:testNormLogCdf0": {
+        "operations": [],
+        "test_time": 0.05879768100021465
+    },
+    "cdf_test.py:testNormLogCdf1": {
+        "operations": [],
+        "test_time": 0.12485450799977116
+    },
+    "cdf_test.py:testNormLogCdf2": {
+        "operations": [],
+        "test_time": 0.0874312470004952
+    },
+    "cdf_test.py:testNormLogCdf3": {
+        "operations": [],
+        "test_time": 0.09430682599850115
+    },
+    "cdf_test.py:testNormLogCdf4": {
+        "operations": [],
+        "test_time": 0.015701887999966857
+    },
+    "cdf_test.py:testNormLogCdf5": {
+        "operations": [],
+        "test_time": 0.1516990039999655
+    },
+    "cdf_test.py:testNormLogCdf6": {
+        "operations": [],
+        "test_time": 0.014629559000240988
+    },
+    "cdf_test.py:testNormLogCdf7": {
+        "operations": [],
+        "test_time": 0.014813076999416808
+    },
+    "cdf_test.py:testNormLogCdf8": {
+        "operations": [],
+        "test_time": 0.015130773999771918
+    },
+    "cdf_test.py:testNormLogCdf9": {
+        "operations": [],
+        "test_time": 0.014559040999301942
+    },
+    "cdf_test.py:testPoissonCdf0": {
+        "operations": [
+            4.9270001909462735e-06
+        ],
+        "test_time": 0.18588126499889768
+    },
+    "cdf_test.py:testPoissonCdf1": {
+        "operations": [
+            4.760999217978679e-06
+        ],
+        "test_time": 0.3183713290000014
+    },
+    "cdf_test.py:testPoissonCdf2": {
+        "operations": [
+            5.373998646973632e-06
+        ],
+        "test_time": 0.27252537200001825
+    },
+    "cdf_test.py:testPoissonCdf3": {
+        "operations": [
+            5.443000191007741e-06
+        ],
+        "test_time": 0.31509551199997077
+    },
+    "cdf_test.py:testPoissonCdf4": {
+        "operations": [
+            5.070000042906031e-06
+        ],
+        "test_time": 0.32726199199896655
+    },
+    "cdf_test.py:testPoissonCdf5": {
+        "operations": [
+            6.0060010582674295e-06
+        ],
+        "test_time": 0.39672365700062073
+    },
+    "cdf_test.py:testPoissonCdf6": {
+        "operations": [
+            5.20000139658805e-06
+        ],
+        "test_time": 0.3390757229990413
+    },
+    "cdf_test.py:testPoissonCdf7": {
+        "operations": [
+            5.552999937208369e-06
+        ],
+        "test_time": 0.004808667999895988
+    },
+    "cdf_test.py:testPoissonCdf8": {
+        "operations": [
+            4.341000021668151e-06
+        ],
+        "test_time": 0.02706788900104584
+    },
+    "cdf_test.py:testPoissonCdf9": {
+        "operations": [
+            4.874000296695158e-06
+        ],
+        "test_time": 0.34101468299923
+    },
+    "cdf_test.py:testTruncnormCdf0": {
+        "operations": [
+            4.969000656274147e-06
+        ],
+        "test_time": 0.5040218859994638
+    },
+    "cdf_test.py:testTruncnormCdf1": {
+        "operations": [
+            4.923998858430423e-06
+        ],
+        "test_time": 0.9557777089994488
+    },
+    "cdf_test.py:testTruncnormCdf2": {
+        "operations": [
+            4.620000254362822e-06
+        ],
+        "test_time": 0.7456672989992512
+    },
+    "cdf_test.py:testTruncnormCdf3": {
+        "operations": [
+            4.810999598703347e-06
+        ],
+        "test_time": 0.2744669129988324
+    },
+    "cdf_test.py:testTruncnormCdf4": {
+        "operations": [
+            5.123998562339693e-06
+        ],
+        "test_time": 1.1940520370008016
+    },
+    "cdf_test.py:testTruncnormCdf5": {
+        "operations": [
+            4.4240005081519485e-06
+        ],
+        "test_time": 1.1251868640010798
+    },
+    "cdf_test.py:testTruncnormCdf6": {
+        "operations": [
+            5.517000317922793e-06
+        ],
+        "test_time": 0.27883348499926797
+    },
+    "cdf_test.py:testTruncnormCdf7": {
+        "operations": [
+            3.895000190823339e-06
+        ],
+        "test_time": 0.2742460919998848
+    },
+    "cdf_test.py:testTruncnormCdf8": {
+        "operations": [
+            5.161000444786623e-06
+        ],
+        "test_time": 1.0906660639993788
+    },
+    "cdf_test.py:testTruncnormCdf9": {
+        "operations": [
+            4.055000317748636e-06
+        ],
+        "test_time": 0.3768178900008934
+    },
+    "cdf_test.py:testTruncnormLogCdf0": {
+        "operations": [],
+        "test_time": 0.27551464899988787
+    },
+    "cdf_test.py:testTruncnormLogCdf1": {
+        "operations": [],
+        "test_time": 0.2726810869990004
+    },
+    "cdf_test.py:testTruncnormLogCdf2": {
+        "operations": [],
+        "test_time": 0.27616243999909784
+    },
+    "cdf_test.py:testTruncnormLogCdf3": {
+        "operations": [],
+        "test_time": 0.28040118900025846
+    },
+    "cdf_test.py:testTruncnormLogCdf4": {
+        "operations": [],
+        "test_time": 0.2780212590005249
+    },
+    "cdf_test.py:testTruncnormLogCdf5": {
+        "operations": [],
+        "test_time": 0.2778775440001482
+    },
+    "cdf_test.py:testTruncnormLogCdf6": {
+        "operations": [],
+        "test_time": 0.2711915540003247
+    },
+    "cdf_test.py:testTruncnormLogCdf7": {
+        "operations": [],
+        "test_time": 0.2787279669992131
+    },
+    "cdf_test.py:testTruncnormLogCdf8": {
+        "operations": [],
+        "test_time": 0.29045384600067337
+    },
+    "cdf_test.py:testTruncnormLogCdf9": {
+        "operations": [],
+        "test_time": 0.2680635299984715
+    },
+    "compress_test.py:testCompress0": {
+        "operations": [
+            0.10255860400138772
+        ],
+        "test_time": 0.1057389849993342
+    },
+    "compress_test.py:testCompress1": {
+        "operations": [
+            0.01878634099921328
+        ],
+        "test_time": 0.021019771000283072
+    },
+    "compress_test.py:testCompress2": {
+        "operations": [
+            0.0798732690000179
+        ],
+        "test_time": 0.08312800499879813
+    },
+    "compress_test.py:testCompress3": {
+        "operations": [
+            0.05160453400094411
+        ],
+        "test_time": 0.05480638700100826
+    },
+    "compress_test.py:testCompress4": {
+        "operations": [
+            0.034502327000154764
+        ],
+        "test_time": 0.03776677699897846
+    },
+    "compress_test.py:testCompress5": {
+        "operations": [
+            0.002529857998524676
+        ],
+        "test_time": 0.004572567999275634
+    },
+    "compress_test.py:testCompress6": {
+        "operations": [
+            0.014486675001535332
+        ],
+        "test_time": 0.017352049999317387
+    },
+    "compress_test.py:testCompress7": {
+        "operations": [
+            0.0026828709997062106
+        ],
+        "test_time": 0.004701141999248648
+    },
+    "compress_test.py:testCompress8": {
+        "operations": [
+            0.040433318999930634
+        ],
+        "test_time": 0.04365306399995461
+    },
+    "compress_test.py:testCompress9": {
+        "operations": [
+            0.020767355999851134
+        ],
+        "test_time": 0.024308170000949758
+    },
+    "convolve_2d_test.py:testConvolutions2D0": {
+        "operations": [
+            0.08303681799952756
+        ],
+        "test_time": 0.08658404599918867
+    },
+    "convolve_2d_test.py:testConvolutions2D1": {
+        "operations": [
+            0.08265660000142816
+        ],
+        "test_time": 0.08562664099918038
+    },
+    "convolve_2d_test.py:testConvolutions2D2": {
+        "operations": [
+            0.11240984799951548
+        ],
+        "test_time": 0.11577257399949303
+    },
+    "convolve_2d_test.py:testConvolutions2D3": {
+        "operations": [
+            0.05388280300030601
+        ],
+        "test_time": 0.057445892998657655
+    },
+    "convolve_2d_test.py:testConvolutions2D4": {
+        "operations": [
+            0.049954430000070715
+        ],
+        "test_time": 0.0537116169998626
+    },
+    "convolve_2d_test.py:testConvolutions2D5": {
+        "operations": [
+            0.10155573100018955
+        ],
+        "test_time": 0.10480040199945506
+    },
+    "convolve_2d_test.py:testConvolutions2D6": {
+        "operations": [
+            0.033798574999309494
+        ],
+        "test_time": 0.037054259999422356
+    },
+    "convolve_2d_test.py:testConvolutions2D7": {
+        "operations": [
+            0.0483057480014395
+        ],
+        "test_time": 0.053263470999809215
+    },
+    "convolve_2d_test.py:testConvolutions2D8": {
+        "operations": [
+            0.06374121500084584
+        ],
+        "test_time": 0.06724378599938063
+    },
+    "convolve_2d_test.py:testConvolutions2D9": {
+        "operations": [
+            0.021771453000837937
+        ],
+        "test_time": 0.025127660999714863
+    },
+    "convolve_test.py:testConvolutions0": {
+        "operations": [
+            0.09646287100076734
+        ],
+        "test_time": 0.09934837199944013
+    },
+    "convolve_test.py:testConvolutions1": {
+        "operations": [
+            0.003162952998536639
+        ],
+        "test_time": 0.00507710700003372
+    },
+    "convolve_test.py:testConvolutions2": {
+        "operations": [
+            0.06986401900030614
+        ],
+        "test_time": 0.07254351399933512
+    },
+    "convolve_test.py:testConvolutions3": {
+        "operations": [
+            0.03070840500004124
+        ],
+        "test_time": 0.03343986700019741
+    },
+    "convolve_test.py:testConvolutions4": {
+        "operations": [
+            0.06000520100133144
+        ],
+        "test_time": 0.06326967199856881
+    },
+    "convolve_test.py:testConvolutions5": {
+        "operations": [
+            0.0023322159995586844
+        ],
+        "test_time": 0.00412507100008952
+    },
+    "convolve_test.py:testConvolutions6": {
+        "operations": [
+            0.04506411200054572
+        ],
+        "test_time": 0.04867830800139927
+    },
+    "convolve_test.py:testConvolutions7": {
+        "operations": [
+            0.07289463100096327
+        ],
+        "test_time": 0.07626868900115369
+    },
+    "convolve_test.py:testConvolutions8": {
+        "operations": [
+            0.06621288099995581
+        ],
+        "test_time": 0.06961989699993865
+    },
+    "convolve_test.py:testConvolutions9": {
+        "operations": [
+            0.10235700600060227
+        ],
+        "test_time": 0.10605401700013317
+    },
+    "cos_test.py:testOp0": {
+        "operations": [
+            0.032481992999237264
+        ],
+        "test_time": 0.036679274000562145
+    },
+    "cos_test.py:testOp1": {
+        "operations": [
+            0.013196006999351084
+        ],
+        "test_time": 0.017867701000795932
+    },
+    "cos_test.py:testOp2": {
+        "operations": [
+            0.023888427000201773
+        ],
+        "test_time": 0.028533605000120588
+    },
+    "cos_test.py:testOp3": {
+        "operations": [
+            0.021837907999724848
+        ],
+        "test_time": 0.026246751000144286
+    },
+    "cos_test.py:testOp4": {
+        "operations": [
+            0.028019172001222614
+        ],
+        "test_time": 0.03295465600058378
+    },
+    "cos_test.py:testOp5": {
+        "operations": [
+            0.01364718799959519
+        ],
+        "test_time": 0.01821623800060479
+    },
+    "cos_test.py:testOp6": {
+        "operations": [
+            0.018065930000375374
+        ],
+        "test_time": 0.0234290640000836
+    },
+    "cos_test.py:testOp7": {
+        "operations": [
+            0.028454372999476618
+        ],
+        "test_time": 0.033250845001020934
+    },
+    "cos_test.py:testOp8": {
+        "operations": [
+            0.022641692999968654
+        ],
+        "test_time": 0.026942129001326975
+    },
+    "cos_test.py:testOp9": {
+        "operations": [
+            0.011796504999438184
+        ],
+        "test_time": 0.016355234000002383
+    },
+    "delete_test.py:testDeleteIndexArray0": {
+        "operations": [
+            3.134999133180827e-06
+        ],
+        "test_time": 0.001780492000762024
+    },
+    "delete_test.py:testDeleteIndexArray1": {
+        "operations": [
+            3.50600021192804e-06
+        ],
+        "test_time": 0.0018726010002865223
+    },
+    "delete_test.py:testDeleteIndexArray2": {
+        "operations": [
+            2.5939989427570254e-06
+        ],
+        "test_time": 0.0018108490003214683
+    },
+    "delete_test.py:testDeleteIndexArray3": {
+        "operations": [
+            2.5720000849105418e-06
+        ],
+        "test_time": 0.0016613320003671106
+    },
+    "delete_test.py:testDeleteIndexArray4": {
+        "operations": [
+            2.5200006348313764e-06
+        ],
+        "test_time": 0.001642864001041744
+    },
+    "delete_test.py:testDeleteIndexArray5": {
+        "operations": [
+            2.4990004021674395e-06
+        ],
+        "test_time": 0.0015541049997409573
+    },
+    "delete_test.py:testDeleteIndexArray6": {
+        "operations": [
+            2.4070013751043007e-06
+        ],
+        "test_time": 0.0016169020000234013
+    },
+    "delete_test.py:testDeleteIndexArray7": {
+        "operations": [
+            2.5979989004554227e-06
+        ],
+        "test_time": 0.022003145000780933
+    },
+    "delete_test.py:testDeleteIndexArray8": {
+        "operations": [
+            3.315999492770061e-06
+        ],
+        "test_time": 0.0177410209998925
+    },
+    "delete_test.py:testDeleteIndexArray9": {
+        "operations": [
+            4.152998371864669e-06
+        ],
+        "test_time": 0.01770574799957103
+    },
+    "delete_test.py:testDeleteInteger0": {
+        "operations": [
+            2.93500124826096e-06
+        ],
+        "test_time": 0.016294205999656697
+    },
+    "delete_test.py:testDeleteInteger1": {
+        "operations": [
+            2.890001269406639e-06
+        ],
+        "test_time": 0.016443236001578043
+    },
+    "delete_test.py:testDeleteInteger2": {
+        "operations": [
+            2.906999725382775e-06
+        ],
+        "test_time": 0.016423691999079892
+    },
+    "delete_test.py:testDeleteInteger3": {
+        "operations": [
+            2.4960008886409923e-06
+        ],
+        "test_time": 0.01543816099911055
+    },
+    "delete_test.py:testDeleteInteger4": {
+        "operations": [
+            2.245000359835103e-06
+        ],
+        "test_time": 0.016095204000521335
+    },
+    "delete_test.py:testDeleteInteger5": {
+        "operations": [
+            2.4929995561251417e-06
+        ],
+        "test_time": 0.015873667998675955
+    },
+    "delete_test.py:testDeleteInteger6": {
+        "operations": [
+            2.5469998945482075e-06
+        ],
+        "test_time": 0.016699469999366556
+    },
+    "delete_test.py:testDeleteInteger7": {
+        "operations": [
+            2.623999534989707e-06
+        ],
+        "test_time": 0.01802387399948202
+    },
+    "delete_test.py:testDeleteInteger8": {
+        "operations": [
+            2.926000888692215e-06
+        ],
+        "test_time": 0.016166314999281894
+    },
+    "delete_test.py:testDeleteInteger9": {
+        "operations": [
+            2.487999154254794e-06
+        ],
+        "test_time": 0.016603098998530186
+    },
+    "delete_test.py:testDeleteMaskArray0": {
+        "operations": [
+            5.077900095784571e-05
+        ],
+        "test_time": 0.001836200999605353
+    },
+    "delete_test.py:testDeleteMaskArray1": {
+        "operations": [
+            4.689699926530011e-05
+        ],
+        "test_time": 0.0017411530006938847
+    },
+    "delete_test.py:testDeleteMaskArray2": {
+        "operations": [
+            3.755600118893199e-05
+        ],
+        "test_time": 0.0016135690002556657
+    },
+    "delete_test.py:testDeleteMaskArray3": {
+        "operations": [
+            3.891500091413036e-05
+        ],
+        "test_time": 0.0016673339996486902
+    },
+    "delete_test.py:testDeleteMaskArray4": {
+        "operations": [
+            3.4712998967734165e-05
+        ],
+        "test_time": 0.0015932149999571266
+    },
+    "delete_test.py:testDeleteMaskArray5": {
+        "operations": [
+            4.023099972982891e-05
+        ],
+        "test_time": 0.001788405999832321
+    },
+    "delete_test.py:testDeleteMaskArray6": {
+        "operations": [
+            3.720299901033286e-05
+        ],
+        "test_time": 0.0015830670017749071
+    },
+    "delete_test.py:testDeleteMaskArray7": {
+        "operations": [
+            4.05569990107324e-05
+        ],
+        "test_time": 0.0017163009997602785
+    },
+    "delete_test.py:testDeleteMaskArray8": {
+        "operations": [
+            3.48209996445803e-05
+        ],
+        "test_time": 0.00154772699897876
+    },
+    "delete_test.py:testDeleteMaskArray9": {
+        "operations": [
+            5.404000148701016e-05
+        ],
+        "test_time": 0.0016804659990157234
+    },
+    "delete_test.py:testDeleteSlice0": {
+        "operations": [
+            2.405999111942947e-06
+        ],
+        "test_time": 0.019688176000272506
+    },
+    "delete_test.py:testDeleteSlice1": {
+        "operations": [
+            2.460999894537963e-06
+        ],
+        "test_time": 0.16639816000133578
+    },
+    "delete_test.py:testDeleteSlice2": {
+        "operations": [
+            3.0750015866942704e-06
+        ],
+        "test_time": 0.04049799099993834
+    },
+    "delete_test.py:testDeleteSlice3": {
+        "operations": [
+            2.5440003810217604e-06
+        ],
+        "test_time": 0.04115157799969893
+    },
+    "delete_test.py:testDeleteSlice4": {
+        "operations": [
+            2.749999111983925e-06
+        ],
+        "test_time": 0.018897695999839925
+    },
+    "delete_test.py:testDeleteSlice5": {
+        "operations": [
+            2.978998963953927e-06
+        ],
+        "test_time": 0.040751773998636054
+    },
+    "delete_test.py:testDeleteSlice6": {
+        "operations": [
+            3.269000444561243e-06
+        ],
+        "test_time": 0.017695017999358242
+    },
+    "delete_test.py:testDeleteSlice7": {
+        "operations": [
+            2.7260011847829446e-06
+        ],
+        "test_time": 0.041176734999680775
+    },
+    "delete_test.py:testDeleteSlice8": {
+        "operations": [
+            2.6519992388784885e-06
+        ],
+        "test_time": 0.04017588500028069
+    },
+    "delete_test.py:testDeleteSlice9": {
+        "operations": [
+            2.643000698299147e-06
+        ],
+        "test_time": 0.03736550399844418
+    },
+    "disable_jit_test.py:test_disable_jit": {
+        "operations": [
+            1.8050001017400064e-05
+        ],
+        "test_time": 0.003677401000459213
+    },
+    "eig_test.py:testEig0": {
+        "operations": [
+            0.034390576000078
+        ],
+        "test_time": 0.12991091600088112
+    },
+    "eig_test.py:testEig1": {
+        "operations": [
+            0.030814456000371138
+        ],
+        "test_time": 0.11585366199869895
+    },
+    "eig_test.py:testEig2": {
+        "operations": [
+            0.0154931930010207
+        ],
+        "test_time": 0.0834751000002143
+    },
+    "eig_test.py:testEig3": {
+        "operations": [
+            0.030265740999311674
+        ],
+        "test_time": 0.03372870599923772
+    },
+    "eig_test.py:testEig4": {
+        "operations": [
+            0.02794295300009253
+        ],
+        "test_time": 0.030086421000305563
+    },
+    "eig_test.py:testEig5": {
+        "operations": [
+            0.029658864999873913
+        ],
+        "test_time": 0.098094883000158
+    },
+    "eig_test.py:testEig6": {
+        "operations": [
+            0.03270403399983479
+        ],
+        "test_time": 0.05585723200056236
+    },
+    "eig_test.py:testEig7": {
+        "operations": [
+            0.02899116899970977
+        ],
+        "test_time": 0.032127920998391346
+    },
+    "eig_test.py:testEig8": {
+        "operations": [
+            0.03903530400020827
+        ],
+        "test_time": 0.04429100099878269
+    },
+    "eig_test.py:testEig9": {
+        "operations": [
+            0.027614460001132102
+        ],
+        "test_time": 0.029927784999017604
+    },
+    "einsum_path_test.py:test_einsum_kpmurphy_example": {
+        "operations": [
+            0.00026767500094138086
+        ],
+        "test_time": 0.08101744200030225
+    },
+    "einsum_path_test.py:test_einsum_path": {
+        "operations": [],
+        "test_time": 0.0019842699985019863
+    },
+    "erf_test.py:testOpGrad0": {
+        "operations": [
+            0.0957634770002187,
+            0.00022759199964639265,
+            0.00013551300071412697,
+            0.0001136030005000066,
+            0.030411261001063394,
+            0.001469349999752012,
+            0.0014778119984839577,
+            0.0014073309994273586,
+            0.004888802001005388,
+            0.0013312569990375778,
+            0.0013971280004625442,
+            0.0014220200009731343,
+            0.0014538109990098746,
+            0.00015355499999714084,
+            0.00014953899881220423,
+            0.00011002399878634606,
+            0.0033849930005089846,
+            0.0014143099997454556,
+            0.0014355500006786315,
+            0.0014393399997061351,
+            0.003297355000540847,
+            0.0014932500016584527,
+            0.0016063549992395565,
+            0.0014213229987944942
+        ],
+        "test_time": 0.18591829600154597
+    },
+    "erf_test.py:testOpGrad1": {
+        "operations": [
+            0.06769352400078787,
+            0.00016918100118346047,
+            0.00012249400060682092,
+            9.701999988465104e-05,
+            0.028021857999192434,
+            0.0013291399991430808,
+            0.0012301630013098475,
+            0.0014657380015705712,
+            0.0043674690004991135,
+            0.0012641670000448357,
+            0.0013015740005357657,
+            0.0012823380002373597,
+            0.0013999319999129511,
+            0.00016151400086528156,
+            0.00014066899893805385,
+            0.00010381600077380426,
+            0.0029649399984919,
+            0.001386021998769138,
+            0.0013411309992079623,
+            0.001216138998643146,
+            0.0029175939998822287,
+            0.001319196000622469,
+            0.001240837000295869,
+            0.0012238279996381607
+        ],
+        "test_time": 0.15137724700070976
+    },
+    "erf_test.py:testOpGrad2": {
+        "operations": [
+            0.11146758099857834,
+            0.00020181299987598322,
+            0.0001315970002906397,
+            0.00011107399950560648,
+            0.035420659000010346,
+            0.0018318349993933225,
+            0.0018102190006175078,
+            0.0018360300000495045,
+            0.005790196999441832,
+            0.0018766759985737735,
+            0.00193224600116082,
+            0.0017670209999778308,
+            0.0018043809996015625,
+            0.00017310099974565674,
+            0.0001592720000189729,
+            0.00014564899902325124,
+            0.0038735519992769696,
+            0.001777475999915623,
+            0.0017307399994024308,
+            0.0017437030001019593,
+            0.004098573999726796,
+            0.0017414560006727697,
+            0.0017112419991462957,
+            0.0017650070003583096
+        ],
+        "test_time": 0.21356663100050355
+    },
+    "erf_test.py:testOpGrad3": {
+        "operations": [
+            0.10038153000095917,
+            0.0001715219987090677,
+            0.00011574899872357491,
+            0.00010075200043502264,
+            0.033807597999839345,
+            0.0016934169998421567,
+            0.00157777200001874,
+            0.0016469470010633813,
+            0.00513190499987104,
+            0.001614606000657659,
+            0.0016429000006610295,
+            0.0015431239989993628,
+            0.001623018999453052,
+            0.00016929400044318754,
+            0.00016049900114012416,
+            0.00012204000086057931,
+            0.003565425000488176,
+            0.0016374360002373578,
+            0.0015873369993641973,
+            0.0014644330003648065,
+            0.003733063000254333,
+            0.0016076489991974086,
+            0.0015144339995458722,
+            0.001625343998966855
+        ],
+        "test_time": 0.19799131100080558
+    },
+    "erf_test.py:testOpGrad4": {
+        "operations": [
+            0.07913591699980316,
+            0.0001885249985207338,
+            0.00012290000086068176,
+            0.0001051559993356932,
+            0.03432079999947746,
+            0.0015308670008380432,
+            0.0014852439999231137,
+            0.0013521359996957472,
+            0.005321405998984119,
+            0.0013965050002298085,
+            0.0015306000004784437,
+            0.0013742009996349225,
+            0.0015516149996983586,
+            0.00013630300054501276,
+            0.00015553100092802197,
+            0.00011637700117717031,
+            0.0035090479996142676,
+            0.0015263410004990874,
+            0.001944738000020152,
+            0.0015998779999790713,
+            0.0037530099998548394,
+            0.0016190810001717182,
+            0.001555183998789289,
+            0.001583819999723346
+        ],
+        "test_time": 0.17793652699947415
+    },
+    "erf_test.py:testOpGrad5": {
+        "operations": [
+            0.08566862900079286,
+            0.0001835330003814306,
+            0.00014883200128679164,
+            0.00010974799988616724,
+            0.031065873999978066,
+            0.0016572189997532405,
+            0.0013573739997809753,
+            0.0015067540007294156,
+            0.0045638150004378986,
+            0.0014068589989619795,
+            0.0014411969987122575,
+            0.0014091020002524601,
+            0.001469595001253765,
+            0.00013349999971978832,
+            0.00016353600040019955,
+            0.00011989599988737609,
+            0.003366410001035547,
+            0.0014104849997238489,
+            0.0013618220000353176,
+            0.0014755709999008104,
+            0.003418538999540033,
+            0.0016197830009332392,
+            0.0015060569985507755,
+            0.0014533810008288128
+        ],
+        "test_time": 0.17590622499847086
+    },
+    "erf_test.py:testOpGrad6": {
+        "operations": [
+            0.10071469500144303,
+            0.0001880309991975082,
+            0.00011726399861800019,
+            0.00012329499986662995,
+            0.03130540799975279,
+            0.001553428000988788,
+            0.001505980999354506,
+            0.0014384559999598423,
+            0.005109363999508787,
+            0.0015302530009648763,
+            0.0015456329983862815,
+            0.001505230999100604,
+            0.0016801980000309413,
+            0.0001956430005520815,
+            0.00015685400103393476,
+            0.00012955000056535937,
+            0.0033642250000411877,
+            0.0017204660016432172,
+            0.001481997998780571,
+            0.0014752480001334334,
+            0.0035901720002584625,
+            0.0015154190004977863,
+            0.001456521000363864,
+            0.001628961001188145
+        ],
+        "test_time": 0.1940671479987941
+    },
+    "eval_context_test.py:test_eval_context": {
+        "operations": [
+            4.9030004447558895e-06
+        ],
+        "test_time": 0.029888020999351284
+    },
+    "exp_test.py:testOp0": {
+        "operations": [
+            0.0003357840014359681
+        ],
+        "test_time": 0.0037748550003016135
+    },
+    "exp_test.py:testOp1": {
+        "operations": [
+            0.014446391000092262
+        ],
+        "test_time": 0.01832384899898898
+    },
+    "exp_test.py:testOp2": {
+        "operations": [
+            0.00038973299888311885
+        ],
+        "test_time": 0.002874570000130916
+    },
+    "exp_test.py:testOp3": {
+        "operations": [
+            0.011373792000085814
+        ],
+        "test_time": 0.015064630000779289
+    },
+    "exp_test.py:testOp4": {
+        "operations": [
+            0.00035379100154386833
+        ],
+        "test_time": 0.002710627000851673
+    },
+    "exp_test.py:testOp5": {
+        "operations": [
+            0.0003763289987546159
+        ],
+        "test_time": 0.0026003519997175317
+    },
+    "exp_test.py:testOp6": {
+        "operations": [
+            0.018794707999404636
+        ],
+        "test_time": 0.022792794999986654
+    },
+    "exp_test.py:testOp7": {
+        "operations": [
+            0.00033230199915124103
+        ],
+        "test_time": 0.0027631019984255545
+    },
+    "exp_test.py:testOp8": {
+        "operations": [
+            0.011563874999410473
+        ],
+        "test_time": 0.01526273000126821
+    },
+    "exp_test.py:testOp9": {
+        "operations": [
+            0.012248287999682361
+        ],
+        "test_time": 0.015758601999550592
+    },
+    "flip_test.py:testFlip0": {
+        "operations": [
+            0.016060677999121253
+        ],
+        "test_time": 0.01921828699960315
+    },
+    "flip_test.py:testFlip1": {
+        "operations": [
+            0.018306398998902296
+        ],
+        "test_time": 0.020555588000206626
+    },
+    "flip_test.py:testFlip2": {
+        "operations": [
+            0.01545986100063601
+        ],
+        "test_time": 0.01869854399956239
+    },
+    "flip_test.py:testFlip3": {
+        "operations": [
+            0.015584592998493463
+        ],
+        "test_time": 0.018738683000265155
+    },
+    "flip_test.py:testFlip4": {
+        "operations": [
+            0.014629241999500664
+        ],
+        "test_time": 0.017732646001604735
+    },
+    "flip_test.py:testFlip5": {
+        "operations": [
+            0.015331992000938044
+        ],
+        "test_time": 0.018624935000843834
+    },
+    "flip_test.py:testFlip6": {
+        "operations": [
+            0.015013321000878932
+        ],
+        "test_time": 0.018176548999690567
+    },
+    "flip_test.py:testFlip7": {
+        "operations": [
+            0.015826483999262564
+        ],
+        "test_time": 0.018598356000438798
+    },
+    "flip_test.py:testFlip8": {
+        "operations": [
+            0.00047557399921061005
+        ],
+        "test_time": 0.0022576859992113896
+    },
+    "flip_test.py:testFlip9": {
+        "operations": [
+            0.014680311000120128
+        ],
+        "test_time": 0.017855458001577063
+    },
+    "fliplr_test.py:testFliplr0": {
+        "operations": [
+            0.01831544800006668
+        ],
+        "test_time": 0.020452675000342424
+    },
+    "fliplr_test.py:testFliplr1": {
+        "operations": [
+            0.00044199699914315715
+        ],
+        "test_time": 0.0022916440011613304
+    },
+    "fliplr_test.py:testFliplr2": {
+        "operations": [
+            0.018084781999277766
+        ],
+        "test_time": 0.020231104999766103
+    },
+    "fliplr_test.py:testFliplr3": {
+        "operations": [
+            0.016558773999349796
+        ],
+        "test_time": 0.019820993000394083
+    },
+    "fliplr_test.py:testFliplr4": {
+        "operations": [
+            0.014940831999410875
+        ],
+        "test_time": 0.018016242000157945
+    },
+    "fliplr_test.py:testFliplr5": {
+        "operations": [
+            0.000441123000200605
+        ],
+        "test_time": 0.0021860870001546573
+    },
+    "fliplr_test.py:testFliplr6": {
+        "operations": [
+            0.0004942369996570051
+        ],
+        "test_time": 0.0022489429993584054
+    },
+    "fliplr_test.py:testFliplr7": {
+        "operations": [
+            0.01524126399999659
+        ],
+        "test_time": 0.018548330999692553
+    },
+    "fliplr_test.py:testFliplr8": {
+        "operations": [
+            0.015541228000074625
+        ],
+        "test_time": 0.01865381400057231
+    },
+    "fliplr_test.py:testFliplr9": {
+        "operations": [
+            0.01743910400000459
+        ],
+        "test_time": 0.020859714999460266
+    },
+    "gammaln_test.py:testScipySpecialFun0": {
+        "operations": [
+            0.030111977999695227
+        ],
+        "test_time": 0.03397375200074748
+    },
+    "gammaln_test.py:testScipySpecialFun1": {
+        "operations": [
+            0.03436505900026532
+        ],
+        "test_time": 0.03842297099981806
+    },
+    "gammaln_test.py:testScipySpecialFun2": {
+        "operations": [
+            0.03902766600003815
+        ],
+        "test_time": 0.043699518999346765
+    },
+    "gammaln_test.py:testScipySpecialFun3": {
+        "operations": [
+            0.039991961000851006
+        ],
+        "test_time": 0.04426200499983679
+    },
+    "gammaln_test.py:testScipySpecialFun4": {
+        "operations": [
+            0.03475287200126331
+        ],
+        "test_time": 0.03868211400003929
+    },
+    "gammaln_test.py:testScipySpecialFun5": {
+        "operations": [
+            0.034764295000059064
+        ],
+        "test_time": 0.03855965199909406
+    },
+    "ge_test.py:test_ops_do_not_accept_complex_dtypes0": {
+        "operations": [
+            0.012797970999599784
+        ],
+        "test_time": 0.015288114000213682
+    },
+    "get_aval_test.py:test_comparing_var": {
+        "operations": [],
+        "test_time": 0.001258475000213366
+    },
+    "get_aval_test.py:test_concrete_array_string_representation": {
+        "operations": [],
+        "test_time": 0.0015177279983618064
+    },
+    "get_aval_test.py:test_input_residual_forwarding": {
+        "operations": [],
+        "test_time": 0.04463397099971189
+    },
+    "get_aval_test.py:test_jit_0": {
+        "operations": [],
+        "test_time": 0.01905056999930821
+    },
+    "get_aval_test.py:test_jit_1": {
+        "operations": [],
+        "test_time": 0.053827452000405174
+    },
+    "get_aval_test.py:test_jit_10": {
+        "operations": [],
+        "test_time": 0.009427107001101831
+    },
+    "get_aval_test.py:test_jit_100": {
+        "operations": [],
+        "test_time": 0.10370780099947297
+    },
+    "get_aval_test.py:test_jit_101": {
+        "operations": [],
+        "test_time": 0.012110083000152372
+    },
+    "get_aval_test.py:test_jit_102": {
+        "operations": [],
+        "test_time": 0.011671448000925011
+    },
+    "get_aval_test.py:test_jit_103": {
+        "operations": [],
+        "test_time": 0.011737051998352399
+    },
+    "get_aval_test.py:test_jit_104": {
+        "operations": [],
+        "test_time": 0.011399213000913733
+    },
+    "get_aval_test.py:test_jit_105": {
+        "operations": [],
+        "test_time": 0.011716125998646021
+    },
+    "get_aval_test.py:test_jit_106": {
+        "operations": [],
+        "test_time": 0.011903712000275846
+    },
+    "get_aval_test.py:test_jit_107": {
+        "operations": [],
+        "test_time": 0.011501998998937779
+    },
+    "get_aval_test.py:test_jit_108": {
+        "operations": [],
+        "test_time": 0.011517461998664658
+    },
+    "get_aval_test.py:test_jit_109": {
+        "operations": [],
+        "test_time": 0.03061259799869731
+    },
+    "get_aval_test.py:test_jit_11": {
+        "operations": [],
+        "test_time": 0.003678860999571043
+    },
+    "get_aval_test.py:test_jit_12": {
+        "operations": [],
+        "test_time": 0.008952987000157009
+    },
+    "get_aval_test.py:test_jit_13": {
+        "operations": [],
+        "test_time": 0.003296969000075478
+    },
+    "get_aval_test.py:test_jit_14": {
+        "operations": [],
+        "test_time": 0.0034390979999443516
+    },
+    "get_aval_test.py:test_jit_15": {
+        "operations": [],
+        "test_time": 0.0035200890015403274
+    },
+    "get_aval_test.py:test_jit_16": {
+        "operations": [],
+        "test_time": 0.003486703000817215
+    },
+    "get_aval_test.py:test_jit_17": {
+        "operations": [],
+        "test_time": 0.003507689998514252
+    },
+    "get_aval_test.py:test_jit_18": {
+        "operations": [],
+        "test_time": 0.003489889999400475
+    },
+    "get_aval_test.py:test_jit_19": {
+        "operations": [],
+        "test_time": 0.003905277999365353
+    },
+    "get_aval_test.py:test_jit_2": {
+        "operations": [],
+        "test_time": 0.0025498970007902244
+    },
+    "get_aval_test.py:test_jit_20": {
+        "operations": [],
+        "test_time": 0.003443064999373746
+    },
+    "get_aval_test.py:test_jit_21": {
+        "operations": [],
+        "test_time": 0.013632493999466533
+    },
+    "get_aval_test.py:test_jit_22": {
+        "operations": [],
+        "test_time": 0.02054344200041669
+    },
+    "get_aval_test.py:test_jit_23": {
+        "operations": [],
+        "test_time": 0.06512313500024902
+    },
+    "get_aval_test.py:test_jit_24": {
+        "operations": [],
+        "test_time": 0.002972475000206032
+    },
+    "get_aval_test.py:test_jit_25": {
+        "operations": [],
+        "test_time": 0.0033186370001203613
+    },
+    "get_aval_test.py:test_jit_26": {
+        "operations": [],
+        "test_time": 0.003310236999823246
+    },
+    "get_aval_test.py:test_jit_27": {
+        "operations": [],
+        "test_time": 0.003032869999515242
+    },
+    "get_aval_test.py:test_jit_28": {
+        "operations": [],
+        "test_time": 0.0030444099993474083
+    },
+    "get_aval_test.py:test_jit_29": {
+        "operations": [],
+        "test_time": 0.002893918999689049
+    },
+    "get_aval_test.py:test_jit_3": {
+        "operations": [],
+        "test_time": 0.002394730998275918
+    },
+    "get_aval_test.py:test_jit_30": {
+        "operations": [],
+        "test_time": 0.0031631519996153656
+    },
+    "get_aval_test.py:test_jit_31": {
+        "operations": [],
+        "test_time": 0.0029817529994033976
+    },
+    "get_aval_test.py:test_jit_32": {
+        "operations": [],
+        "test_time": 0.00910222400125349
+    },
+    "get_aval_test.py:test_jit_33": {
+        "operations": [],
+        "test_time": 0.0026612830006342847
+    },
+    "get_aval_test.py:test_jit_34": {
+        "operations": [],
+        "test_time": 0.004161973000009311
+    },
+    "get_aval_test.py:test_jit_35": {
+        "operations": [],
+        "test_time": 0.002628595000714995
+    },
+    "get_aval_test.py:test_jit_36": {
+        "operations": [],
+        "test_time": 0.0028688570000667823
+    },
+    "get_aval_test.py:test_jit_37": {
+        "operations": [],
+        "test_time": 0.0026354340006946586
+    },
+    "get_aval_test.py:test_jit_38": {
+        "operations": [],
+        "test_time": 0.002822960001140018
+    },
+    "get_aval_test.py:test_jit_39": {
+        "operations": [],
+        "test_time": 0.0030269999988377094
+    },
+    "get_aval_test.py:test_jit_4": {
+        "operations": [],
+        "test_time": 0.002624102999106981
+    },
+    "get_aval_test.py:test_jit_40": {
+        "operations": [],
+        "test_time": 0.002673703998880228
+    },
+    "get_aval_test.py:test_jit_41": {
+        "operations": [],
+        "test_time": 0.002902469999753521
+    },
+    "get_aval_test.py:test_jit_42": {
+        "operations": [],
+        "test_time": 0.002882437000153004
+    },
+    "get_aval_test.py:test_jit_43": {
+        "operations": [],
+        "test_time": 0.005804076999993413
+    },
+    "get_aval_test.py:test_jit_44": {
+        "operations": [],
+        "test_time": 0.003873038000165252
+    },
+    "get_aval_test.py:test_jit_45": {
+        "operations": [],
+        "test_time": 0.025759149000805337
+    },
+    "get_aval_test.py:test_jit_46": {
+        "operations": [],
+        "test_time": 0.004242458000589977
+    },
+    "get_aval_test.py:test_jit_47": {
+        "operations": [],
+        "test_time": 0.004471076999834622
+    },
+    "get_aval_test.py:test_jit_48": {
+        "operations": [],
+        "test_time": 0.004167342000073404
+    },
+    "get_aval_test.py:test_jit_49": {
+        "operations": [],
+        "test_time": 0.004362976000265917
+    },
+    "get_aval_test.py:test_jit_5": {
+        "operations": [],
+        "test_time": 0.002606817000923911
+    },
+    "get_aval_test.py:test_jit_50": {
+        "operations": [],
+        "test_time": 0.004498014999626321
+    },
+    "get_aval_test.py:test_jit_51": {
+        "operations": [],
+        "test_time": 0.0038901679999980843
+    },
+    "get_aval_test.py:test_jit_52": {
+        "operations": [],
+        "test_time": 0.004302811999878031
+    },
+    "get_aval_test.py:test_jit_53": {
+        "operations": [],
+        "test_time": 0.004161001999818836
+    },
+    "get_aval_test.py:test_jit_54": {
+        "operations": [],
+        "test_time": 0.010957463000522694
+    },
+    "get_aval_test.py:test_jit_55": {
+        "operations": [],
+        "test_time": 0.006194970999786165
+    },
+    "get_aval_test.py:test_jit_56": {
+        "operations": [],
+        "test_time": 0.014293440000983537
+    },
+    "get_aval_test.py:test_jit_57": {
+        "operations": [],
+        "test_time": 0.005915261999689392
+    },
+    "get_aval_test.py:test_jit_58": {
+        "operations": [],
+        "test_time": 0.005659688999003265
+    },
+    "get_aval_test.py:test_jit_59": {
+        "operations": [],
+        "test_time": 0.005842397000378696
+    },
+    "get_aval_test.py:test_jit_6": {
+        "operations": [],
+        "test_time": 0.0026899980002781376
+    },
+    "get_aval_test.py:test_jit_60": {
+        "operations": [],
+        "test_time": 0.00599850099933974
+    },
+    "get_aval_test.py:test_jit_61": {
+        "operations": [],
+        "test_time": 0.0054808540007798
+    },
+    "get_aval_test.py:test_jit_62": {
+        "operations": [],
+        "test_time": 0.005571796998992795
+    },
+    "get_aval_test.py:test_jit_63": {
+        "operations": [],
+        "test_time": 0.005489639999723295
+    },
+    "get_aval_test.py:test_jit_64": {
+        "operations": [],
+        "test_time": 0.00585480399968219
+    },
+    "get_aval_test.py:test_jit_65": {
+        "operations": [],
+        "test_time": 0.021133952999662142
+    },
+    "get_aval_test.py:test_jit_66": {
+        "operations": [],
+        "test_time": 0.0022568050007976126
+    },
+    "get_aval_test.py:test_jit_67": {
+        "operations": [],
+        "test_time": 0.034959512999193976
+    },
+    "get_aval_test.py:test_jit_68": {
+        "operations": [],
+        "test_time": 0.0022287279989541275
+    },
+    "get_aval_test.py:test_jit_69": {
+        "operations": [],
+        "test_time": 0.0021419909990072483
+    },
+    "get_aval_test.py:test_jit_7": {
+        "operations": [],
+        "test_time": 0.0027283500003250083
+    },
+    "get_aval_test.py:test_jit_70": {
+        "operations": [],
+        "test_time": 0.0026530590002948884
+    },
+    "get_aval_test.py:test_jit_71": {
+        "operations": [],
+        "test_time": 0.0022042129985493375
+    },
+    "get_aval_test.py:test_jit_72": {
+        "operations": [],
+        "test_time": 0.0022940850012673764
+    },
+    "get_aval_test.py:test_jit_73": {
+        "operations": [],
+        "test_time": 0.0023043559995130636
+    },
+    "get_aval_test.py:test_jit_74": {
+        "operations": [],
+        "test_time": 0.002233318000435247
+    },
+    "get_aval_test.py:test_jit_75": {
+        "operations": [],
+        "test_time": 0.0022601339987886604
+    },
+    "get_aval_test.py:test_jit_76": {
+        "operations": [],
+        "test_time": 0.00775352200071211
+    },
+    "get_aval_test.py:test_jit_77": {
+        "operations": [],
+        "test_time": 0.05469239499871037
+    },
+    "get_aval_test.py:test_jit_78": {
+        "operations": [],
+        "test_time": 0.03064749999975902
+    },
+    "get_aval_test.py:test_jit_79": {
+        "operations": [],
+        "test_time": 0.006928396000148496
+    },
+    "get_aval_test.py:test_jit_8": {
+        "operations": [],
+        "test_time": 0.0026097830013895873
+    },
+    "get_aval_test.py:test_jit_80": {
+        "operations": [],
+        "test_time": 0.0068417120000958676
+    },
+    "get_aval_test.py:test_jit_81": {
+        "operations": [],
+        "test_time": 0.006749076999767567
+    },
+    "get_aval_test.py:test_jit_82": {
+        "operations": [],
+        "test_time": 0.007034480999209336
+    },
+    "get_aval_test.py:test_jit_83": {
+        "operations": [],
+        "test_time": 0.007039744999929098
+    },
+    "get_aval_test.py:test_jit_84": {
+        "operations": [],
+        "test_time": 0.0077998819997446844
+    },
+    "get_aval_test.py:test_jit_85": {
+        "operations": [],
+        "test_time": 0.006711085999995703
+    },
+    "get_aval_test.py:test_jit_86": {
+        "operations": [],
+        "test_time": 0.006883627000206616
+    },
+    "get_aval_test.py:test_jit_87": {
+        "operations": [],
+        "test_time": 0.02466018700033601
+    },
+    "get_aval_test.py:test_jit_88": {
+        "operations": [],
+        "test_time": 0.025333075000162353
+    },
+    "get_aval_test.py:test_jit_89": {
+        "operations": [],
+        "test_time": 0.03596399100024428
+    },
+    "get_aval_test.py:test_jit_9": {
+        "operations": [],
+        "test_time": 0.002922789999502129
+    },
+    "get_aval_test.py:test_jit_90": {
+        "operations": [],
+        "test_time": 0.006903277000674279
+    },
+    "get_aval_test.py:test_jit_91": {
+        "operations": [],
+        "test_time": 0.007305250001081731
+    },
+    "get_aval_test.py:test_jit_92": {
+        "operations": [],
+        "test_time": 0.007173902999056736
+    },
+    "get_aval_test.py:test_jit_93": {
+        "operations": [],
+        "test_time": 0.007410350999634829
+    },
+    "get_aval_test.py:test_jit_94": {
+        "operations": [],
+        "test_time": 0.0071990689993981505
+    },
+    "get_aval_test.py:test_jit_95": {
+        "operations": [],
+        "test_time": 0.007121007000023383
+    },
+    "get_aval_test.py:test_jit_96": {
+        "operations": [],
+        "test_time": 0.007209122999483952
+    },
+    "get_aval_test.py:test_jit_97": {
+        "operations": [],
+        "test_time": 0.007338694998907158
+    },
+    "get_aval_test.py:test_jit_98": {
+        "operations": [],
+        "test_time": 0.025358161999974982
+    },
+    "get_aval_test.py:test_jit_99": {
+        "operations": [],
+        "test_time": 0.010775801998534007
+    },
+    "get_aval_test.py:test_jit_closure": {
+        "operations": [],
+        "test_time": 0.018434161000186577
+    },
+    "get_aval_test.py:test_jvp_0": {
+        "operations": [],
+        "test_time": 0.005189134999454836
+    },
+    "get_aval_test.py:test_jvp_1": {
+        "operations": [],
+        "test_time": 0.013706807998460135
+    },
+    "get_aval_test.py:test_jvp_10": {
+        "operations": [],
+        "test_time": 0.01977865200024098
+    },
+    "get_aval_test.py:test_jvp_100": {
+        "operations": [],
+        "test_time": 0.06423601400092593
+    },
+    "get_aval_test.py:test_jvp_101": {
+        "operations": [],
+        "test_time": 0.024923451001086505
+    },
+    "get_aval_test.py:test_jvp_102": {
+        "operations": [],
+        "test_time": 0.0241889410008298
+    },
+    "get_aval_test.py:test_jvp_103": {
+        "operations": [],
+        "test_time": 0.024842987000738503
+    },
+    "get_aval_test.py:test_jvp_104": {
+        "operations": [],
+        "test_time": 0.02520835699942836
+    },
+    "get_aval_test.py:test_jvp_105": {
+        "operations": [],
+        "test_time": 0.025689658999908715
+    },
+    "get_aval_test.py:test_jvp_106": {
+        "operations": [],
+        "test_time": 0.030149538000841858
+    },
+    "get_aval_test.py:test_jvp_107": {
+        "operations": [],
+        "test_time": 0.025781472999369726
+    },
+    "get_aval_test.py:test_jvp_108": {
+        "operations": [],
+        "test_time": 0.03125850200012792
+    },
+    "get_aval_test.py:test_jvp_109": {
+        "operations": [],
+        "test_time": 0.06196453599841334
+    },
+    "get_aval_test.py:test_jvp_11": {
+        "operations": [],
+        "test_time": 0.007760174999930314
+    },
+    "get_aval_test.py:test_jvp_12": {
+        "operations": [],
+        "test_time": 0.020287125000322703
+    },
+    "get_aval_test.py:test_jvp_13": {
+        "operations": [],
+        "test_time": 0.007624026000485173
+    },
+    "get_aval_test.py:test_jvp_14": {
+        "operations": [],
+        "test_time": 0.007618032001118991
+    },
+    "get_aval_test.py:test_jvp_15": {
+        "operations": [],
+        "test_time": 0.008083431999693858
+    },
+    "get_aval_test.py:test_jvp_16": {
+        "operations": [],
+        "test_time": 0.008217915999921388
+    },
+    "get_aval_test.py:test_jvp_17": {
+        "operations": [],
+        "test_time": 0.008462787000098615
+    },
+    "get_aval_test.py:test_jvp_18": {
+        "operations": [],
+        "test_time": 0.007915995000075782
+    },
+    "get_aval_test.py:test_jvp_19": {
+        "operations": [],
+        "test_time": 0.008166509998773108
+    },
+    "get_aval_test.py:test_jvp_2": {
+        "operations": [],
+        "test_time": 0.005229995998888626
+    },
+    "get_aval_test.py:test_jvp_20": {
+        "operations": [],
+        "test_time": 0.008554579999326961
+    },
+    "get_aval_test.py:test_jvp_21": {
+        "operations": [],
+        "test_time": 0.02918132800004969
+    },
+    "get_aval_test.py:test_jvp_22": {
+        "operations": [],
+        "test_time": 0.006155060998935369
+    },
+    "get_aval_test.py:test_jvp_23": {
+        "operations": [],
+        "test_time": 0.03108358200006478
+    },
+    "get_aval_test.py:test_jvp_24": {
+        "operations": [],
+        "test_time": 0.006127259001004859
+    },
+    "get_aval_test.py:test_jvp_25": {
+        "operations": [],
+        "test_time": 0.005951260998699581
+    },
+    "get_aval_test.py:test_jvp_26": {
+        "operations": [],
+        "test_time": 0.006795878000048106
+    },
+    "get_aval_test.py:test_jvp_27": {
+        "operations": [],
+        "test_time": 0.006790638000893523
+    },
+    "get_aval_test.py:test_jvp_28": {
+        "operations": [],
+        "test_time": 0.007345975998759968
+    },
+    "get_aval_test.py:test_jvp_29": {
+        "operations": [],
+        "test_time": 0.007993549999810057
+    },
+    "get_aval_test.py:test_jvp_3": {
+        "operations": [],
+        "test_time": 0.0050002159987343475
+    },
+    "get_aval_test.py:test_jvp_30": {
+        "operations": [],
+        "test_time": 0.006459800999436993
+    },
+    "get_aval_test.py:test_jvp_31": {
+        "operations": [],
+        "test_time": 0.007168775000536698
+    },
+    "get_aval_test.py:test_jvp_32": {
+        "operations": [],
+        "test_time": 0.0182654830005049
+    },
+    "get_aval_test.py:test_jvp_33": {
+        "operations": [],
+        "test_time": 0.004523364999840851
+    },
+    "get_aval_test.py:test_jvp_34": {
+        "operations": [],
+        "test_time": 0.007961210001667496
+    },
+    "get_aval_test.py:test_jvp_35": {
+        "operations": [],
+        "test_time": 0.004578105999826221
+    },
+    "get_aval_test.py:test_jvp_36": {
+        "operations": [],
+        "test_time": 0.004388509998534573
+    },
+    "get_aval_test.py:test_jvp_37": {
+        "operations": [],
+        "test_time": 0.005037324999648263
+    },
+    "get_aval_test.py:test_jvp_38": {
+        "operations": [],
+        "test_time": 0.004825465000976692
+    },
+    "get_aval_test.py:test_jvp_39": {
+        "operations": [],
+        "test_time": 0.005502407000676612
+    },
+    "get_aval_test.py:test_jvp_4": {
+        "operations": [],
+        "test_time": 0.005598804000328528
+    },
+    "get_aval_test.py:test_jvp_40": {
+        "operations": [],
+        "test_time": 0.0049402389995520934
+    },
+    "get_aval_test.py:test_jvp_41": {
+        "operations": [],
+        "test_time": 0.0049844490004034014
+    },
+    "get_aval_test.py:test_jvp_42": {
+        "operations": [],
+        "test_time": 0.005163883000932401
+    },
+    "get_aval_test.py:test_jvp_43": {
+        "operations": [],
+        "test_time": 0.010880363999604015
+    },
+    "get_aval_test.py:test_jvp_44": {
+        "operations": [],
+        "test_time": 0.008120579999740585
+    },
+    "get_aval_test.py:test_jvp_45": {
+        "operations": [],
+        "test_time": 0.01699128899963398
+    },
+    "get_aval_test.py:test_jvp_46": {
+        "operations": [],
+        "test_time": 0.008739290000448818
+    },
+    "get_aval_test.py:test_jvp_47": {
+        "operations": [],
+        "test_time": 0.008175716999176075
+    },
+    "get_aval_test.py:test_jvp_48": {
+        "operations": [],
+        "test_time": 0.008808350001345389
+    },
+    "get_aval_test.py:test_jvp_49": {
+        "operations": [],
+        "test_time": 0.008821907998935785
+    },
+    "get_aval_test.py:test_jvp_5": {
+        "operations": [],
+        "test_time": 0.005657751999024185
+    },
+    "get_aval_test.py:test_jvp_50": {
+        "operations": [],
+        "test_time": 0.009235548001015559
+    },
+    "get_aval_test.py:test_jvp_51": {
+        "operations": [],
+        "test_time": 0.009028383999975631
+    },
+    "get_aval_test.py:test_jvp_52": {
+        "operations": [],
+        "test_time": 0.00891745999979321
+    },
+    "get_aval_test.py:test_jvp_53": {
+        "operations": [],
+        "test_time": 0.009760206001374172
+    },
+    "get_aval_test.py:test_jvp_54": {
+        "operations": [],
+        "test_time": 0.026136139000300318
+    },
+    "get_aval_test.py:test_jvp_55": {
+        "operations": [],
+        "test_time": 0.013066006000371999
+    },
+    "get_aval_test.py:test_jvp_56": {
+        "operations": [],
+        "test_time": 0.03399465899929055
+    },
+    "get_aval_test.py:test_jvp_57": {
+        "operations": [],
+        "test_time": 0.013393027998972684
+    },
+    "get_aval_test.py:test_jvp_58": {
+        "operations": [],
+        "test_time": 0.013336378999156295
+    },
+    "get_aval_test.py:test_jvp_59": {
+        "operations": [],
+        "test_time": 0.014030757000000449
+    },
+    "get_aval_test.py:test_jvp_6": {
+        "operations": [],
+        "test_time": 0.006338498000332038
+    },
+    "get_aval_test.py:test_jvp_60": {
+        "operations": [],
+        "test_time": 0.013827234999553184
+    },
+    "get_aval_test.py:test_jvp_61": {
+        "operations": [],
+        "test_time": 0.014690104000692372
+    },
+    "get_aval_test.py:test_jvp_62": {
+        "operations": [],
+        "test_time": 0.013686880000022938
+    },
+    "get_aval_test.py:test_jvp_63": {
+        "operations": [],
+        "test_time": 0.014057861000765115
+    },
+    "get_aval_test.py:test_jvp_64": {
+        "operations": [],
+        "test_time": 0.014405917998374207
+    },
+    "get_aval_test.py:test_jvp_65": {
+        "operations": [],
+        "test_time": 0.04838503899918578
+    },
+    "get_aval_test.py:test_jvp_66": {
+        "operations": [],
+        "test_time": 0.004246626000167453
+    },
+    "get_aval_test.py:test_jvp_67": {
+        "operations": [],
+        "test_time": 0.011004047000824357
+    },
+    "get_aval_test.py:test_jvp_68": {
+        "operations": [],
+        "test_time": 0.00431516900061979
+    },
+    "get_aval_test.py:test_jvp_69": {
+        "operations": [],
+        "test_time": 0.0042492279990256066
+    },
+    "get_aval_test.py:test_jvp_7": {
+        "operations": [],
+        "test_time": 0.005738452000514371
+    },
+    "get_aval_test.py:test_jvp_70": {
+        "operations": [],
+        "test_time": 0.004867233999902965
+    },
+    "get_aval_test.py:test_jvp_71": {
+        "operations": [],
+        "test_time": 0.004859730001044227
+    },
+    "get_aval_test.py:test_jvp_72": {
+        "operations": [],
+        "test_time": 0.005343216998880962
+    },
+    "get_aval_test.py:test_jvp_73": {
+        "operations": [],
+        "test_time": 0.004524535999735235
+    },
+    "get_aval_test.py:test_jvp_74": {
+        "operations": [],
+        "test_time": 0.004688566999902832
+    },
+    "get_aval_test.py:test_jvp_75": {
+        "operations": [],
+        "test_time": 0.005028364001191221
+    },
+    "get_aval_test.py:test_jvp_76": {
+        "operations": [],
+        "test_time": 0.015569830000458751
+    },
+    "get_aval_test.py:test_jvp_77": {
+        "operations": [],
+        "test_time": 0.01805828899887274
+    },
+    "get_aval_test.py:test_jvp_78": {
+        "operations": [],
+        "test_time": 0.057976628000687924
+    },
+    "get_aval_test.py:test_jvp_79": {
+        "operations": [],
+        "test_time": 0.017417262000890332
+    },
+    "get_aval_test.py:test_jvp_8": {
+        "operations": [],
+        "test_time": 0.005741577000662801
+    },
+    "get_aval_test.py:test_jvp_80": {
+        "operations": [],
+        "test_time": 0.017566632001035032
+    },
+    "get_aval_test.py:test_jvp_81": {
+        "operations": [],
+        "test_time": 0.01827746799972374
+    },
+    "get_aval_test.py:test_jvp_82": {
+        "operations": [],
+        "test_time": 0.018452906000675284
+    },
+    "get_aval_test.py:test_jvp_83": {
+        "operations": [],
+        "test_time": 0.018721765000009327
+    },
+    "get_aval_test.py:test_jvp_84": {
+        "operations": [],
+        "test_time": 0.018062151999401976
+    },
+    "get_aval_test.py:test_jvp_85": {
+        "operations": [],
+        "test_time": 0.01870241899996472
+    },
+    "get_aval_test.py:test_jvp_86": {
+        "operations": [],
+        "test_time": 0.019091937001576298
+    },
+    "get_aval_test.py:test_jvp_87": {
+        "operations": [],
+        "test_time": 0.05738654099877749
+    },
+    "get_aval_test.py:test_jvp_88": {
+        "operations": [],
+        "test_time": 0.018558738998763147
+    },
+    "get_aval_test.py:test_jvp_89": {
+        "operations": [],
+        "test_time": 0.04340608100028476
+    },
+    "get_aval_test.py:test_jvp_9": {
+        "operations": [],
+        "test_time": 0.006607077999433386
+    },
+    "get_aval_test.py:test_jvp_90": {
+        "operations": [],
+        "test_time": 0.018127151000953745
+    },
+    "get_aval_test.py:test_jvp_91": {
+        "operations": [],
+        "test_time": 0.018332206000195583
+    },
+    "get_aval_test.py:test_jvp_92": {
+        "operations": [],
+        "test_time": 0.019150115998854744
+    },
+    "get_aval_test.py:test_jvp_93": {
+        "operations": [],
+        "test_time": 0.019143395000355667
+    },
+    "get_aval_test.py:test_jvp_94": {
+        "operations": [],
+        "test_time": 0.019299118001072202
+    },
+    "get_aval_test.py:test_jvp_95": {
+        "operations": [],
+        "test_time": 0.018413112999041914
+    },
+    "get_aval_test.py:test_jvp_96": {
+        "operations": [],
+        "test_time": 0.018239272001665086
+    },
+    "get_aval_test.py:test_jvp_97": {
+        "operations": [],
+        "test_time": 0.01947969100001501
+    },
+    "get_aval_test.py:test_jvp_98": {
+        "operations": [],
+        "test_time": 0.058061699999598204
+    },
+    "get_aval_test.py:test_jvp_99": {
+        "operations": [],
+        "test_time": 0.02491377199839917
+    },
+    "get_aval_test.py:test_jvp_closure": {
+        "operations": [],
+        "test_time": 0.004542095000942936
+    },
+    "get_aval_test.py:test_jvp_linearized0": {
+        "operations": [],
+        "test_time": 0.007571697999082971
+    },
+    "get_aval_test.py:test_jvp_linearized1": {
+        "operations": [],
+        "test_time": 0.01787623999916832
+    },
+    "get_aval_test.py:test_jvp_linearized10": {
+        "operations": [],
+        "test_time": 0.023581396000736277
+    },
+    "get_aval_test.py:test_jvp_linearized100": {
+        "operations": [],
+        "test_time": 0.05776399800015497
+    },
+    "get_aval_test.py:test_jvp_linearized101": {
+        "operations": [],
+        "test_time": 0.02759730099933222
+    },
+    "get_aval_test.py:test_jvp_linearized102": {
+        "operations": [],
+        "test_time": 0.027741025998693658
+    },
+    "get_aval_test.py:test_jvp_linearized103": {
+        "operations": [],
+        "test_time": 0.03140050000001793
+    },
+    "get_aval_test.py:test_jvp_linearized104": {
+        "operations": [],
+        "test_time": 0.03288372899987735
+    },
+    "get_aval_test.py:test_jvp_linearized105": {
+        "operations": [],
+        "test_time": 0.03328379800041148
+    },
+    "get_aval_test.py:test_jvp_linearized106": {
+        "operations": [],
+        "test_time": 0.030353099000421935
+    },
+    "get_aval_test.py:test_jvp_linearized107": {
+        "operations": [],
+        "test_time": 0.0299350780005625
+    },
+    "get_aval_test.py:test_jvp_linearized108": {
+        "operations": [],
+        "test_time": 0.030999630000223988
+    },
+    "get_aval_test.py:test_jvp_linearized109": {
+        "operations": [],
+        "test_time": 0.06979818199943111
+    },
+    "get_aval_test.py:test_jvp_linearized11": {
+        "operations": [],
+        "test_time": 0.009704648999104393
+    },
+    "get_aval_test.py:test_jvp_linearized12": {
+        "operations": [],
+        "test_time": 0.026517827000134275
+    },
+    "get_aval_test.py:test_jvp_linearized13": {
+        "operations": [],
+        "test_time": 0.009687863999715773
+    },
+    "get_aval_test.py:test_jvp_linearized14": {
+        "operations": [],
+        "test_time": 0.00943136699970637
+    },
+    "get_aval_test.py:test_jvp_linearized15": {
+        "operations": [],
+        "test_time": 0.012307167000471964
+    },
+    "get_aval_test.py:test_jvp_linearized16": {
+        "operations": [],
+        "test_time": 0.011596734999329783
+    },
+    "get_aval_test.py:test_jvp_linearized17": {
+        "operations": [],
+        "test_time": 0.014728051000929554
+    },
+    "get_aval_test.py:test_jvp_linearized18": {
+        "operations": [],
+        "test_time": 0.011974520999501692
+    },
+    "get_aval_test.py:test_jvp_linearized19": {
+        "operations": [],
+        "test_time": 0.012256615000296733
+    },
+    "get_aval_test.py:test_jvp_linearized2": {
+        "operations": [],
+        "test_time": 0.006922542001120746
+    },
+    "get_aval_test.py:test_jvp_linearized20": {
+        "operations": [],
+        "test_time": 0.01339619899954414
+    },
+    "get_aval_test.py:test_jvp_linearized21": {
+        "operations": [],
+        "test_time": 0.03511056599927542
+    },
+    "get_aval_test.py:test_jvp_linearized22": {
+        "operations": [],
+        "test_time": 0.007627946000866359
+    },
+    "get_aval_test.py:test_jvp_linearized23": {
+        "operations": [],
+        "test_time": 0.018112875999577227
+    },
+    "get_aval_test.py:test_jvp_linearized24": {
+        "operations": [],
+        "test_time": 0.007474041000023135
+    },
+    "get_aval_test.py:test_jvp_linearized25": {
+        "operations": [],
+        "test_time": 0.007253894998939359
+    },
+    "get_aval_test.py:test_jvp_linearized26": {
+        "operations": [],
+        "test_time": 0.009835828999712248
+    },
+    "get_aval_test.py:test_jvp_linearized27": {
+        "operations": [],
+        "test_time": 0.009164672999759205
+    },
+    "get_aval_test.py:test_jvp_linearized28": {
+        "operations": [],
+        "test_time": 0.011477678001028835
+    },
+    "get_aval_test.py:test_jvp_linearized29": {
+        "operations": [],
+        "test_time": 0.009336306000477634
+    },
+    "get_aval_test.py:test_jvp_linearized3": {
+        "operations": [],
+        "test_time": 0.006778335000490188
+    },
+    "get_aval_test.py:test_jvp_linearized30": {
+        "operations": [],
+        "test_time": 0.009293959999922663
+    },
+    "get_aval_test.py:test_jvp_linearized31": {
+        "operations": [],
+        "test_time": 0.010803350998685346
+    },
+    "get_aval_test.py:test_jvp_linearized32": {
+        "operations": [],
+        "test_time": 0.022346132000166108
+    },
+    "get_aval_test.py:test_jvp_linearized33": {
+        "operations": [],
+        "test_time": 0.005617247999907704
+    },
+    "get_aval_test.py:test_jvp_linearized34": {
+        "operations": [],
+        "test_time": 0.010553513000559178
+    },
+    "get_aval_test.py:test_jvp_linearized35": {
+        "operations": [],
+        "test_time": 0.005483423999976367
+    },
+    "get_aval_test.py:test_jvp_linearized36": {
+        "operations": [],
+        "test_time": 0.005403360000855173
+    },
+    "get_aval_test.py:test_jvp_linearized37": {
+        "operations": [],
+        "test_time": 0.006680489999780548
+    },
+    "get_aval_test.py:test_jvp_linearized38": {
+        "operations": [],
+        "test_time": 0.007015022998530185
+    },
+    "get_aval_test.py:test_jvp_linearized39": {
+        "operations": [],
+        "test_time": 0.007767757000692654
+    },
+    "get_aval_test.py:test_jvp_linearized4": {
+        "operations": [],
+        "test_time": 0.00880176600003324
+    },
+    "get_aval_test.py:test_jvp_linearized40": {
+        "operations": [],
+        "test_time": 0.006688646999464254
+    },
+    "get_aval_test.py:test_jvp_linearized41": {
+        "operations": [],
+        "test_time": 0.006404133999240003
+    },
+    "get_aval_test.py:test_jvp_linearized42": {
+        "operations": [],
+        "test_time": 0.0076731949993700255
+    },
+    "get_aval_test.py:test_jvp_linearized43": {
+        "operations": [],
+        "test_time": 0.01303528400057985
+    },
+    "get_aval_test.py:test_jvp_linearized44": {
+        "operations": [],
+        "test_time": 0.010084890000143787
+    },
+    "get_aval_test.py:test_jvp_linearized45": {
+        "operations": [],
+        "test_time": 0.021537553999223746
+    },
+    "get_aval_test.py:test_jvp_linearized46": {
+        "operations": [],
+        "test_time": 0.01005424999857496
+    },
+    "get_aval_test.py:test_jvp_linearized47": {
+        "operations": [],
+        "test_time": 0.009789792999072233
+    },
+    "get_aval_test.py:test_jvp_linearized48": {
+        "operations": [],
+        "test_time": 0.011668989000099828
+    },
+    "get_aval_test.py:test_jvp_linearized49": {
+        "operations": [],
+        "test_time": 0.011426814999140333
+    },
+    "get_aval_test.py:test_jvp_linearized5": {
+        "operations": [],
+        "test_time": 0.008358138000403414
+    },
+    "get_aval_test.py:test_jvp_linearized50": {
+        "operations": [],
+        "test_time": 0.012788448000719654
+    },
+    "get_aval_test.py:test_jvp_linearized51": {
+        "operations": [],
+        "test_time": 0.010855758999241516
+    },
+    "get_aval_test.py:test_jvp_linearized52": {
+        "operations": [],
+        "test_time": 0.011017520999303088
+    },
+    "get_aval_test.py:test_jvp_linearized53": {
+        "operations": [],
+        "test_time": 0.012067235000358778
+    },
+    "get_aval_test.py:test_jvp_linearized54": {
+        "operations": [],
+        "test_time": 0.02654025400079263
+    },
+    "get_aval_test.py:test_jvp_linearized55": {
+        "operations": [],
+        "test_time": 0.01775858399923891
+    },
+    "get_aval_test.py:test_jvp_linearized56": {
+        "operations": [],
+        "test_time": 0.04648051999902236
+    },
+    "get_aval_test.py:test_jvp_linearized57": {
+        "operations": [],
+        "test_time": 0.01731413800007431
+    },
+    "get_aval_test.py:test_jvp_linearized58": {
+        "operations": [],
+        "test_time": 0.016430367000793922
+    },
+    "get_aval_test.py:test_jvp_linearized59": {
+        "operations": [],
+        "test_time": 0.019357533999937004
+    },
+    "get_aval_test.py:test_jvp_linearized6": {
+        "operations": [],
+        "test_time": 0.010159031999137369
+    },
+    "get_aval_test.py:test_jvp_linearized60": {
+        "operations": [],
+        "test_time": 0.019645248001324944
+    },
+    "get_aval_test.py:test_jvp_linearized61": {
+        "operations": [],
+        "test_time": 0.0224304610001127
+    },
+    "get_aval_test.py:test_jvp_linearized62": {
+        "operations": [],
+        "test_time": 0.020083606001207954
+    },
+    "get_aval_test.py:test_jvp_linearized63": {
+        "operations": [],
+        "test_time": 0.019378818000404863
+    },
+    "get_aval_test.py:test_jvp_linearized64": {
+        "operations": [],
+        "test_time": 0.020038811999256723
+    },
+    "get_aval_test.py:test_jvp_linearized65": {
+        "operations": [],
+        "test_time": 0.056355586000790936
+    },
+    "get_aval_test.py:test_jvp_linearized66": {
+        "operations": [],
+        "test_time": 0.005285479999656673
+    },
+    "get_aval_test.py:test_jvp_linearized67": {
+        "operations": [],
+        "test_time": 0.013276906000101008
+    },
+    "get_aval_test.py:test_jvp_linearized68": {
+        "operations": [],
+        "test_time": 0.005096831000628299
+    },
+    "get_aval_test.py:test_jvp_linearized69": {
+        "operations": [],
+        "test_time": 0.005233747000602307
+    },
+    "get_aval_test.py:test_jvp_linearized7": {
+        "operations": [],
+        "test_time": 0.008225690000472241
+    },
+    "get_aval_test.py:test_jvp_linearized70": {
+        "operations": [],
+        "test_time": 0.006437893000111217
+    },
+    "get_aval_test.py:test_jvp_linearized71": {
+        "operations": [],
+        "test_time": 0.006425608000427019
+    },
+    "get_aval_test.py:test_jvp_linearized72": {
+        "operations": [],
+        "test_time": 0.008157877999110497
+    },
+    "get_aval_test.py:test_jvp_linearized73": {
+        "operations": [],
+        "test_time": 0.006386199000189663
+    },
+    "get_aval_test.py:test_jvp_linearized74": {
+        "operations": [],
+        "test_time": 0.006367893000060576
+    },
+    "get_aval_test.py:test_jvp_linearized75": {
+        "operations": [],
+        "test_time": 0.007935535000797245
+    },
+    "get_aval_test.py:test_jvp_linearized76": {
+        "operations": [],
+        "test_time": 0.017067288999896846
+    },
+    "get_aval_test.py:test_jvp_linearized77": {
+        "operations": [],
+        "test_time": 0.02038748300037696
+    },
+    "get_aval_test.py:test_jvp_linearized78": {
+        "operations": [],
+        "test_time": 0.051626549000502564
+    },
+    "get_aval_test.py:test_jvp_linearized79": {
+        "operations": [],
+        "test_time": 0.021736724998845602
+    },
+    "get_aval_test.py:test_jvp_linearized8": {
+        "operations": [],
+        "test_time": 0.008607195999502437
+    },
+    "get_aval_test.py:test_jvp_linearized80": {
+        "operations": [],
+        "test_time": 0.021668783001587144
+    },
+    "get_aval_test.py:test_jvp_linearized81": {
+        "operations": [],
+        "test_time": 0.02436636600032216
+    },
+    "get_aval_test.py:test_jvp_linearized82": {
+        "operations": [],
+        "test_time": 0.024055718999079545
+    },
+    "get_aval_test.py:test_jvp_linearized83": {
+        "operations": [],
+        "test_time": 0.0270930379992933
+    },
+    "get_aval_test.py:test_jvp_linearized84": {
+        "operations": [],
+        "test_time": 0.024748867999733193
+    },
+    "get_aval_test.py:test_jvp_linearized85": {
+        "operations": [],
+        "test_time": 0.023505807999754325
+    },
+    "get_aval_test.py:test_jvp_linearized86": {
+        "operations": [],
+        "test_time": 0.024465594000503188
+    },
+    "get_aval_test.py:test_jvp_linearized87": {
+        "operations": [],
+        "test_time": 0.06450737999875855
+    },
+    "get_aval_test.py:test_jvp_linearized88": {
+        "operations": [],
+        "test_time": 0.02098825099892565
+    },
+    "get_aval_test.py:test_jvp_linearized89": {
+        "operations": [],
+        "test_time": 0.05210963200079277
+    },
+    "get_aval_test.py:test_jvp_linearized9": {
+        "operations": [],
+        "test_time": 0.009195652999551385
+    },
+    "get_aval_test.py:test_jvp_linearized90": {
+        "operations": [],
+        "test_time": 0.02074452899978496
+    },
+    "get_aval_test.py:test_jvp_linearized91": {
+        "operations": [],
+        "test_time": 0.021229232001132914
+    },
+    "get_aval_test.py:test_jvp_linearized92": {
+        "operations": [],
+        "test_time": 0.023767384000166203
+    },
+    "get_aval_test.py:test_jvp_linearized93": {
+        "operations": [],
+        "test_time": 0.024294855998959974
+    },
+    "get_aval_test.py:test_jvp_linearized94": {
+        "operations": [],
+        "test_time": 0.02659919799953059
+    },
+    "get_aval_test.py:test_jvp_linearized95": {
+        "operations": [],
+        "test_time": 0.023364771999695222
+    },
+    "get_aval_test.py:test_jvp_linearized96": {
+        "operations": [],
+        "test_time": 0.02315599900066445
+    },
+    "get_aval_test.py:test_jvp_linearized97": {
+        "operations": [],
+        "test_time": 0.024342265000086627
+    },
+    "get_aval_test.py:test_jvp_linearized98": {
+        "operations": [],
+        "test_time": 0.06350049899992882
+    },
+    "get_aval_test.py:test_jvp_linearized99": {
+        "operations": [],
+        "test_time": 0.02741937000064354
+    },
+    "get_aval_test.py:test_jvp_repeated_fwd": {
+        "operations": [],
+        "test_time": 0.010395782999694347
+    },
+    "get_aval_test.py:test_jvp_zeros": {
+        "operations": [],
+        "test_time": 0.0051762219991360325
+    },
+    "get_aval_test.py:test_product_jit": {
+        "operations": [],
+        "test_time": 0.0016229620014200918
+    },
+    "get_aval_test.py:test_raise_to_shaped_weak_type0": {
+        "operations": [
+            9.004999992612284e-05
+        ],
+        "test_time": 0.0029867850007576635
+    },
+    "get_aval_test.py:test_raise_to_shaped_weak_type1": {
+        "operations": [
+            0.00011283800085948315
+        ],
+        "test_time": 0.0022844809991511283
+    },
+    "get_aval_test.py:test_raise_to_shaped_weak_type2": {
+        "operations": [
+            5.006199899071362e-05
+        ],
+        "test_time": 0.0023365359993476886
+    },
+    "get_aval_test.py:test_reference_cycles": {
+        "operations": [],
+        "test_time": 0.15691048799999407
+    },
+    "get_aval_test.py:test_reference_cycles_jit": {
+        "operations": [],
+        "test_time": 0.16774967600031232
+    },
+    "get_aval_test.py:test_simple_jit": {
+        "operations": [],
+        "test_time": 0.0018072550010401756
+    },
+    "get_aval_test.py:test_tree_flatten": {
+        "operations": [],
+        "test_time": 0.0013391680004133377
+    },
+    "get_aval_test.py:test_tree_map": {
+        "operations": [],
+        "test_time": 0.0018554099988250528
+    },
+    "get_aval_test.py:test_tree_unflatten": {
+        "operations": [],
+        "test_time": 0.001400221999574569
+    },
+    "get_aval_test.py:test_var_compared_by_identity": {
+        "operations": [],
+        "test_time": 0.0013601209993794328
+    },
+    "get_aval_test.py:test_var_ordering": {
+        "operations": [],
+        "test_time": 0.0014152380008454202
+    },
+    "get_aval_test.py:test_var_tree_flatten": {
+        "operations": [],
+        "test_time": 0.0013824479992763372
+    },
+    "get_aval_test.py:test_vjp_0": {
+        "operations": [],
+        "test_time": 0.007629259000168531
+    },
+    "get_aval_test.py:test_vjp_1": {
+        "operations": [],
+        "test_time": 0.01874233499984257
+    },
+    "get_aval_test.py:test_vjp_10": {
+        "operations": [],
+        "test_time": 0.024636387001010007
+    },
+    "get_aval_test.py:test_vjp_100": {
+        "operations": [],
+        "test_time": 0.05818297899895697
+    },
+    "get_aval_test.py:test_vjp_101": {
+        "operations": [],
+        "test_time": 0.02890299099999538
+    },
+    "get_aval_test.py:test_vjp_102": {
+        "operations": [],
+        "test_time": 0.0286954009989131
+    },
+    "get_aval_test.py:test_vjp_103": {
+        "operations": [],
+        "test_time": 0.031393380000736215
+    },
+    "get_aval_test.py:test_vjp_104": {
+        "operations": [],
+        "test_time": 0.030547479998858762
+    },
+    "get_aval_test.py:test_vjp_105": {
+        "operations": [],
+        "test_time": 0.03290065200053505
+    },
+    "get_aval_test.py:test_vjp_106": {
+        "operations": [],
+        "test_time": 0.03243225499863911
+    },
+    "get_aval_test.py:test_vjp_107": {
+        "operations": [],
+        "test_time": 0.03201501100011228
+    },
+    "get_aval_test.py:test_vjp_108": {
+        "operations": [],
+        "test_time": 0.03184994199909852
+    },
+    "get_aval_test.py:test_vjp_109": {
+        "operations": [],
+        "test_time": 0.06805820500085247
+    },
+    "get_aval_test.py:test_vjp_11": {
+        "operations": [],
+        "test_time": 0.012349163998806034
+    },
+    "get_aval_test.py:test_vjp_12": {
+        "operations": [],
+        "test_time": 0.026016892999905394
+    },
+    "get_aval_test.py:test_vjp_13": {
+        "operations": [],
+        "test_time": 0.009419566998985829
+    },
+    "get_aval_test.py:test_vjp_14": {
+        "operations": [],
+        "test_time": 0.009661796000727918
+    },
+    "get_aval_test.py:test_vjp_15": {
+        "operations": [],
+        "test_time": 0.013060592998954235
+    },
+    "get_aval_test.py:test_vjp_16": {
+        "operations": [],
+        "test_time": 0.012615183000889374
+    },
+    "get_aval_test.py:test_vjp_17": {
+        "operations": [],
+        "test_time": 0.014229985999918426
+    },
+    "get_aval_test.py:test_vjp_18": {
+        "operations": [],
+        "test_time": 0.01248230499913916
+    },
+    "get_aval_test.py:test_vjp_19": {
+        "operations": [],
+        "test_time": 0.012139778998971451
+    },
+    "get_aval_test.py:test_vjp_2": {
+        "operations": [],
+        "test_time": 0.006920514000739786
+    },
+    "get_aval_test.py:test_vjp_20": {
+        "operations": [],
+        "test_time": 0.013393090001045493
+    },
+    "get_aval_test.py:test_vjp_21": {
+        "operations": [],
+        "test_time": 0.033668209000097704
+    },
+    "get_aval_test.py:test_vjp_22": {
+        "operations": [],
+        "test_time": 0.007109913998647244
+    },
+    "get_aval_test.py:test_vjp_23": {
+        "operations": [],
+        "test_time": 0.016192023000257905
+    },
+    "get_aval_test.py:test_vjp_24": {
+        "operations": [],
+        "test_time": 0.00690286200006085
+    },
+    "get_aval_test.py:test_vjp_25": {
+        "operations": [],
+        "test_time": 0.006969926000238047
+    },
+    "get_aval_test.py:test_vjp_26": {
+        "operations": [],
+        "test_time": 0.009286006999900565
+    },
+    "get_aval_test.py:test_vjp_27": {
+        "operations": [],
+        "test_time": 0.009192382000037469
+    },
+    "get_aval_test.py:test_vjp_28": {
+        "operations": [],
+        "test_time": 0.012554029999591876
+    },
+    "get_aval_test.py:test_vjp_29": {
+        "operations": [],
+        "test_time": 0.009947783000825439
+    },
+    "get_aval_test.py:test_vjp_3": {
+        "operations": [],
+        "test_time": 0.0073180899998988025
+    },
+    "get_aval_test.py:test_vjp_30": {
+        "operations": [],
+        "test_time": 0.009590158000719384
+    },
+    "get_aval_test.py:test_vjp_31": {
+        "operations": [],
+        "test_time": 0.011638755000603851
+    },
+    "get_aval_test.py:test_vjp_32": {
+        "operations": [],
+        "test_time": 0.023308129999350058
+    },
+    "get_aval_test.py:test_vjp_33": {
+        "operations": [],
+        "test_time": 0.006437871999878553
+    },
+    "get_aval_test.py:test_vjp_34": {
+        "operations": [],
+        "test_time": 0.011293133000435773
+    },
+    "get_aval_test.py:test_vjp_35": {
+        "operations": [],
+        "test_time": 0.006231180999748176
+    },
+    "get_aval_test.py:test_vjp_36": {
+        "operations": [],
+        "test_time": 0.006046749000233831
+    },
+    "get_aval_test.py:test_vjp_37": {
+        "operations": [],
+        "test_time": 0.007313594000152079
+    },
+    "get_aval_test.py:test_vjp_38": {
+        "operations": [],
+        "test_time": 0.007958280000821105
+    },
+    "get_aval_test.py:test_vjp_39": {
+        "operations": [],
+        "test_time": 0.009099758000957081
+    },
+    "get_aval_test.py:test_vjp_4": {
+        "operations": [],
+        "test_time": 0.009384475999468123
+    },
+    "get_aval_test.py:test_vjp_40": {
+        "operations": [],
+        "test_time": 0.007668598998861853
+    },
+    "get_aval_test.py:test_vjp_41": {
+        "operations": [],
+        "test_time": 0.0078000510002311785
+    },
+    "get_aval_test.py:test_vjp_42": {
+        "operations": [],
+        "test_time": 0.008735587000046507
+    },
+    "get_aval_test.py:test_vjp_43": {
+        "operations": [],
+        "test_time": 0.014009792001161259
+    },
+    "get_aval_test.py:test_vjp_44": {
+        "operations": [],
+        "test_time": 0.010890573999859043
+    },
+    "get_aval_test.py:test_vjp_45": {
+        "operations": [],
+        "test_time": 0.021818262999659055
+    },
+    "get_aval_test.py:test_vjp_46": {
+        "operations": [],
+        "test_time": 0.010486799999853247
+    },
+    "get_aval_test.py:test_vjp_47": {
+        "operations": [],
+        "test_time": 0.010172178999710013
+    },
+    "get_aval_test.py:test_vjp_48": {
+        "operations": [],
+        "test_time": 0.011877488001118763
+    },
+    "get_aval_test.py:test_vjp_49": {
+        "operations": [],
+        "test_time": 0.01691386600032274
+    },
+    "get_aval_test.py:test_vjp_5": {
+        "operations": [],
+        "test_time": 0.0087116459999379
+    },
+    "get_aval_test.py:test_vjp_50": {
+        "operations": [],
+        "test_time": 0.013628014999994775
+    },
+    "get_aval_test.py:test_vjp_51": {
+        "operations": [],
+        "test_time": 0.01247579700066126
+    },
+    "get_aval_test.py:test_vjp_52": {
+        "operations": [],
+        "test_time": 0.011669568999423063
+    },
+    "get_aval_test.py:test_vjp_53": {
+        "operations": [],
+        "test_time": 0.013537879000068642
+    },
+    "get_aval_test.py:test_vjp_54": {
+        "operations": [],
+        "test_time": 0.02684104599939019
+    },
+    "get_aval_test.py:test_vjp_55": {
+        "operations": [],
+        "test_time": 0.018018490000031306
+    },
+    "get_aval_test.py:test_vjp_56": {
+        "operations": [],
+        "test_time": 0.04803865199937718
+    },
+    "get_aval_test.py:test_vjp_57": {
+        "operations": [],
+        "test_time": 0.01852579899968987
+    },
+    "get_aval_test.py:test_vjp_58": {
+        "operations": [],
+        "test_time": 0.018014558001596015
+    },
+    "get_aval_test.py:test_vjp_59": {
+        "operations": [],
+        "test_time": 0.020500971000728896
+    },
+    "get_aval_test.py:test_vjp_6": {
+        "operations": [],
+        "test_time": 0.011123070000394364
+    },
+    "get_aval_test.py:test_vjp_60": {
+        "operations": [],
+        "test_time": 0.019421685001361766
+    },
+    "get_aval_test.py:test_vjp_61": {
+        "operations": [],
+        "test_time": 0.022335255998768844
+    },
+    "get_aval_test.py:test_vjp_62": {
+        "operations": [],
+        "test_time": 0.019902053998521296
+    },
+    "get_aval_test.py:test_vjp_63": {
+        "operations": [],
+        "test_time": 0.02020680300120148
+    },
+    "get_aval_test.py:test_vjp_64": {
+        "operations": [],
+        "test_time": 0.02330932800032315
+    },
+    "get_aval_test.py:test_vjp_65": {
+        "operations": [],
+        "test_time": 0.059456349999891245
+    },
+    "get_aval_test.py:test_vjp_66": {
+        "operations": [],
+        "test_time": 0.006151626999781001
+    },
+    "get_aval_test.py:test_vjp_67": {
+        "operations": [],
+        "test_time": 0.014977714001361164
+    },
+    "get_aval_test.py:test_vjp_68": {
+        "operations": [],
+        "test_time": 0.0064516869988437975
+    },
+    "get_aval_test.py:test_vjp_69": {
+        "operations": [],
+        "test_time": 0.006132043999969028
+    },
+    "get_aval_test.py:test_vjp_7": {
+        "operations": [],
+        "test_time": 0.009756518998983665
+    },
+    "get_aval_test.py:test_vjp_70": {
+        "operations": [],
+        "test_time": 0.007841393999115098
+    },
+    "get_aval_test.py:test_vjp_71": {
+        "operations": [],
+        "test_time": 0.007874671000536182
+    },
+    "get_aval_test.py:test_vjp_72": {
+        "operations": [],
+        "test_time": 0.00918234399978246
+    },
+    "get_aval_test.py:test_vjp_73": {
+        "operations": [],
+        "test_time": 0.007988194000063231
+    },
+    "get_aval_test.py:test_vjp_74": {
+        "operations": [],
+        "test_time": 0.00788925100096094
+    },
+    "get_aval_test.py:test_vjp_75": {
+        "operations": [],
+        "test_time": 0.008779993000644026
+    },
+    "get_aval_test.py:test_vjp_76": {
+        "operations": [],
+        "test_time": 0.018713782999839168
+    },
+    "get_aval_test.py:test_vjp_77": {
+        "operations": [],
+        "test_time": 0.050231580000399845
+    },
+    "get_aval_test.py:test_vjp_78": {
+        "operations": [],
+        "test_time": 0.051913577000959776
+    },
+    "get_aval_test.py:test_vjp_79": {
+        "operations": [],
+        "test_time": 0.021156236000024364
+    },
+    "get_aval_test.py:test_vjp_8": {
+        "operations": [],
+        "test_time": 0.008895080000002054
+    },
+    "get_aval_test.py:test_vjp_80": {
+        "operations": [],
+        "test_time": 0.02137679699990258
+    },
+    "get_aval_test.py:test_vjp_81": {
+        "operations": [],
+        "test_time": 0.02451119400029711
+    },
+    "get_aval_test.py:test_vjp_82": {
+        "operations": [],
+        "test_time": 0.02414031700027408
+    },
+    "get_aval_test.py:test_vjp_83": {
+        "operations": [],
+        "test_time": 0.027714887000911403
+    },
+    "get_aval_test.py:test_vjp_84": {
+        "operations": [],
+        "test_time": 0.024886545999834198
+    },
+    "get_aval_test.py:test_vjp_85": {
+        "operations": [],
+        "test_time": 0.024386925000726478
+    },
+    "get_aval_test.py:test_vjp_86": {
+        "operations": [],
+        "test_time": 0.025324430000182474
+    },
+    "get_aval_test.py:test_vjp_87": {
+        "operations": [],
+        "test_time": 0.06395815999894694
+    },
+    "get_aval_test.py:test_vjp_88": {
+        "operations": [],
+        "test_time": 0.021835407000253326
+    },
+    "get_aval_test.py:test_vjp_89": {
+        "operations": [],
+        "test_time": 0.05175365100149065
+    },
+    "get_aval_test.py:test_vjp_9": {
+        "operations": [],
+        "test_time": 0.010137046998352162
+    },
+    "get_aval_test.py:test_vjp_90": {
+        "operations": [],
+        "test_time": 0.0210872420011583
+    },
+    "get_aval_test.py:test_vjp_91": {
+        "operations": [],
+        "test_time": 0.022128525999505655
+    },
+    "get_aval_test.py:test_vjp_92": {
+        "operations": [],
+        "test_time": 0.0345733129997825
+    },
+    "get_aval_test.py:test_vjp_93": {
+        "operations": [],
+        "test_time": 0.04385843999989447
+    },
+    "get_aval_test.py:test_vjp_94": {
+        "operations": [],
+        "test_time": 0.057075822000115295
+    },
+    "get_aval_test.py:test_vjp_95": {
+        "operations": [],
+        "test_time": 0.046407988000282785
+    },
+    "get_aval_test.py:test_vjp_96": {
+        "operations": [],
+        "test_time": 0.06239597599960689
+    },
+    "get_aval_test.py:test_vjp_97": {
+        "operations": [],
+        "test_time": 0.04853843899945787
+    },
+    "get_aval_test.py:test_vjp_98": {
+        "operations": [],
+        "test_time": 0.12512502699973993
+    },
+    "get_aval_test.py:test_vjp_99": {
+        "operations": [],
+        "test_time": 0.052534001999447355
+    },
+    "i0_test.py:testOp0": {
+        "operations": [
+            0.1859475860001112
+        ],
+        "test_time": 0.193059692001043
+    },
+    "i0_test.py:testOp1": {
+        "operations": [
+            0.23289328099963313
+        ],
+        "test_time": 0.23998738099908223
+    },
+    "i0_test.py:testOp2": {
+        "operations": [
+            0.1600124919987138
+        ],
+        "test_time": 0.16681291900022188
+    },
+    "i0_test.py:testOp3": {
+        "operations": [
+            0.16278213599980518
+        ],
+        "test_time": 0.16812033899987
+    },
+    "i0_test.py:testOp4": {
+        "operations": [
+            0.12719417099833663
+        ],
+        "test_time": 0.13225994400090713
+    },
+    "i0_test.py:testOp5": {
+        "operations": [
+            0.12606414400033827
+        ],
+        "test_time": 0.12993131099938182
+    },
+    "i0_test.py:testOp6": {
+        "operations": [
+            0.14148371500050416
+        ],
+        "test_time": 0.14602279499922588
+    },
+    "i0_test.py:testOp7": {
+        "operations": [
+            0.14886914899943804
+        ],
+        "test_time": 0.15378331799911393
+    },
+    "i0_test.py:testOp8": {
+        "operations": [
+            0.14016917400113016
+        ],
+        "test_time": 0.145242694999979
+    },
+    "i0_test.py:testOp9": {
+        "operations": [
+            0.09996174600019003
+        ],
+        "test_time": 0.10468760500043572
+    },
+    "infeed_test.py:testInfeed": {
+        "operations": [
+            0.016059681000115233,
+            0.015739930000563618
+        ],
+        "test_time": 0.09709390500029258
+    },
+    "infeed_test.py:testInfeedPytree": {
+        "operations": [],
+        "test_time": 0.030251821999627282
+    },
+    "infeed_test.py:testInfeedThenOutfeed": {
+        "operations": [],
+        "test_time": 0.05288166799982719
+    },
+    "infeed_test.py:testInfeedThenOutfeedInALoop": {
+        "operations": [
+            0.0003112639988103183,
+            0.0007042170000204351,
+            0.0005575209997914499,
+            0.0004877440005657263,
+            0.00047383099990838673,
+            0.0005158480016689282,
+            0.0005314259997248882,
+            0.0005014489997847704,
+            0.00047158400047919713,
+            0.0007438099983119173
+        ],
+        "test_time": 0.03062179199878301
+    },
+    "integer_pow_test.py:testUnaryOperationsNonUniqueIndices_integer_pow_BCOO": {
+        "operations": [
+            0.00019551999992017954
+        ],
+        "test_time": 0.8095926789999339
+    },
+    "integer_pow_test.py:testUnaryOperationsNonUniqueIndices_integer_pow_BCSR": {
+        "operations": [
+            0.0001599499998974352
+        ],
+        "test_time": 0.27550861700001406
+    },
+    "isscalar_test.py:test_dunder_jax_array": {
+        "operations": [
+            1.1469999662949704e-05,
+            5.1510014600353315e-06
+        ],
+        "test_time": 0.09324016000027768
+    },
+    "log_test.py:testIndexApply0": {
+        "operations": [
+            0.0002624099997774465
+        ],
+        "test_time": 0.03206280800077366
+    },
+    "lu_test.py:testLu0": {
+        "operations": [
+            0.3607896180001262
+        ],
+        "test_time": 0.3641292020001856
+    },
+    "lu_test.py:testLu1": {
+        "operations": [
+            0.21672782300083782
+        ],
+        "test_time": 0.2204289230012364
+    },
+    "lu_test.py:testLu2": {
+        "operations": [
+            0.18040469200059306
+        ],
+        "test_time": 0.18367423299969232
+    },
+    "lu_test.py:testLu3": {
+        "operations": [
+            1.2823472860000038
+        ],
+        "test_time": 1.286209328998666
+    },
+    "lu_test.py:testLu4": {
+        "operations": [
+            0.40890783600116265
+        ],
+        "test_time": 0.4132236229997943
+    },
+    "lu_test.py:testLu5": {
+        "operations": [
+            0.10588492099850555
+        ],
+        "test_time": 0.1099104549994081
+    },
+    "lu_test.py:testLu6": {
+        "operations": [
+            1.2212096329985798
+        ],
+        "test_time": 1.2238259349996952
+    },
+    "lu_test.py:testLu7": {
+        "operations": [
+            0.2431178339993494
+        ],
+        "test_time": 0.2464059020003333
+    },
+    "lu_test.py:testLuBatching0": {
+        "operations": [
+            0.00010715400094341021,
+            5.0569000450195745e-05,
+            3.819499943347182e-05,
+            3.8083000617916696e-05,
+            3.415999890421517e-05,
+            5.020900061936118e-05,
+            3.733199991984293e-05,
+            3.4688000596361235e-05,
+            4.4722000893671066e-05,
+            3.5459999708109535e-05
+        ],
+        "test_time": 0.6961786299998494
+    },
+    "lu_test.py:testLuBatching1": {
+        "operations": [
+            0.00013174599916965235,
+            5.927799975324888e-05,
+            4.043099943373818e-05,
+            3.666299926408101e-05,
+            3.891400046995841e-05,
+            3.6284000088926405e-05,
+            3.5711000236915424e-05,
+            3.5817000025417656e-05,
+            3.531000038492493e-05,
+            3.5119999665766954e-05
+        ],
+        "test_time": 0.507372210999165
+    },
+    "lu_test.py:testLuCPUBackendOnGPU": {
+        "operations": [],
+        "test_time": 0.0018411790006211959
+    },
+    "lu_test.py:testLuGrad0": {
+        "operations": [],
+        "test_time": 1.3474343580001005
+    },
+    "lu_test.py:testLuGrad1": {
+        "operations": [],
+        "test_time": 1.4440182250000362
+    },
+    "lu_test.py:testLuGrad2": {
+        "operations": [],
+        "test_time": 0.7939178929991613
+    },
+    "lu_test.py:testLuGrad3": {
+        "operations": [],
+        "test_time": 0.7937324239992449
+    },
+    "lu_test.py:testLuGrad4": {
+        "operations": [],
+        "test_time": 1.2348852750001242
+    },
+    "lu_test.py:testLuGrad5": {
+        "operations": [],
+        "test_time": 1.1823295700014569
+    },
+    "lu_test.py:testLuGrad6": {
+        "operations": [],
+        "test_time": 2.1688284360006946
+    },
+    "lu_test.py:testLuGrad7": {
+        "operations": [],
+        "test_time": 1.6339520500005165
+    },
+    "lu_test.py:testLuGrad8": {
+        "operations": [],
+        "test_time": 1.0328645019999385
+    },
+    "lu_test.py:testLuGrad9": {
+        "operations": [],
+        "test_time": 1.2454480070009595
+    },
+    "lu_test.py:testLuOfSingularMatrix": {
+        "operations": [
+            0.24155935600174416
+        ],
+        "test_time": 0.24487467099970672
+    },
+    "make_jax_pr_test.py:test_make_jaxpr": {
+        "operations": [
+            0.004351772999143577,
+            0.0026694780008256203
+        ],
+        "test_time": 0.040568696000264026
+    },
+    "max_test.py:testReducerBadInitial0": {
+        "operations": [],
+        "test_time": 0.05339362000086112
+    },
+    "max_test.py:testReducerInitial0": {
+        "operations": [
+            0.046786547000010614
+        ],
+        "test_time": 0.05031806599981792
+    },
+    "max_test.py:testReducerInitial1": {
+        "operations": [
+            0.028610474999368307
+        ],
+        "test_time": 0.032150597999134334
+    },
+    "max_test.py:testReducerInitial2": {
+        "operations": [
+            0.01674675499998557
+        ],
+        "test_time": 0.02025014999890118
+    },
+    "max_test.py:testReducerInitial3": {
+        "operations": [
+            0.038488091000544955
+        ],
+        "test_time": 0.04193097399911494
+    },
+    "max_test.py:testReducerInitial4": {
+        "operations": [
+            0.02602271099931386
+        ],
+        "test_time": 0.029142293000404607
+    },
+    "max_test.py:testReducerInitial5": {
+        "operations": [
+            0.04214459499962686
+        ],
+        "test_time": 0.04623538899977575
+    },
+    "max_test.py:testReducerInitial6": {
+        "operations": [
+            0.03186720200028503
+        ],
+        "test_time": 0.03545371600012004
+    },
+    "max_test.py:testReducerInitial7": {
+        "operations": [
+            0.044623671999943326
+        ],
+        "test_time": 0.04813603100046748
+    },
+    "max_test.py:testReducerInitial8": {
+        "operations": [
+            0.03562304799925187
+        ],
+        "test_time": 0.039280946999497246
+    },
+    "max_test.py:testReducerInitial9": {
+        "operations": [
+            0.028581950000443612
+        ],
+        "test_time": 0.032113359000504715
+    },
+    "mean_test.py:testReducer0": {
+        "operations": [
+            0.028704280999590992
+        ],
+        "test_time": 0.03247231899877079
+    },
+    "mean_test.py:testReducer1": {
+        "operations": [
+            0.039904799001305946
+        ],
+        "test_time": 0.04339247800089652
+    },
+    "mean_test.py:testReducer2": {
+        "operations": [
+            0.06252283899993927
+        ],
+        "test_time": 0.06602107300022908
+    },
+    "mean_test.py:testReducer3": {
+        "operations": [
+            0.05688645599911979
+        ],
+        "test_time": 0.06048822299999301
+    },
+    "mean_test.py:testReducer4": {
+        "operations": [
+            0.05014972599929024
+        ],
+        "test_time": 0.05386906499916222
+    },
+    "mean_test.py:testReducer5": {
+        "operations": [
+            0.07220091099952697
+        ],
+        "test_time": 0.07570645199848514
+    },
+    "mean_test.py:testReducer6": {
+        "operations": [
+            0.012535994001154904
+        ],
+        "test_time": 0.015922849999697064
+    },
+    "mean_test.py:testReducer7": {
+        "operations": [
+            0.06247025599986955
+        ],
+        "test_time": 0.06639647900010459
+    },
+    "mean_test.py:testReducer8": {
+        "operations": [
+            0.02904845300145098
+        ],
+        "test_time": 0.032889543001147103
+    },
+    "mean_test.py:testReducer9": {
+        "operations": [
+            0.029725620999670355
+        ],
+        "test_time": 0.03295033600079478
+    },
+    "named_call_test.py:test_tap_named_call": {
+        "operations": [
+            7.239001206471585e-06
+        ],
+        "test_time": 0.003757845999643905
+    },
+    "ndtr_test.py:testScipySpecialFun0": {
+        "operations": [
+            0.1307353880001756,
+            0.059562741000263486,
+            0.0029593259987450438,
+            0.002332345999093377,
+            0.0023361090006801533,
+            0.009268051999242743,
+            0.0026064479989145184,
+            0.002498388999811141,
+            0.0023644769989914494
+        ],
+        "test_time": 0.24055058999874745
+    },
+    "ndtr_test.py:testScipySpecialFun1": {
+        "operations": [
+            0.16218769700026314,
+            0.09288421200108132,
+            0.0032600189988443162,
+            0.002634455000588787,
+            0.0023640210001758533,
+            0.009332825000456069,
+            0.002517535000151838,
+            0.00266782700055046,
+            0.002392135998888989
+        ],
+        "test_time": 0.32329806899906544
+    },
+    "ndtr_test.py:testScipySpecialFun2": {
+        "operations": [
+            0.17825518199970247,
+            0.10599323699898378,
+            0.00361770099880232,
+            0.0026177630006714026,
+            0.0026239730013912776,
+            0.009890233999612974,
+            0.002514019000955159,
+            0.0025787810009205714,
+            0.002450873998895986
+        ],
+        "test_time": 0.35972515899993596
+    },
+    "ndtr_test.py:testScipySpecialFun3": {
+        "operations": [
+            0.1812310079985764,
+            0.10440554399974644,
+            0.003422918998694513,
+            0.002550580000388436,
+            0.00258871400001226,
+            0.009197931000016979,
+            0.0024596510011178907,
+            0.0024198920000344515,
+            0.0025754889993550023
+        ],
+        "test_time": 0.35729315000025963
+    },
+    "ndtr_test.py:testScipySpecialFun4": {
+        "operations": [
+            0.16697678499986068,
+            0.09639737300130946,
+            0.0033204030005435925,
+            0.002574830999947153,
+            0.0023685500000283355,
+            0.00961462800114532,
+            0.002713625999604119,
+            0.0024540539998270106,
+            0.002451563999784412
+        ],
+        "test_time": 0.3323584549998486
+    },
+    "ndtr_test.py:testScipySpecialFun5": {
+        "operations": [
+            0.1564043340003991,
+            0.09843054399971152,
+            0.0036265029993955977,
+            0.002532716998757678,
+            0.0025143129987554858,
+            0.009444663999602199,
+            0.002526917998693534,
+            0.0026945219997287495,
+            0.002601180000056047
+        ],
+        "test_time": 0.3248898050005664
+    },
+    "one_hot_test.py:testOneHot": {
+        "operations": [
+            0.05037289499887265,
+            0.0009205730002577184
+        ],
+        "test_time": 0.05608457500056829
+    },
+    "ones_test.py:testZerosOnes0": {
+        "operations": [
+            0.014657783000075142
+        ],
+        "test_time": 0.01815003100091417
+    },
+    "ones_test.py:testZerosOnes1": {
+        "operations": [
+            0.014397949000340304
+        ],
+        "test_time": 0.018124551001164946
+    },
+    "ones_test.py:testZerosOnes2": {
+        "operations": [
+            0.014769429000807577
+        ],
+        "test_time": 0.018751731999145704
+    },
+    "ones_test.py:testZerosOnes3": {
+        "operations": [
+            0.013613787999929627
+        ],
+        "test_time": 0.01707287899989751
+    },
+    "ones_test.py:testZerosOnes4": {
+        "operations": [
+            0.014241460999983246
+        ],
+        "test_time": 0.017630241000006208
+    },
+    "ones_test.py:testZerosOnes5": {
+        "operations": [
+            0.0004197190010017948
+        ],
+        "test_time": 0.0020671439997386187
+    },
+    "ones_test.py:testZerosOnes6": {
+        "operations": [
+            0.016877423999176244
+        ],
+        "test_time": 0.020428140998774325
+    },
+    "ones_test.py:testZerosOnes7": {
+        "operations": [
+            0.00048406299902126193
+        ],
+        "test_time": 0.0022474060006061336
+    },
+    "ones_test.py:testZerosOnes8": {
+        "operations": [
+            0.01389594500142266
+        ],
+        "test_time": 0.017057286999261123
+    },
+    "ones_test.py:testZerosOnes9": {
+        "operations": [
+            0.0135447770007886
+        ],
+        "test_time": 0.016644957000607974
+    },
+    "partial_test.py:testPartialDoesNotMergeWithOtherPartials": {
+        "operations": [
+            1.3949000276625156e-05
+        ],
+        "test_time": 0.0013745329997618683
+    },
+    "partial_test.py:testPartialFuncAttributeHasStableHash": {
+        "operations": [
+            1.3233000572654419e-05,
+            3.831999492831528e-06
+        ],
+        "test_time": 0.0013974090015835827
+    },
+    "partial_val_test.py:test_dropvar_avals": {
+        "operations": [
+            1.3011000191909261e-05
+        ],
+        "test_time": 0.0034593190011946717
+    },
+    "pmax_test.py:testCommAssocCollective_pmax_vmap_names=i_collective_names=i": {
+        "operations": [
+            0.017255516000659554
+        ],
+        "test_time": 0.12139063699942199
+    },
+    "pmax_test.py:testCommAssocCollective_pmax_vmap_names=ij_collective_names=i": {
+        "operations": [
+            0.034531385001173476
+        ],
+        "test_time": 0.08858502399925783
+    },
+    "pmax_test.py:testCommAssocCollective_pmax_vmap_names=ij_collective_names=ij": {
+        "operations": [
+            0.016207587999815587
+        ],
+        "test_time": 0.09559486800026207
+    },
+    "pmax_test.py:testCommAssocCollective_pmax_vmap_names=ij_collective_names=j": {
+        "operations": [
+            0.01700858500043978
+        ],
+        "test_time": 0.09926408100000117
+    },
+    "pmax_test.py:testCommAssocCollective_pmax_vmap_names=ij_collective_names=ji": {
+        "operations": [
+            0.016188998999496107
+        ],
+        "test_time": 0.02271440600088681
+    },
+    "pmax_test.py:testCommAssocCollective_pmax_vmap_names=ijk_collective_names=i": {
+        "operations": [
+            0.034259076999660465
+        ],
+        "test_time": 0.10135198799980571
+    },
+    "pmax_test.py:testCommAssocCollective_pmax_vmap_names=ijk_collective_names=ij": {
+        "operations": [
+            0.018693779999011895
+        ],
+        "test_time": 0.06793270799971651
+    },
+    "pmax_test.py:testCommAssocCollective_pmax_vmap_names=ijk_collective_names=ijk": {
+        "operations": [
+            0.018208113999207853
+        ],
+        "test_time": 0.08354041999882611
+    },
+    "pmax_test.py:testCommAssocCollective_pmax_vmap_names=ijk_collective_names=ik": {
+        "operations": [
+            0.0188014800005476
+        ],
+        "test_time": 0.11281312899882323
+    },
+    "pmax_test.py:testCommAssocCollective_pmax_vmap_names=ijk_collective_names=ikj": {
+        "operations": [
+            0.019303760998809594
+        ],
+        "test_time": 0.025322109999251552
+    },
+    "pmax_test.py:testCommAssocCollective_pmax_vmap_names=ijk_collective_names=j": {
+        "operations": [
+            0.020519449999483186
+        ],
+        "test_time": 0.0628477149984974
+    },
+    "pmax_test.py:testCommAssocCollective_pmax_vmap_names=ijk_collective_names=ji": {
+        "operations": [
+            0.02145942599963746
+        ],
+        "test_time": 0.028270908998820232
+    },
+    "pmax_test.py:testCommAssocCollective_pmax_vmap_names=ijk_collective_names=jik": {
+        "operations": [
+            0.020939748001183034
+        ],
+        "test_time": 0.026665507999496185
+    },
+    "pmax_test.py:testCommAssocCollective_pmax_vmap_names=ijk_collective_names=jk": {
+        "operations": [
+            0.019787776998782647
+        ],
+        "test_time": 0.11573228900124377
+    },
+    "pmax_test.py:testCommAssocCollective_pmax_vmap_names=ijk_collective_names=jki": {
+        "operations": [
+            0.018412300001728
+        ],
+        "test_time": 0.023978381999768317
+    },
+    "pmax_test.py:testCommAssocCollective_pmax_vmap_names=ijk_collective_names=k": {
+        "operations": [
+            0.01797356999850308
+        ],
+        "test_time": 0.09897846000058053
+    },
+    "pmax_test.py:testCommAssocCollective_pmax_vmap_names=ijk_collective_names=ki": {
+        "operations": [
+            0.018814344999555033
+        ],
+        "test_time": 0.02571700100088492
+    },
+    "pmax_test.py:testCommAssocCollective_pmax_vmap_names=ijk_collective_names=kij": {
+        "operations": [
+            0.0183036060006998
+        ],
+        "test_time": 0.023855801000536303
+    },
+    "pmax_test.py:testCommAssocCollective_pmax_vmap_names=ijk_collective_names=kj": {
+        "operations": [
+            0.01791039799900318
+        ],
+        "test_time": 0.024526502998924116
+    },
+    "pmax_test.py:testCommAssocCollective_pmax_vmap_names=ijk_collective_names=kji": {
+        "operations": [
+            0.01824041899999429
+        ],
+        "test_time": 0.02370671999960905
+    },
+    "power_test.py:testOp0": {
+        "operations": [
+            0.0003701879995787749
+        ],
+        "test_time": 0.0027838229998451425
+    },
+    "power_test.py:testOp1": {
+        "operations": [
+            0.0003010620002896758
+        ],
+        "test_time": 0.0027277629997115582
+    },
+    "power_test.py:testOp10": {
+        "operations": [
+            0.054621572999167256
+        ],
+        "test_time": 0.060357944001225405
+    },
+    "power_test.py:testOp11": {
+        "operations": [
+            0.022800280999945244
+        ],
+        "test_time": 0.027471566998428898
+    },
+    "power_test.py:testOp12": {
+        "operations": [
+            0.1208874410003773
+        ],
+        "test_time": 0.1262330160006968
+    },
+    "power_test.py:testOp13": {
+        "operations": [
+            0.0347434079994855
+        ],
+        "test_time": 0.03947854400030337
+    },
+    "power_test.py:testOp14": {
+        "operations": [
+            0.011538668000866892
+        ],
+        "test_time": 0.01712694200068654
+    },
+    "power_test.py:testOp15": {
+        "operations": [
+            0.04421654399993713
+        ],
+        "test_time": 0.04906099199979508
+    },
+    "power_test.py:testOp16": {
+        "operations": [
+            0.03988382199895568
+        ],
+        "test_time": 0.04540165700018406
+    },
+    "power_test.py:testOp17": {
+        "operations": [
+            0.14779987099973368
+        ],
+        "test_time": 0.15248342599988973
+    },
+    "power_test.py:testOp18": {
+        "operations": [
+            0.028581763999682153
+        ],
+        "test_time": 0.03181578399926366
+    },
+    "power_test.py:testOp19": {
+        "operations": [
+            0.03320466200057126
+        ],
+        "test_time": 0.03886743399925763
+    },
+    "power_test.py:testOp2": {
+        "operations": [
+            0.0005235759999777656
+        ],
+        "test_time": 0.0032415980003861478
+    },
+    "power_test.py:testOp3": {
+        "operations": [
+            0.0003882529999827966
+        ],
+        "test_time": 0.0028647420003835578
+    },
+    "power_test.py:testOp4": {
+        "operations": [
+            0.0004588070005411282
+        ],
+        "test_time": 0.002834128999893437
+    },
+    "power_test.py:testOp5": {
+        "operations": [
+            0.0005928299997322029
+        ],
+        "test_time": 0.0031575699995300965
+    },
+    "power_test.py:testOp6": {
+        "operations": [
+            0.00047030599853314925
+        ],
+        "test_time": 0.0030642719993920764
+    },
+    "power_test.py:testOp7": {
+        "operations": [
+            0.0005788019989267923
+        ],
+        "test_time": 0.0031371820005006157
+    },
+    "power_test.py:testOp8": {
+        "operations": [
+            0.0003524980002111988
+        ],
+        "test_time": 0.002692887999728555
+    },
+    "power_test.py:testOp9": {
+        "operations": [
+            0.00043260799975541886
+        ],
+        "test_time": 0.0028968560000066645
+    },
+    "prod_test.py:testReducer0": {
+        "operations": [
+            0.0326732310004445
+        ],
+        "test_time": 0.03571130399905087
+    },
+    "prod_test.py:testReducer1": {
+        "operations": [
+            0.05922074699992663
+        ],
+        "test_time": 0.0627728549989115
+    },
+    "prod_test.py:testReducer2": {
+        "operations": [
+            0.0660465059991111
+        ],
+        "test_time": 0.06948525799998606
+    },
+    "prod_test.py:testReducer3": {
+        "operations": [
+            0.03583505799906561
+        ],
+        "test_time": 0.039176278000013554
+    },
+    "prod_test.py:testReducer4": {
+        "operations": [
+            0.02766088899988972
+        ],
+        "test_time": 0.03109250899979088
+    },
+    "prod_test.py:testReducer5": {
+        "operations": [
+            0.02917635700032406
+        ],
+        "test_time": 0.032510097000340465
+    },
+    "prod_test.py:testReducer6": {
+        "operations": [
+            0.030818365999948583
+        ],
+        "test_time": 0.03441875600037747
+    },
+    "prod_test.py:testReducer7": {
+        "operations": [
+            0.02848722000089765
+        ],
+        "test_time": 0.03201928399903409
+    },
+    "prod_test.py:testReducer8": {
+        "operations": [
+            0.0350363039997319
+        ],
+        "test_time": 0.03828659200007678
+    },
+    "prod_test.py:testReducer9": {
+        "operations": [
+            0.03751983999973163
+        ],
+        "test_time": 0.04075468700102647
+    },
+    "reshape_test.py:testIndexSequenceDeprecation0": {
+        "operations": [
+            0.011463859998912085
+        ],
+        "test_time": 0.07227435499953572
+    },
+    "reshape_test.py:testIndexSequenceDeprecation1": {
+        "operations": [
+            0.0001685820006969152
+        ],
+        "test_time": 0.06688424599997234
+    },
+    "reshape_test.py:testIndexSequenceDeprecation2": {
+        "operations": [
+            0.00018403200010652654
+        ],
+        "test_time": 0.04467642400049954
+    },
+    "reshape_test.py:testIndexSequenceDeprecation3": {
+        "operations": [
+            0.00021160799951758236
+        ],
+        "test_time": 0.006420641000659089
+    },
+    "reshape_test.py:testIndexSequenceDeprecation4": {
+        "operations": [
+            0.00013496300016413443
+        ],
+        "test_time": 0.1635601059988403
+    },
+    "reshape_test.py:testIndexSequenceDeprecation5": {
+        "operations": [
+            0.00018604599972604774
+        ],
+        "test_time": 0.009601543999451678
+    },
+    "reshape_test.py:testIndexSequenceDeprecation6": {
+        "operations": [
+            0.00014704299974255264
+        ],
+        "test_time": 0.004485165000005509
+    },
+    "size_test.py:test_dunder_jax_array": {
+        "operations": [
+            1.0443000064697117e-05,
+            1.1013999028364196e-05
+        ],
+        "test_time": 0.010181058001762722
+    },
+    "slice_in_dim_test.py:testPartition0": {
+        "operations": [
+            0.01873997400070948,
+            0.00025291000019933563,
+            0.014266448999478598,
+            0.0002509619989723433
+        ],
+        "test_time": 0.23530881800070347
+    },
+    "slice_in_dim_test.py:testPartition1": {
+        "operations": [
+            0.012159186999269878,
+            0.00019592500029830262,
+            0.015584120999847073,
+            0.00020127700008742977
+        ],
+        "test_time": 0.1997166199998901
+    },
+    "slice_in_dim_test.py:testPartition2": {
+        "operations": [
+            0.015563797000140767,
+            0.00021228500008874107,
+            0.0158792860001995,
+            0.0002091450005536899
+        ],
+        "test_time": 0.20659755199994834
+    },
+    "slice_in_dim_test.py:testPartition3": {
+        "operations": [
+            0.01332346100025461,
+            0.00018775900025502779,
+            0.011758276999898953,
+            0.0001897590009320993
+        ],
+        "test_time": 0.12599960700026713
+    },
+    "slice_in_dim_test.py:testPartition4": {
+        "operations": [
+            0.011536956000782084,
+            0.00023095199867384508,
+            0.016555829999560956,
+            0.00019704800070030615
+        ],
+        "test_time": 0.152916904000449
+    },
+    "slice_in_dim_test.py:testPartition5": {
+        "operations": [
+            0.013137365000147838,
+            0.00019545400027709547,
+            0.00010729799942055251,
+            0.0001063939998857677
+        ],
+        "test_time": 0.12790456100083247
+    },
+    "slice_in_dim_test.py:testPartition6": {
+        "operations": [
+            0.012724770000204444,
+            0.00021742299941251986,
+            0.013114821000272059,
+            0.00023493800108553842
+        ],
+        "test_time": 0.15781563699965773
+    },
+    "slice_in_dim_test.py:testPartition7": {
+        "operations": [
+            0.01404548599930422,
+            0.00019855099890264682,
+            0.012498105999839026,
+            0.00019226999938837253
+        ],
+        "test_time": 0.13942362099987804
+    },
+    "slice_in_dim_test.py:testPartition8": {
+        "operations": [
+            0.013879468000595807,
+            0.0002255059989693109,
+            0.013634805000037886,
+            0.0002502730003470788
+        ],
+        "test_time": 0.17143601899988425
+    },
+    "slice_in_dim_test.py:testPartition9": {
+        "operations": [
+            0.012513277999460115,
+            0.00022986600015428849,
+            0.013570559000072535,
+            0.0002043109998339787
+        ],
+        "test_time": 0.20157154299886315
+    },
+    "split_test.py:testSplitStaticInt0": {
+        "operations": [
+            0.04360671100039326
+        ],
+        "test_time": 0.04776066200065543
+    },
+    "split_test.py:testSplitStaticInt1": {
+        "operations": [
+            0.037890744000833365
+        ],
+        "test_time": 0.041650514998764265
+    },
+    "split_test.py:testSplitStaticInt2": {
+        "operations": [
+            0.05140615600066667
+        ],
+        "test_time": 0.05541647700010799
+    },
+    "split_test.py:testSplitStaticInt3": {
+        "operations": [
+            0.03700334199857025
+        ],
+        "test_time": 0.04079039499993087
+    },
+    "split_test.py:testSplitStaticInt4": {
+        "operations": [
+            0.03322961000048963
+        ],
+        "test_time": 0.03698151000025973
+    },
+    "split_test.py:testSplitStaticInt5": {
+        "operations": [
+            0.03752563600028225
+        ],
+        "test_time": 0.04126447799899324
+    },
+    "split_test.py:testSplitStaticInt6": {
+        "operations": [
+            0.03081624700098473
+        ],
+        "test_time": 0.03445973800080537
+    },
+    "split_test.py:testSplitStaticInt7": {
+        "operations": [
+            0.038625369999863324
+        ],
+        "test_time": 0.04259419399932085
+    },
+    "split_test.py:testSplitStaticInt8": {
+        "operations": [
+            0.05780337400028657
+        ],
+        "test_time": 0.062065123000138556
+    },
+    "split_test.py:testSplitStaticInt9": {
+        "operations": [
+            0.04707637600040471
+        ],
+        "test_time": 0.05133469999964291
+    },
+    "sqrt_test.py:testOp0": {
+        "operations": [
+            0.017313190999630024
+        ],
+        "test_time": 0.021866814999157214
+    },
+    "sqrt_test.py:testOp1": {
+        "operations": [
+            0.014174818999890704
+        ],
+        "test_time": 0.018303951999769197
+    },
+    "sqrt_test.py:testOp2": {
+        "operations": [
+            0.012506167000537971
+        ],
+        "test_time": 0.016227096000875463
+    },
+    "sqrt_test.py:testOp3": {
+        "operations": [
+            0.01181292100045539
+        ],
+        "test_time": 0.015602931000103126
+    },
+    "sqrt_test.py:testOp4": {
+        "operations": [
+            0.014317653000034625
+        ],
+        "test_time": 0.018253943999297917
+    },
+    "sqrt_test.py:testOp5": {
+        "operations": [
+            0.0003301050001027761
+        ],
+        "test_time": 0.0026673440006561577
+    },
+    "sqrt_test.py:testOp6": {
+        "operations": [
+            0.016940740999416448
+        ],
+        "test_time": 0.020810533000258147
+    },
+    "sqrt_test.py:testOp7": {
+        "operations": [
+            0.014421973999560578
+        ],
+        "test_time": 0.01858700099910493
+    },
+    "sqrt_test.py:testOp8": {
+        "operations": [
+            0.011815441999715404
+        ],
+        "test_time": 0.0156796690007468
+    },
+    "sqrt_test.py:testOp9": {
+        "operations": [
+            0.012272642001335043
+        ],
+        "test_time": 0.01592331600113539
+    },
+    "stack_test.py:testStack0": {
+        "operations": [
+            0.0343223929994565
+        ],
+        "test_time": 0.09214946400061308
+    },
+    "stack_test.py:testStack1": {
+        "operations": [
+            0.060650871999314404
+        ],
+        "test_time": 0.08023171199965873
+    },
+    "stack_test.py:testStack2": {
+        "operations": [
+            0.04054546499901335
+        ],
+        "test_time": 0.04453746600120212
+    },
+    "stack_test.py:testStack3": {
+        "operations": [
+            0.06294809499922849
+        ],
+        "test_time": 0.06705802399847016
+    },
+    "stack_test.py:testStack4": {
+        "operations": [
+            0.038977487000011024
+        ],
+        "test_time": 0.08095076300014625
+    },
+    "stack_test.py:testStack5": {
+        "operations": [
+            0.02535525600069377
+        ],
+        "test_time": 0.05479649700100708
+    },
+    "stack_test.py:testStack6": {
+        "operations": [
+            0.0429857439994521
+        ],
+        "test_time": 0.07190408899987233
+    },
+    "stack_test.py:testStack7": {
+        "operations": [
+            0.050369910000881646
+        ],
+        "test_time": 0.055367975000990555
+    },
+    "stack_test.py:testStack8": {
+        "operations": [
+            0.04682346200024767
+        ],
+        "test_time": 0.05112309099968115
+    },
+    "stack_test.py:testStack9": {
+        "operations": [
+            0.04438490299980913
+        ],
+        "test_time": 0.08484775299984904
+    },
+    "stop_gradient_test.py:test_custom_linear_solve_nonsymmetric": {
+        "operations": [
+            0.00018298100076208357,
+            0.00016434999997727573,
+            0.00015342699953180272,
+            0.0001518930002930574,
+            0.0001551000004837988,
+            0.00014538600044033956,
+            0.00014744399959454313,
+            0.0001665070012677461,
+            0.0001585589998285286,
+            0.00016117799896164797,
+            0.00016353400133084506,
+            0.0001571970005898038,
+            0.0001595699995959876,
+            0.00020109700017201249,
+            0.00015380399963760283,
+            0.0001612920004845364,
+            0.00015422200158354826,
+            0.0001622340005269507,
+            0.00014916799955244642,
+            0.0001508430013927864,
+            0.000149965999298729,
+            0.00015725699995527975,
+            0.0001580280004418455,
+            0.000147943999763811,
+            0.0001829960001487052,
+            0.00016282000069622882,
+            0.0001564780013723066,
+            0.00016203500126721337,
+            0.00016416600010416005,
+            0.00015977499970176723,
+            0.0001638390003790846,
+            0.00015986200014594942,
+            0.0001610529998288257,
+            0.00014722800005984027,
+            0.0001570309996168362,
+            0.00015894699936325196,
+            0.00018097100110026076,
+            0.00014819399984844495,
+            0.00016786700143711641,
+            0.0001664729988988256,
+            0.00016591700114076957,
+            0.00016072200014605187,
+            0.0001611460011190502,
+            0.00017164999917440582,
+            0.00015569899915135466,
+            0.00016731200048525352,
+            0.00015257599989126902,
+            0.00015327900109696202,
+            0.00015215500025078654,
+            0.00015826199887669645,
+            0.00015309899936255533,
+            0.0001497410012234468
+        ],
+        "test_time": 4.1186857579996285
+    },
+    "stop_gradient_test.py:test_custom_linear_solve_symmetric": {
+        "operations": [
+            0.0001572050005052006,
+            0.0001517509990662802,
+            0.00014816000111750327,
+            0.00015904199972283095,
+            0.00015877000078035053,
+            0.00014800300050410442,
+            0.00016011800107662566,
+            0.0001605140005267458,
+            0.0001575010010128608,
+            0.00015537299987045117,
+            0.00015062099919305183,
+            0.00014647599891759455,
+            0.00014844500037725084,
+            0.00015032600094855297,
+            0.00015537800027232151,
+            0.0001584390010975767,
+            0.00015906999942671973,
+            0.00015864899978623725,
+            0.00024829899848555215,
+            0.00016169999980775174,
+            0.00015870300012466032,
+            0.00014995900164649356,
+            0.0001988950007216772,
+            0.00015910900037852116,
+            0.00017253599980904255,
+            0.00017438000031688716,
+            0.0001665620002313517,
+            0.00015383299978566356,
+            0.00018290200023329817,
+            0.0001514529994892655,
+            0.00017529800061311107,
+            0.00016924500050663482,
+            0.00015578400052618235,
+            0.0001524720009911107,
+            0.0002157220005756244,
+            0.0001552520006953273,
+            0.00016519900054845493,
+            0.00015400900156237185,
+            0.00015759900088596623,
+            0.00015629399968020152,
+            0.00016366099953302182,
+            0.0001532930000394117,
+            0.00015496900050493423,
+            0.000261799999861978,
+            0.00016020700059016235,
+            0.00016196199976548087,
+            0.0001742389995342819,
+            0.00015284599976439495,
+            0.00015164300020842347,
+            0.000162299000294297,
+            0.0001481950002926169,
+            0.00015902400082268286
+        ],
+        "test_time": 3.3632554369996797
+    },
+    "sum_test.py:testReducer0": {
+        "operations": [
+            0.01619427699915832
+        ],
+        "test_time": 0.019718387000466464
+    },
+    "sum_test.py:testReducer1": {
+        "operations": [
+            0.015995899000699865
+        ],
+        "test_time": 0.01967322400014382
+    },
+    "sum_test.py:testReducer2": {
+        "operations": [
+            0.019246042000304442
+        ],
+        "test_time": 0.02309990200046741
+    },
+    "sum_test.py:testReducer3": {
+        "operations": [
+            0.013252202999865403
+        ],
+        "test_time": 0.016708745000869385
+    },
+    "sum_test.py:testReducer4": {
+        "operations": [
+            0.013408879000053275
+        ],
+        "test_time": 0.016848840999955428
+    },
+    "sum_test.py:testReducer5": {
+        "operations": [
+            0.01541408500088437
+        ],
+        "test_time": 0.018929777999801445
+    },
+    "sum_test.py:testReducer6": {
+        "operations": [
+            0.01573449600073218
+        ],
+        "test_time": 0.019280189999335562
+    },
+    "sum_test.py:testReducer7": {
+        "operations": [
+            0.016344267000022228
+        ],
+        "test_time": 0.019362553999599186
+    },
+    "sum_test.py:testReducer8": {
+        "operations": [
+            0.013471295000272221
+        ],
+        "test_time": 0.01643985599912412
+    },
+    "sum_test.py:testReducer9": {
+        "operations": [
+            0.014275494000685285
+        ],
+        "test_time": 0.017734234999807086
+    },
+    "svd_test.py:testSvdOnTinyElement0": {
+        "operations": [],
+        "test_time": 1.0233164169985685
+    },
+    "svd_test.py:testSvdOnTinyElement1": {
+        "operations": [],
+        "test_time": 0.7565747379994718
+    },
+    "svd_test.py:testSvdOnTinyElement2": {
+        "operations": [],
+        "test_time": 0.8084131319992593
+    },
+    "svd_test.py:testSvdOnZero0": {
+        "operations": [
+            0.014306301998658455
+        ],
+        "test_time": 0.018180618000769755
+    },
+    "svd_test.py:testSvdOnZero1": {
+        "operations": [
+            0.11491366299924266
+        ],
+        "test_time": 0.13463808599954064
+    },
+    "svd_test.py:testSvdOnZero2": {
+        "operations": [
+            0.0980399979998765
+        ],
+        "test_time": 0.10231847199975164
+    },
+    "svd_test.py:testSvdOnZero3": {
+        "operations": [
+            0.0348309569999401
+        ],
+        "test_time": 0.05252985900006024
+    },
+    "svd_test.py:testSvdOnZero4": {
+        "operations": [
+            0.0012222479999763891
+        ],
+        "test_time": 0.003485717999865301
+    },
+    "svd_test.py:testSvdOnZero5": {
+        "operations": [
+            0.001209513000503648
+        ],
+        "test_time": 0.0034038320009130985
+    },
+    "svd_test.py:testSvdOnZero6": {
+        "operations": [
+            0.002006004000577377
+        ],
+        "test_time": 0.004416794999997364
+    },
+    "svd_test.py:testSvdOnZero7": {
+        "operations": [
+            0.0019309589988552034
+        ],
+        "test_time": 0.004323047000070801
+    },
+    "svd_test.py:testSvdOnZero8": {
+        "operations": [
+            0.0011444900010246783
+        ],
+        "test_time": 0.0030802580004092306
+    },
+    "svd_test.py:testSvdOnZero9": {
+        "operations": [
+            0.17746379100026388
+        ],
+        "test_time": 0.18127173199900426
+    },
+    "svd_test.py:testSvdWithOnRankDeficientInput0": {
+        "operations": [
+            0.0363230589991872,
+            1.0253796090000833
+        ],
+        "test_time": 1.401488621999306
+    },
+    "svd_test.py:testSvdWithOnRankDeficientInput1": {
+        "operations": [
+            0.0002478770002198871,
+            0.16569241199977114
+        ],
+        "test_time": 0.21300481899925217
+    },
+    "svd_test.py:testSvdWithOnRankDeficientInput2": {
+        "operations": [
+            0.0005858700005774153,
+            0.1876425720001862
+        ],
+        "test_time": 0.2801784189996397
+    },
+    "svd_test.py:testSvdWithOnRankDeficientInput3": {
+        "operations": [
+            0.0006019819993525743,
+            0.2128829310004221
+        ],
+        "test_time": 0.23456565000014962
+    },
+    "svd_test.py:testSvdWithOnRankDeficientInput4": {
+        "operations": [
+            0.0006130359997769119,
+            0.24161679200005892
+        ],
+        "test_time": 0.2621836250000342
+    },
+    "svd_test.py:testSvdWithOnRankDeficientInput5": {
+        "operations": [
+            0.0005740149990742793,
+            0.17452845700063335
+        ],
+        "test_time": 0.19556451800053765
+    },
+    "svd_test.py:testSvdWithOnRankDeficientInput6": {
+        "operations": [
+            0.0006453339992731344,
+            0.21922236099999282
+        ],
+        "test_time": 0.24179856600130734
+    },
+    "svd_test.py:testSvdWithOnRankDeficientInput7": {
+        "operations": [
+            0.03276177599946095,
+            1.0002241149995825
+        ],
+        "test_time": 1.3596073019998585
+    },
+    "svd_test.py:testSvdWithOnRankDeficientInput8": {
+        "operations": [
+            0.0002814370000123745,
+            0.16461556300055236
+        ],
+        "test_time": 0.1767430529998819
+    },
+    "svd_test.py:testSvdWithOnRankDeficientInput9": {
+        "operations": [
+            0.0005771479991381057,
+            0.1930938410005183
+        ],
+        "test_time": 0.21413947800101596
+    },
+    "svd_test.py:testSvdWithRectangularInput0": {
+        "operations": [
+            0.69161598699975
+        ],
+        "test_time": 0.994706043999031
+    },
+    "svd_test.py:testSvdWithRectangularInput1": {
+        "operations": [
+            1.1352309360008803
+        ],
+        "test_time": 1.411247424000976
+    },
+    "svd_test.py:testSvdWithRectangularInput2": {
+        "operations": [
+            0.6806505080003262
+        ],
+        "test_time": 0.8668841970011272
+    },
+    "svd_test.py:testSvdWithRectangularInput3": {
+        "operations": [
+            0.0849752800004353
+        ],
+        "test_time": 0.09432692900008988
+    },
+    "svd_test.py:testSvdWithRectangularInput4": {
+        "operations": [
+            0.23142422800083295
+        ],
+        "test_time": 0.27216909500020847
+    },
+    "svd_test.py:testSvdWithRectangularInput5": {
+        "operations": [
+            0.21503300099902845
+        ],
+        "test_time": 0.29764889599937305
+    },
+    "svd_test.py:testSvdWithRectangularInput6": {
+        "operations": [
+            0.5838432740001736
+        ],
+        "test_time": 0.6309760169988294
+    },
+    "svd_test.py:testSvdWithRectangularInput7": {
+        "operations": [
+            0.08369550200040976
+        ],
+        "test_time": 0.09288461800133518
+    },
+    "svd_test.py:testSvdWithRectangularInput8": {
+        "operations": [
+            0.08605191000060586
+        ],
+        "test_time": 0.0951022400004149
+    },
+    "svd_test.py:testSvdWithRectangularInput9": {
+        "operations": [
+            0.08830202899844153
+        ],
+        "test_time": 0.09754568999960611
+    },
+    "svd_test.py:testSvdWithSkinnyTallInput0": {
+        "operations": [
+            0.27450177799983067
+        ],
+        "test_time": 0.3299257039998338
+    },
+    "svd_test.py:testSvdWithSkinnyTallInput1": {
+        "operations": [
+            0.8130586999996012
+        ],
+        "test_time": 0.8627629959992191
+    },
+    "top_k_test.py:testTopK0": {
+        "operations": [
+            0.018336768000153825
+        ],
+        "test_time": 0.022141594999993686
+    },
+    "top_k_test.py:testTopK1": {
+        "operations": [
+            0.019672462998642004
+        ],
+        "test_time": 0.023552185000880854
+    },
+    "top_k_test.py:testTopK2": {
+        "operations": [
+            0.014647714999227901
+        ],
+        "test_time": 0.018201703000158886
+    },
+    "top_k_test.py:testTopK3": {
+        "operations": [
+            0.017199908001202857
+        ],
+        "test_time": 0.02092126099887537
+    },
+    "top_k_test.py:testTopK4": {
+        "operations": [
+            0.021870440999919083
+        ],
+        "test_time": 0.025532031000693678
+    },
+    "top_k_test.py:testTopK5": {
+        "operations": [
+            0.018519741999625694
+        ],
+        "test_time": 0.022487008000098285
+    },
+    "top_k_test.py:testTopK6": {
+        "operations": [
+            0.01921294800013129
+        ],
+        "test_time": 0.023005037999610067
+    },
+    "top_k_test.py:testTopK7": {
+        "operations": [
+            0.01807370000096853
+        ],
+        "test_time": 0.021743258999777026
+    },
+    "top_k_test.py:testTopK8": {
+        "operations": [
+            0.021654955000485643
+        ],
+        "test_time": 0.02541467300034128
+    },
+    "top_k_test.py:testTopK9": {
+        "operations": [
+            0.01715572700049961
+        ],
+        "test_time": 0.020756522000738187
+    },
+    "trace_to_jax_pr_dynamic_test.py:test_staging_basic": {
+        "operations": [
+            0.0004208190002827905
+        ],
+        "test_time": 0.0018701589997363044
+    },
+    "tree_map_test.py:test_tree_map": {
+        "operations": [
+            4.542900023807306e-05
+        ],
+        "test_time": 0.0020853559999522986
+    },
+    "tree_unflatten_test.py:test_tree_unflatten": {
+        "operations": [
+            6.991000191192143e-06
+        ],
+        "test_time": 0.0011812110005848808
+    },
+    "tril_indices_from_test.py:testTrilIndicesFrom0": {
+        "operations": [
+            0.5128329800008942
+        ],
+        "test_time": 0.5152344819998689
+    },
+    "tril_indices_from_test.py:testTrilIndicesFrom1": {
+        "operations": [
+            0.30591773400010425
+        ],
+        "test_time": 0.30903439999929105
+    },
+    "tril_indices_from_test.py:testTrilIndicesFrom2": {
+        "operations": [
+            0.24754472200038435
+        ],
+        "test_time": 0.25015949699991324
+    },
+    "tril_indices_from_test.py:testTrilIndicesFrom3": {
+        "operations": [
+            0.3088376330015308
+        ],
+        "test_time": 0.31180213500010723
+    },
+    "tril_indices_from_test.py:testTrilIndicesFrom4": {
+        "operations": [
+            0.3190991789997497
+        ],
+        "test_time": 0.32215891600026225
+    },
+    "tril_indices_from_test.py:testTrilIndicesFrom5": {
+        "operations": [
+            0.012734163999994053
+        ],
+        "test_time": 0.015017289999377681
+    },
+    "tril_indices_from_test.py:testTrilIndicesFrom6": {
+        "operations": [
+            0.1926174620002712
+        ],
+        "test_time": 0.19570155500150577
+    },
+    "tril_indices_from_test.py:testTrilIndicesFrom7": {
+        "operations": [
+            0.03753873799905705
+        ],
+        "test_time": 0.04011838199949125
+    },
+    "tril_indices_from_test.py:testTrilIndicesFrom8": {
+        "operations": [
+            0.012830325998947956
+        ],
+        "test_time": 0.01510634599981131
+    },
+    "tril_indices_from_test.py:testTrilIndicesFrom9": {
+        "operations": [
+            0.0845754140009376
+        ],
+        "test_time": 0.08708631000081368
+    },
+    "tril_test.py:testTriLU0": {
+        "operations": [
+            0.07333712399849901
+        ],
+        "test_time": 0.07622999999875901
+    },
+    "tril_test.py:testTriLU1": {
+        "operations": [
+            0.09111010500055272
+        ],
+        "test_time": 0.09476095900026849
+    },
+    "tril_test.py:testTriLU2": {
+        "operations": [
+            0.09452380800030369
+        ],
+        "test_time": 0.09846491600001173
+    },
+    "tril_test.py:testTriLU3": {
+        "operations": [
+            0.03771003200017731
+        ],
+        "test_time": 0.04172084700076084
+    },
+    "tril_test.py:testTriLU4": {
+        "operations": [
+            0.08233788100005768
+        ],
+        "test_time": 0.08568847499918775
+    },
+    "tril_test.py:testTriLU5": {
+        "operations": [
+            0.08953491800093616
+        ],
+        "test_time": 0.09294125599990366
+    },
+    "tril_test.py:testTriLU6": {
+        "operations": [
+            0.0011595609994401457
+        ],
+        "test_time": 0.002886009999201633
+    },
+    "tril_test.py:testTriLU7": {
+        "operations": [
+            0.03720619100022304
+        ],
+        "test_time": 0.04003706199910084
+    },
+    "tril_test.py:testTriLU8": {
+        "operations": [
+            0.030924653001420666
+        ],
+        "test_time": 0.03424521300075867
+    },
+    "tril_test.py:testTriLU9": {
+        "operations": [
+            0.02560482199987746
+        ],
+        "test_time": 0.02819005899982585
+    },
+    "triu_indices_test.py:testTriuIndices0": {
+        "operations": [
+            0.23741147100008675
+        ],
+        "test_time": 0.23992317000011099
+    },
+    "triu_indices_test.py:testTriuIndices1": {
+        "operations": [
+            0.10166558099990652
+        ],
+        "test_time": 0.10504806000062672
+    },
+    "triu_indices_test.py:testTriuIndices2": {
+        "operations": [
+            0.3911103150003328
+        ],
+        "test_time": 0.39451160299904586
+    },
+    "triu_indices_test.py:testTriuIndices3": {
+        "operations": [
+            0.13517274400146562
+        ],
+        "test_time": 0.13772216299912543
+    },
+    "triu_indices_test.py:testTriuIndices4": {
+        "operations": [
+            0.08817181099948357
+        ],
+        "test_time": 0.09129494599983445
+    },
+    "triu_indices_test.py:testTriuIndices5": {
+        "operations": [
+            0.0516135010002472
+        ],
+        "test_time": 0.05493097600083274
+    },
+    "triu_indices_test.py:testTriuIndices6": {
+        "operations": [
+            0.039004297999781556
+        ],
+        "test_time": 0.04136695499983034
+    },
+    "triu_indices_test.py:testTriuIndices7": {
+        "operations": [
+            0.03824631299903558
+        ],
+        "test_time": 0.040578742999059614
+    },
+    "triu_indices_test.py:testTriuIndices8": {
+        "operations": [
+            0.012799332000213326
+        ],
+        "test_time": 0.014836398000625195
+    },
+    "triu_indices_test.py:testTriuIndices9": {
+        "operations": [
+            0.002123234999089618
+        ],
+        "test_time": 0.003925757000615704
+    },
+    "var_test.py:testReducerWhereNoInitial0": {
+        "operations": [
+            0.11209258299822977
+        ],
+        "test_time": 0.11497492200032866
+    },
+    "var_test.py:testReducerWhereNoInitial1": {
+        "operations": [
+            0.07961694500045269
+        ],
+        "test_time": 0.08314963999873726
+    },
+    "var_test.py:testReducerWhereNoInitial2": {
+        "operations": [
+            0.049587860999963596
+        ],
+        "test_time": 0.05326759099989431
+    },
+    "var_test.py:testReducerWhereNoInitial3": {
+        "operations": [
+            0.11931443999856128
+        ],
+        "test_time": 0.12288538000029803
+    },
+    "var_test.py:testReducerWhereNoInitial4": {
+        "operations": [
+            0.033856756999739446
+        ],
+        "test_time": 0.03756062599859433
+    },
+    "var_test.py:testReducerWhereNoInitial5": {
+        "operations": [
+            0.22378310400017654
+        ],
+        "test_time": 0.2274866989992006
+    },
+    "var_test.py:testReducerWhereNoInitial6": {
+        "operations": [
+            0.085978768998757
+        ],
+        "test_time": 0.08944177199919068
+    },
+    "var_test.py:testReducerWhereNoInitial7": {
+        "operations": [
+            0.00501723200068227
+        ],
+        "test_time": 0.007137429000067641
+    },
+    "var_test.py:testReducerWhereNoInitial8": {
+        "operations": [
+            0.08580881000125373
+        ],
+        "test_time": 0.08940965799956757
+    },
+    "var_test.py:testReducerWhereNoInitial9": {
+        "operations": [
+            0.08693187400058378
+        ],
+        "test_time": 0.09061450099943613
+    },
+    "vjp_test.py:test_vjp_0": {
+        "operations": [
+            0.0030601800008298596
+        ],
+        "test_time": 0.007656781999685336
+    },
+    "vjp_test.py:test_vjp_1": {
+        "operations": [
+            0.006700826001178939
+        ],
+        "test_time": 0.017929992000063066
+    },
+    "vjp_test.py:test_vjp_10": {
+        "operations": [
+            0.007589529999677325
+        ],
+        "test_time": 0.022787507999964873
+    },
+    "vjp_test.py:test_vjp_100": {
+        "operations": [
+            0.01887948600051459
+        ],
+        "test_time": 0.05620914300016011
+    },
+    "vjp_test.py:test_vjp_101": {
+        "operations": [
+            0.010268649999488844
+        ],
+        "test_time": 0.02869868300149392
+    },
+    "vjp_test.py:test_vjp_102": {
+        "operations": [
+            0.011702124998919317
+        ],
+        "test_time": 0.03111577400159149
+    },
+    "vjp_test.py:test_vjp_103": {
+        "operations": [
+            0.014618244000303093
+        ],
+        "test_time": 0.03373833900150203
+    },
+    "vjp_test.py:test_vjp_104": {
+        "operations": [
+            0.014005666998855304
+        ],
+        "test_time": 0.03358031399875472
+    },
+    "vjp_test.py:test_vjp_105": {
+        "operations": [
+            0.016181902999960585
+        ],
+        "test_time": 0.03386571100054425
+    },
+    "vjp_test.py:test_vjp_106": {
+        "operations": [
+            0.012584554999193642
+        ],
+        "test_time": 0.032145561001016176
+    },
+    "vjp_test.py:test_vjp_107": {
+        "operations": [
+            0.012762569000187796
+        ],
+        "test_time": 0.03247211900088587
+    },
+    "vjp_test.py:test_vjp_108": {
+        "operations": [
+            0.020697342000858043
+        ],
+        "test_time": 0.05042412399961904
+    },
+    "vjp_test.py:test_vjp_109": {
+        "operations": [
+            0.0222210729989456
+        ],
+        "test_time": 0.06993740700090711
+    },
+    "vjp_test.py:test_vjp_11": {
+        "operations": [
+            0.0038752649998059496
+        ],
+        "test_time": 0.01025438699980441
+    },
+    "vjp_test.py:test_vjp_12": {
+        "operations": [
+            0.009989242998926784
+        ],
+        "test_time": 0.02627927799949248
+    },
+    "vjp_test.py:test_vjp_13": {
+        "operations": [
+            0.00404732300012256
+        ],
+        "test_time": 0.010158668999793008
+    },
+    "vjp_test.py:test_vjp_14": {
+        "operations": [
+            0.004134214999794494
+        ],
+        "test_time": 0.01024598500043794
+    },
+    "vjp_test.py:test_vjp_15": {
+        "operations": [
+            0.0060976630011282396
+        ],
+        "test_time": 0.01298270400002366
+    },
+    "vjp_test.py:test_vjp_16": {
+        "operations": [
+            0.005940437000390375
+        ],
+        "test_time": 0.0124365530009527
+    },
+    "vjp_test.py:test_vjp_17": {
+        "operations": [
+            0.00789182300104585
+        ],
+        "test_time": 0.014904071000273689
+    },
+    "vjp_test.py:test_vjp_18": {
+        "operations": [
+            0.005648870999721112
+        ],
+        "test_time": 0.01272528299887199
+    },
+    "vjp_test.py:test_vjp_19": {
+        "operations": [
+            0.005739694999647327
+        ],
+        "test_time": 0.012963465000211727
+    },
+    "vjp_test.py:test_vjp_2": {
+        "operations": [
+            0.0026443249989824835
+        ],
+        "test_time": 0.007355491999987862
+    },
+    "vjp_test.py:test_vjp_20": {
+        "operations": [
+            0.006671948000075645
+        ],
+        "test_time": 0.014266742000472732
+    },
+    "vjp_test.py:test_vjp_21": {
+        "operations": [
+            0.01198192999981984
+        ],
+        "test_time": 0.03577837999910116
+    },
+    "vjp_test.py:test_vjp_22": {
+        "operations": [
+            0.0029529509993153624
+        ],
+        "test_time": 0.007793655000568833
+    },
+    "vjp_test.py:test_vjp_23": {
+        "operations": [
+            0.005747642999267555
+        ],
+        "test_time": 0.01675165499909781
+    },
+    "vjp_test.py:test_vjp_24": {
+        "operations": [
+            0.002691354999114992
+        ],
+        "test_time": 0.007404314001178136
+    },
+    "vjp_test.py:test_vjp_25": {
+        "operations": [
+            0.0026485130001674406
+        ],
+        "test_time": 0.007154015000196523
+    },
+    "vjp_test.py:test_vjp_26": {
+        "operations": [
+            0.004591392000293126
+        ],
+        "test_time": 0.00944569999956002
+    },
+    "vjp_test.py:test_vjp_27": {
+        "operations": [
+            0.0041701889986143215
+        ],
+        "test_time": 0.00890141899981245
+    },
+    "vjp_test.py:test_vjp_28": {
+        "operations": [
+            0.006112438000855036
+        ],
+        "test_time": 0.010978326999975252
+    },
+    "vjp_test.py:test_vjp_29": {
+        "operations": [
+            0.0043133069993928075
+        ],
+        "test_time": 0.009237882999514113
+    },
+    "vjp_test.py:test_vjp_3": {
+        "operations": [
+            0.0025495740010228474
+        ],
+        "test_time": 0.0068440239992924035
+    },
+    "vjp_test.py:test_vjp_30": {
+        "operations": [
+            0.003818182000031811
+        ],
+        "test_time": 0.008832253999571549
+    },
+    "vjp_test.py:test_vjp_31": {
+        "operations": [
+            0.005465783999170526
+        ],
+        "test_time": 0.010782617999211652
+    },
+    "vjp_test.py:test_vjp_32": {
+        "operations": [
+            0.006355427000016789
+        ],
+        "test_time": 0.020365431999380235
+    },
+    "vjp_test.py:test_vjp_33": {
+        "operations": [
+            0.0015657739986636443
+        ],
+        "test_time": 0.006030448999808868
+    },
+    "vjp_test.py:test_vjp_34": {
+        "operations": [
+            0.0032048070006567286
+        ],
+        "test_time": 0.010234727000351995
+    },
+    "vjp_test.py:test_vjp_35": {
+        "operations": [
+            0.0014048789998923894
+        ],
+        "test_time": 0.005368968000766472
+    },
+    "vjp_test.py:test_vjp_36": {
+        "operations": [
+            0.001430865999282105
+        ],
+        "test_time": 0.005471566000778694
+    },
+    "vjp_test.py:test_vjp_37": {
+        "operations": [
+            0.002319361999980174
+        ],
+        "test_time": 0.006936497000424424
+    },
+    "vjp_test.py:test_vjp_38": {
+        "operations": [
+            0.002367139000853058
+        ],
+        "test_time": 0.0070210949997999705
+    },
+    "vjp_test.py:test_vjp_39": {
+        "operations": [
+            0.0033050790007109754
+        ],
+        "test_time": 0.007726947000264772
+    },
+    "vjp_test.py:test_vjp_4": {
+        "operations": [
+            0.0039505559998360695
+        ],
+        "test_time": 0.00833683699966059
+    },
+    "vjp_test.py:test_vjp_40": {
+        "operations": [
+            0.002253963000839576
+        ],
+        "test_time": 0.006862473999717622
+    },
+    "vjp_test.py:test_vjp_41": {
+        "operations": [
+            0.0021401980011432897
+        ],
+        "test_time": 0.0068489400000544265
+    },
+    "vjp_test.py:test_vjp_42": {
+        "operations": [
+            0.0029219159987405874
+        ],
+        "test_time": 0.00787317599861126
+    },
+    "vjp_test.py:test_vjp_43": {
+        "operations": [
+            0.003931410999939544
+        ],
+        "test_time": 0.013086330000078306
+    },
+    "vjp_test.py:test_vjp_44": {
+        "operations": [
+            0.0035983630004920997
+        ],
+        "test_time": 0.010208919000433525
+    },
+    "vjp_test.py:test_vjp_45": {
+        "operations": [
+            0.007538918998761801
+        ],
+        "test_time": 0.021159862999411416
+    },
+    "vjp_test.py:test_vjp_46": {
+        "operations": [
+            0.003448445999310934
+        ],
+        "test_time": 0.010274190999552957
+    },
+    "vjp_test.py:test_vjp_47": {
+        "operations": [
+            0.0034470139999029925
+        ],
+        "test_time": 0.01031241100099578
+    },
+    "vjp_test.py:test_vjp_48": {
+        "operations": [
+            0.004736570999739342
+        ],
+        "test_time": 0.011666426998999668
+    },
+    "vjp_test.py:test_vjp_49": {
+        "operations": [
+            0.0048813800003699725
+        ],
+        "test_time": 0.011787566001657979
+    },
+    "vjp_test.py:test_vjp_5": {
+        "operations": [
+            0.0043556879991228925
+        ],
+        "test_time": 0.008895103001123061
+    },
+    "vjp_test.py:test_vjp_50": {
+        "operations": [
+            0.006281020998358144
+        ],
+        "test_time": 0.013559254999563564
+    },
+    "vjp_test.py:test_vjp_51": {
+        "operations": [
+            0.004435667000507237
+        ],
+        "test_time": 0.011902088001079392
+    },
+    "vjp_test.py:test_vjp_52": {
+        "operations": [
+            0.004342027999882703
+        ],
+        "test_time": 0.01172955199945136
+    },
+    "vjp_test.py:test_vjp_53": {
+        "operations": [
+            0.005450888998893788
+        ],
+        "test_time": 0.01323331200001121
+    },
+    "vjp_test.py:test_vjp_54": {
+        "operations": [
+            0.008722879001652473
+        ],
+        "test_time": 0.02662120900095033
+    },
+    "vjp_test.py:test_vjp_55": {
+        "operations": [
+            0.0072471679995942395
+        ],
+        "test_time": 0.0173281040006259
+    },
+    "vjp_test.py:test_vjp_56": {
+        "operations": [
+            0.017456425001000753
+        ],
+        "test_time": 0.04570086000057927
+    },
+    "vjp_test.py:test_vjp_57": {
+        "operations": [
+            0.007338193001487525
+        ],
+        "test_time": 0.017484738000348443
+    },
+    "vjp_test.py:test_vjp_58": {
+        "operations": [
+            0.0075379649988462916
+        ],
+        "test_time": 0.017389874999935273
+    },
+    "vjp_test.py:test_vjp_59": {
+        "operations": [
+            0.009729277999213082
+        ],
+        "test_time": 0.020190616000036243
+    },
+    "vjp_test.py:test_vjp_6": {
+        "operations": [
+            0.00579484299851174
+        ],
+        "test_time": 0.010624182999890763
+    },
+    "vjp_test.py:test_vjp_60": {
+        "operations": [
+            0.009957216001566849
+        ],
+        "test_time": 0.02017762700052117
+    },
+    "vjp_test.py:test_vjp_61": {
+        "operations": [
+            0.13883391100171139
+        ],
+        "test_time": 0.15019138399838994
+    },
+    "vjp_test.py:test_vjp_62": {
+        "operations": [
+            0.009474811000472982
+        ],
+        "test_time": 0.025187113000356476
+    },
+    "vjp_test.py:test_vjp_63": {
+        "operations": [
+            0.009628393998355023
+        ],
+        "test_time": 0.021342718999221688
+    },
+    "vjp_test.py:test_vjp_64": {
+        "operations": [
+            0.010550410999712767
+        ],
+        "test_time": 0.022581383998840465
+    },
+    "vjp_test.py:test_vjp_65": {
+        "operations": [
+            0.020059133999893675
+        ],
+        "test_time": 0.05939982699965185
+    },
+    "vjp_test.py:test_vjp_66": {
+        "operations": [
+            0.0023913799996080343
+        ],
+        "test_time": 0.006643133001489332
+    },
+    "vjp_test.py:test_vjp_67": {
+        "operations": [
+            0.0049592459999985294
+        ],
+        "test_time": 0.015049855999677675
+    },
+    "vjp_test.py:test_vjp_68": {
+        "operations": [
+            0.0020469410010264255
+        ],
+        "test_time": 0.005973109999104054
+    },
+    "vjp_test.py:test_vjp_69": {
+        "operations": [
+            0.0022302409997791983
+        ],
+        "test_time": 0.006166064998978982
+    },
+    "vjp_test.py:test_vjp_7": {
+        "operations": [
+            0.004286847999537713
+        ],
+        "test_time": 0.009649121000620653
+    },
+    "vjp_test.py:test_vjp_70": {
+        "operations": [
+            0.003271599000072456
+        ],
+        "test_time": 0.007585516001199721
+    },
+    "vjp_test.py:test_vjp_71": {
+        "operations": [
+            0.003469417000815156
+        ],
+        "test_time": 0.00769373300136067
+    },
+    "vjp_test.py:test_vjp_72": {
+        "operations": [
+            0.0044641109998337924
+        ],
+        "test_time": 0.008957259000453632
+    },
+    "vjp_test.py:test_vjp_73": {
+        "operations": [
+            0.003312504000859917
+        ],
+        "test_time": 0.007964745998833678
+    },
+    "vjp_test.py:test_vjp_74": {
+        "operations": [
+            0.0032227440005954122
+        ],
+        "test_time": 0.007937151998703484
+    },
+    "vjp_test.py:test_vjp_75": {
+        "operations": [
+            0.003949160998672596
+        ],
+        "test_time": 0.00886651699875074
+    },
+    "vjp_test.py:test_vjp_76": {
+        "operations": [
+            0.005733797001084895
+        ],
+        "test_time": 0.0188444180002989
+    },
+    "vjp_test.py:test_vjp_77": {
+        "operations": [
+            0.009503301000222564
+        ],
+        "test_time": 0.022770132000005106
+    },
+    "vjp_test.py:test_vjp_78": {
+        "operations": [
+            0.019600169000113965
+        ],
+        "test_time": 0.05444153799908236
+    },
+    "vjp_test.py:test_vjp_79": {
+        "operations": [
+            0.009516828000414534
+        ],
+        "test_time": 0.022349647999362787
+    },
+    "vjp_test.py:test_vjp_8": {
+        "operations": [
+            0.0038456510010291822
+        ],
+        "test_time": 0.00903723400006129
+    },
+    "vjp_test.py:test_vjp_80": {
+        "operations": [
+            0.009364744999402319
+        ],
+        "test_time": 0.021743602999777067
+    },
+    "vjp_test.py:test_vjp_81": {
+        "operations": [
+            0.011488594998809276
+        ],
+        "test_time": 0.02410040999893681
+    },
+    "vjp_test.py:test_vjp_82": {
+        "operations": [
+            0.03192924700124422
+        ],
+        "test_time": 0.054948067998338956
+    },
+    "vjp_test.py:test_vjp_83": {
+        "operations": [
+            0.0302905019998434
+        ],
+        "test_time": 0.0573229679994256
+    },
+    "vjp_test.py:test_vjp_84": {
+        "operations": [
+            0.021995791999870562
+        ],
+        "test_time": 0.04821818199889094
+    },
+    "vjp_test.py:test_vjp_85": {
+        "operations": [
+            0.02078385300046648
+        ],
+        "test_time": 0.05027574199993978
+    },
+    "vjp_test.py:test_vjp_86": {
+        "operations": [
+            0.029827173000740004
+        ],
+        "test_time": 0.05984296000133327
+    },
+    "vjp_test.py:test_vjp_87": {
+        "operations": [
+            0.03876976200081117
+        ],
+        "test_time": 0.12725505500020518
+    },
+    "vjp_test.py:test_vjp_88": {
+        "operations": [
+            0.01917485800004215
+        ],
+        "test_time": 0.04465244000130042
+    },
+    "vjp_test.py:test_vjp_89": {
+        "operations": [
+            0.039626865000172984
+        ],
+        "test_time": 0.1097159399996599
+    },
+    "vjp_test.py:test_vjp_9": {
+        "operations": [
+            0.010143956998945214
+        ],
+        "test_time": 0.01971324700025434
+    },
+    "vjp_test.py:test_vjp_90": {
+        "operations": [
+            0.018331268000110867
+        ],
+        "test_time": 0.04274009600158024
+    },
+    "vjp_test.py:test_vjp_91": {
+        "operations": [
+            0.018558060999566806
+        ],
+        "test_time": 0.04352407700025651
+    },
+    "vjp_test.py:test_vjp_92": {
+        "operations": [
+            0.024452366000332404
+        ],
+        "test_time": 0.05089602699990792
+    },
+    "vjp_test.py:test_vjp_93": {
+        "operations": [
+            0.024272721999295754
+        ],
+        "test_time": 0.05038540399982594
+    },
+    "vjp_test.py:test_vjp_94": {
+        "operations": [
+            0.02861836400006723
+        ],
+        "test_time": 0.05559913199977018
+    },
+    "vjp_test.py:test_vjp_95": {
+        "operations": [
+            0.022152427000037278
+        ],
+        "test_time": 0.04930279700056417
+    },
+    "vjp_test.py:test_vjp_96": {
+        "operations": [
+            0.021677095999621088
+        ],
+        "test_time": 0.04888218999985838
+    },
+    "vjp_test.py:test_vjp_97": {
+        "operations": [
+            0.023878666999735287
+        ],
+        "test_time": 0.051971394999782206
+    },
+    "vjp_test.py:test_vjp_98": {
+        "operations": [
+            0.04259690399885585
+        ],
+        "test_time": 0.13047734499923536
+    },
+    "vjp_test.py:test_vjp_99": {
+        "operations": [
+            0.020167945000139298
+        ],
+        "test_time": 0.051158791000489146
+    },
+    "zeros_test.py:testZerosOnes0": {
+        "operations": [
+            0.0007315100010600872
+        ],
+        "test_time": 0.0033736299992597196
+    },
+    "zeros_test.py:testZerosOnes1": {
+        "operations": [
+            0.0005008989992347779
+        ],
+        "test_time": 0.002736808000918245
+    },
+    "zeros_test.py:testZerosOnes2": {
+        "operations": [
+            0.0004852640013268683
+        ],
+        "test_time": 0.002762330999757978
+    },
+    "zeros_test.py:testZerosOnes3": {
+        "operations": [
+            0.0004758589984703576
+        ],
+        "test_time": 0.002603835999252624
+    },
+    "zeros_test.py:testZerosOnes4": {
+        "operations": [
+            0.000550955001017428
+        ],
+        "test_time": 0.002959555000416003
+    },
+    "zeros_test.py:testZerosOnes5": {
+        "operations": [
+            0.0005106099997647107
+        ],
+        "test_time": 0.0025926100006472552
+    },
+    "zeros_test.py:testZerosOnes6": {
+        "operations": [
+            0.0005684190000465605
+        ],
+        "test_time": 0.0028259490009077126
+    },
+    "zeros_test.py:testZerosOnes7": {
+        "operations": [
+            0.000519843999427394
+        ],
+        "test_time": 0.002672519000043394
+    },
+    "zeros_test.py:testZerosOnes8": {
+        "operations": [
+            0.0004927029985992704
+        ],
+        "test_time": 0.0035756710003624903
+    },
+    "zeros_test.py:testZerosOnes9": {
+        "operations": [
+            0.0005277010004647309
+        ],
+        "test_time": 0.0026814749999175547
+    }, 
+    "select_test.py:testSelect0": {
+        "operations": [
+            0.02787687699998287
+        ],
+        "test_time": 0.03326079599997911
+    },
+    "select_test.py:testSelect1": {
+        "operations": [
+            0.012388222000026872
+        ],
+        "test_time": 0.014855729000032625
+    },
+    "select_test.py:testSelect2": {
+        "operations": [
+            0.015571840999996311
+        ],
+        "test_time": 0.01822884599999952
+    },
+    "select_test.py:testSelect3": {
+        "operations": [
+            0.014320169000029637
+        ],
+        "test_time": 0.016770462000010866
+    },
+    "select_test.py:testSelect4": {
+        "operations": [
+            0.015992014000005383
+        ],
+        "test_time": 0.018816623999953208
+    },
+    "select_test.py:testSelect5": {
+        "operations": [
+            0.016647875999979078
+        ],
+        "test_time": 0.01928615899998931
+    },
+    "select_test.py:testSelect6": {
+        "operations": [
+            0.015290245000016967
+        ],
+        "test_time": 0.018108376000043336
+    },
+    "select_test.py:testSelect7": {
+        "operations": [
+            0.016499850000002425
+        ],
+        "test_time": 0.019697231000009197
+    },
+    "select_test.py:testSelect8": {
+        "operations": [
+            0.014937782999993487
+        ],
+        "test_time": 0.017723845000034544
+    },
+    "select_test.py:testSelect9": {
+        "operations": [
+            0.013539659000002757
+        ],
+        "test_time": 0.016115130000002864
+    }
+}

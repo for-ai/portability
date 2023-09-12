@@ -1,0 +1,78 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.10, pytest-7.2.2, pluggy-1.0.0
+rootdir: /home/frasermince/portability, configfile: pyproject.toml
+plugins: hypothesis-6.70.2, xdist-3.2.1, forked-1.6.0, metadata-2.0.4, json-report-1.5.0, timeout-2.1.0
+timeout: 300.0s
+timeout method: signal
+timeout func_only: False
+collected 2 items
+
+src/tensorflow_tests_reduced/log_survival_function_test.py Laplace/loc: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+Laplace/scale: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+Laplace/log_survival_function/sub: (Sub): /job:localhost/replica:0/task:0/device:GPU:0
+Laplace/log_survival_function/truediv: (RealDiv): /job:localhost/replica:0/task:0/device:GPU:0
+Laplace/log_survival_function/Neg: (Neg): /job:localhost/replica:0/task:0/device:GPU:0
+Laplace/log_survival_function/log_cdf_laplace/add: (AddV2): /job:localhost/replica:0/task:0/device:GPU:0
+Laplace/log_survival_function/log_cdf_laplace/Abs: (Abs): /job:localhost/replica:0/task:0/device:GPU:0
+Laplace/log_survival_function/log_cdf_laplace/Neg: (Neg): /job:localhost/replica:0/task:0/device:GPU:0
+Laplace/log_survival_function/log_cdf_laplace/Exp: (Exp): /job:localhost/replica:0/task:0/device:GPU:0
+Laplace/log_survival_function/log_cdf_laplace/mul: (Mul): /job:localhost/replica:0/task:0/device:GPU:0
+Laplace/log_survival_function/log_cdf_laplace/Log1p: (Log1p): /job:localhost/replica:0/task:0/device:GPU:0
+Laplace/log_survival_function/log_cdf_laplace/Less: (Less): /job:localhost/replica:0/task:0/device:GPU:0
+Laplace/log_survival_function/log_cdf_laplace/SelectV2: (SelectV2): /job:localhost/replica:0/task:0/device:GPU:0
+Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const_1: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Laplace/log_survival_function/value: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Laplace/log_survival_function/log_cdf_laplace/add/x: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Laplace/log_survival_function/log_cdf_laplace/mul/x: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Laplace/log_survival_function/log_cdf_laplace/Less/y: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Identity: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+x: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+y: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Sub: (Sub): /job:localhost/replica:0/task:0/device:GPU:0
+z_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+x: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+y: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+RealDiv: (RealDiv): /job:localhost/replica:0/task:0/device:GPU:0
+z_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+x: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Neg: (Neg): /job:localhost/replica:0/task:0/device:GPU:0
+y_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+x: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+y: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+AddV2: (AddV2): /job:localhost/replica:0/task:0/device:GPU:0
+z_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+x: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Abs: (Abs): /job:localhost/replica:0/task:0/device:GPU:0
+y_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+x: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Exp: (Exp): /job:localhost/replica:0/task:0/device:GPU:0
+y_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+x: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+y: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Mul: (Mul): /job:localhost/replica:0/task:0/device:GPU:0
+z_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+x: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Log1p: (Log1p): /job:localhost/replica:0/task:0/device:GPU:0
+y_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+x: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+y: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Less: (Less): /job:localhost/replica:0/task:0/device:GPU:0
+z_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GITEM <TestCaseFunction testLaplaceLogSurvivalFunction>
+.ITEM <TestCaseFunction test_session>
+s
+
+--------------------------------- JSON report ----------------------------------
+report saved to: test_failure_report.json
+========================= 1 passed, 1 skipped in 2.98s =========================
+PU:0
+condition: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+t: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+e: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+SelectV2: (SelectV2): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0

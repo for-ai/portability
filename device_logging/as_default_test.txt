@@ -1,0 +1,46 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.10, pytest-7.2.2, pluggy-1.0.0
+rootdir: /home/frasermince/portability, configfile: pyproject.toml
+plugins: hypothesis-6.70.2, xdist-3.2.1, forked-1.6.0, metadata-2.0.4, json-report-1.5.0, timeout-2.1.0
+timeout: 300.0s
+timeout method: signal
+timeout func_only: False
+collected 3 items
+
+src/tensorflow_tests_reduced/as_default_test.py ITEM <TestCaseFunction testGraphGradientVariable>
+.ITEM <TestCaseFunction testGraphModeWithGradients>
+.ITEM <TestCaseFunction test_session>
+s
+
+--------------------------------- JSON report ----------------------------------
+report saved to: test_failure_report.json
+========================= 2 passed, 1 skipped in 2.86s =========================
+Variable/IsInitialized/VarIsInitializedOp: (VarIsInitializedOp): /job:localhost/replica:0/task:0/device:GPU:0
+Variable/Assign: (AssignVariableOp): /job:localhost/replica:0/task:0/device:GPU:0
+Variable/Read/ReadVariableOp: (ReadVariableOp): /job:localhost/replica:0/task:0/device:GPU:0
+StatefulPartitionedCall: (StatefulPartitionedCall): /job:localhost/replica:0/task:0/device:GPU:0
+gradients/grad_ys_0: (Fill): /job:localhost/replica:0/task:0/device:GPU:0
+gradients/StatefulPartitionedCall_grad/PartitionedCall: (PartitionedCall): /job:localhost/replica:0/task:0/device:GPU:0
+Variable/Initializer/initial_value: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Variable: (VarHandleOp): /job:localhost/replica:0/task:0/device:GPU:0
+gradients/Shape: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+gradients/grad_ys_0/Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+resource_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+VarHandleOp: (VarHandleOp): /job:localhost/replica:0/task:0/device:GPU:0
+resource: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+value: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+AssignVariableOp: (AssignVariableOp): /job:localhost/replica:0/task:0/device:GPU:0
+readvariableop_resource: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+ReadVariableOp: (ReadVariableOp): /job:localhost/replica:0/task:0/device:GPU:0
+mul/ReadVariableOp: (ReadVariableOp): /job:localhost/replica:0/task:0/device:GPU:0
+mul: (Mul): /job:localhost/replica:0/task:0/device:GPU:0
+gradient_tape/mul/Mul: (Mul): /job:localhost/replica:0/task:0/device:GPU:0
+gradient_tape/mul/Mul_1: (Mul): /job:localhost/replica:0/task:0/device:GPU:0
+AddN: (AddN): /job:localhost/replica:0/task:0/device:GPU:0
+NoOp: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+Identity: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+identity_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+ones: (Const): /job:localhost/replica:0/task:0/device:GPU:0

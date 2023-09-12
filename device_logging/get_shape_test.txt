@@ -1,0 +1,74 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.10, pytest-7.2.2, pluggy-1.0.0
+rootdir: /home/frasermince/portability, configfile: pyproject.toml
+plugins: hypothesis-6.70.2, xdist-3.2.1, forked-1.6.0, metadata-2.0.4, json-report-1.5.0, timeout-2.1.0
+timeout: 300.0s
+timeout method: signal
+timeout func_only: False
+collected 2 items
+
+src/tensorflow_tests_reduced/get_shape_test.py ITEM <TestCaseFunction testGetShape>
+.ITEM <TestCaseFunction test_session>
+s
+
+--------------------------------- JSON report ----------------------------------
+report saved to: test_failure_report.json
+========================= 1 passed, 1 skipped in 2.87s =========================
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Shape: (Shape): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+NoOp: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+begin: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+end: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+strides: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+StridedSlice: (StridedSlice): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+x: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+y: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Equal: (Equal): /job:localhost/replica:0/task:0/device:GPU:0
+z_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+start: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+limit: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+delta: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+Range: (Range): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+reduction__indices: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+All: (All): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+begin: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+end: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+strides: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+StridedSlice: (StridedSlice): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+begin: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+end: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+strides: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+StridedSlice: (StridedSlice): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+x: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+y: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Sub: (Sub): /job:localhost/replica:0/task:0/device:GPU:0
+z_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+x: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+y: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+LessEqual: (LessEqual): /job:localhost/replica:0/task:0/device:GPU:0
+z_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+Shape: (Shape): /job:localhost/replica:0/task:0/device:CPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+Shape: (Shape): /job:localhost/replica:0/task:0/device:CPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0

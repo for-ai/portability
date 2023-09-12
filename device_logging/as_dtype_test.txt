@@ -1,0 +1,84 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.10, pytest-7.2.2, pluggy-1.0.0
+rootdir: /home/frasermince/portability, configfile: pyproject.toml
+plugins: hypothesis-6.70.2, xdist-3.2.1, forked-1.6.0, metadata-2.0.4, json-report-1.5.0, timeout-2.1.0
+timeout: 300.0s
+timeout method: signal
+timeout func_only: False
+collected 46 items
+
+src/tensorflow_tests_reduced/as_dtype_test.py ITEM <TestCaseFunction testAllPybind11DTypeConvertibleToDType>
+.ITEM <TestCaseFunction testAllTypesConstructible>
+.ITEM <TestCaseFunction testAllTypesConvertibleToDType>
+.ITEM <TestCaseFunction testAllTypesConvertibleToNumpyDtype>
+.ITEM <TestCaseFunction testAsDtypeInvalidArgument>
+.ITEM <TestCaseFunction testAsDtypeReturnsInternedVersion>
+.ITEM <TestCaseFunction testDTypeSerialization0>
+.ITEM <TestCaseFunction testDTypeSerialization1>
+.ITEM <TestCaseFunction testDTypeSerialization10>
+.ITEM <TestCaseFunction testDTypeSerialization11>
+.ITEM <TestCaseFunction testDTypeSerialization12>
+.ITEM <TestCaseFunction testDTypeSerialization13>
+.ITEM <TestCaseFunction testDTypeSerialization14>
+.ITEM <TestCaseFunction testDTypeSerialization15>
+.ITEM <TestCaseFunction testDTypeSerialization16>
+.ITEM <TestCaseFunction testDTypeSerialization17>
+.ITEM <TestCaseFunction testDTypeSerialization18>
+.ITEM <TestCaseFunction testDTypeSerialization19>
+.ITEM <TestCaseFunction testDTypeSerialization2>
+.ITEM <TestCaseFunction testDTypeSerialization20>
+.ITEM <TestCaseFunction testDTypeSerialization3>
+.ITEM <TestCaseFunction testDTypeSerialization4>
+.ITEM <TestCaseFunction testDTypeSerialization5>
+.ITEM <TestCaseFunction testDTypeSerialization6>
+.ITEM <TestCaseFunction testDTypeSerialization7>
+.ITEM <TestCaseFunction testDTypeSerialization8>
+.ITEM <TestCaseFunction testDTypeSerialization9>
+.ITEM <TestCaseFunction testDTypeSubtypes>
+.ITEM <TestCaseFunction testDTypeSupertypes>
+.ITEM <TestCaseFunction testDTypesHaveUniqueNames>
+.ITEM <TestCaseFunction testEqWithNonTFTypes>
+.ITEM <TestCaseFunction testInvalid>
+.ITEM <TestCaseFunction testIsComplex>
+.ITEM <TestCaseFunction testIsFloating>
+.ITEM <TestCaseFunction testIsInteger>
+.ITEM <TestCaseFunction testIsUnsigned>
+.ITEM <TestCaseFunction testLimitsUndefinedError>
+.ITEM <TestCaseFunction testMinMax>
+<dtype: 'float32'>: -3.4028235e+38 - 3.4028235e+38
+<dtype: 'float64'>: -1.7976931348623157e+308 - 1.7976931348623157e+308
+<dtype: 'int32'>: -2147483648 - 2147483647
+<dtype: 'uint8'>: 0 - 255
+<dtype: 'int16'>: -32768 - 32767
+<dtype: 'int8'>: -128 - 127
+<dtype: 'int64'>: -9223372036854775808 - 9223372036854775807
+<dtype: 'bfloat16'>: -3.38953e+38 - 3.38953e+38
+<dtype: 'uint16'>: 0 - 65535
+<dtype: 'float16'>: -65500.0 - 65500.0
+<dtype: 'uint32'>: 0 - 4294967295
+<dtype: 'uint64'>: 0 - 18446744073709551615
+<dtype: 'float32_ref'>: -3.4028235e+38 - 3.4028235e+38
+<dtype: 'float64_ref'>: -1.7976931348623157e+308 - 1.7976931348623157e+308
+<dtype: 'int32_ref'>: -2147483648 - 2147483647
+<dtype: 'uint8_ref'>: 0 - 255
+<dtype: 'int16_ref'>: -32768 - 32767
+<dtype: 'int8_ref'>: -128 - 127
+<dtype: 'int64_ref'>: -9223372036854775808 - 9223372036854775807
+<dtype: 'bfloat16_ref'>: -3.38953e+38 - 3.38953e+38
+<dtype: 'uint16_ref'>: 0 - 65535
+<dtype: 'float16_ref'>: -65500.0 - 65500.0
+<dtype: 'uint32_ref'>: 0 - 4294967295
+<dtype: 'uint64_ref'>: 0 - 18446744073709551615
+.ITEM <TestCaseFunction testNumpyConversion>
+.ITEM <TestCaseFunction testPythonLongConversion>
+.ITEM <TestCaseFunction testPythonTypesConversion>
+.ITEM <TestCaseFunction testRealDtype>
+.ITEM <TestCaseFunction testReduce>
+.ITEM <TestCaseFunction testRepr>
+sITEM <TestCaseFunction testStringConversion>
+.ITEM <TestCaseFunction test_session>
+s
+
+--------------------------------- JSON report ----------------------------------
+report saved to: test_failure_report.json
+======================== 44 passed, 2 skipped in 2.74s =========================

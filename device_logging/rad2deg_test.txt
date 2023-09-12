@@ -1,0 +1,16 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.10, pytest-7.2.2, pluggy-1.0.0
+rootdir: /home/frasermince/portability, configfile: pyproject.toml
+plugins: hypothesis-6.70.2, xdist-3.2.1, forked-1.6.0, metadata-2.0.4, json-report-1.5.0, timeout-2.1.0
+timeout: 300.0s
+timeout method: signal
+timeout func_only: False
+collected 2 items
+
+src/tensorflow_tests_reduced/rad2deg_test.py ITEM <TestCaseFunction testUnaryUfunc_bfloat16>
+.ITEM <TestCaseFunction testUnaryUfunc_float8_e4m3b11>
+.
+
+--------------------------------- JSON report ----------------------------------
+report saved to: test_failure_report.json
+============================== 2 passed in 2.62s ===============================

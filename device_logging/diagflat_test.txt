@@ -1,0 +1,99 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.10, pytest-7.2.2, pluggy-1.0.0
+rootdir: /home/frasermince/portability, configfile: pyproject.toml
+plugins: hypothesis-6.70.2, xdist-3.2.1, forked-1.6.0, metadata-2.0.4, json-report-1.5.0, timeout-2.1.0
+timeout: 300.0s
+timeout method: signal
+timeout func_only: False
+collected 2 items
+
+src/tensorflow_tests_reduced/diagflat_test.py input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Identity: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Identity: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+tensor: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+shape: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+Reshape: (Reshape): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+x: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+y: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+Equal: (Equal): /job:localhost/replica:0/task:0/device:GPU:0
+z_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+dims: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+value: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Fill: (Fill): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+tensor: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+shape: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+Reshape: (Reshape): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+dims: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+value: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Fill: (Fill): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+x: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Cast: (Cast): /job:localhost/replica:0/task:0/device:GPU:0
+y_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Identity: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+x: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+Cast: (Cast): /job:localhost/replica:0/task:0/device:GPU:0
+y_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+tensor: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+shape: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+Reshape: (Reshape): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+diagonal: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+k: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+num__rows: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+num__cols: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+padding__value: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+MatrixDiagV3: (MatrixDiagV3): /job:localhost/replica:0/task:0/device:CPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:CPU:0
+tensor: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+shape: (_Arg): /job:localhost/replica:0/task:0/device:CPU:0
+Reshape: (Reshape): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+diagonal: (_DeviceArg): /job:localhost/replica:0/ITEM <TestCaseFunction testDiagFlat>
+.ITEM <TestCaseFunction test_session>
+s
+
+--------------------------------- JSON report ----------------------------------
+report saved to: test_failure_report.json
+========================= 1 passed, 1 skipped in 6.00s =========================
+task:0/device:CPU:0
+k: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+num__rows: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+num__cols: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+padding__value: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+MatrixDiagV3: (MatrixDiagV3): /job:localhost/replica:0/task:0/device:CPU:0
+output_RetVal: (_DeviceRetval): /job:localhost/replica:0/task:0/device:CPU:0
+diagonal: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+k: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+num__rows: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+num__cols: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+padding__value: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+MatrixDiagV3: (MatrixDiagV3): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+diagonal: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+k: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+num__rows: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+num__cols: (_DeviceArg): /job:localhost/replica:0/task:0/device:CPU:0
+padding__value: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+MatrixDiagV3: (MatrixDiagV3): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0

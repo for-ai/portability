@@ -1,0 +1,20 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.10, pytest-7.2.2, pluggy-1.0.0
+rootdir: /home/frasermince/portability, configfile: pyproject.toml
+plugins: hypothesis-6.70.2, xdist-3.2.1, forked-1.6.0, metadata-2.0.4, json-report-1.5.0, timeout-2.1.0
+timeout: 300.0s
+timeout method: signal
+timeout func_only: False
+collected 6 items
+
+src/tensorflow_tests_reduced/get_global_step_test.py ITEM <TestCaseFunction test_create_global_step>
+.ITEM <TestCaseFunction test_get_global_step>
+.ITEM <TestCaseFunction test_get_or_create_global_step>
+.ITEM <TestCaseFunction test_invalid_dtype>
+.ITEM <TestCaseFunction test_invalid_shape>
+.ITEM <TestCaseFunction test_session>
+s
+
+--------------------------------- JSON report ----------------------------------
+report saved to: test_failure_report.json
+========================= 5 passed, 1 skipped in 2.64s =========================

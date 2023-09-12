@@ -1,0 +1,61 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.10, pytest-7.2.2, pluggy-1.0.0
+rootdir: /home/frasermince/portability, configfile: pyproject.toml
+plugins: hypothesis-6.70.2, xdist-3.2.1, forked-1.6.0, metadata-2.0.4, json-report-1.5.0, timeout-2.1.0
+timeout: 300.0s
+timeout method: signal
+timeout func_only: False
+collected 25 items
+
+src/tensorflow_tests_reduced/constant_test.py ITEM <TestCaseFunction test_convert_string_to_number0>
+.ITEM <TestCaseFunction test_convert_string_to_number1>
+.ITEM <TestCaseFunction test_convert_string_to_number10>
+.ITEM <TestCaseFunction test_convert_string_to_number11>
+.ITEM <TestCaseFunction test_convert_string_to_number12>
+.ITEM <TestCaseFunction test_convert_string_to_number13>
+.ITEM <TestCaseFunction test_convert_string_to_number14>
+.ITEM <TestCaseFunction test_convert_string_to_number15>
+.ITEM <TestCaseFunction test_convert_string_to_number16>
+.ITEM <TestCaseFunction test_convert_string_to_number17>
+.ITEM <TestCaseFunction test_convert_string_to_number18>
+.ITEM <TestCaseFunction test_convert_string_to_number19>
+.ITEM <TestCaseFunction test_convert_string_to_number2>
+.ITEM <TestCaseFunction test_convert_string_to_number20>
+.ITEM <TestCaseFunction test_convert_string_to_number3>
+.ITEM <TestCaseFunction test_convert_string_to_number4>
+.ITEM <TestCaseFunction test_convert_string_to_number5>
+.ITEM <TestCaseFunction test_convert_string_to_number6>
+.ITEM <TestCaseFunction test_convert_string_to_number7>
+.ITEM <TestCaseFunction test_convert_string_to_number8>
+.ITEM <TestCaseFunction test_convert_string_to_number9>
+.ITEM <TestCaseFunction test_eager_const_grad_error>
+.ITEM <TestCaseFunction test_eager_const_pfor>
+.ITEM <TestCaseFunction test_eager_const_xla>
+.ITEM <TestCaseFunction test_session>
+s
+
+--------------------------------- JSON report ----------------------------------
+report saved to: test_failure_report.json
+======================== 24 passed, 1 skipped in 3.22s =========================
+loop_body/PlaceholderWithDefault: (PlaceholderWithDefault): /job:localhost/replica:0/task:0/device:GPU:0
+loop_body/GatherV2: (GatherV2): /job:localhost/replica:0/task:0/device:GPU:0
+loop_body/import/const: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+pfor/Reshape: (Reshape): /job:localhost/replica:0/task:0/device:GPU:0
+pfor/range: (Range): /job:localhost/replica:0/task:0/device:GPU:0
+loop_body/import/const/pfor/Identity: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+Identity: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+identity_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0
+Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const_1: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+loop_body/PlaceholderWithDefault/input: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+loop_body/GatherV2/axis: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+loop_body/import/x: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const_2: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+pfor/Reshape/tensor: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+pfor/Reshape/shape: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+pfor/range/start: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+pfor/range/limit: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+pfor/range/delta: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+input: (_Arg): /job:localhost/replica:0/task:0/device:GPU:0
+_EagerConst: (_EagerConst): /job:localhost/replica:0/task:0/device:GPU:0
+output_RetVal: (_Retval): /job:localhost/replica:0/task:0/device:GPU:0

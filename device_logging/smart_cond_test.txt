@@ -1,0 +1,78 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.10, pytest-7.2.2, pluggy-1.0.0
+rootdir: /home/frasermince/portability, configfile: pyproject.toml
+plugins: hypothesis-6.70.2, xdist-3.2.1, forked-1.6.0, metadata-2.0.4, json-report-1.5.0, timeout-2.1.0
+timeout: 300.0s
+timeout method: signal
+timeout func_only: False
+collected 8 items
+
+src/tensorflow_tests_reduced/smart_cond_test.py ITEM <TestCaseFunction testEval>
+.ITEM <TestCaseFunction testFalse>
+.ITEM <TestCaseFunction testMissingArg1>
+.ITEM <TestCaseFunction testMissingArg2>
+.ITEM <TestCaseFunction testPlaceholderWithDefault>
+.ITEM <TestCaseFunction testTrue>
+.mul: (Mul): /job:localhost/replica:0/task:0/device:GPU:0
+Greater: (Greater): /job:localhost/replica:0/task:0/device:GPU:0
+Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const_1: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Greater/y: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const_2: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Mul: (Mul): /job:localhost/replica:0/task:0/device:GPU:0
+Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const_1: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Mul/y: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+PlaceholderWithDefault: (PlaceholderWithDefault): /job:localhost/replica:0/task:0/device:GPU:0
+Greater: (Greater): /job:localhost/replica:0/task:0/device:GPU:0
+cond/Identity: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+cond/switch_pred/_2: (Switch): /job:localhost/replica:0/task:0/device:GPU:0
+cond/pivot_f/_3: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+cond/pivot_t/_4: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+cond/output/_5: (Merge): /job:localhost/replica:0/task:0/device:GPU:0
+cond/branch_executed/_6: (Merge): /job:localhost/replica:0/task:0/device:GPU:0
+cond: (IdentityN): /job:localhost/replica:0/task:0/device:GPU:0
+Func/cond/then/_0/input_control_node/_7: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+Func/cond/then/_0/output/_8: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+Func/cond/then/_0/output_control_node/_9: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+cond/then/_0: (IdentityN): /job:localhost/replica:0/task:0/device:GPU:0
+Func/cond/else/_1/input_control_node/_10: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+Func/cond/else/_1/output/_11: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+Func/cond/else/_1/output_control_node/_12: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+cond/else/_1: (IdentityN): /job:localhost/replica:0/task:0/device:GPU:0
+PlaceholderWithDefault/input: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Greater/y: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+cond/then/_0/Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+cond/else/_1/Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Mul: (Mul): /job:localhost/replica:0/task:0/device:GPU:0
+Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Const_1: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Mul/y: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+Greater: (Greater): /job:localhost/replica:0/task:0/device:GPU:0
+cond/Squeeze: (Squeeze): /job:localhost/replica:0/task:0/device:GPU:0
+cond/Identity: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+cond/switch_pred/_2: (Switch): /job:localhost/replica:0/task:0/device:GPU:0
+cond/pivot_f/_3: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+cond/pivot_t/_4: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+cond/output/_5: (Merge): /job:localhost/replica:0/task:0/device:GPU:0
+cond/branch_executed/_6: (Merge): /job:localhost/replica:0/task:0/device:GPU:0
+cond: (IdentityN): /job:localhost/replica:0/task:0/device:GPU:0
+Func/cond/then/_0/input_control_node/_7: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+Func/cond/then/_0/output/_8: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+Func/cond/then/_0/output_control_node/_9: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+cond/then/_0: (IdentityN): /job:localhost/replica:0/task:0/device:GPU:0
+Func/cond/else/_1/input_control_node/_10: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+Func/cond/else/_1/output/_11: (Identity): /job:localhost/replica:0/task:0/device:GPU:0
+Func/cond/else/_1/output_control_node/_12: (NoOp): /job:localhost/replica:0/task:0/device:GPU:0
+cond/else/_1: (IdentityN): /job:localhost/replica:0/task:0/device:GPU:0
+Placeholder: (Placeholder): /job:localhost/replica:0/task:0/device:GPU:0
+Greater/y: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+cond/then/_0/Const: (Const): /job:localhost/replica:0/task:0/device:GPU:0
+cond/else/_1/Const: (CITEM <TestCaseFunction testUnknown>
+.ITEM <TestCaseFunction test_session>
+s
+
+--------------------------------- JSON report ----------------------------------
+report saved to: test_failure_report.json
+========================= 7 passed, 1 skipped in 2.90s =========================
+onst): /job:localhost/replica:0/task:0/device:GPU:0
